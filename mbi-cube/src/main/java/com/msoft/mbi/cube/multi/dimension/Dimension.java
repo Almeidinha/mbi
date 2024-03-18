@@ -1,6 +1,5 @@
 package com.msoft.mbi.cube.multi.dimension;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -8,7 +7,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 import com.msoft.mbi.cube.multi.Cubo;
-import com.msoft.mbi.cube.multi.LinhaMetrica;
+import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.column.DataType;
 import com.msoft.mbi.cube.multi.column.TipoData;
 import com.msoft.mbi.cube.multi.column.TipoDecimal;
@@ -28,8 +27,6 @@ import lombok.Setter;
 @Setter
 public abstract class Dimension implements Comparable<Dimension>, Serializable {
 
-    @Serial
-    private static final long serialVersionUID = -1646061639216450074L;
     public static final String FECHA = "]";
     public static final String ABRE = "[";
     public static final String BRANCO = "";
@@ -380,13 +377,13 @@ public abstract class Dimension implements Comparable<Dimension>, Serializable {
 
     public String searchMetricAlertLineProperty(List<MetricaMetaData> metricasMetaData, String function, Dimension dimensionColumn) {
         
-        LinhaMetrica linhaMetrica = this.cube.getMapaMetricas().getLinhaMetrica(this);
-        if (linhaMetrica == null) {
+        MetricLine metricLine = this.cube.getMapaMetricas().getMetricLine(this);
+        if (metricLine == null) {
             return null;
         }
 
         return metricasMetaData.stream()
-                .map(metaData -> linhaMetrica.getMetricas().get(metaData.getTitulo()))
+                .map(metaData -> metricLine.getMetrics().get(metaData.getTitulo()))
                 .filter(Objects::nonNull)
                 .map(metricExpression -> metricExpression.buscaAlertaMetricaLinha(function, this, dimensionColumn))
                 .filter(Objects::nonNull)

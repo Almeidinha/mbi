@@ -1,7 +1,7 @@
 package com.msoft.mbi.cube.multi.metrics.calculated;
 
-import com.msoft.mbi.cube.exception.CuboMathParserException;
-import com.msoft.mbi.cube.multi.LinhaMetrica;
+import com.msoft.mbi.cube.exception.CubeMathParserException;
+import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.MapaMetricas;
 import com.msoft.mbi.cube.multi.calculation.Calculo;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
@@ -12,15 +12,13 @@ import java.io.Serial;
 
 public class MetricaCalculadaEvolucaoAH extends MetricaCalculada {
 
-    @Serial
-    private static final long serialVersionUID = 7068703921985921810L;
 
     private Dimension getDimensaoAnterior(Dimension dimensionAtual, MetricaCalculadaEvolucaoAHMetaData metaData) {
         return metaData.getAnaliseEvolucaoTipo().getDimensaoAnterior(dimensionAtual);
     }
 
     @Override
-    public Double calcula(MapaMetricas mapaMetricas, LinhaMetrica linhaMetrica, LinhaMetrica linhaMetricaAnterior) {
+    public Double calcula(MapaMetricas mapaMetricas, MetricLine metricLine, MetricLine metricLineAnterior) {
 
         MetricaCalculadaEvolucaoAHMetaData metaData = (MetricaCalculadaEvolucaoAHMetaData) this.getMetaData();
         Calculo calculo = metaData.createCalculo();
@@ -28,16 +26,16 @@ public class MetricaCalculadaEvolucaoAH extends MetricaCalculada {
         try {
             String tituloColunaAH = calculo.getVariables().get(MetricaCalculadaEvolucaoAHMetaData.COLUNA_AH_VARIABLE);
 
-            Metrica metricaReferencia = linhaMetrica.getMetricas().get(tituloColunaAH);
-            Double oValor = metricaReferencia.getMetaData().calculaValorTotalParcial(linhaMetrica.getDimensionLinha(), linhaMetrica.getDimensionColuna());
+            Metrica metricaReferencia = metricLine.getMetrics().get(tituloColunaAH);
+            Double oValor = metricaReferencia.getMetaData().calculaValorTotalParcial(metricLine.getDimensionLine(), metricLine.getDimensionColumn());
             double valorAtual = oValor != null ? oValor : 0;
 
             double valorAnterior = 0;
 
-            Dimension dimensionAnterior = this.getDimensaoAnterior(linhaMetrica.getDimensionColuna(), metaData);
+            Dimension dimensionAnterior = this.getDimensaoAnterior(metricLine.getDimensionColumn(), metaData);
 
-            Metrica expressaoValor = linhaMetrica.getMetricas().get(tituloColunaAH);
-            oValor = expressaoValor.getMetaData().calculaValorTotalParcial(linhaMetrica.getDimensionLinha(), dimensionAnterior);
+            Metrica expressaoValor = metricLine.getMetrics().get(tituloColunaAH);
+            oValor = expressaoValor.getMetaData().calculaValorTotalParcial(metricLine.getDimensionLine(), dimensionAnterior);
             valorAnterior = oValor != null ? oValor : 0;
 
             if (valorAtual != valorAnterior) {
@@ -61,20 +59,20 @@ public class MetricaCalculadaEvolucaoAH extends MetricaCalculada {
                 retorno = (double) 0;
             }
         } catch (Exception ex) {
-            CuboMathParserException parserException = new CuboMathParserException("Não foi possível realizar o cálculo da coluna " + metaData.getTitulo() + ".", ex);
+            CubeMathParserException parserException = new CubeMathParserException("Não foi possível realizar o cálculo da coluna " + metaData.getTitulo() + ".", ex);
             throw parserException;
         }
         return retorno;
     }
 
     @Override
-    public Double getValor(MapaMetricas mapaMetricas, LinhaMetrica linhaMetrica, LinhaMetrica linhaMetricaAnterior) {
-        return this.calcula(mapaMetricas, linhaMetrica, linhaMetricaAnterior);
+    public Double getValor(MapaMetricas mapaMetricas, MetricLine metricLine, MetricLine metricLineAnterior) {
+        return this.calcula(mapaMetricas, metricLine, metricLineAnterior);
     }
 
     @Override
-    public Double calcula(MapaMetricas mapaMetricas, LinhaMetrica linhaMetrica, LinhaMetrica linhaMetricaAnterior, MetricaValorUtilizar nivelCalcular) {
-        return calcula(mapaMetricas, linhaMetrica, linhaMetricaAnterior);
+    public Double calcula(MapaMetricas mapaMetricas, MetricLine metricLine, MetricLine metricLineAnterior, MetricaValorUtilizar nivelCalcular) {
+        return calcula(mapaMetricas, metricLine, metricLineAnterior);
     }
 
 }

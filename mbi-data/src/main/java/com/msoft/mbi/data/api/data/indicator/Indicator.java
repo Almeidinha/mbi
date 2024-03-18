@@ -8,9 +8,9 @@ import com.msoft.mbi.cube.multi.generation.*;
 import com.msoft.mbi.cube.multi.metaData.AlertaCorMetaData;
 import com.msoft.mbi.cube.multi.metaData.CampoMetaData;
 import com.msoft.mbi.cube.multi.metaData.CuboMetaData;
-import com.msoft.mbi.cube.util.CuboListener;
-import com.msoft.mbi.cube.util.DefaultCuboListener;
-import com.msoft.mbi.cube.util.logicOperators.OperadoresLogicos;
+import com.msoft.mbi.cube.util.CubeListener;
+import com.msoft.mbi.cube.util.DefaultCubeListener;
+import com.msoft.mbi.cube.util.logicOperators.LogicalOperators;
 import com.msoft.mbi.data.api.data.consult.CachedResults;
 import com.msoft.mbi.data.api.data.consult.ConsultResult;
 import com.msoft.mbi.data.api.data.exception.BIDatabaseException;
@@ -96,7 +96,7 @@ public class Indicator {
     private String currentView = "T";
     private String dateFormat = "dd/MM/yyyy";
 
-    transient private CuboListener cuboListener = new DefaultCuboListener();
+    transient private CubeListener cubeListener = new DefaultCubeListener();
 
     private int leftCoordinates = 10;
     private int topCoordinates = 60;
@@ -520,11 +520,11 @@ public class Indicator {
     public void montaSaida(boolean consult) throws Exception {
         if (consult) {
             try {
-                this.cuboListener.start();
+                this.cubeListener.start();
                 buildTableData();
                 stopProcess();
             } finally {
-                this.cuboListener.finish();
+                this.cubeListener.finish();
             }
         }
     }
@@ -659,8 +659,8 @@ public class Indicator {
     }
 
     private void configureCubeListener() {
-        if (this.cubo != null && this.cuboListener != null) {
-            this.cubo.setCuboListener(new CubeProcessor(this));
+        if (this.cubo != null && this.cubeListener != null) {
+            this.cubo.setCubeListener(new CubeProcessor(this));
         }
     }
 
@@ -720,7 +720,7 @@ public class Indicator {
             if (corLinha != null) {
                 String corFundo = corLinha.getBackGroundColor().startsWith("#") ? corLinha.getBackGroundColor().substring(1) : corLinha.getBackGroundColor();
                 String corFonte = corLinha.getFontColor().startsWith("#") ? corLinha.getFontColor().substring(1) : corLinha.getFontColor();
-                AlertaCorMetaData alertaCor = new AlertaCorMetaData(alertSequence++, OperadoresLogicos.ENTRE_INCLUSIVO,
+                AlertaCorMetaData alertaCor = new AlertaCorMetaData(alertSequence++, LogicalOperators.BETWEEN_INCLUSIVE,
                         Double.parseDouble(corLinha.getInitialValue()), Double.parseDouble(corLinha.getInitialValue()), corFonte, corFundo,
                         "Verdana", false, false, 10);
                 campo.addAlertaCor(alertaCor, AlertaCorMetaData.TIPO_ALERTA_VALOR);
@@ -1161,7 +1161,7 @@ public class Indicator {
     }
 
     public boolean stopProcess() {
-        return this.cuboListener.stopProcess();
+        return this.cubeListener.stopProcess();
     }
 
     public void validateMultiDimensionalTable() throws BIException {

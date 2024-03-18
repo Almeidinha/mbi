@@ -1,13 +1,10 @@
 package com.msoft.mbi.cube.multi.dimension;
 
-import java.io.Serial;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DimensionLinha extends Dimension {
 
-    @Serial
-    private static final long serialVersionUID = -1646061639216450074L;
 
     public DimensionLinha(Dimension pai, DimensaoMetaData metaData) {
         super(pai, metaData);
@@ -33,7 +30,7 @@ public class DimensionLinha extends Dimension {
         processValor(resultSet);
         processDimensaoOrdenacao(resultSet);
         processDimensaoLinha();
-        this.cube.getMapaMetricas().acumulaMetricaLinha(this, resultSet);
+        this.cube.getMapaMetricas().accumulateMetricLine(this, resultSet);
         processFilhoDimensao(resultSet);
         processHierarquiaColuna(resultSet);
     }

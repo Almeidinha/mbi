@@ -1,17 +1,14 @@
 package com.msoft.mbi.cube.multi.partialTotalization;
 
-import java.io.Serial;
 import java.util.Iterator;
 
-import com.msoft.mbi.cube.multi.LinhaMetrica;
+import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.MapaMetricas;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.metrics.Metrica;
 import com.msoft.mbi.cube.multi.metrics.MetricaMetaData;
 
 public class TotalizacaoParcialAplicarTipoSoma implements TotalizacaoParcialAplicarTipo {
-    @Serial
-    private static final long serialVersionUID = 3159443912847785683L;
 
     private static TotalizacaoParcialAplicarTipoSoma acumuladoParcialTipo;
 
@@ -51,9 +48,9 @@ public class TotalizacaoParcialAplicarTipoSoma implements TotalizacaoParcialApli
                     dimensionColuna = dimensionEixoReferencia;
                 }
 
-                LinhaMetrica linhaMetrica = mapaMetricas.getLinhaMetrica(dimensionLinha, dimensionColuna);
-                Metrica metricaCalculada = linhaMetrica.getMetricas().get(metaData.getTitulo());
-                retorno = metricaCalculada.getValor(mapaMetricas, linhaMetrica, null);
+                MetricLine metricLine = mapaMetricas.getMetricLine(dimensionLinha, dimensionColuna);
+                Metrica metricaCalculada = metricLine.getMetrics().get(metaData.getTitulo());
+                retorno = metricaCalculada.getValor(mapaMetricas, metricLine, null);
             }
         }
         return retorno;

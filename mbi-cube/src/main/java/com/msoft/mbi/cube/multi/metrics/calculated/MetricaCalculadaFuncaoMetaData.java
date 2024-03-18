@@ -1,6 +1,6 @@
 package com.msoft.mbi.cube.multi.metrics.calculated;
 
-import com.msoft.mbi.cube.multi.LinhaMetrica;
+import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.analytics.AnaliseParticipacaoTipo;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 
@@ -12,8 +12,8 @@ public interface MetricaCalculadaFuncaoMetaData {
 
     public AnaliseParticipacaoTipo getAnaliseParticipacaoTipo();
 
-    public Dimension getDimensaoEixoReferencia(LinhaMetrica linhaMetrica);
+    public Dimension getDimensaoEixoReferencia(MetricLine metricLine);
 
-    public Dimension getDimensaoOutra(LinhaMetrica linhaMetrica);
+    public Dimension getDimensaoOutra(MetricLine metricLine);
 
 }

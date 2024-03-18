@@ -5,8 +5,6 @@ import com.msoft.mbi.cube.multi.renderers.linkHTML.MascaraLinkHTMLValorDinamicoR
 
 public class AplicadorEfeitoHTMLNaoAplica implements AplicadorEfeitoHTML {
 
-    public static final String FWJ_VERSAO = "$Revision: 1.1 $";
-
     @Override
     public String aplicaEfeitoHTML(Object valor, MascaraRenderer efeitoHTMLDecorator) {
         return valor.toString();

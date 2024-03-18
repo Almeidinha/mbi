@@ -6,9 +6,6 @@ import java.io.Serial;
 
 public class AnaliseEvolucaoTipoDinamica implements AnaliseEvolucaoTipo {
 
-    @Serial
-    private static final long serialVersionUID = 1908972561906857406L;
-
     private static AnaliseEvolucaoTipoDinamica analiseEvolucaoTipoDinamica;
 
     private AnaliseEvolucaoTipoDinamica() {

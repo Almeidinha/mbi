@@ -15,9 +15,6 @@ import java.io.Serial;
 
 public class AnaliseEvolucaoTipoFixa implements AnaliseEvolucaoTipo {
 
-    @Serial
-    private static final long serialVersionUID = -6966560715731181873L;
-
     private static AnaliseEvolucaoTipoFixa analiseEvolucaoTipoFixa;
 
     private AnaliseEvolucaoTipoFixa() {

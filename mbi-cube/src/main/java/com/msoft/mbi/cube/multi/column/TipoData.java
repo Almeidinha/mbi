@@ -1,17 +1,14 @@
 package com.msoft.mbi.cube.multi.column;
 
-import java.io.Serial;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.msoft.mbi.cube.util.logicOperators.OperaTor;
-import com.msoft.mbi.cube.util.logicOperators.OperadoresLogicos;
+import com.msoft.mbi.cube.util.logicOperators.LogicalOperators;
 
 public class TipoData implements DataType<Date> {
 
-    @Serial
-    private static final long serialVersionUID = -5731073170436610239L;
 
     private Date data = null;
     public static final Date BRANCO = new Date(Integer.MIN_VALUE - 1);
@@ -30,22 +27,22 @@ public class TipoData implements DataType<Date> {
 
     @Override
     public OperaTor<Date> getOperator(String operator) {
-        if (OperadoresLogicos.MAIOR.equals(operator)) {
-            return OperadoresLogicos.operadorMaiorData;
-        } else if (OperadoresLogicos.MAIORIGUAL.equals(operator)) {
-            return OperadoresLogicos.operadorMaiorIgualData;
-        } else if (OperadoresLogicos.IGUAL.equals(operator)) {
-            return OperadoresLogicos.operadorIgualDimensao;
-        } else if (OperadoresLogicos.MENOR.equals(operator)) {
-            return OperadoresLogicos.operadorMenorData;
-        } else if (OperadoresLogicos.MENORIGUAL.equals(operator)) {
-            return OperadoresLogicos.operadorMenorIgualData;
-        } else if (OperadoresLogicos.ENTRE_EXCLUSIVO.equals(operator)) {
-            return OperadoresLogicos.operadorEntreExclusivoData;
-        } else if (OperadoresLogicos.ENTRE_INCLUSIVO.equals(operator)) {
-            return OperadoresLogicos.operadorEntreInclusivoData;
+        if (LogicalOperators.GREATER_THAN.equals(operator)) {
+            return LogicalOperators.OPERATOR_GREATER_DATE;
+        } else if (LogicalOperators.GREATER_EQUAL.equals(operator)) {
+            return LogicalOperators.OPERATOR_GREATER_EQUAL_DATE;
+        } else if (LogicalOperators.EQUAL.equals(operator)) {
+            return LogicalOperators.OPERATOR_EQUAL_DIMENSION;
+        } else if (LogicalOperators.LESS_THAN.equals(operator)) {
+            return LogicalOperators.OPERATOR_LESS_THAN_DATE;
+        } else if (LogicalOperators.LESS_EQUAL.equals(operator)) {
+            return LogicalOperators.OPERATOR_LESS_EQUAL_DATE;
+        } else if (LogicalOperators.BETWEEN_EXCLUSIVE.equals(operator)) {
+            return LogicalOperators.OPERA_TOR_BETWEEN_EXCLUSIVE_DATA;
+        } else if (LogicalOperators.BETWEEN_INCLUSIVE.equals(operator)) {
+            return LogicalOperators.OPERA_TOR_BETWEEN_INCLUSIVE_DATA;
         } else {
-            return OperadoresLogicos.operadorDiferenteDimensao;
+            return LogicalOperators.OPERA_TOR_NOT_EQUALS_DIMENSION;
         }
     }
 }

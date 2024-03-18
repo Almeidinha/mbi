@@ -1,18 +1,15 @@
 package com.msoft.mbi.cube.multi.dimension.comparator;
 
-import java.io.Serial;
 import java.util.Iterator;
 import java.util.List;
 
-import com.msoft.mbi.cube.multi.LinhaMetrica;
+import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.MapaMetricas;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.metrics.OrdenacaoMetrica;
 
 public class DimensaoMetricaComparator extends DimensaoComparator {
 
-    @Serial
-    private static final long serialVersionUID = -8895106282059813571L;
 
     private MapaMetricas mapaMetricasCubo;
     private List<OrdenacaoMetrica> ordenacoesMetrica;
@@ -22,9 +19,9 @@ public class DimensaoMetricaComparator extends DimensaoComparator {
         this.ordenacoesMetrica = metricasOrdenadas;
     }
 
-    private int comparaMetricas(int retorno, LinhaMetrica linhaMetricaDimensao1, LinhaMetrica linhaMetricaDimensao2, OrdenacaoMetrica ordenacaoMetrica) {
-        Double valorDimensao1 = ordenacaoMetrica.calculaValorOrdenacao(this.mapaMetricasCubo, linhaMetricaDimensao1);
-        Double valorDimensao2 = ordenacaoMetrica.calculaValorOrdenacao(this.mapaMetricasCubo, linhaMetricaDimensao2);
+    private int comparaMetricas(int retorno, MetricLine metricLineDimensao1, MetricLine metricLineDimensao2, OrdenacaoMetrica ordenacaoMetrica) {
+        Double valorDimensao1 = ordenacaoMetrica.calculaValorOrdenacao(this.mapaMetricasCubo, metricLineDimensao1);
+        Double valorDimensao2 = ordenacaoMetrica.calculaValorOrdenacao(this.mapaMetricasCubo, metricLineDimensao2);
         int ordem = ordenacaoMetrica.getTipoOrdenacao();
         if (valorDimensao1 == null) {
             if (valorDimensao2 == null) {
@@ -48,21 +45,21 @@ public class DimensaoMetricaComparator extends DimensaoComparator {
         Iterator<OrdenacaoMetrica> iMetricasOrdenadas = this.ordenacoesMetrica.iterator();
         while (retorno == 0 && iMetricasOrdenadas.hasNext()) {
             OrdenacaoMetrica ordenacaoMetrica = iMetricasOrdenadas.next();
-            LinhaMetrica linhaMetricaDimensao1 = null;
-            LinhaMetrica linhaMetricaDimensao2 = null;
+            MetricLine metricLineDimensao1 = null;
+            MetricLine metricLineDimensao2 = null;
             List<Dimension> lDimensoesColuna = ordenacaoMetrica.getDimensoesColunaUtilizar(dimensionLinha1.getCube());
             Iterator<Dimension> iDimensoesColuna = lDimensoesColuna.iterator();
             if (lDimensoesColuna.size() > 0) {
                 while (retorno == 0 && iDimensoesColuna.hasNext()) {
                     Dimension dimensionColuna = iDimensoesColuna.next();
-                    linhaMetricaDimensao1 = this.mapaMetricasCubo.getLinhaMetrica(dimensionLinha1, dimensionColuna);
-                    linhaMetricaDimensao2 = this.mapaMetricasCubo.getLinhaMetrica(dimensionLinha2, dimensionColuna);
-                    retorno = this.comparaMetricas(retorno, linhaMetricaDimensao1, linhaMetricaDimensao2, ordenacaoMetrica);
+                    metricLineDimensao1 = this.mapaMetricasCubo.getMetricLine(dimensionLinha1, dimensionColuna);
+                    metricLineDimensao2 = this.mapaMetricasCubo.getMetricLine(dimensionLinha2, dimensionColuna);
+                    retorno = this.comparaMetricas(retorno, metricLineDimensao1, metricLineDimensao2, ordenacaoMetrica);
                 }
             } else {
-                linhaMetricaDimensao1 = this.mapaMetricasCubo.getLinhaMetrica(dimensionLinha1);
-                linhaMetricaDimensao2 = this.mapaMetricasCubo.getLinhaMetrica(dimensionLinha2);
-                retorno = this.comparaMetricas(retorno, linhaMetricaDimensao1, linhaMetricaDimensao2, ordenacaoMetrica);
+                metricLineDimensao1 = this.mapaMetricasCubo.getMetricLine(dimensionLinha1);
+                metricLineDimensao2 = this.mapaMetricasCubo.getMetricLine(dimensionLinha2);
+                retorno = this.comparaMetricas(retorno, metricLineDimensao1, metricLineDimensao2, ordenacaoMetrica);
             }
         }
         if (retorno == 0) {

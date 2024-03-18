@@ -22,7 +22,7 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
 
-import com.msoft.mbi.cube.exception.CuboMathParserException;
+import com.msoft.mbi.cube.exception.CubeMathParserException;
 import com.msoft.mbi.cube.multi.column.ColunaMetaData;
 import com.msoft.mbi.cube.multi.column.TipoData;
 import com.msoft.mbi.cube.multi.dimension.DimensaoMetaData;
@@ -256,7 +256,7 @@ public class ImpressorExcel implements Impressor {
             this.saida.close();
             this.livroPlanilhas = null;
         } catch (IOException e) {
-            CuboMathParserException parserException = new CuboMathParserException("Não foi possível finalizar a geração do arquivo excel.", e);
+            CubeMathParserException parserException = new CubeMathParserException("Não foi possível finalizar a geração do arquivo excel.", e);
             throw parserException;
         }
     }

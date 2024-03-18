@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.msoft.mbi.cube.util.logicOperators.OperaTor;
-import com.msoft.mbi.cube.util.logicOperators.OperadoresLogicos;
+import com.msoft.mbi.cube.util.logicOperators.LogicalOperators;
 
 public class TipoTexto implements DataType<String> {
 
@@ -26,16 +26,16 @@ public class TipoTexto implements DataType<String> {
 
     @Override
     public OperaTor<String> getOperator(String operator) {
-        if (OperadoresLogicos.IGUAL.equals(operator)) {
-            return OperadoresLogicos.operadorIgualDimensao;
-        } else if (OperadoresLogicos.INICIACOM.equals(operator)) {
-            return OperadoresLogicos.operadorIniciaComTexto;
-        } else if (OperadoresLogicos.CONTEM.equals(operator)) {
-            return OperadoresLogicos.operadorContemTexto;
-        } else if (OperadoresLogicos.NAOCONTEM.equals(operator)) {
-            return OperadoresLogicos.operadorNaoContemTexto;
+        if (LogicalOperators.EQUAL.equals(operator)) {
+            return LogicalOperators.OPERATOR_EQUAL_DIMENSION;
+        } else if (LogicalOperators.STARTS_WITH.equals(operator)) {
+            return LogicalOperators.OPERATOR_STATS_WITH_TEXT;
+        } else if (LogicalOperators.CONTAINS.equals(operator)) {
+            return LogicalOperators.OPERA_TOR_CONTAINS_TEXT;
+        } else if (LogicalOperators.NOT_CONTAINS.equals(operator)) {
+            return LogicalOperators.OPERA_TOR_NOT_CONTAINS_TEXT;
         } else {
-            return OperadoresLogicos.operadorDiferenteDimensao;
+            return LogicalOperators.OPERA_TOR_NOT_EQUALS_DIMENSION;
         }
     }
 

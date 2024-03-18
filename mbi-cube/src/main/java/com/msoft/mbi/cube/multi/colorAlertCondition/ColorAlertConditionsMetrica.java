@@ -13,9 +13,6 @@ import java.io.Serial;
 
 public abstract class ColorAlertConditionsMetrica extends ColorAlertConditions {
 
-    @Serial
-    private static final long serialVersionUID = -7518092635890160060L;
-
     private MetricaMetaData metaData;
     private CalculoSumarizacaoTipo calculoTipo;
 

@@ -5,13 +5,12 @@ import com.msoft.mbi.cube.multi.column.TipoDecimal;
 import com.msoft.mbi.cube.multi.column.TipoMetricaInteiro;
 import com.msoft.mbi.cube.multi.metaData.CampoMetaData;
 import com.msoft.mbi.cube.multi.metrics.MetricaMetaData;
+import lombok.Getter;
 
-import java.io.Serial;
 
+@Getter
 public class MetricaAditivaMetaData extends MetricaMetaData {
 
-    @Serial
-    private static final long serialVersionUID = 4469002703551885025L;
     private String coluna = null;
 
     protected MetricaAditivaMetaData(String titulo, String coluna, DataType<Double> tipo) {
@@ -21,13 +20,13 @@ public class MetricaAditivaMetaData extends MetricaMetaData {
 
     public static MetricaAditivaMetaData factory(CampoMetaData campoMetaData) {
         String titulo = campoMetaData.getTituloCampo();
-        String coluna = null;
+        String coluna;
         if (campoMetaData.getApelidoCampo() != null) {
             coluna = campoMetaData.getApelidoCampo();
         } else {
             coluna = campoMetaData.getNomeCampo();
         }
-        MetricaAditivaMetaData metricaMetaData = null;
+        MetricaAditivaMetaData metricaMetaData;
         DataType<Double> dataType = null;
         if (CampoMetaData.TIPO_INTEIRO.equals(campoMetaData.getTipoDado())) {
             dataType = new TipoMetricaInteiro();
@@ -42,10 +41,6 @@ public class MetricaAditivaMetaData extends MetricaMetaData {
         }
         MetricaMetaData.factory(metricaMetaData, campoMetaData);
         return metricaMetaData;
-    }
-
-    public String getColuna() {
-        return coluna;
     }
 
     public void setColuna(String coluna) {

@@ -7,14 +7,13 @@ import com.msoft.mbi.cube.multi.metrics.MetricaMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.applyAggregationOrder.AgregacaoAplicarAntes;
 import com.msoft.mbi.cube.multi.metrics.calculated.applyAggregationOrder.AgregacaoAplicarDepois;
 import com.msoft.mbi.cube.multi.metrics.calculated.applyAggregationOrder.AgregacaoAplicarOrdem;
+import lombok.Getter;
 
-import java.io.Serial;
 
 public class MetricaCalculadaMetaData extends MetricaMetaData {
 
-    @Serial
-    private static final long serialVersionUID = 4469002703551885025L;
     protected String expressao;
+    @Getter
     private AgregacaoAplicarOrdem agregacaoAplicarOrdem;
 
     protected MetricaCalculadaMetaData(String titulo) {
@@ -39,10 +38,6 @@ public class MetricaCalculadaMetaData extends MetricaMetaData {
 
     public Calculo createCalculo() {
         return new Calculo(this.expressao);
-    }
-
-    public AgregacaoAplicarOrdem getAgregacaoAplicarOrdem() {
-        return agregacaoAplicarOrdem;
     }
 
     public void setAgregacaoAplicarOrdem(String agregacaoAplicarOrdem) {

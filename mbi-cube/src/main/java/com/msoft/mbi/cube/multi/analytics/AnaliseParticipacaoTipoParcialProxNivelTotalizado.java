@@ -6,9 +6,6 @@ import java.io.Serial;
 
 public class AnaliseParticipacaoTipoParcialProxNivelTotalizado implements AnaliseParticipacaoTipo {
 
-    @Serial
-    private static final long serialVersionUID = 4925420157797689212L;
-
     private static AnaliseParticipacaoTipoParcialProxNivelTotalizado analiseParticipacaoTipoParcialProxNivelTotalizado;
 
     private AnaliseParticipacaoTipoParcialProxNivelTotalizado() {

@@ -2,12 +2,8 @@ package com.msoft.mbi.cube.multi.dimension.comparator;
 
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 
-import java.io.Serial;
-
 public class DimensaoPadraoComparator extends DimensaoComparator {
 
-    @Serial
-    private static final long serialVersionUID = -2766540552269100827L;
 
     private static DimensaoPadraoComparator padraoComparator;
 

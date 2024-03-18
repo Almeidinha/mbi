@@ -13,8 +13,8 @@ public abstract class MetricaCalculadaAcumuladoMetaData extends MetricaCalculada
 
     public static final String COLUNA_AV_VARIABLE = "colunaAV";
     public static final String COLUNA_VALOR_ANTERIOR_VARIABLE = "valorAnterior";
-    private String tituloColunaReferencia;
-    private AnaliseParticipacaoTipo analiseParticipacaoTipo;
+    private final String tituloColunaReferencia;
+    private final AnaliseParticipacaoTipo analiseParticipacaoTipo;
 
     public MetricaCalculadaAcumuladoMetaData(MetricaMetaData colunaReferencia, AnaliseParticipacaoTipo analiseParticipacaoTipo,
                                              List<AlertaCorMetaData> alertasCores) {

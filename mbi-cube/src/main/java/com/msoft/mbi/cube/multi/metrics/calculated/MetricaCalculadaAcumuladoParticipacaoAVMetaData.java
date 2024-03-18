@@ -2,7 +2,7 @@ package com.msoft.mbi.cube.multi.metrics.calculated;
 
 import java.util.List;
 
-import com.msoft.mbi.cube.multi.LinhaMetrica;
+import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.analytics.AnaliseParticipacaoTipo;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.metaData.AlertaCorMetaData;
@@ -10,7 +10,6 @@ import com.msoft.mbi.cube.multi.metrics.MetricaMetaData;
 
 public class MetricaCalculadaAcumuladoParticipacaoAVMetaData extends MetricaCalculadaAcumuladoParticipacaoMetaData {
 
-    private static final long serialVersionUID = 8119896945637697977L;
     public static final String PARTICIPACAO_ACUMULADA_AV = "participacaoAcumulada";
 
     public MetricaCalculadaAcumuladoParticipacaoAVMetaData(MetricaMetaData colunaReferencia, AnaliseParticipacaoTipo analiseVerticalTipo, List<AlertaCorMetaData> alertasCores) {
@@ -20,13 +19,13 @@ public class MetricaCalculadaAcumuladoParticipacaoAVMetaData extends MetricaCalc
     }
 
     @Override
-    public Dimension getDimensaoEixoReferencia(LinhaMetrica linhaMetrica) {
-        return linhaMetrica.getDimensionLinha();
+    public Dimension getDimensaoEixoReferencia(MetricLine metricLine) {
+        return metricLine.getDimensionLine();
     }
 
     @Override
-    public Dimension getDimensaoOutra(LinhaMetrica linhaMetrica) {
-        return linhaMetrica.getDimensionColuna();
+    public Dimension getDimensaoOutra(MetricLine metricLine) {
+        return metricLine.getDimensionColumn();
     }
 
     @Override

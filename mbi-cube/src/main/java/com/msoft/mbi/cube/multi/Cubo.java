@@ -19,9 +19,9 @@ import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.dimension.DimensionLinha;
 import com.msoft.mbi.cube.multi.dimension.DimensaoMetaData;
 import com.msoft.mbi.cube.multi.dimension.Dimensions;
-import com.msoft.mbi.cube.multi.resumeFunctions.FiltroMetricas;
-import com.msoft.mbi.cube.multi.resumeFunctions.FiltroMetricasValorAcumulado;
-import com.msoft.mbi.cube.multi.resumeFunctions.FuncaoRanking;
+import com.msoft.mbi.cube.multi.resumeFunctions.MetricFilters;
+import com.msoft.mbi.cube.multi.resumeFunctions.MetricFiltersAccumulatedValue;
+import com.msoft.mbi.cube.multi.resumeFunctions.FunctionRanking;
 import com.msoft.mbi.cube.multi.metaData.CampoMetaData;
 import com.msoft.mbi.cube.multi.metaData.CuboMetaData;
 import com.msoft.mbi.cube.multi.metrics.MetricaMetaData;
@@ -29,8 +29,8 @@ import com.msoft.mbi.cube.multi.metrics.OrdenacaoMetrica;
 import com.msoft.mbi.cube.multi.metrics.additive.MetricaAditivaMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricaCalculadaFuncaoMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricaCalculadaMetaData;
-import com.msoft.mbi.cube.util.CuboListener;
-import com.msoft.mbi.cube.util.DefaultCuboListener;
+import com.msoft.mbi.cube.util.CubeListener;
+import com.msoft.mbi.cube.util.DefaultCubeListener;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -58,14 +58,14 @@ public abstract class Cubo extends Dimension {
 	protected MapaMetricas mapaMetricas = null;
     private transient List<Dimension> dimensoesUltimoNivelColuna = null;
     protected transient List<Dimension> dimensoesUltimoNivelLinha = null;
-    protected FiltroMetricas filtrosMetrica;
-    protected FiltroMetricasValorAcumulado filtrosMetricaAcumulado;
+    protected MetricFilters filtrosMetrica;
+    protected MetricFiltersAccumulatedValue filtrosMetricaAcumulado;
     @Getter
 	private final List<Dimension> poolDimensoes = new ArrayList<>();
     protected List<MetricaMetaData> metricasTotalizaHorizontal = new ArrayList<>();
     @Setter
     @Getter
-    private CuboListener cuboListener = new DefaultCuboListener();
+    private CubeListener cubeListener = new DefaultCubeListener();
 
     protected Cubo(CuboMetaData metaData) {
         super(metaData);
@@ -84,7 +84,7 @@ public abstract class Cubo extends Dimension {
     }
 
     public static Cubo factoryCuboFormatoPadrao(CuboMetaData metaData) {
-        CuboFormatoPadrao cubo = new CuboFormatoPadrao(metaData);
+        CubeDefaultFormat cubo = new CubeDefaultFormat(metaData);
         cubo.factory();
         cubo.dimensionsLine = new Dimensions();
         cubo.dimensionsColumn = new Dimensions();
@@ -247,8 +247,8 @@ public abstract class Cubo extends Dimension {
             Matcher mCampoIn = pCampoIN.matcher(expressaoFiltro);
             if (mCampoIn.find()) {
                 String sCampoIn = mCampoIn.group();
-                String operador = null;
-                String conector = null;
+                String operador;
+                String conector;
                 if (sCampoIn.contains("not")) {
                     operador = " <> ";
                     conector = " & ";
@@ -356,29 +356,29 @@ public abstract class Cubo extends Dimension {
         metricaMetaData.setCubo(this);
     }
 
-	protected void aplicaRanking(Iterator<Dimension> iDimensoes, FuncaoRanking funcao, int qtdDimensoes) {
+	protected void aplicaRanking(Iterator<Dimension> iDimensoes, FunctionRanking funcao, int qtdDimensoes) {
         Dimension dimensionAux = null;
         List<Dimension> dimensoesRemover = new ArrayList<Dimension>();
         while (iDimensoes.hasNext()) {
             dimensionAux = iDimensoes.next();
             int sequencia = dimensionAux.getRankingSequence() != null ? dimensionAux.getRankingSequence() : -1;
-            if (!funcao.testaCondicao(sequencia, qtdDimensoes)) {
+            if (!funcao.testCondicao(sequencia, qtdDimensoes)) {
                 dimensoesRemover.add(dimensionAux);
             }
         }
         if (!dimensoesRemover.isEmpty()) {
-            this.removerDimensoesFiltrosFuncao(dimensoesRemover.get(0).getParent(), dimensoesRemover);
+            this.removeDimensionsFiltersFunction(dimensoesRemover.get(0).getParent(), dimensoesRemover);
         }
     }
 
-    private List<Dimension> aplicaFiltrosMetrica(FiltroMetricas filtrosMetrica) {
+    private List<Dimension> aplicaFiltrosMetrica(MetricFilters filtrosMetrica) {
         List<Dimension> lDimensoesLinhaRemover = new ArrayList<Dimension>();
         if (filtrosMetrica != null) {
             List<Dimension> dimensoesColunaRemover = null;
             Map<Dimension, Integer> remocoesColuna = null;
             Map<Dimension, List<Dimension>> mapDimensoesColunaLinhaRemover = new HashMap<>();
             List<Dimension> lDimensoesLinhaUltimoNivel = this.getDimensoesUltimoNivelLinha();
-            List<Dimension> lDimensoesColunaUltimoNivel = filtrosMetrica.getDimensoesColunaUtilizar(this);
+            List<Dimension> lDimensoesColunaUltimoNivel = filtrosMetrica.getColumnDimensionsUse(this);
 
             for (Dimension dimensionLinha : lDimensoesLinhaUltimoNivel) {
                 remocoesColuna = new HashMap<>();
@@ -387,15 +387,15 @@ public abstract class Cubo extends Dimension {
                 if (!lDimensoesColunaUltimoNivel.isEmpty()) {
                     for (Dimension dimensionColuna : lDimensoesColunaUltimoNivel) {
                         remocoesColuna.put(dimensionColuna, 0);
-                        LinhaMetrica linhaMetrica = this.mapaMetricas.getLinhaMetrica(dimensionLinha, dimensionColuna);
-                        if (!filtrosMetrica.testaCondicao(this.mapaMetricas, linhaMetrica)) {
+                        MetricLine metricLine = this.mapaMetricas.getMetricLine(dimensionLinha, dimensionColuna);
+                        if (!filtrosMetrica.testCondition(this.mapaMetricas, metricLine)) {
                             dimensoesColunaRemover.add(dimensionColuna);
                         }
                     }
                     mapDimensoesColunaLinhaRemover.put(dimensionLinha, dimensoesColunaRemover);
                 } else {
-                    LinhaMetrica linhaMetrica = this.mapaMetricas.getLinhaMetrica(dimensionLinha);
-                    if (!filtrosMetrica.testaCondicao(this.mapaMetricas, linhaMetrica)) {
+                    MetricLine metricLine = this.mapaMetricas.getMetricLine(dimensionLinha);
+                    if (!filtrosMetrica.testCondition(this.mapaMetricas, metricLine)) {
                         lDimensoesLinhaRemover.add(dimensionLinha);
                     }
                 }
@@ -413,7 +413,7 @@ public abstract class Cubo extends Dimension {
 
                     for (Dimension dimensionColunaRemover : lDimensoesColunaRemover) {
                         remocoesColuna.put(dimensionColunaRemover, (remocoesColuna.get(dimensionColunaRemover)) + 1);
-                        this.mapaMetricas.removeLinhaMetrica(dimensionLinha, dimensionColunaRemover);
+                        this.mapaMetricas.removeMetricLine(dimensionLinha, dimensionColunaRemover);
                     }
                 }
 
@@ -456,63 +456,63 @@ public abstract class Cubo extends Dimension {
         for (Dimension dimensionLinhaRemover : dimensoesLinhaRemover) {
             verificaProcessamento++;
             if (verificaProcessamento % 100 == 0) {
-                if (this.cuboListener.stopProcess()) {
+                if (this.cubeListener.stopProcess()) {
                     return;
                 }
             }
             Dimension dimensionPai = dimensionLinhaRemover.getParent();
             dimensionPai.removeDimensionLine(dimensionLinhaRemover);
-            this.mapaMetricas.removeLinhaMetrica(dimensionLinhaRemover);
+            this.mapaMetricas.removeMetricLine(dimensionLinhaRemover);
             dimensoesLinhaUltimoNivel.remove(dimensionLinhaRemover);
         }
         dimensoesLinhaRemover = this.aplicaFiltrosMetrica(this.filtrosMetricaAcumulado);
         if (!dimensoesLinhaRemover.isEmpty()) {
-            this.removerDimensoesFiltrosFuncao(this, dimensoesLinhaRemover);
+            this.removeDimensionsFiltersFunction(this, dimensoesLinhaRemover);
         }
         List<OrdenacaoMetrica> metricasOrdenadas = this.geraOrdenadacoesMetrica();
-        this.reordenaDados(metricasOrdenadas);
+        this.reorderData(metricasOrdenadas);
         if (!this.dimensionsLine.isEmpty()) {
-            this.atualizaSequenciasRanking(this.dimensionsLine.values().iterator());
-            this.verificaRanking();
+            this.UpdateSequenceRanking(this.dimensionsLine.values().iterator());
+            this.verifyRanking();
         }
         metricasOrdenadas = null;
         System.gc();
     }
 
     public void processar(ResultSet set) throws SQLException {
-        this.cuboListener.start();
+        this.cubeListener.start();
         DimensaoMetaData linhaMetaData = this.hierarquiaLinha.get(0);
         Dimension dimensionLinha = new DimensionLinha(this, linhaMetaData);
         int batchSize = 50; // Adjust the batch size as needed
         int count = 0;
 
-        this.cuboListener.setTemDados(false);
+        this.cubeListener.setHasData(false);
         while (set.next()) {
-            this.cuboListener.setTemDados(true);
+            this.cubeListener.setHasData(true);
             dimensionLinha.processar(set);
-            this.mapaMetricas.acumulaMetricaLinha(this, set);
+            this.mapaMetricas.accumulateMetricLine(this, set);
 
             count++;
             if (count % batchSize == 0) {
-                if (this.cuboListener.stopProcess()) {
+                if (this.cubeListener.stopProcess()) {
                     break;
                 }
             }
         }
 
         this.resumeDados();
-        this.cuboListener.finish();
+        this.cubeListener.finish();
     }
 
     protected abstract void factory();
 
-    protected abstract void removerDimensoesFiltrosFuncao(Dimension dimensionPai, List<Dimension> dimensoesRemover);
+    protected abstract void removeDimensionsFiltersFunction(Dimension dimensionPai, List<Dimension> dimensoesRemover);
 
-    protected abstract void atualizaSequenciasRanking(Iterator<Dimension> iDimensoesLinha);
+    protected abstract void UpdateSequenceRanking(Iterator<Dimension> iDimensoesLinha);
 
-    protected abstract void verificaRanking();
+    protected abstract void verifyRanking();
 
-    protected abstract void reordenaDados(List<OrdenacaoMetrica> metricasOrdenadas);
+    protected abstract void reorderData(List<OrdenacaoMetrica> metricasOrdenadas);
 
     protected abstract void adidionaOrdenacoesMetrica(List<OrdenacaoMetrica> ordenacoesMetrica,
                                                       List<OrdenacaoMetrica> listaOrdenacoes);

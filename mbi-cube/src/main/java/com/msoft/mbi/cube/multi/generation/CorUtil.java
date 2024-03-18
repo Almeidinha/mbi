@@ -9,7 +9,7 @@ public class CorUtil {
     private static final HashMap<String, Short> coresExcelHTML;
 
     static {
-        coresExcelHTML = new HashMap<String, Short>();
+        coresExcelHTML = new HashMap<>();
         coresExcelHTML.put("ff0000", HSSFColor.HSSFColorPredefined.RED.getIndex());
         coresExcelHTML.put("ff0033", HSSFColor.HSSFColorPredefined.RED.getIndex());
         coresExcelHTML.put("ff3300", HSSFColor.HSSFColorPredefined.RED.getIndex());
@@ -29,10 +29,6 @@ public class CorUtil {
         coresExcelHTML.put("993333", HSSFColor.HSSFColorPredefined.DARK_RED.getIndex());
         coresExcelHTML.put("990066", HSSFColor.HSSFColorPredefined.DARK_RED.getIndex());
         coresExcelHTML.put("993366", HSSFColor.HSSFColorPredefined.DARK_RED.getIndex());
-        coresExcelHTML.put("663300", HSSFColor.HSSFColorPredefined.DARK_RED.getIndex());
-        coresExcelHTML.put("663333", HSSFColor.HSSFColorPredefined.DARK_RED.getIndex());
-        coresExcelHTML.put("660000", HSSFColor.HSSFColorPredefined.DARK_RED.getIndex());
-        coresExcelHTML.put("660033", HSSFColor.HSSFColorPredefined.DARK_RED.getIndex());
 
         coresExcelHTML.put("ff00ff", HSSFColor.HSSFColorPredefined.PINK.getIndex());
         coresExcelHTML.put("ff33ff", HSSFColor.HSSFColorPredefined.PINK.getIndex());
@@ -90,7 +86,6 @@ public class CorUtil {
         coresExcelHTML.put("99ff00", HSSFColor.HSSFColorPredefined.BRIGHT_GREEN.getIndex());
         coresExcelHTML.put("99ff33", HSSFColor.HSSFColorPredefined.BRIGHT_GREEN.getIndex());
         coresExcelHTML.put("99ff66", HSSFColor.HSSFColorPredefined.BRIGHT_GREEN.getIndex());
-        coresExcelHTML.put("99ff00", HSSFColor.HSSFColorPredefined.BRIGHT_GREEN.getIndex());
         coresExcelHTML.put("33ff33", HSSFColor.HSSFColorPredefined.BRIGHT_GREEN.getIndex());
         coresExcelHTML.put("33ff66", HSSFColor.HSSFColorPredefined.BRIGHT_GREEN.getIndex());
         coresExcelHTML.put("33ff99", HSSFColor.HSSFColorPredefined.BRIGHT_GREEN.getIndex());
@@ -165,7 +160,6 @@ public class CorUtil {
         coresExcelHTML.put("999900", HSSFColor.HSSFColorPredefined.DARK_YELLOW.getIndex());
         coresExcelHTML.put("999933", HSSFColor.HSSFColorPredefined.DARK_YELLOW.getIndex());
         coresExcelHTML.put("999966", HSSFColor.HSSFColorPredefined.DARK_YELLOW.getIndex());
-        coresExcelHTML.put("999966", HSSFColor.HSSFColorPredefined.DARK_YELLOW.getIndex());
 
         coresExcelHTML.put("666600", HSSFColor.HSSFColorPredefined.GREY_80_PERCENT.getIndex());
         coresExcelHTML.put("666633", HSSFColor.HSSFColorPredefined.GREY_80_PERCENT.getIndex());
@@ -211,7 +205,6 @@ public class CorUtil {
         coresExcelHTML.put("cc0099", HSSFColor.HSSFColorPredefined.PLUM.getIndex());
         coresExcelHTML.put("cc33cc", HSSFColor.HSSFColorPredefined.PLUM.getIndex());
 
-        coresExcelHTML.put("cc33cc", HSSFColor.HSSFColorPredefined.ORANGE.getIndex());
         coresExcelHTML.put("cc6600", HSSFColor.HSSFColorPredefined.ORANGE.getIndex());
         coresExcelHTML.put("cc6633", HSSFColor.HSSFColorPredefined.ORANGE.getIndex());
         coresExcelHTML.put("cc6666", HSSFColor.HSSFColorPredefined.ORANGE.getIndex());

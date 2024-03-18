@@ -2,7 +2,7 @@ package com.msoft.mbi.cube.multi.column;
 
 import java.util.List;
 
-import com.msoft.mbi.cube.multi.resumeFunctions.FuncaoRanking;
+import com.msoft.mbi.cube.multi.resumeFunctions.FunctionRanking;
 import com.msoft.mbi.cube.multi.generation.Impressor;
 import com.msoft.mbi.cube.multi.metaData.CampoMetaData;
 import com.msoft.mbi.cube.multi.metaData.MascaraLinkHTMLMetaData;
@@ -39,7 +39,7 @@ public abstract class ColunaMetaData {
     private boolean campoSequencia = false;
     @Getter
     @Setter
-    private FuncaoRanking funcaoRanking;
+    private FunctionRanking functionRanking;
     @Getter
     @Setter
     private boolean expressaoParcialTotal = false;
@@ -160,7 +160,7 @@ public abstract class ColunaMetaData {
         colunaMetaData.setCellProperty(campoMetaData.getLarguraColuna(), campoMetaData.getPosicaoAlinhamentoColuna());
         colunaMetaData.setHasCampoSequencia(campoMetaData.isMostraSequencia());
         if (campoMetaData.getExpressaoRanking() != null) {
-            colunaMetaData.setFuncaoRanking(FuncaoRanking.factory(campoMetaData.getExpressaoRanking()));
+            colunaMetaData.setFunctionRanking(FunctionRanking.factory(campoMetaData.getExpressaoRanking()));
         }
     }
 

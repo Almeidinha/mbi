@@ -62,7 +62,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
             for (DimensaoMetaData metadata : this.cube.getHierarquiaColuna()) {
                 verificaProcessamento++;
                 if (verificaProcessamento % 100 == 0) {
-                    if (this.cube.getCuboListener().stopProcess())
+                    if (this.cube.getCubeListener().stopProcess())
                         return;
                 }
                 this.openLine();
@@ -262,7 +262,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
         for (MetricaMetaData metaData : this.cube.getHierarquiaMetrica()) {
             verificaProcessamento++;
             if (verificaProcessamento % 100 == 0) {
-                if (this.cube.getCuboListener().stopProcess())
+                if (this.cube.getCubeListener().stopProcess())
                     return;
             }
             if (metaData.isVisualizada()) {
@@ -354,7 +354,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
         if (!this.cube.getHierarquiaColuna().isEmpty()) {
             List<MetricaMetaData> metricasSemAH = this.getMetricasSemAH(this.visibleMetrics);
             for (Dimension dimension : dimensionColunaPai.getDimensionsColumn().values()) {
-                if (this.cube.getCuboListener().stopProcess())
+                if (this.cube.getCubeListener().stopProcess())
                     return;
                 if (!dimension.getDimensionsColumn().isEmpty()) {
                     this.imprimeCabecalhoMetricas(dimension);
@@ -430,7 +430,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
         int i = 0;
         for (i = 0; it.hasNext(); i++) {
             if (i % 100 == 0) {
-                if (this.cube.getCuboListener().stopProcess())
+                if (this.cube.getCubeListener().stopProcess())
                     return;
             }
             dimension = it.next();
@@ -462,7 +462,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
         int i;
         for (i = 0; it.hasNext(); i++) {
             if (i % 100 == 0) {
-                if (this.cube.getCuboListener().stopProcess())
+                if (this.cube.getCubeListener().stopProcess())
                     return;
             }
             dimension = it.next();
@@ -562,7 +562,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
             Dimension dimensionPaiAtual = this.dimensoesColunaUltimoNivel.get(0).getParent();
             for (int x = 0; x < this.dimensoesColunaUltimoNivel.size(); x++) {
                 if (x % 100 == 0) {
-                    if (this.cube.getCuboListener().stopProcess())
+                    if (this.cube.getCubeListener().stopProcess())
                         return;
                 }
                 Dimension ultimaDimensionColuna = this.dimensoesColunaUltimoNivel.get(x);

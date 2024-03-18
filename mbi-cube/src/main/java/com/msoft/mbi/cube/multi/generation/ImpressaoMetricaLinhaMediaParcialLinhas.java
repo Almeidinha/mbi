@@ -12,8 +12,6 @@ public class ImpressaoMetricaLinhaMediaParcialLinhas extends ImpressaoMetricaLin
         super(metricas, CalculoSumarizacaoTipoMediaLinha.getInstance(), MetricaMetaData.MEDIA_PARCIAL);
     }
 
-    public static final String FWJ_VERSAO = "$Revision: 1.3 $";
-
     @Override
     public void imprimeValoresMetrica(Dimension dimensionLinha, Dimension dimensionLinhaAnterior, Dimension dimensionColuna, String propriedadeCelula, Impressor impressor, Cubo cubo, String tipoLinha) {
         for (MetricaMetaData metaData : this.metricas) {

@@ -7,9 +7,6 @@ import java.io.Serial;
 
 public class AnaliseParticipacaoTipoGeral implements AnaliseParticipacaoTipo {
 
-    @Serial
-    private static final long serialVersionUID = -4544696049642313068L;
-
     private static AnaliseParticipacaoTipoGeral analiseParticipacaoTipoGeral;
 
     private AnaliseParticipacaoTipoGeral() {

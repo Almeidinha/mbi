@@ -1,6 +1,5 @@
 package com.msoft.mbi.cube.multi.column;
 
-import java.io.Serial;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
@@ -9,8 +8,6 @@ import com.msoft.mbi.cube.util.logicOperators.OperaTor;
 
 public class TipoHora implements DataType<Time> {
 
-    @Serial
-    private static final long serialVersionUID = -2677223042679361900L;
 
     private Time hora = null;
     public static final Time BRANCO = new Time(Integer.MIN_VALUE - 1);

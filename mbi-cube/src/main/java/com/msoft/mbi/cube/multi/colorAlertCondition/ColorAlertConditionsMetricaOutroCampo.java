@@ -12,8 +12,6 @@ import com.msoft.mbi.cube.multi.metrics.MetricaMetaData;
 
 public class ColorAlertConditionsMetricaOutroCampo extends ColorAlertConditionsMetrica {
 
-    @Serial
-    private static final long serialVersionUID = -1376954315387809081L;
 
     private TipoComparacaoOutroCampo tipoComparacao;
     private Double valorReferencia;

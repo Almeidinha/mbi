@@ -20,64 +20,64 @@ import com.msoft.mbi.cube.multi.partialTotalization.TotalizacaoParcialAplicarTip
 
 public class MapaMetricas {
 
-    private final Dimension dimensionLinhaNula;
-    private final Dimension dimensionColunaNula;
+    private final Dimension dimensionNullLine;
+    private final Dimension dimensionNullColumn;
 
-    private final Map<String, Map<String, Metrica>> mapMetricas = new HashMap<>();
-    private final Cubo cubo;
+    private final Map<String, Map<String, Metrica>> metricsMap = new HashMap<>();
+    private final Cubo cube;
 
-    public MapaMetricas(Cubo cubo) {
-        this.cubo = cubo;
-        dimensionLinhaNula = new DimensionLinhaNula(cubo);
-        dimensionColunaNula = new DimensionColunaNula(cubo);
+    public MapaMetricas(Cubo cube) {
+        this.cube = cube;
+        dimensionNullLine = new DimensionLinhaNula(cube);
+        dimensionNullColumn = new DimensionColunaNula(cube);
     }
 
-    public LinhaMetrica getLinhaMetrica(Dimension dimensionLinha, Dimension dimensionColuna) {
-        Map<String, Metrica> metricas = this.getMapMetricas(dimensionLinha, dimensionColuna);
-        return new LinhaMetrica(dimensionLinha, dimensionColuna, metricas);
+    public MetricLine getMetricLine(Dimension dimensionLine, Dimension dimensionColumn) {
+        Map<String, Metrica> metrics = this.getMetricaMap(dimensionLine, dimensionColumn);
+        return new MetricLine(dimensionLine, dimensionColumn, metrics);
     }
 
-    public LinhaMetrica getLinhaMetrica(Dimension dimensionLinha) {
-        return this.getLinhaMetrica(dimensionLinha, dimensionColunaNula);
+    public MetricLine getMetricLine(Dimension dimensionLine) {
+        return this.getMetricLine(dimensionLine, dimensionNullColumn);
     }
 
-    public void acumulaMetricaLinha(Dimension dimension, ResultSet set) throws SQLException {
-        this.acumulaMetrica(dimension, dimensionColunaNula, set);
+    public void accumulateMetricLine(Dimension dimension, ResultSet set) throws SQLException {
+        this.accumulateMetric(dimension, dimensionNullColumn, set);
     }
 
-    public void acumulaMetricaColuna(Dimension dimension, ResultSet set) throws SQLException {
-        this.acumulaMetrica(dimensionLinhaNula, dimension, set);
+    public void accumulateMetricColumn(Dimension dimension, ResultSet set) throws SQLException {
+        this.accumulateMetric(dimensionNullLine, dimension, set);
     }
 
-    public void acumulaMetricaLinhaOutros(Dimension dimensionLinha, Dimension dimensaLinhaOutros) {
-        this.acumulaMetricaOutros(dimensionLinha, dimensaLinhaOutros, dimensionColunaNula);
+    public void accumulateMetricLineOthers(Dimension dimensionLine, Dimension dimensionLineOthers) {
+        this.accumulateMetricOthers(dimensionLine, dimensionLineOthers, dimensionNullColumn);
     }
 
-    public void acumulaMetricaColunaOutros(Dimension dimensionColuna) {
-        this.acumulaMetricaOutros(dimensionLinhaNula, dimensionLinhaNula, dimensionColuna);
+    public void accumulateMetricColumnOthers(Dimension dimensionColumn) {
+        this.accumulateMetricOthers(dimensionNullLine, dimensionNullLine, dimensionColumn);
     }
 
-    public void acumulaMetrica(Dimension dimensionLinha, Dimension dimensionColuna, ResultSet set) throws SQLException {
-        if (this.cubo instanceof CuboFormatoPadrao) {
-            if (dimensionLinha.getValue() != null && !dimensionLinha.getValue().toString().equalsIgnoreCase("root")) {
-                dimensionLinha.setValue(dimensionLinha.getValue() + "(*" + set.getRow() + "*)");
+    public void accumulateMetric(Dimension dimensionLine, Dimension dimensionColumn, ResultSet set) throws SQLException {
+        if (this.cube instanceof CubeDefaultFormat) {
+            if (dimensionLine.getValue() != null && !dimensionLine.getValue().toString().equalsIgnoreCase("root")) {
+                dimensionLine.setValue(dimensionLine.getValue() + "(*" + set.getRow() + "*)");
             }
         }
 
-        String chave = this.formaChave(dimensionLinha, dimensionColuna);
-        Map<String, Metrica> mapMetricaAtual = new HashMap<>();
+        String key = this.buildKey(dimensionLine, dimensionColumn);
+        Map<String, Metrica> mapActualMetrics = new HashMap<>();
 
-        Map<String, Metrica> mapMetrica = this.mapMetricas.computeIfAbsent(chave, k -> new HashMap<>());
+        Map<String, Metrica> mapMetrica = this.metricsMap.computeIfAbsent(key, k -> new HashMap<>());
 
-        Iterator<MetricaAditivaMetaData> itAditiva = this.cubo.getHierarquiaMetricaAditiva().iterator();
+        Iterator<MetricaAditivaMetaData> isAdditive = this.cube.getHierarquiaMetricaAditiva().iterator();
         MetricaAditivaMetaData metricaMetaData;
         MetricaAditiva metrica;
         String titulo;
         String coluna;
 
-        LinhaMetrica linhaMetricaAtual = new LinhaMetrica(dimensionLinha, dimensionColuna, mapMetricaAtual);
-        while (itAditiva.hasNext()) {
-            metricaMetaData = itAditiva.next();
+        MetricLine metricLineAtual = new MetricLine(dimensionLine, dimensionColumn, mapActualMetrics);
+        while (isAdditive.hasNext()) {
+            metricaMetaData = isAdditive.next();
             titulo = metricaMetaData.getTitulo();
             coluna = metricaMetaData.getColuna();
 
@@ -89,14 +89,14 @@ public class MapaMetricas {
             }
 
             MetricaAditiva metricaValorAtual = metricaMetaData.createMetrica();
-            mapMetricaAtual.put(titulo, metricaValorAtual);
-            Double valor = (Double) metricaMetaData.getTipo().getValor(set, coluna);
+            mapActualMetrics.put(titulo, metricaValorAtual);
+            Double valor = metricaMetaData.getTipo().getValor(set, coluna);
             metricaValorAtual.add(valor);
 
             metrica.add(valor);
         }
 
-        Iterator<MetricaCalculadaMetaData> itCalculada = this.cubo.getHierarquiaMetricaCalculada().iterator();
+        Iterator<MetricaCalculadaMetaData> itCalculada = this.cube.getHierarquiaMetricaCalculada().iterator();
         MetricaCalculadaMetaData metricaCalculadaMetaData;
         MetricaCalculada metricaCalculada;
 
@@ -112,7 +112,7 @@ public class MapaMetricas {
             }
         }
 
-        for (MetricaCalculadaMetaData calculadaMetaData : this.cubo.getHierarquiaMetricaCalculada()) {
+        for (MetricaCalculadaMetaData calculadaMetaData : this.cube.getHierarquiaMetricaCalculada()) {
             metricaCalculadaMetaData = calculadaMetaData;
             titulo = metricaCalculadaMetaData.getTitulo();
 
@@ -120,11 +120,11 @@ public class MapaMetricas {
 
             if (!(metricaCalculadaMetaData instanceof MetricaCalculadaFuncaoMetaData)) {
                 MetricaCalculada metricaCalculadaValorAtual = metricaCalculadaMetaData.createMetrica();
-                mapMetricaAtual.put(titulo, metricaCalculadaValorAtual);
+                mapActualMetrics.put(titulo, metricaCalculadaValorAtual);
 
-                LinhaMetrica linhaMetricaUtilizar = metricaCalculadaMetaData.getAgregacaoAplicarOrdem().getLinhaMetricaUtilizar(linhaMetricaAtual,
+                MetricLine metricLineUtilizar = metricaCalculadaMetaData.getAgregacaoAplicarOrdem().getLinhaMetricaUtilizar(metricLineAtual,
                         this);
-                Double valor = metricaCalculada.calcula(this, linhaMetricaUtilizar, (LinhaMetrica) null);
+                Double valor = metricaCalculada.calcula(this, metricLineUtilizar, (MetricLine) null);
                 metricaCalculada.populaNovoValor(valor);
 
                 metricaCalculadaValorAtual.setValor(valor);
@@ -132,11 +132,11 @@ public class MapaMetricas {
         }
     }
 
-    public void acumulaMetricaOutros(Dimension dimensionLinhaRemover, Dimension dimensionLinhaOutros, Dimension dimensionColuna) {
-        String chaveOutros = this.formaChave(dimensionLinhaOutros, dimensionColuna);
-        Map<String, Metrica> mapMetricaOutros = this.mapMetricas.computeIfAbsent(chaveOutros, k -> new HashMap<>());
+    public void accumulateMetricOthers(Dimension dimensionLinhaRemover, Dimension dimensionLinhaOutros, Dimension dimensionColumn) {
+        String chaveOutros = this.buildKey(dimensionLinhaOutros, dimensionColumn);
+        Map<String, Metrica> mapMetricaOutros = this.metricsMap.computeIfAbsent(chaveOutros, k -> new HashMap<>());
 
-        Iterator<MetricaAditivaMetaData> itAditiva = this.cubo.getHierarquiaMetricaAditiva().iterator();
+        Iterator<MetricaAditivaMetaData> itAditiva = this.cube.getHierarquiaMetricaAditiva().iterator();
         MetricaAditivaMetaData metricaMetaData;
         MetricaAditiva metrica;
         String titulo;
@@ -150,12 +150,12 @@ public class MapaMetricas {
                 mapMetricaOutros.put(titulo, metrica);
             }
             TotalizacaoParcialAplicarTipoSoma totalParcialLinha = TotalizacaoParcialAplicarTipoSoma.getInstance();
-            Double valor = totalParcialLinha.calculaValor(dimensionLinhaRemover, dimensionColuna, metricaMetaData, this);
+            Double valor = totalParcialLinha.calculaValor(dimensionLinhaRemover, dimensionColumn, metricaMetaData, this);
 
             metrica.somaValor(valor);
         }
 
-        Iterator<MetricaCalculadaMetaData> itCalculada = this.cubo.getHierarquiaMetricaCalculada().iterator();
+        Iterator<MetricaCalculadaMetaData> itCalculada = this.cube.getHierarquiaMetricaCalculada().iterator();
         MetricaCalculadaMetaData metricaCalculadaMetaData;
         MetricaCalculada metricaCalculada;
         while (itCalculada.hasNext()) {
@@ -170,20 +170,20 @@ public class MapaMetricas {
             }
 
             if (!(metricaCalculadaMetaData instanceof MetricaCalculadaFuncaoMetaData)) {
-                LinhaMetrica linha = new LinhaMetrica(dimensionLinhaOutros, this.dimensionColunaNula, mapMetricaOutros);
+                MetricLine linha = new MetricLine(dimensionLinhaOutros, this.dimensionNullColumn, mapMetricaOutros);
                 Double valor = metricaCalculada.calcula(this, linha, null);
                 metricaCalculada.setValor(valor);
             }
         }
     }
 
-    public Map<String, Metrica> getMapMetricas(Dimension dimensionLinha, Dimension dimensionColuna) {
-        String chave = this.formaChave(dimensionLinha, dimensionColuna);
-        Map<String, Metrica> mapMetrica = this.mapMetricas.get(chave);
+    public Map<String, Metrica> getMetricaMap(Dimension dimensionLine, Dimension dimensionColumn) {
+        String chave = this.buildKey(dimensionLine, dimensionColumn);
+        Map<String, Metrica> mapMetrica = this.metricsMap.get(chave);
         if (mapMetrica == null) {
             mapMetrica = new HashMap<>();
-            this.mapMetricas.put(chave, mapMetrica);
-            for (MetricaMetaData metaData : this.cubo.getHierarquiaMetrica()) {
+            this.metricsMap.put(chave, mapMetrica);
+            for (MetricaMetaData metaData : this.cube.getHierarquiaMetrica()) {
                 Metrica metrica = metaData.createMetrica();
                 mapMetrica.put(metaData.getTitulo(), metrica);
             }
@@ -191,20 +191,20 @@ public class MapaMetricas {
         return mapMetrica;
     }
 
-    private String formaChave(Dimension dimensionLinha, Dimension dimensionColuna) {
-        return dimensionLinha.getKeyValue() +
+    private String buildKey(Dimension dimensionLine, Dimension dimensionColumn) {
+        return dimensionLine.getKeyValue() +
                 "." +
-                dimensionColuna.getKeyValue();
+                dimensionColumn.getKeyValue();
     }
 
-    public void removeLinhaMetrica(Dimension dimensionLinha, Dimension dimensionColuna) {
-        String chave = this.formaChave(dimensionLinha, dimensionColuna);
-        this.mapMetricas.remove(chave);
+    public void removeMetricLine(Dimension dimensionLine, Dimension dimensionColumn) {
+        String key = this.buildKey(dimensionLine, dimensionColumn);
+        this.metricsMap.remove(key);
     }
 
-    public void removeLinhaMetrica(Dimension dimensionLinha) {
-        String chave = this.formaChave(dimensionLinha, dimensionColunaNula);
-        this.mapMetricas.remove(chave);
+    public void removeMetricLine(Dimension dimensionLine) {
+        String key = this.buildKey(dimensionLine, dimensionNullColumn);
+        this.metricsMap.remove(key);
     }
 
 }

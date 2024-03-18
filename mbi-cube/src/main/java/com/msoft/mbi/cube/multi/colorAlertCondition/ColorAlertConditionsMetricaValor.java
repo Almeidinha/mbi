@@ -1,6 +1,5 @@
 package com.msoft.mbi.cube.multi.colorAlertCondition;
 
-import java.io.Serial;
 import java.util.List;
 
 import com.msoft.mbi.cube.multi.Cubo;
@@ -8,9 +7,6 @@ import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.metrics.MetricaMetaData;
 
 public class ColorAlertConditionsMetricaValor extends ColorAlertConditionsMetrica {
-
-    @Serial
-    private static final long serialVersionUID = -5732025896736792151L;
 
     protected List<Object> valores;
 

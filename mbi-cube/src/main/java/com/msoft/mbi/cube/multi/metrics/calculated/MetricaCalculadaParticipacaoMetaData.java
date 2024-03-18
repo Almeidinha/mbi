@@ -14,12 +14,10 @@ import com.msoft.mbi.cube.multi.renderers.linkHTML.MascaraLinkHTMLTextoRenderer;
 
 public abstract class MetricaCalculadaParticipacaoMetaData extends MetricaCalculadaMetaData implements MetricaCalculadaFuncaoMetaData {
 
-    @Serial
-    private static final long serialVersionUID = 2454209671934016540L;
     public static final String COLUNA_AV_VARIABLE = "colunaAV";
     public static final String VALOR_NIVEL_ACIMA_VARIABLE = "valorAcima";
-    private String tituloColunaReferencia;
-    private AnaliseParticipacaoTipo analiseVertical;
+    private final String tituloColunaReferencia;
+    private final AnaliseParticipacaoTipo analiseVertical;
 
     public MetricaCalculadaParticipacaoMetaData(String prefixoTitulo, MetricaMetaData colunaParticipacao, AnaliseParticipacaoTipo analiseVerticalTipo,
                                                 List<AlertaCorMetaData> alertasCores) {

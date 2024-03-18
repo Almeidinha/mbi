@@ -1,13 +1,10 @@
 package com.msoft.mbi.cube.multi.dimension;
 
-import java.io.Serial;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DimensionColuna extends Dimension {
 
-    @Serial
-    private static final long serialVersionUID = 3691610278266628390L;
     private Dimension dimensionCuboPai;
     private Dimension dimensionLinha = new DimensionLinhaNula(cube);
 
@@ -60,10 +57,10 @@ public class DimensionColuna extends Dimension {
             this.parent.addDimensionsColumn(dimensionColuna);
             dimensionColuna.parent = this.dimensionCuboPai;
         }
-        this.cube.getMapaMetricas().acumulaMetrica(this.dimensionLinha, this, set);
+        this.cube.getMapaMetricas().accumulateMetric(this.dimensionLinha, this, set);
 
         if (this.dimensionLinha.getMetaData().isUltima()) {
-            this.cube.getMapaMetricas().acumulaMetricaColuna(this, set);
+            this.cube.getMapaMetricas().accumulateMetricColumn(this, set);
         }
 
         Dimension dimensionCubo = this.dimensionCuboPai.getDimensionsColumn().get(this);
@@ -92,7 +89,7 @@ public class DimensionColuna extends Dimension {
             this.parent.addDimensionsColumn(this);
             dimensionColuna = this;
         }
-        this.cube.getMapaMetricas().acumulaMetricaOutros(dimensionLinhaRemover, dimensionLinhaOutros, dimensaoColunaOld);
+        this.cube.getMapaMetricas().accumulateMetricOthers(dimensionLinhaRemover, dimensionLinhaOutros, dimensaoColunaOld);
         Dimension dimensionCubo = this.dimensionCuboPai.getDimensionsColumn().get(this);
         if (dimensionCubo == null) {
             dimensionCubo = new DimensionColuna(this.dimensionCuboPai, this.metaData);

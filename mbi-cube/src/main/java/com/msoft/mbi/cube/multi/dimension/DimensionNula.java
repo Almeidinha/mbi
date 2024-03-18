@@ -1,6 +1,5 @@
 package com.msoft.mbi.cube.multi.dimension;
 
-import java.io.Serial;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -8,9 +7,6 @@ import com.msoft.mbi.cube.multi.Cubo;
 import com.msoft.mbi.cube.multi.metaData.CampoMetaData;
 
 public abstract class DimensionNula extends Dimension {
-
-    @Serial
-    private static final long serialVersionUID = -1646061639216450074L;
 
     protected DimensionNula(Cubo cubo) {
         super(new DimensaoMetaData(null, null, null));

@@ -1,11 +1,15 @@
 package com.msoft.mbi.cube.multi.metaData;
 
 import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTML;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
 public class MascaraLinkHTMLMetaData {
 
-    private String idMascara;
-    private int tipo;
+    private final String idMascara;
+    private final int tipo;
+    @Setter
     private LinkHTML linkHTML;
     public static final int TIPO_DEPOIS_VALOR = 1;
     public static final int TIPO_VALOR = 2;
@@ -15,22 +19,6 @@ public class MascaraLinkHTMLMetaData {
         this.idMascara = idMascara;
         this.linkHTML = linkHTML;
         this.tipo = tipo;
-    }
-
-    public int getTipo() {
-        return tipo;
-    }
-
-    public LinkHTML getLinkHTML() {
-        return linkHTML;
-    }
-
-    public String getIdMascara() {
-        return idMascara;
-    }
-
-    public void setLinkHTML(LinkHTML linkHTML) {
-        this.linkHTML = linkHTML;
     }
 
 }

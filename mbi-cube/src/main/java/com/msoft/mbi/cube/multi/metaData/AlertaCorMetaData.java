@@ -12,6 +12,7 @@ import com.msoft.mbi.cube.multi.metrics.calculated.MetricaCalculadaAcumuladoValo
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricaCalculadaEvolucaoAHMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricaCalculadaParticipacaoAHMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricaCalculadaParticipacaoAVMetaData;
+import lombok.Setter;
 
 public class AlertaCorMetaData implements Serializable {
 
@@ -20,16 +21,27 @@ public class AlertaCorMetaData implements Serializable {
 
     public static final int ACAO_PINTAR_LINHA = 1;
     public static final int ACAO_PINTAR_CELULA = 2;
+    @Setter
     private int sequencia;
+    @Setter
     private int acao;
+    @Setter
     private String operador;
+    @Setter
     private String corFonte;
+    @Setter
     private String corFundo;
+    @Setter
     private String estiloFonte;
+    @Setter
     private boolean negrito;
+    @Setter
     private boolean italico;
+    @Setter
     private int tamanhoFonte;
+    @Setter
     private String funcao;
+    @Setter
     private List<Object> valores;
     private String tipoComparacao;
     private Double valorReferencia;
@@ -99,80 +111,40 @@ public class AlertaCorMetaData implements Serializable {
         return sequencia;
     }
 
-    public void setSequencia(int sequencia) {
-        this.sequencia = sequencia;
-    }
-
     public int getAcao() {
         return acao;
-    }
-
-    public void setAcao(int acao) {
-        this.acao = acao;
     }
 
     public String getOperador() {
         return operador;
     }
 
-    public void setOperador(String operador) {
-        this.operador = operador;
-    }
-
     public List<Object> getValores() {
         return valores;
-    }
-
-    public void setValores(List<Object> valores) {
-        this.valores = valores;
     }
 
     public String getCorFonte() {
         return corFonte;
     }
 
-    public void setCorFonte(String corFonte) {
-        this.corFonte = corFonte;
-    }
-
     public String getCorFundo() {
         return corFundo;
-    }
-
-    public void setCorFundo(String corFundo) {
-        this.corFundo = corFundo;
     }
 
     public String getEstiloFonte() {
         return estiloFonte;
     }
 
-    public void setEstiloFonte(String estiloFonte) {
-        this.estiloFonte = estiloFonte;
-    }
-
     public boolean isNegrito() {
         return negrito;
-    }
-
-    public void setNegrito(boolean negrito) {
-        this.negrito = negrito;
     }
 
     public boolean isItalico() {
         return italico;
     }
 
-    public void setItalico(boolean italico) {
-        this.italico = italico;
-    }
-
     public int getTamanhoFonte() {
         return tamanhoFonte;
-    }
-
-    public void setTamanhoFonte(int tamanhoFonte) {
-        this.tamanhoFonte = tamanhoFonte;
     }
 
     public String getFuncao() {
@@ -188,15 +160,9 @@ public class AlertaCorMetaData implements Serializable {
                 || this.funcao.equals(MetricaCalculadaEvolucaoAHMetaData.AH);
     }
 
-    public void setFuncao(String funcao) {
-        this.funcao = funcao;
-    }
-
     public static List<String> getListaFuncoesTotalizacaoHorizontal() {
-        List<String> lst = new ArrayList<>();
-        lst.addAll(FUNCOES_AH);
 
-        return lst;
+        return new ArrayList<>(FUNCOES_AH);
     }
 
     public String getTipoComparacao() {

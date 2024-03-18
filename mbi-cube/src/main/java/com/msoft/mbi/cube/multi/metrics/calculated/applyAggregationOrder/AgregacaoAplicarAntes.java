@@ -1,6 +1,6 @@
 package com.msoft.mbi.cube.multi.metrics.calculated.applyAggregationOrder;
 
-import com.msoft.mbi.cube.multi.LinhaMetrica;
+import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.MapaMetricas;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricaCalculada;
 
@@ -25,8 +25,8 @@ public class AgregacaoAplicarAntes implements AgregacaoAplicarOrdem {
   }
 
   @Override
-  public LinhaMetrica getLinhaMetricaUtilizar(LinhaMetrica linhaMetricaValoresAtuais, MapaMetricas mapaMetricas) {
-    return linhaMetricaValoresAtuais;
+  public MetricLine getLinhaMetricaUtilizar(MetricLine metricLineValoresAtuais, MapaMetricas mapaMetricas) {
+    return metricLineValoresAtuais;
   }
 
 }

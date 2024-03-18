@@ -19,8 +19,8 @@ import com.msoft.mbi.cube.multi.dimension.DimensaoMetaData;
 import com.msoft.mbi.cube.multi.dimension.DimensaoOutrosMetaData;
 import com.msoft.mbi.cube.multi.dimension.Dimensions;
 import com.msoft.mbi.cube.multi.dimension.comparator.DimensaoMetricaComparator;
-import com.msoft.mbi.cube.multi.resumeFunctions.FiltroMetricas;
-import com.msoft.mbi.cube.multi.resumeFunctions.FiltroMetricasValorAcumulado;
+import com.msoft.mbi.cube.multi.resumeFunctions.MetricFilters;
+import com.msoft.mbi.cube.multi.resumeFunctions.MetricFiltersAccumulatedValue;
 import com.msoft.mbi.cube.multi.metaData.AlertaCorMetaData;
 import com.msoft.mbi.cube.multi.metaData.CampoMetaData;
 import com.msoft.mbi.cube.multi.metaData.CuboMetaData;
@@ -242,22 +242,22 @@ public class CuboFormatoMultiDimensional extends Cubo {
 
         if (cuboMetaData.getExpressaoFiltrosMetrica() != null && !"".equals(cuboMetaData.getExpressaoFiltrosMetrica().trim())) {
             String expressaoFiltro = this.converteFiltroMetricaParaTitulosCampo(cuboMetaData.getExpressaoFiltrosMetrica());
-            this.filtrosMetrica = new FiltroMetricas(expressaoFiltro, MetricaValorUtilizarLinhaMetrica.getInstance());
+            this.filtrosMetrica = new MetricFilters(expressaoFiltro, MetricaValorUtilizarLinhaMetrica.getInstance());
         }
         if (cuboMetaData.getExpressaoFiltrosAcumulado() != null && !"".equals(cuboMetaData.getExpressaoFiltrosAcumulado().trim())) {
             String expressaoFiltro = this.converteFiltroMetricaParaTitulosCampo(cuboMetaData.getExpressaoFiltrosAcumulado());
-            this.filtrosMetricaAcumulado = new FiltroMetricasValorAcumulado(expressaoFiltro);
+            this.filtrosMetricaAcumulado = new MetricFiltersAccumulatedValue(expressaoFiltro);
         }
 
     }
 
     @Override
-    protected void atualizaSequenciasRanking(Iterator<Dimension> iDimensoesLinha) {
+    protected void UpdateSequenceRanking(Iterator<Dimension> iDimensoesLinha) {
         int sequencia = 1;
         while (iDimensoesLinha.hasNext()) {
             Dimension dimensionLinha = iDimensoesLinha.next();
             if (!dimensionLinha.getDimensionsLine().isEmpty()) {
-                atualizaSequenciasRanking(dimensionLinha.getDimensionsLine().values().iterator());
+                UpdateSequenceRanking(dimensionLinha.getDimensionsLine().values().iterator());
             }
             dimensionLinha.setRankingSequence(sequencia++);
         }
@@ -267,8 +267,8 @@ public class CuboFormatoMultiDimensional extends Cubo {
     private void aplicaRankings(Dimensions dimensions, Dimension dimensionPai) {
         Dimension primeiraDimension = (Dimension) dimensions.firstKey();
         Iterator<Dimension> iDimensoes = dimensions.values().iterator();
-        if (primeiraDimension.getMetaData().hasCampoSequencia() && primeiraDimension.getMetaData().getFuncaoRanking() != null) {
-            this.aplicaRanking(iDimensoes, primeiraDimension.getMetaData().getFuncaoRanking(), dimensions.size());
+        if (primeiraDimension.getMetaData().hasCampoSequencia() && primeiraDimension.getMetaData().getFunctionRanking() != null) {
+            this.aplicaRanking(iDimensoes, primeiraDimension.getMetaData().getFunctionRanking(), dimensions.size());
         }
         iDimensoes = dimensionPai.getDimensionsLine().values().iterator();
         while (iDimensoes.hasNext()) {
@@ -280,25 +280,25 @@ public class CuboFormatoMultiDimensional extends Cubo {
     }
 
     @Override
-    protected void verificaRanking() {
+    protected void verifyRanking() {
         this.aplicaRankings(this.dimensionsLine, this);
     }
 
     @Override
-    protected void removerDimensoesFiltrosFuncao(Dimension dimensionAdicionarOutros, List<Dimension> dimensoesRemover) {
+    protected void removeDimensionsFiltersFunction(Dimension dimensionAdicionarOutros, List<Dimension> dimensoesRemover) {
         List<Dimension> lDimensoesLinhaUltimoNivel = this.getDimensoesUltimoNivelLinha();
         DimensaoOutrosMetaData metaDataOutros = new DimensaoOutrosMetaData(dimensionAdicionarOutros.getMetaData().getFilho());
         DimensionLinhaOutros dimensaoOutros = new DimensionLinhaOutros(dimensionAdicionarOutros, metaDataOutros);
         for (Dimension dimensionLinhaRemover : dimensoesRemover) {
             dimensaoOutros.processar(dimensionLinhaRemover);
             dimensionLinhaRemover.getParent().removeDimensionLine(dimensionLinhaRemover);
-            this.mapaMetricas.removeLinhaMetrica(dimensionLinhaRemover);
+            this.mapaMetricas.removeMetricLine(dimensionLinhaRemover);
             lDimensoesLinhaUltimoNivel.remove(dimensionLinhaRemover);
         }
     }
 
     @Override
-    protected void reordenaDados(List<OrdenacaoMetrica> metricasOrdenadas) {
+    protected void reorderData(List<OrdenacaoMetrica> metricasOrdenadas) {
         if (!metricasOrdenadas.isEmpty()) {
             this.getLastMetaDataLinha().setComparator(new DimensaoMetricaComparator(this.mapaMetricas, this.getDimensoesUltimoNivelColuna(), metricasOrdenadas));
             this.reordenaDimensoesLinhaUltimoNivel(metricasOrdenadas);

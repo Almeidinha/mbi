@@ -1,13 +1,10 @@
 package com.msoft.mbi.cube.multi.column;
 
-import java.io.Serial;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class TipoDecimal extends TipoNumero<Double> {
 
-    @Serial
-    private static final long serialVersionUID = 5301332149644259726L;
     private Double decimal = null;
     public static final Double BRANCO = Double.valueOf(Integer.MIN_VALUE - 1);
 

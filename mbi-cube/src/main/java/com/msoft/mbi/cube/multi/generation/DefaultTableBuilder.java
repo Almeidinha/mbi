@@ -3,7 +3,7 @@ package com.msoft.mbi.cube.multi.generation;
 import java.util.*;
 
 import com.msoft.mbi.cube.multi.Cubo;
-import com.msoft.mbi.cube.multi.LinhaMetrica;
+import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.MapaMetricas;
 import com.msoft.mbi.cube.multi.column.ColunaMetaData;
 import com.msoft.mbi.cube.multi.column.TipoData;
@@ -20,7 +20,7 @@ public class DefaultTableBuilder extends tableGenerator {
     private Map<String, Object> currentLineValues = new HashMap<>();
     private final Map<Integer, Map<String, String>> currentLineCellProperties = new HashMap<>();
     private boolean hasSequence = false;
-    private LinhaMetrica previousMetricLine = null;
+    private MetricLine previousMetricLine = null;
 
     public DefaultTableBuilder(Cubo cubo) {
         this.cube = cubo;
@@ -229,15 +229,15 @@ public class DefaultTableBuilder extends tableGenerator {
 
     private void imprimeLinhaAtual(Dimension dimensionLinha) {
         MapaMetricas mapaMetricas = this.cube.getMapaMetricas();
-        LinhaMetrica linhaMetrica = mapaMetricas.getLinhaMetrica(dimensionLinha);
+        MetricLine metricLine = mapaMetricas.getMetricLine(dimensionLinha);
 
-        Map<String, Metrica> metricas = linhaMetrica.getMetricas();
+        Map<String, Metrica> metricas = metricLine.getMetrics();
         String propriedadeLinhaAtual = dimensionLinha.getMetricDefaultStyles(this.currentLine);
 
         Map<String, String> mapPropriedades = this.currentLineCellProperties.get(this.currentLine % 2);
         for (MetricaMetaData metricaMetaData : this.visibleMetrics) {
             String titulo = metricaMetaData.getTitulo();
-            Double valor = metricas.get(titulo).getValor(mapaMetricas, linhaMetrica, this.previousMetricLine);
+            Double valor = metricas.get(titulo).getValor(mapaMetricas, metricLine, this.previousMetricLine);
             this.currentLineValues.put(titulo, valor);
             String propriedadeAplicarMetrica = this.buscaPropriedadeAplicarCelula(propriedadeLinhaAtual, valor, metricaMetaData);
             mapPropriedades.put(titulo, propriedadeAplicarMetrica);
@@ -248,7 +248,7 @@ public class DefaultTableBuilder extends tableGenerator {
         }
         this.imprimeLinha(mapPropriedades);
 
-        this.previousMetricLine = linhaMetrica;
+        this.previousMetricLine = metricLine;
 
     }
 

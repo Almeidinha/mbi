@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.msoft.mbi.cube.multi.Cubo;
-import com.msoft.mbi.cube.multi.LinhaMetrica;
+import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.MapaMetricas;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.dimension.DimensionColunaNula;
@@ -22,15 +22,15 @@ public class MetricaValorUtilizarTotal implements MetricaValorUtilizar {
     }
 
     @Override
-    public Double getValor(MapaMetricas mapaMetricas, LinhaMetrica linhaMetrica, String tituloCampo) {
-        Cubo cubo = linhaMetrica.getDimensionLinha().getCube();
+    public Double getValor(MapaMetricas mapaMetricas, MetricLine metricLine, String tituloCampo) {
+        Cubo cubo = metricLine.getDimensionLine().getCube();
         MetricaMetaData metaData = cubo.getMetricaMetaDataByTitulo(tituloCampo);
-        return metaData.calculaValorTotalParcial(linhaMetrica.getDimensionLinha(), new DimensionColunaNula(cubo));
+        return metaData.calculaValorTotalParcial(metricLine.getDimensionLine(), new DimensionColunaNula(cubo));
     }
 
     @Override
-    public Double calculaValor(Metrica metrica, LinhaMetrica linhaMetrica, MapaMetricas mapaMetricas) {
-        return metrica.getMetaData().calculaValorTotalParcial(linhaMetrica.getDimensionLinha(), linhaMetrica.getDimensionColuna());
+    public Double calculaValor(Metrica metrica, MetricLine metricLine, MapaMetricas mapaMetricas) {
+        return metrica.getMetaData().calculaValorTotalParcial(metricLine.getDimensionLine(), metricLine.getDimensionColumn());
     }
 
     @Override

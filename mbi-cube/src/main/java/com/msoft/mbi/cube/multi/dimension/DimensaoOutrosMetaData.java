@@ -1,6 +1,5 @@
 package com.msoft.mbi.cube.multi.dimension;
 
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +9,6 @@ import com.msoft.mbi.cube.multi.renderers.CellProperty;
 
 public class DimensaoOutrosMetaData extends DimensaoMetaData {
 
-    @Serial
-    private static final long serialVersionUID = -6558320398156003015L;
     private DimensaoMetaData metaDataDimensaoRanking;
 
     public DimensaoMetaData getMetaDataDimensaoRanking() {

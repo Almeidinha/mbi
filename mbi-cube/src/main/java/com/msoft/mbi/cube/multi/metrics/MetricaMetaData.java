@@ -1,9 +1,7 @@
 package com.msoft.mbi.cube.multi.metrics;
 
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -22,30 +20,60 @@ import com.msoft.mbi.cube.multi.renderers.MascaraValorNulo;
 import com.msoft.mbi.cube.multi.partialTotalization.TotalizacaoParcialAplicarTipo;
 import com.msoft.mbi.cube.multi.partialTotalization.TotalizacaoParcialAplicarTipoExpressao;
 import com.msoft.mbi.cube.multi.partialTotalization.TotalizacaoParcialAplicarTipoSoma;
+import lombok.Getter;
+import lombok.Setter;
 
 public abstract class MetricaMetaData extends ColunaMetaData {
 
-    @Serial
-    private static final long serialVersionUID = 4469002703551885025L;
-    private DataType<Double> tipo = null;
+    @Setter
+    @Getter
+    private DataType<Double> tipo;
+    @Getter
+    @Setter
     private Cubo cubo = null;
+    @Getter
+    @Setter
     private boolean visualizada = true;
+    @Getter
+    @Setter
     private boolean totalizarParcialLinhas = false;
+    @Getter
+    @Setter
     private boolean mediaParcialLinhas = false;
+    @Setter
+    @Getter
     private boolean expressaoParcialLinhas = false;
+    @Setter
+    @Getter
     private boolean totalizarParcialColunas = false;
+    @Getter
+    @Setter
     private boolean mediaParcialColunas = false;
+    @Setter
+    @Getter
     private boolean expressaoParcialColunas = false;
+    @Setter
+    @Getter
     private boolean totalizarLinhas = false;
+    @Setter
+    @Getter
     private boolean totalizarSomaColunas = false;
+    @Getter
+    @Setter
     private boolean totalizarMediaColunas = false;
+    @Getter
+    @Setter
     private boolean totalizarSomaGeralColunas = false;
+    @Getter
+    @Setter
     private boolean utilizaPercentual = false;
     private MascaraCasasDecimaisRenderer casasDecimaisRenderer;
-    private MascaraValorNulo formatacaoValorNulo = null;
-    private Map<String, List<ColorAlertConditionsMetrica>> mapAlertasCoresLinha;
-    private Map<String, List<ColorAlertConditionsMetrica>> mapAlertasCoresCelula;
+    @Setter
+    private MascaraValorNulo formatacaoValorNulo;
+    private final Map<String, List<ColorAlertConditionsMetrica>> mapAlertasCoresLinha;
+    private final Map<String, List<ColorAlertConditionsMetrica>> mapAlertasCoresCelula;
     private TotalizacaoParcialAplicarTipo tipoAcumuladoParcialCalculator;
+    @Getter
     private int numeroCasasDecimais = 0;
     public static final String AGREGACAO_SOMATORIO = "SUM";
     public static final String AGREGACAO_CONTAGEM = "COUNT";
@@ -53,7 +81,9 @@ public abstract class MetricaMetaData extends ColunaMetaData {
     public static final String AGREGACAO_MINIMO = "MIN";
     public static final String AGREGACAO_MAXIMO = "MAX";
     public static final String AGREGACAO_VAZIO = "VAZIO";
-    private List<OrdenacaoMetrica> ordenacoesMetrica;
+    @Getter
+    private final List<OrdenacaoMetrica> ordenacoesMetrica;
+    @Setter
     protected String agregacaoTipo;
     public static final String TOTALIZACAO_AH = "totalizacaoHorizontal";
     public static final String MEDIA_AH = "mediaHorizontal";
@@ -110,8 +140,8 @@ public abstract class MetricaMetaData extends ColunaMetaData {
     }
 
     protected static void factoryAlertasCores(MetricaMetaData metricaMetaData, List<AlertaCorMetaData> alertas) {
-        ColorAlertProperties propriedadeAlerta = null;
-        ColorAlertConditionsMetricaValor condicaoAlertaCores = null;
+        ColorAlertProperties propriedadeAlerta;
+        ColorAlertConditionsMetricaValor condicaoAlertaCores;
         for (AlertaCorMetaData alertaCor : alertas) {
             propriedadeAlerta = ColorAlertProperties.factory(alertaCor.getCorFonte(), alertaCor.getCorFundo(), alertaCor.getEstiloFonte(),
                     alertaCor.isNegrito(), alertaCor.isItalico(), alertaCor.getTamanhoFonte());
@@ -120,66 +150,6 @@ public abstract class MetricaMetaData extends ColunaMetaData {
                     alertaCor.getAcao(), alertaCor.getOperador(), metricaMetaData, alertaCor.getValores());
             metricaMetaData.addAlertaCor(condicaoAlertaCores);
         }
-    }
-
-    public DataType<Double> getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(DataType<Double> tipo) {
-        this.tipo = tipo;
-    }
-
-    public Cubo getCubo() {
-        return cubo;
-    }
-
-    public void setCubo(Cubo cubo) {
-        this.cubo = cubo;
-    }
-
-    public boolean isVisualizada() {
-        return visualizada;
-    }
-
-    public void setVisualizada(boolean visualizada) {
-        this.visualizada = visualizada;
-    }
-
-    public boolean isTotalizarParcialLinhas() {
-        return totalizarParcialLinhas;
-    }
-
-    public void setTotalizarParcialLinhas(boolean totalizacaoParcial) {
-        this.totalizarParcialLinhas = totalizacaoParcial;
-    }
-
-    public boolean isMediaParcialLinhas() {
-        return mediaParcialLinhas;
-    }
-
-    public void setMediaParcialLinhas(boolean mediaParcialLinhas) {
-        this.mediaParcialLinhas = mediaParcialLinhas;
-    }
-
-    public boolean isExpressaoParcialLinhas() {
-        return expressaoParcialLinhas;
-    }
-
-    public void setExpressaoParcialLinhas(boolean expressaoParcialLinhas) {
-        this.expressaoParcialLinhas = expressaoParcialLinhas;
-    }
-
-    public void setFormatacaoValorNulo(MascaraValorNulo formatacaoValorNulo) {
-        this.formatacaoValorNulo = formatacaoValorNulo;
-    }
-
-    public boolean isTotalizarLinhas() {
-        return totalizarLinhas;
-    }
-
-    public void setTotalizarLinhas(boolean totalizar) {
-        this.totalizarLinhas = totalizar;
     }
 
     public List<ColorAlertConditionsMetrica> getAlertasCoresLinha() {
@@ -206,22 +176,6 @@ public abstract class MetricaMetaData extends ColunaMetaData {
         }
     }
 
-    public boolean isTotalizarSomaColunas() {
-        return totalizarSomaColunas;
-    }
-
-    public void setTotalizarSomaColunas(boolean totalizarColunas) {
-        this.totalizarSomaColunas = totalizarColunas; // mudar para aceitar o tipo de totalizacao
-    }
-
-    public boolean isTotalizarSomaGeralColunas() {
-        return totalizarSomaGeralColunas;
-    }
-
-    public void setTotalizarSomaGeralColunas(boolean totalizarGeralMetricasColunas) {
-        this.totalizarSomaGeralColunas = totalizarGeralMetricasColunas;
-    }
-
     public int getNCasasDecimais() {
         return this.casasDecimaisRenderer.getNCasasDecimais();
     }
@@ -229,46 +183,6 @@ public abstract class MetricaMetaData extends ColunaMetaData {
     public void setNCasasDecimais(int casasDecimais) {
         this.numeroCasasDecimais = casasDecimais;
         this.casasDecimaisRenderer = new MascaraCasasDecimaisRenderer(this.numeroCasasDecimais);
-    }
-
-    public boolean isTotalizarParcialColunas() {
-        return totalizarParcialColunas;
-    }
-
-    public void setTotalizarParcialColunas(boolean totalizarParcialColunas) {
-        this.totalizarParcialColunas = totalizarParcialColunas;
-    }
-
-    public boolean isMediaParcialColunas() {
-        return mediaParcialColunas;
-    }
-
-    public void setMediaParcialColunas(boolean mediaParcialColunas) {
-        this.mediaParcialColunas = mediaParcialColunas;
-    }
-
-    public boolean isExpressaoParcialColunas() {
-        return expressaoParcialColunas;
-    }
-
-    public void setExpressaoParcialColunas(boolean expressaoParcialColunas) {
-        this.expressaoParcialColunas = expressaoParcialColunas;
-    }
-
-    public boolean isTotalizarMediaColunas() {
-        return totalizarMediaColunas;
-    }
-
-    public void setTotalizarMediaColunas(boolean totalizarMediaColunas) {
-        this.totalizarMediaColunas = totalizarMediaColunas;
-    }
-
-    public List<OrdenacaoMetrica> getOrdenacoesMetrica() {
-        return ordenacoesMetrica;
-    }
-
-    public void setAgregacaoTipo(String agregacaoTipo) {
-        this.agregacaoTipo = agregacaoTipo;
     }
 
     @Override
@@ -282,7 +196,7 @@ public abstract class MetricaMetaData extends ColunaMetaData {
 
     public String getFormattedValue(Object valor) {
         if (valor != null) {
-            return super.getFormattedValue(this.casasDecimaisRenderer.aplica(valor)).toString();
+            return super.getFormattedValue(this.casasDecimaisRenderer.aplica(valor));
         } else {
             return this.getTextoValorNulo();
         }
@@ -290,9 +204,8 @@ public abstract class MetricaMetaData extends ColunaMetaData {
 
     private List<ColorAlertConditionsMetrica> getAlertasCores(Map<String, List<ColorAlertConditionsMetrica>> alertas) {
         List<ColorAlertConditionsMetrica> retorno = new ArrayList<>();
-        Iterator<List<ColorAlertConditionsMetrica>> iListasAlertas = alertas.values().iterator();
-        while (iListasAlertas.hasNext()) {
-            retorno.addAll(iListasAlertas.next());
+        for (List<ColorAlertConditionsMetrica> colorAlertConditionsMetricas : alertas.values()) {
+            retorno.addAll(colorAlertConditionsMetricas);
         }
         return retorno;
     }
@@ -323,14 +236,6 @@ public abstract class MetricaMetaData extends ColunaMetaData {
         }
     }
 
-    public void setUtilizaPercentual(boolean utilizaPercentual) {
-        this.utilizaPercentual = utilizaPercentual;
-    }
-
-    public boolean isUtilizaPercentual() {
-        return utilizaPercentual;
-    }
-
     @Override
     public String toString() {
         return this.getTitulo();
@@ -338,10 +243,6 @@ public abstract class MetricaMetaData extends ColunaMetaData {
 
     public Double calculaValorTotalParcial(Dimension dimensionEixoReferencia, Dimension dimension) {
         return this.tipoAcumuladoParcialCalculator.calculaValor(dimensionEixoReferencia, dimension, this, this.cubo.getMapaMetricas());
-    }
-
-    public int getNumeroCasasDecimais() {
-        return numeroCasasDecimais;
     }
 
     @Override

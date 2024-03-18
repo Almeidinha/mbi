@@ -5,5 +5,5 @@ import java.util.List;
 
 public interface OperaTor<T> extends Serializable {
 
-  boolean compare(T valor1, List<T> valuesToCompare);
+  boolean compare(T firstValue, List<T> valuesToCompare);
 }

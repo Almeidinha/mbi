@@ -1,7 +1,7 @@
 package com.msoft.mbi.cube.multi.metrics.calculated;
 
-import com.msoft.mbi.cube.exception.CuboMathParserException;
-import com.msoft.mbi.cube.multi.LinhaMetrica;
+import com.msoft.mbi.cube.exception.CubeMathParserException;
+import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.MapaMetricas;
 import com.msoft.mbi.cube.multi.calculation.Calculo;
 import com.msoft.mbi.cube.multi.metrics.Metrica;
@@ -12,8 +12,6 @@ import java.io.Serial;
 
 public class MetricaCalculada extends Metrica {
 
-    @Serial
-    private static final long serialVersionUID = 3920289781688248321L;
 
     @Override
     public MetricaCalculadaMetaData getMetaData() {
@@ -21,28 +19,27 @@ public class MetricaCalculada extends Metrica {
     }
 
     @Override
-    public Double getValor(MapaMetricas mapaMetricas, LinhaMetrica linhaMetrica, LinhaMetrica linhaMetricaAnterior) {
+    public Double getValor(MapaMetricas mapaMetricas, MetricLine metricLine, MetricLine metricLineAnterior) {
         return this.agregador.getValorAgregado();
     }
 
-    public Double calcula(MapaMetricas mapaMetricas, LinhaMetrica linhaMetrica, LinhaMetrica linhaMetricaAnterior, MetricaValorUtilizar nivelCalcular) {
+    public Double calcula(MapaMetricas mapaMetricas, MetricLine metricLine, MetricLine metricLineAnterior, MetricaValorUtilizar nivelCalcular) {
         MetricaCalculadaMetaData metaData = this.getMetaData();
         Calculo calculo = metaData.createCalculo();
         Double retorno;
         try {
             for (String variable : calculo.getVariables().keySet()) {
-                Metrica expressao = linhaMetrica.getMetricas().get(calculo.getVariables().get(variable));
+                Metrica expressao = metricLine.getMetrics().get(calculo.getVariables().get(variable));
                 if (expressao == null) {
-                    expressao = linhaMetrica.getMetricas().get(this.removeBarraVariable(calculo.getVariables().get(variable)));
+                    expressao = metricLine.getMetrics().get(this.removeBarraVariable(calculo.getVariables().get(variable)));
                 }
 
-                Double valor = nivelCalcular.calculaValor(expressao, linhaMetrica, mapaMetricas);
+                Double valor = nivelCalcular.calculaValor(expressao, metricLine, mapaMetricas);
                 calculo.setValorVariable(variable, (valor != null ? valor : 0));
             }
             retorno = calculo.calculaValor();
         } catch (Exception ex) {
-            CuboMathParserException parserException = new CuboMathParserException("Não foi possível realizar o cálculo da coluna " + metaData.getTitulo() + ".", ex);
-            throw parserException;
+            throw new CubeMathParserException("Não foi possível realizar o cálculo da coluna " + metaData.getTitulo() + ".", ex);
         }
         return retorno;
     }
@@ -52,8 +49,8 @@ public class MetricaCalculada extends Metrica {
     }
 
     @Override
-    public Double calcula(MapaMetricas mapaMetricas, LinhaMetrica linhaMetrica, LinhaMetrica linhaMetricaAnterior) {
-        return this.calcula(mapaMetricas, linhaMetrica, linhaMetricaAnterior, MetricaValorUtilizarLinhaMetrica.getInstance());
+    public Double calcula(MapaMetricas mapaMetricas, MetricLine metricLine, MetricLine metricLineAnterior) {
+        return this.calcula(mapaMetricas, metricLine, metricLineAnterior, MetricaValorUtilizarLinhaMetrica.getInstance());
     }
 
     public void populaNovoValor(Double valor) {

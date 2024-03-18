@@ -3,7 +3,7 @@ package com.msoft.mbi.cube.multi.metrics;
 import java.util.List;
 
 import com.msoft.mbi.cube.multi.Cubo;
-import com.msoft.mbi.cube.multi.LinhaMetrica;
+import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.MapaMetricas;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 
@@ -19,14 +19,14 @@ public class MetricaValorUtilizarLinhaMetrica implements MetricaValorUtilizar {
     }
 
     @Override
-    public Double getValor(MapaMetricas mapaMetricas, LinhaMetrica linhaMetrica, String tituloCampo) {
-        Metrica expressao = linhaMetrica.getMetricas().get(tituloCampo);
-        return expressao.getValor(mapaMetricas, linhaMetrica, (LinhaMetrica) null);
+    public Double getValor(MapaMetricas mapaMetricas, MetricLine metricLine, String tituloCampo) {
+        Metrica expressao = metricLine.getMetrics().get(tituloCampo);
+        return expressao.getValor(mapaMetricas, metricLine, (MetricLine) null);
     }
 
     @Override
-    public Double calculaValor(Metrica metrica, LinhaMetrica linhaMetrica, MapaMetricas mapaMetricas) {
-        return metrica.calcula(mapaMetricas, linhaMetrica, (LinhaMetrica) null);
+    public Double calculaValor(Metrica metrica, MetricLine metricLine, MapaMetricas mapaMetricas) {
+        return metrica.calcula(mapaMetricas, metricLine, (MetricLine) null);
     }
 
     @Override

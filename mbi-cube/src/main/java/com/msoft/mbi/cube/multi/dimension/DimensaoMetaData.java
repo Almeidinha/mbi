@@ -1,6 +1,5 @@
 package com.msoft.mbi.cube.multi.dimension;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +29,6 @@ import lombok.Setter;
 @Setter
 public class DimensaoMetaData extends ColunaMetaData implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = 3170295257323867171L;
     private DimensaoMetaData parent = null;
     @Setter(AccessLevel.NONE)
     private String coluna;

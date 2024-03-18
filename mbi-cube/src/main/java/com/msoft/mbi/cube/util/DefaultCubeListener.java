@@ -1,7 +1,7 @@
 package com.msoft.mbi.cube.util;
 
 
-public class DefaultCuboListener implements CuboListener{
+public class DefaultCubeListener implements CubeListener {
 
   public void finish() {
   }
@@ -15,7 +15,7 @@ public class DefaultCuboListener implements CuboListener{
   }
 
   @Override
-  public void setTemDados(boolean temDados) {    
+  public void setHasData(boolean hasData) {
   }
  
 

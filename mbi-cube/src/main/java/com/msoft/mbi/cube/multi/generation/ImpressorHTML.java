@@ -8,7 +8,7 @@ import java.io.Writer;
 import java.text.NumberFormat;
 import java.util.*;
 
-import com.msoft.mbi.cube.exception.CuboMathParserException;
+import com.msoft.mbi.cube.exception.CubeMathParserException;
 import com.msoft.mbi.cube.multi.column.ColunaMetaData;
 import com.msoft.mbi.cube.multi.dimension.DimensaoMetaData;
 import com.msoft.mbi.cube.multi.metrics.MetricaMetaData;
@@ -34,7 +34,7 @@ public class ImpressorHTML implements Impressor {
             this.propriedadesEspecificasColuna = new HashMap<>();
             this.aplicadorEfeitoHTML = new AplicadorEfeitoHTMLAplica();
         } catch (FileNotFoundException e) {
-            throw new CuboMathParserException("Não foi possível criar o arquivo.", e);
+            throw new CubeMathParserException("Não foi possível criar o arquivo.", e);
         }
     }
 
@@ -52,7 +52,7 @@ public class ImpressorHTML implements Impressor {
         try {
             this.output.write(texto + "\n");
         } catch (IOException e) {
-            throw new CuboMathParserException("Não foi possível realizar a impressão do valor.", e);
+            throw new CubeMathParserException("Não foi possível realizar a impressão do valor.", e);
         }
     }
 
@@ -97,7 +97,7 @@ public class ImpressorHTML implements Impressor {
                 fos.close();
             }
         } catch (IOException e) {
-            throw new CuboMathParserException("Não foi possível finalizar a impressão da tabela.", e);
+            throw new CubeMathParserException("Não foi possível finalizar a impressão da tabela.", e);
         }
     }
 

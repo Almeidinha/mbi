@@ -10,7 +10,7 @@ import com.msoft.mbi.cube.multi.calculation.Calculo;
 
 public class CalculoHierarquiaOrdenacao {
 
-    private List<MetricaCalculadaMetaData> metricasCalculadas = new ArrayList<>();
+    private final List<MetricaCalculadaMetaData> metricasCalculadas = new ArrayList<>();
 
     public CalculoHierarquiaOrdenacao(List<MetricaCalculadaMetaData> metricasCalculadas) {
         if (metricasCalculadas != null) {
@@ -35,18 +35,16 @@ public class CalculoHierarquiaOrdenacao {
     private void ordena(List<MetricaCalculadaMetaData> listaMetricasCalculadas, Map<String, MetricaCalculadaMetaData> mapaMetricasCalculadas, MetricaCalculadaMetaData metrica) {
 
         Calculo calculo = metrica.createCalculo();
-        Iterator<String> variaveis = calculo.getVariables().keySet().iterator();
-        while (variaveis.hasNext()) {
-            String variavel = variaveis.next();
+        for (String variavel : calculo.getVariables().keySet()) {
             String titulo = calculo.getVariables().get(variavel);
             MetricaCalculadaMetaData metricaInterna = mapaMetricasCalculadas.get(titulo);
             if (metricaInterna != null) {
-                if (listaMetricasCalculadas.indexOf(metricaInterna) == -1) {
+                if (!listaMetricasCalculadas.contains(metricaInterna)) {
                     this.ordena(listaMetricasCalculadas, mapaMetricasCalculadas, metricaInterna);
                 }
             }
         }
-        if (listaMetricasCalculadas.indexOf(metrica) == -1) {
+        if (!listaMetricasCalculadas.contains(metrica)) {
             listaMetricasCalculadas.add(metrica);
         }
     }

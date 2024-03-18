@@ -1,10 +1,9 @@
 package com.msoft.mbi.cube.multi.metrics;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
-import com.msoft.mbi.cube.multi.LinhaMetrica;
+import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.MapaMetricas;
 import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditionsMetrica;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
@@ -18,8 +17,6 @@ import com.msoft.mbi.cube.multi.renderers.CellProperty;
 
 public abstract class Metrica implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = 7155977185339529752L;
     private MetricaMetaData metaData = null;
     protected AgregadorTipo agregador;
 
@@ -69,11 +66,11 @@ public abstract class Metrica implements Serializable {
         }
     }
 
-    public abstract Double calcula(MapaMetricas mapaMetricas, LinhaMetrica linhaMetrica, LinhaMetrica linhaMetricaAnterior);
+    public abstract Double calcula(MapaMetricas mapaMetricas, MetricLine metricLine, MetricLine metricLineAnterior);
 
-    public abstract Double calcula(MapaMetricas mapaMetricas, LinhaMetrica linhaMetrica, LinhaMetrica linhaMetricaAnterior,
+    public abstract Double calcula(MapaMetricas mapaMetricas, MetricLine metricLine, MetricLine metricLineAnterior,
                                    MetricaValorUtilizar nivelCalcular);
 
-    public abstract Double getValor(MapaMetricas mapaMetricas, LinhaMetrica linhaMetrica, LinhaMetrica linhaMetricaAnterior);
+    public abstract Double getValor(MapaMetricas mapaMetricas, MetricLine metricLine, MetricLine metricLineAnterior);
 
 }

@@ -7,13 +7,18 @@ import java.util.List;
 
 import com.msoft.mbi.cube.multi.column.TipoTextoRoot;
 import com.msoft.mbi.cube.multi.dimension.DimensaoMetaData;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
 public class CuboMetaData extends DimensaoMetaData {
 
     private List<CampoMetaData> camposDimensao;
     private List<CampoMetaData> camposMetrica;
     private List<CampoMetaData> campos;
+    @Setter
     private String expressaoFiltrosMetrica;
+    @Setter
     private String expressaoFiltrosAcumulado;
     @Serial
     private static final long serialVersionUID = 5087431304248017465L;
@@ -23,34 +28,6 @@ public class CuboMetaData extends DimensaoMetaData {
         this.camposDimensao = new ArrayList<>();
         this.camposMetrica = new ArrayList<>();
         this.campos = new ArrayList<>();
-    }
-
-    public List<CampoMetaData> getCamposDimensao() {
-        return camposDimensao;
-    }
-
-    public List<CampoMetaData> getCamposMetrica() {
-        return camposMetrica;
-    }
-
-    public String getExpressaoFiltrosMetrica() {
-        return expressaoFiltrosMetrica;
-    }
-
-    public void setExpressaoFiltrosMetrica(String expressaoFiltrosMetrica) {
-        this.expressaoFiltrosMetrica = expressaoFiltrosMetrica;
-    }
-
-    public List<CampoMetaData> getCampos() {
-        return campos;
-    }
-
-    public String getExpressaoFiltrosAcumulado() {
-        return expressaoFiltrosAcumulado;
-    }
-
-    public void setExpressaoFiltrosAcumulado(String expressaoFiltrosAcumulado) {
-        this.expressaoFiltrosAcumulado = expressaoFiltrosAcumulado;
     }
 
     public void addCampo(CampoMetaData campo, String tipo) {
@@ -65,17 +42,17 @@ public class CuboMetaData extends DimensaoMetaData {
 
     public void ordenaCampos() {
         SequenciaCampoComparator comparator = new SequenciaCampoComparator();
-        Collections.sort(this.campos, comparator);
+        this.campos.sort(comparator);
     }
 
     public void ordenaCamposDimensao() {
         SequenciaCampoComparator comparator = new SequenciaCampoComparator();
-        Collections.sort(this.camposDimensao, comparator);
+        this.camposDimensao.sort(comparator);
     }
 
     public void ordenaCamposMetrica() {
         SequenciaCampoComparator comparator = new SequenciaCampoComparator();
-        Collections.sort(this.camposMetrica, comparator);
+        this.camposMetrica.sort(comparator);
     }
 
     public CampoMetaData getCampoMetricaByCodigo(int codigo) {

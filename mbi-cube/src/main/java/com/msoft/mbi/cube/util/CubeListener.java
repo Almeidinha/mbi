@@ -1,11 +1,11 @@
 package com.msoft.mbi.cube.util;
 
-public interface CuboListener {
+public interface CubeListener {
   
   public void start();
   public void finish();
   public boolean stopProcess();
-  public void setTemDados(boolean temDados);
+  public void setHasData(boolean hasData);
     
 
 }

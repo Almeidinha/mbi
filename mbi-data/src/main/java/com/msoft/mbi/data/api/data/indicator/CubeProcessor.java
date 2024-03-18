@@ -1,11 +1,11 @@
 package com.msoft.mbi.data.api.data.indicator;
 
-import com.msoft.mbi.cube.util.CuboListener;
+import com.msoft.mbi.cube.util.CubeListener;
 import lombok.extern.log4j.Log4j2;
 
 
 @Log4j2
-public class CubeProcessor implements CuboListener {
+public class CubeProcessor implements CubeListener {
 
     private final Indicator indicator;
 
@@ -28,7 +28,7 @@ public class CubeProcessor implements CuboListener {
         }
     }
 
-    public void setTemDados(boolean hasData){
+    public void setHasData(boolean hasData){
         this.indicator.setHasData(hasData);
     }
 }

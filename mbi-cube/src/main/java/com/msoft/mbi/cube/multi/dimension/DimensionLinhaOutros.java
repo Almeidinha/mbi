@@ -30,7 +30,7 @@ public class DimensionLinhaOutros extends DimensionLinha {
             dimensionLinhaOutros = this;
         }
 
-        this.cube.getMapaMetricas().acumulaMetricaLinhaOutros(dimensionLinhaRemover, dimensionLinhaOutros);
+        this.cube.getMapaMetricas().accumulateMetricLineOthers(dimensionLinhaRemover, dimensionLinhaOutros);
         Iterator<Dimension> iDimensoesColuna = dimensionLinhaRemover.getDimensionsColumn().values().iterator();
         this.processarColunasOutros(dimensionLinhaRemover, dimensionLinhaOutros, iDimensoesColuna, dimensionLinhaOutros, this.metaData.getCubo());
     }

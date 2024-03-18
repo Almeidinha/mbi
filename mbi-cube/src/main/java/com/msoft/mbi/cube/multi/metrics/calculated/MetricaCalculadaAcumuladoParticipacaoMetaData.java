@@ -9,7 +9,6 @@ import com.msoft.mbi.cube.multi.metrics.MetricaMetaData;
 
 public abstract class MetricaCalculadaAcumuladoParticipacaoMetaData extends MetricaCalculadaAcumuladoMetaData {
 
-    private static final long serialVersionUID = -3529627922537821443L;
 
     public MetricaCalculadaAcumuladoParticipacaoMetaData(MetricaMetaData colunaReferencia, AnaliseParticipacaoTipo analiseVerticalTipo,
                                                          List<AlertaCorMetaData> alertasCores) {

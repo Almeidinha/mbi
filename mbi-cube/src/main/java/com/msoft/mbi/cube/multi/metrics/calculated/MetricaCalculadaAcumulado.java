@@ -1,44 +1,41 @@
 package com.msoft.mbi.cube.multi.metrics.calculated;
 
-import com.msoft.mbi.cube.exception.CuboMathParserException;
-import com.msoft.mbi.cube.multi.LinhaMetrica;
+import com.msoft.mbi.cube.exception.CubeMathParserException;
+import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.MapaMetricas;
 import com.msoft.mbi.cube.multi.calculation.Calculo;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.metrics.Metrica;
 import com.msoft.mbi.cube.multi.metrics.MetricaValorUtilizar;
 
-import java.io.Serial;
 
 public class MetricaCalculadaAcumulado extends MetricaCalculada {
 
-    @Serial
-    private static final long serialVersionUID = 7068703921985921810L;
 
     @Override
-    public Double calcula(MapaMetricas mapaMetricas, LinhaMetrica linhaMetrica, LinhaMetrica linhaMetricaAnterior) {
-        //o metadado da metrica calculada acumulada
+    public Double calcula(MapaMetricas mapaMetricas, MetricLine metricLine, MetricLine metricLineAnterior) {
+
         MetricaCalculadaAcumuladoMetaData metaData = (MetricaCalculadaAcumuladoMetaData) this.getMetaData();
         Calculo calculo = metaData.createCalculo();
         Double retorno = null;
         try {
             String tituloColunaAV = calculo.getVariables().get(MetricaCalculadaAcumuladoMetaData.COLUNA_AV_VARIABLE);
-            Metrica metricaReferencia = linhaMetrica.getMetricas().get(tituloColunaAV);
-            Double valorAtual = metricaReferencia.getValor(mapaMetricas, linhaMetrica, linhaMetricaAnterior);
+            Metrica metricaReferencia = metricLine.getMetrics().get(tituloColunaAV);
+            Double valorAtual = metricaReferencia.getValor(mapaMetricas, metricLine, metricLineAnterior);
             calculo.setValorVariable(MetricaCalculadaAcumuladoMetaData.COLUNA_AV_VARIABLE, (valorAtual != null ? valorAtual : 0));
 
             Double valorAnterior = (double) 0;
 
             if (metaData instanceof MetricaCalculadaAcumuladoParticipacaoAVMetaData || metaData instanceof MetricaCalculadaAcumuladoValorAVMetaData) {
-                if (linhaMetricaAnterior != null) {
+                if (metricLineAnterior != null) {
 
-                    Metrica metricaValorAcumulado = linhaMetricaAnterior.getMetricas().get(metaData.getTitulo());
-                    valorAnterior = metricaValorAcumulado.getValor(mapaMetricas, linhaMetricaAnterior, null);
+                    Metrica metricaValorAcumulado = metricLineAnterior.getMetrics().get(metaData.getTitulo());
+                    valorAnterior = metricaValorAcumulado.getValor(mapaMetricas, metricLineAnterior, null);
 
                     if ((metaData instanceof MetricaCalculadaAcumuladoParticipacaoAVMetaData)) {
 
-                        Dimension dimensionAtual = ((MetricaCalculadaAcumuladoParticipacaoAVMetaData) metaData).getAnaliseParticipacaoTipo().getDimensaoNivelAcima(linhaMetrica.getDimensionLinha());
-                        Dimension dimensionAnterior = ((MetricaCalculadaAcumuladoParticipacaoAVMetaData) metaData).getAnaliseParticipacaoTipo().getDimensaoNivelAcima(linhaMetricaAnterior.getDimensionLinha());
+                        Dimension dimensionAtual = ((MetricaCalculadaAcumuladoParticipacaoAVMetaData) metaData).getAnaliseParticipacaoTipo().getDimensaoNivelAcima(metricLine.getDimensionLine());
+                        Dimension dimensionAnterior = ((MetricaCalculadaAcumuladoParticipacaoAVMetaData) metaData).getAnaliseParticipacaoTipo().getDimensaoNivelAcima(metricLineAnterior.getDimensionLine());
 
                         if (dimensionAtual != dimensionAnterior && !dimensionAtual.getKeyValue().equals(dimensionAnterior.getKeyValue())) {
                             valorAnterior = (double) 0;
@@ -47,8 +44,8 @@ public class MetricaCalculadaAcumulado extends MetricaCalculada {
 
                     if ((metaData instanceof MetricaCalculadaAcumuladoValorAVMetaData)) {
 
-                        Dimension dimensionAtual = ((MetricaCalculadaAcumuladoValorAVMetaData) metaData).getAnaliseParticipacaoTipo().getDimensaoNivelAcima(linhaMetrica.getDimensionLinha());
-                        Dimension dimensionAnterior = ((MetricaCalculadaAcumuladoValorAVMetaData) metaData).getAnaliseParticipacaoTipo().getDimensaoNivelAcima(linhaMetricaAnterior.getDimensionLinha());
+                        Dimension dimensionAtual = ((MetricaCalculadaAcumuladoValorAVMetaData) metaData).getAnaliseParticipacaoTipo().getDimensaoNivelAcima(metricLine.getDimensionLine());
+                        Dimension dimensionAnterior = ((MetricaCalculadaAcumuladoValorAVMetaData) metaData).getAnaliseParticipacaoTipo().getDimensaoNivelAcima(metricLineAnterior.getDimensionLine());
 
                         if (dimensionAtual != dimensionAnterior && !dimensionAtual.getKeyValue().equals(dimensionAnterior.getKeyValue())) {
                             valorAnterior = (double) 0;
@@ -58,26 +55,25 @@ public class MetricaCalculadaAcumulado extends MetricaCalculada {
             }
 
             if (metaData instanceof MetricaCalculadaAcumuladoParticipacaoAHMetaData) {
-                Dimension dimensionAnterior = this.getDimensaoAnterior(linhaMetrica.getDimensionColuna(), metaData);
+                Dimension dimensionAnterior = this.getDimensaoAnterior(metricLine.getDimensionColumn(), metaData);
 
                 if (dimensionAnterior != null) {
-                    Metrica expressaoValor = linhaMetrica.getMetricas().get(metaData.getTitulo());
-                    valorAnterior = expressaoValor.getMetaData().calculaValorTotalParcial(linhaMetrica.getDimensionLinha(), dimensionAnterior);
+                    Metrica expressaoValor = metricLine.getMetrics().get(metaData.getTitulo());
+                    valorAnterior = expressaoValor.getMetaData().calculaValorTotalParcial(metricLine.getDimensionLine(), dimensionAnterior);
                 }
             }
 
             calculo.setValorVariable(MetricaCalculadaAcumuladoMetaData.COLUNA_VALOR_ANTERIOR_VARIABLE, (valorAnterior != null ? valorAnterior : 0));
             retorno = calculo.calculaValor();
         } catch (Exception ex) {
-            CuboMathParserException parserException = new CuboMathParserException("Não foi possível relizar o cálculo da coluna " + metaData.getTitulo() + ".", ex);
-            throw parserException;
+            throw new CubeMathParserException("Não foi possível relizar o cálculo da coluna " + metaData.getTitulo() + ".", ex);
         }
         return retorno;
     }
 
     @Override
-    public Double calcula(MapaMetricas mapaMetricas, LinhaMetrica linhaMetrica, LinhaMetrica linhaMetricaAnterior, MetricaValorUtilizar nivelCalcular) {
-        return calcula(mapaMetricas, linhaMetrica, linhaMetricaAnterior);
+    public Double calcula(MapaMetricas mapaMetricas, MetricLine metricLine, MetricLine metricLineAnterior, MetricaValorUtilizar nivelCalcular) {
+        return calcula(mapaMetricas, metricLine, metricLineAnterior);
     }
 
     private Dimension getDimensaoAnterior(Dimension dimensionAtual, MetricaCalculadaAcumuladoMetaData metaData) {
@@ -85,9 +81,9 @@ public class MetricaCalculadaAcumulado extends MetricaCalculada {
     }
 
     @Override
-    public Double getValor(MapaMetricas mapaMetricas, LinhaMetrica linhaMetrica, LinhaMetrica linhaMetricaAnterior) {
+    public Double getValor(MapaMetricas mapaMetricas, MetricLine metricLine, MetricLine metricLineAnterior) {
         if (this.agregador.getValorAgregado() == null) {
-            this.agregador.setValor(this.calcula(mapaMetricas, linhaMetrica, linhaMetricaAnterior));
+            this.agregador.setValor(this.calcula(mapaMetricas, metricLine, metricLineAnterior));
         }
         return this.agregador.getValorAgregado();
     }

@@ -2,7 +2,7 @@ package com.msoft.mbi.cube.multi.metrics.calculated;
 
 import java.util.List;
 
-import com.msoft.mbi.cube.multi.LinhaMetrica;
+import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.analytics.AnaliseEvolucaoTipo;
 import com.msoft.mbi.cube.multi.analytics.AnaliseParticipacaoTipo;
 import com.msoft.mbi.cube.multi.analytics.AnaliseParticipacaoTipoGeral;
@@ -14,15 +14,16 @@ import com.msoft.mbi.cube.multi.metaData.CampoMetaData;
 import com.msoft.mbi.cube.multi.metrics.MetricaMetaData;
 import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLTextoColuna;
 import com.msoft.mbi.cube.multi.renderers.linkHTML.MascaraLinkHTMLTextoRenderer;
+import lombok.Getter;
 
 public class MetricaCalculadaEvolucaoAHMetaData extends MetricaCalculadaMetaData implements MetricaCalculadaFuncaoMetaData {
 
-    private static final long serialVersionUID = 1590485166352081678L;
     public static final String COLUNA_AH_VARIABLE = "colunaAH";
     public static final String COLUNA_VALOR_ANTERIOR_VARIABLE = "valorAnterior";
-    private String tituloColunaReferencia;
-    private AnaliseParticipacaoTipo tipoComparacaoParticipacao;
-    private AnaliseEvolucaoTipo analiseEvolucaoTipo;
+    private final String tituloColunaReferencia;
+    private final AnaliseParticipacaoTipo tipoComparacaoParticipacao;
+    @Getter
+    private final AnaliseEvolucaoTipo analiseEvolucaoTipo;
     public static final String AH = "analiseHorizontal";
 
     public MetricaCalculadaEvolucaoAHMetaData(MetricaMetaData colunaReferencia, List<AlertaCorMetaData> alertasCores, AnaliseEvolucaoTipo tipoAnaliseEvolucao) {
@@ -57,10 +58,6 @@ public class MetricaCalculadaEvolucaoAHMetaData extends MetricaCalculadaMetaData
         return metricaCalculadaAH;
     }
 
-    public AnaliseEvolucaoTipo getAnaliseEvolucaoTipo() {
-        return analiseEvolucaoTipo;
-    }
-
     @Override
     public String getFuncaoCampo() {
         return MetricaCalculadaEvolucaoAHMetaData.AH;
@@ -77,13 +74,13 @@ public class MetricaCalculadaEvolucaoAHMetaData extends MetricaCalculadaMetaData
     }
 
     @Override
-    public Dimension getDimensaoEixoReferencia(LinhaMetrica linhaMetrica) {
-        return linhaMetrica.getDimensionLinha();
+    public Dimension getDimensaoEixoReferencia(MetricLine metricLine) {
+        return metricLine.getDimensionLine();
     }
 
     @Override
-    public Dimension getDimensaoOutra(LinhaMetrica linhaMetrica) {
-        return linhaMetrica.getDimensionColuna();
+    public Dimension getDimensaoOutra(MetricLine metricLine) {
+        return metricLine.getDimensionColumn();
     }
 
     @Override

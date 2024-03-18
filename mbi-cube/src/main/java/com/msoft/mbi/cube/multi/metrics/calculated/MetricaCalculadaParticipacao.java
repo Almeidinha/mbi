@@ -1,7 +1,7 @@
 package com.msoft.mbi.cube.multi.metrics.calculated;
 
-import com.msoft.mbi.cube.exception.CuboMathParserException;
-import com.msoft.mbi.cube.multi.LinhaMetrica;
+import com.msoft.mbi.cube.exception.CubeMathParserException;
+import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.MapaMetricas;
 import com.msoft.mbi.cube.multi.calculation.Calculo;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
@@ -12,15 +12,13 @@ import java.io.Serial;
 
 public class MetricaCalculadaParticipacao extends MetricaCalculada {
 
-    @Serial
-    private static final long serialVersionUID = 7068703921985921810L;
 
     private Dimension getDimensaoAcimaParticipacao(Dimension dimensionAtual, MetricaCalculadaParticipacaoMetaData metaData) {
         return metaData.getAnaliseParticipacaoTipo().getDimensaoNivelAcima(dimensionAtual);
     }
 
     @Override
-    public Double calcula(MapaMetricas mapaMetricas, LinhaMetrica linhaMetrica, LinhaMetrica linhaMetricaAnterior) {
+    public Double calcula(MapaMetricas mapaMetricas, MetricLine metricLine, MetricLine metricLineAnterior) {
 
         MetricaCalculadaParticipacaoMetaData metaData = (MetricaCalculadaParticipacaoMetaData) this.getMetaData();
         Calculo calculo = metaData.createCalculo();
@@ -28,25 +26,24 @@ public class MetricaCalculadaParticipacao extends MetricaCalculada {
         try {
             String tituloColunaAV = calculo.getVariables().get(MetricaCalculadaParticipacaoMetaData.COLUNA_AV_VARIABLE);
 
-            Metrica expressao = linhaMetrica.getMetricas().get(tituloColunaAV);
-            Double valor = expressao.getMetaData().calculaValorTotalParcial(linhaMetrica.getDimensionLinha(), linhaMetrica.getDimensionColuna());
+            Metrica expressao = metricLine.getMetrics().get(tituloColunaAV);
+            Double valor = expressao.getMetaData().calculaValorTotalParcial(metricLine.getDimensionLine(), metricLine.getDimensionColumn());
             if (valor != null) {
-                calculo.setValorVariable(MetricaCalculadaParticipacaoMetaData.COLUNA_AV_VARIABLE, (valor != null ? valor : 0));
+                calculo.setValorVariable(MetricaCalculadaParticipacaoMetaData.COLUNA_AV_VARIABLE, valor);
 
-                Dimension dimensionPai = this.getDimensaoAcimaParticipacao(metaData.getDimensaoEixoReferencia(linhaMetrica), metaData);
+                Dimension dimensionPai = this.getDimensaoAcimaParticipacao(metaData.getDimensaoEixoReferencia(metricLine), metaData);
 
-                Double valorAcima = expressao.getMetaData().calculaValorTotalParcial(dimensionPai, metaData.getDimensaoOutra(linhaMetrica));
+                Double valorAcima = expressao.getMetaData().calculaValorTotalParcial(dimensionPai, metaData.getDimensaoOutra(metricLine));
                 if (valorAcima != null && valorAcima != 0) {
 
-                    calculo.setValorVariable(MetricaCalculadaParticipacaoMetaData.VALOR_NIVEL_ACIMA_VARIABLE, (valorAcima != null ? valorAcima : 0));
+                    calculo.setValorVariable(MetricaCalculadaParticipacaoMetaData.VALOR_NIVEL_ACIMA_VARIABLE, valorAcima);
                     retorno = calculo.calculaValor();
                 } else {
                     retorno = (double) 0;
                 }
             }
         } catch (Exception ex) {
-            CuboMathParserException parserException = new CuboMathParserException("Não foi possível realizar o cálculo da coluna " + metaData.getTitulo() + ".", ex);
-            throw parserException;
+            throw new CubeMathParserException("Não foi possível realizar o cálculo da coluna " + metaData.getTitulo() + ".", ex);
         }
         return retorno;
     }
@@ -60,12 +57,12 @@ public class MetricaCalculadaParticipacao extends MetricaCalculada {
     }
 
     @Override
-    public Double getValor(MapaMetricas mapaMetricas, LinhaMetrica linhaMetrica, LinhaMetrica linhaMetricaAnterior) {
-        return this.calcula(mapaMetricas, linhaMetrica, linhaMetricaAnterior);
+    public Double getValor(MapaMetricas mapaMetricas, MetricLine metricLine, MetricLine metricLineAnterior) {
+        return this.calcula(mapaMetricas, metricLine, metricLineAnterior);
     }
 
     @Override
-    public Double calcula(MapaMetricas mapaMetricas, LinhaMetrica linhaMetrica, LinhaMetrica linhaMetricaAnterior, MetricaValorUtilizar nivelCalcular) {
-        return calcula(mapaMetricas, linhaMetrica, linhaMetricaAnterior);
+    public Double calcula(MapaMetricas mapaMetricas, MetricLine metricLine, MetricLine metricLineAnterior, MetricaValorUtilizar nivelCalcular) {
+        return calcula(mapaMetricas, metricLine, metricLineAnterior);
     }
 }

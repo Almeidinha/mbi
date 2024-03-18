@@ -1,9 +1,8 @@
 package com.msoft.mbi.cube.multi.partialTotalization;
 
-import java.io.Serial;
 import java.util.Map;
 
-import com.msoft.mbi.cube.multi.LinhaMetrica;
+import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.MapaMetricas;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.metrics.Metrica;
@@ -12,8 +11,6 @@ import com.msoft.mbi.cube.multi.metrics.MetricaValorUtilizarTotal;
 
 public class TotalizacaoParcialAplicarTipoExpressao implements TotalizacaoParcialAplicarTipo {
 
-    @Serial
-    private static final long serialVersionUID = 7830651675746489789L;
 
     private static TotalizacaoParcialAplicarTipoExpressao acumuladoParcialTipo;
 
@@ -35,10 +32,10 @@ public class TotalizacaoParcialAplicarTipoExpressao implements TotalizacaoParcia
             dimensionEixoReferencia = dimension;
             dimension = dimAux;
         }
-        LinhaMetrica linhaMetrica = mapaMetricas.getLinhaMetrica(dimensionEixoReferencia, dimension);
-        Map<String, Metrica> metricas = linhaMetrica.getMetricas();
+        MetricLine metricLine = mapaMetricas.getMetricLine(dimensionEixoReferencia, dimension);
+        Map<String, Metrica> metricas = metricLine.getMetrics();
         Metrica expressao = metricas.get(metaData.getTitulo());
-        Double valor = expressao.calcula(mapaMetricas, linhaMetrica, (LinhaMetrica) null, MetricaValorUtilizarTotal.getInstance());
+        Double valor = expressao.calcula(mapaMetricas, metricLine, (MetricLine) null, MetricaValorUtilizarTotal.getInstance());
         return valor;
     }
 
