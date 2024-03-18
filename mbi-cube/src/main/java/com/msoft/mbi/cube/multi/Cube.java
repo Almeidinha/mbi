@@ -479,6 +479,7 @@ public abstract class Cube extends Dimension {
         int count = 0;
 
         this.cubeListener.setHasData(false);
+
         while (set.next()) {
             this.cubeListener.setHasData(true);
             dimensionLine.process(set);

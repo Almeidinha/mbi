@@ -17,8 +17,13 @@ import com.msoft.mbi.model.*;
 import com.msoft.mbi.model.support.DatabaseType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCallback;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Service;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 
 @Service
@@ -84,27 +89,11 @@ public class AnalysisServiceImpl implements AnalysisService {
             BITenantEntity biTenant = tenantService.findById(dto.getConnectionId());
             Indicator ind = biIndLogicToIndMapper.dtoToIndicator(dto);
 
-            /*
-            * TODO Check the need for this
-            ind.setTenantId(dto.getConnectionId());
-            ind.setDateFormat(biTenant.getDateFormat());
-            * */
-
             String sql = ind.getSqlExpression(DatabaseType.MSSQL, false);
 
             JdbcTemplate jdbcTemplate = connectionManager.getNewConnection(biTenant);
 
             ind.startTableProcess();
-
-            /*TETES*/
-            /*jdbcTemplate.execute(sql,new PreparedStatementCallback<Boolean>(){
-                @Override
-                public Boolean doInPreparedStatement(PreparedStatement ps) throws SQLException {
-                    return ps.execute();
-                }
-            });
-
-            /* END TETES*/
 
             jdbcTemplate.query(sql, resultSet -> {
                 try {
@@ -112,6 +101,7 @@ public class AnalysisServiceImpl implements AnalysisService {
                 } catch (BIException e) {
                     throw new RuntimeException(e);
                 }
+                return null;
             });
 
             ObjectNode resultNode = objectMapper.createObjectNode();
