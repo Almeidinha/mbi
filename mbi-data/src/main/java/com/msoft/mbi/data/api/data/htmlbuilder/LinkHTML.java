@@ -1,15 +1,11 @@
 package com.msoft.mbi.data.api.data.htmlbuilder;
 
 import com.msoft.mbi.data.api.data.util.BIIOException;
-
 import java.io.IOException;
-import java.io.Serial;
 import java.io.Writer;
 
 public class LinkHTML extends ComponenteHTML {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     private String href = "";
     private String nome = "";
     private String target = "";

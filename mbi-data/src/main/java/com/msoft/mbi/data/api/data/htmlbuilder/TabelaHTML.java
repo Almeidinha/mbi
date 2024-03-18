@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.IOException;
-import java.io.Serial;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +13,6 @@ import java.util.List;
 @Setter
 public class TabelaHTML extends ComponenteTabelaHTML {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     private int larguraBorda;
     private String imagemFundo = "";
     private int cellpadding;

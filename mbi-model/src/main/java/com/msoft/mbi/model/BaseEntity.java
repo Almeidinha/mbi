@@ -8,7 +8,6 @@ import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -18,9 +17,6 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BaseEntity implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
 
     @Temporal(value = TemporalType.DATE)
     @Column(name = "CREATED_AT")

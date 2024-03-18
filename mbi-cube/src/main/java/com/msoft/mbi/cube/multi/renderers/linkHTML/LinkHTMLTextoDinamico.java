@@ -10,8 +10,6 @@ public class LinkHTMLTextoDinamico extends LinkHTMLTexto {
         this.nomeParametroDinamico = nomeParametroDinamico;
     }
 
-    public static final String FWJ_VERSAO = "$Revision: 1.1 $";
-
     public String getNomeParametroDinamico() {
         return nomeParametroDinamico;
     }

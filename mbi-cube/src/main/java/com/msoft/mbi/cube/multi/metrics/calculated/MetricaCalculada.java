@@ -8,7 +8,6 @@ import com.msoft.mbi.cube.multi.metrics.Metrica;
 import com.msoft.mbi.cube.multi.metrics.MetricaValorUtilizar;
 import com.msoft.mbi.cube.multi.metrics.MetricaValorUtilizarLinhaMetrica;
 
-import java.io.Serial;
 
 public class MetricaCalculada extends Metrica {
 

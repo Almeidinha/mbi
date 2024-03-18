@@ -1,6 +1,5 @@
 package com.msoft.mbi.cube.multi.metrics.additive;
 
-import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -9,7 +8,7 @@ import com.msoft.mbi.cube.multi.MapaMetricas;
 import com.msoft.mbi.cube.multi.metrics.Metrica;
 import com.msoft.mbi.cube.multi.metrics.MetricaValorUtilizar;
 
-public class MetricaAditiva extends Metrica implements Serializable {
+public class MetricaAditiva extends Metrica {
 
 
   public void add(ResultSet set, String campo) throws SQLException {

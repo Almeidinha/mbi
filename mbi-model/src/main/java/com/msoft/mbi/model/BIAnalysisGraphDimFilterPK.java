@@ -8,12 +8,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
 
 @Getter
 @Setter
 @EqualsAndHashCode
-public class BIAnalysisGraphDimFilterPK implements Serializable {
+public class BIAnalysisGraphDimFilterPK {
 
     @Column(name = "indicator_id", nullable = false)
     @Id

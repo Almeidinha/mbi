@@ -2,7 +2,6 @@ package com.msoft.mbi.cube.multi.renderers;
 
 import lombok.*;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,8 +13,6 @@ import java.util.Map;
 @AllArgsConstructor
 public class CellProperty implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     private int fontSize;
     private String fontName;
     private String fontColor;

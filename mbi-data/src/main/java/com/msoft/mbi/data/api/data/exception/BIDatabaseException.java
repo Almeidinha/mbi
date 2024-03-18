@@ -1,11 +1,6 @@
 package com.msoft.mbi.data.api.data.exception;
 
-import java.io.Serial;
-
 public class BIDatabaseException extends BIException {
-
-    @Serial
-    private static final long serialVersionUID = 348216247881209632L;
 
     private static final String defaultError = "10008 - Erro durante a transação no banco";
     private String exceptionMessage = "";

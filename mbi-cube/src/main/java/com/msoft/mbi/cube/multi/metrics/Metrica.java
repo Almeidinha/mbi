@@ -1,6 +1,5 @@
 package com.msoft.mbi.cube.multi.metrics;
 
-import java.io.Serializable;
 import java.util.List;
 
 import com.msoft.mbi.cube.multi.MetricLine;
@@ -14,19 +13,15 @@ import com.msoft.mbi.cube.multi.metrics.aggregation.AgregadorSoma;
 import com.msoft.mbi.cube.multi.metrics.aggregation.AgregadorTipo;
 import com.msoft.mbi.cube.multi.metrics.aggregation.AgregadorVazio;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
+import lombok.Getter;
+import lombok.Setter;
 
-public abstract class Metrica implements Serializable {
+public abstract class Metrica {
 
+    @Setter
+    @Getter
     private MetricaMetaData metaData = null;
     protected AgregadorTipo agregador;
-
-    public MetricaMetaData getMetaData() {
-        return metaData;
-    }
-
-    public void setMetaData(MetricaMetaData metaData) {
-        this.metaData = metaData;
-    }
 
     public String buscaAlertaMetricaLinha(String funcao, Dimension dimensionLinha, Dimension dimensionColuna) {
         String nomeEstilo = null;

@@ -8,7 +8,6 @@ import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.metrics.Metrica;
 import com.msoft.mbi.cube.multi.metrics.MetricaValorUtilizar;
 
-import java.io.Serial;
 
 public class MetricaCalculadaParticipacao extends MetricaCalculada {
 

@@ -1,6 +1,5 @@
 package com.msoft.mbi.cube.multi;
 
-import java.io.Serial;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -36,8 +35,6 @@ import lombok.Setter;
 
 public abstract class Cubo extends Dimension {
 
-    @Serial
-    private static final long serialVersionUID = 8297263364630757131L;
     @Getter
 	protected List<ColunaMetaData> colunasVisualizadas = new ArrayList<>();
     @Getter

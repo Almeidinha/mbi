@@ -1,6 +1,5 @@
 package com.msoft.mbi.cube.multi.dimension;
 
-import java.io.Serial;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
@@ -12,8 +11,6 @@ import com.msoft.mbi.cube.multi.renderers.CellProperty;
 
 public class DimensionLinhaOutros extends DimensionLinha {
 
-    @Serial
-    private static final long serialVersionUID = -3609923281651804571L;
     public final static String VALOR_OUTROS = "OUTROS";
 
     public DimensionLinhaOutros(Dimension pai, DimensaoMetaData metaData) {

@@ -1,6 +1,5 @@
 package com.msoft.mbi.cube.multi;
 
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -39,11 +38,6 @@ import com.msoft.mbi.cube.multi.metrics.calculated.MetricaCalculadaParticipacaoA
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricaCalculadaParticipacaoMetaData;
 
 public class CuboFormatoMultiDimensional extends Cubo {
-
-    @Serial
-    private static final long serialVersionUID = -9102046413842085221L;
-
-    public static final String FWJ_VERSAO = "$Revision: 1.6 $";
 
     public CuboFormatoMultiDimensional(CuboMetaData metaData) {
         super(metaData);

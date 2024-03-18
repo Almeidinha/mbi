@@ -2,12 +2,7 @@ package com.msoft.mbi.cube.multi.resumeFunctions;
 
 import com.msoft.mbi.cube.exception.CubeMathParserException;
 
-import java.io.Serial;
-
 public class FunctionRankingLast extends FunctionRanking {
-
-    @Serial
-    private static final long serialVersionUID = -6819639180540031258L;
 
     public FunctionRankingLast(Integer posicoes) {
         super("IF([sequencia] > ([qtdRegistros]-[posicoes]), 1, 0)");

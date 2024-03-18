@@ -1,6 +1,5 @@
 package com.msoft.mbi.cube.multi.metrics;
 
-import java.io.Serializable;
 import java.util.List;
 
 import com.msoft.mbi.cube.multi.Cubo;
@@ -9,7 +8,7 @@ import com.msoft.mbi.cube.multi.MapaMetricas;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import lombok.Getter;
 
-public class OrdenacaoMetrica implements Comparable<OrdenacaoMetrica>, Serializable {
+public class OrdenacaoMetrica implements Comparable<OrdenacaoMetrica> {
 
     @Getter
     private final int tipoOrdenacao;

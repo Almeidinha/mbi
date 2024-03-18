@@ -7,8 +7,6 @@ public class LinkHTMLTextoColuna extends LinkHTMLTexto {
         this.setWidth(tamanhoColuna);
     }
 
-    public static final String FWJ_VERSAO = "$Revision: 1.4 $";
-
     @Override
     public String toString() {
 

@@ -3,13 +3,9 @@ package com.msoft.mbi.data.api.data.htmlbuilder;
 import com.msoft.mbi.data.api.data.util.BIIOException;
 
 import java.io.IOException;
-import java.io.Serial;
 import java.io.Writer;
 
 public class ImagemHTML extends ComponenteHTML {
-
-    @Serial
-    private static final long serialVersionUID = -2431930029409088846L;
 
     private String fonte = "";
     private int larguraBorda = 0;

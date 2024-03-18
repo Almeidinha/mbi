@@ -1,10 +1,6 @@
 package com.msoft.mbi.cube.multi.renderers.linkHTML;
 
-import java.io.Serial;
-
 public class MascaraLinkHTMLValorDinamicoPadraoRenderer extends MascaraLinkHTMLValorDinamicoRenderer {
-    @Serial
-    private static final long serialVersionUID = -3879648374368263054L;
 
     public MascaraLinkHTMLValorDinamicoPadraoRenderer() {
         super(null);

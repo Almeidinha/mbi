@@ -1,6 +1,5 @@
 package com.msoft.mbi.cube.multi.metaData;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +14,6 @@ import com.msoft.mbi.cube.multi.metrics.calculated.MetricaCalculadaParticipacaoA
 import lombok.Setter;
 
 public class AlertaCorMetaData implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = -9205019701541912864L;
 
     public static final int ACAO_PINTAR_LINHA = 1;
     public static final int ACAO_PINTAR_CELULA = 2;

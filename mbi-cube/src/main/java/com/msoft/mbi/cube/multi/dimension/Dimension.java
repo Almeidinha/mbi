@@ -1,6 +1,5 @@
 package com.msoft.mbi.cube.multi.dimension;
 
-import java.io.Serializable;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,7 +24,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public abstract class Dimension implements Comparable<Dimension>, Serializable {
+public abstract class Dimension implements Comparable<Dimension> {
 
     public static final String FECHA = "]";
     public static final String ABRE = "[";

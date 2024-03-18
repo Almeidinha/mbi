@@ -1,6 +1,5 @@
 package com.msoft.mbi.cube.multi.metrics.calculated;
 
-import java.io.Serial;
 import java.util.List;
 
 import com.msoft.mbi.cube.multi.MetricLine;

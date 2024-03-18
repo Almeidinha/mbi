@@ -1,14 +1,10 @@
 package com.msoft.mbi.cube.multi.renderers;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.Locale;
 
 public class MascaraCasasDecimaisRenderer implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 4004553153554390236L;
 
     private int nCasasDecimais;
 

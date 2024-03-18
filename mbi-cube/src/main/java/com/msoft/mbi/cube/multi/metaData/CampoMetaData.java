@@ -1,6 +1,5 @@
 package com.msoft.mbi.cube.multi.metaData;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,8 +15,6 @@ import lombok.Setter;
 @SuppressWarnings("unused")
 public class CampoMetaData implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = 3664833124646749474L;
     private Integer campo;
     private String nomeCampo;
     private String tituloCampo;

@@ -8,12 +8,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
 
 @Getter
 @Setter
 @EqualsAndHashCode
-public class BIAccessRestrictionInterfacePK implements Serializable {
+public class BIAccessRestrictionInterfacePK {
 
     @Column(name = "user_group_id", nullable = false)
     @Id

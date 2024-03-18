@@ -1,11 +1,8 @@
 package com.msoft.mbi.data.api.data.htmlbuilder;
-
-import com.msoft.mbi.data.api.data.exception.BIException;
 import com.msoft.mbi.data.api.data.util.BIIOException;
 import lombok.Setter;
 
 import java.io.IOException;
-import java.io.Serial;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -13,8 +10,6 @@ import java.util.List;
 
 public class LinhaHTML extends ComponenteTabelaHTML implements Linha {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     @Setter
     private List<Celula> celulas;
     private CelulaHTML celulaAtual;

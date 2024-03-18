@@ -1,8 +1,6 @@
 package com.msoft.mbi.cube.multi.metaData;
 
-import java.io.Serial;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import com.msoft.mbi.cube.multi.column.TipoTextoRoot;
@@ -20,8 +18,6 @@ public class CuboMetaData extends DimensaoMetaData {
     private String expressaoFiltrosMetrica;
     @Setter
     private String expressaoFiltrosAcumulado;
-    @Serial
-    private static final long serialVersionUID = 5087431304248017465L;
 
     public CuboMetaData() {
         super("Cubo", null, new TipoTextoRoot());

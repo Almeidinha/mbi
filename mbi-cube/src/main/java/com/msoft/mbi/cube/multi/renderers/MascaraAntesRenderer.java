@@ -1,11 +1,7 @@
 package com.msoft.mbi.cube.multi.renderers;
 
-import java.io.Serial;
 
 public class MascaraAntesRenderer implements MascaraRenderer {
-
-    @Serial
-    private static final long serialVersionUID = 240470382655275489L;
 
     private String textoMascara;
     private MascaraRenderer renderer;

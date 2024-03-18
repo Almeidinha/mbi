@@ -1,11 +1,7 @@
 package com.msoft.mbi.cube.multi.renderers;
 
-import java.io.Serial;
-
 public class MascaraMesAno implements MascaraRenderer, MascaraEisDimensaoDat {
 
-    @Serial
-    private static final long serialVersionUID = 8274609593776772539L;
     public static final String MES_ABREVIADO = "MMM";
     public static final String MES_NAO_ABREVIADO = "MMMM";
     public static final String ANO_ABREVIADO = "yy";

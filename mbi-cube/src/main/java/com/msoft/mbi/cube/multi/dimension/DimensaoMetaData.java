@@ -1,6 +1,5 @@
 package com.msoft.mbi.cube.multi.dimension;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +26,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class DimensaoMetaData extends ColunaMetaData implements Serializable {
+public class DimensaoMetaData extends ColunaMetaData {
 
     private DimensaoMetaData parent = null;
     @Setter(AccessLevel.NONE)

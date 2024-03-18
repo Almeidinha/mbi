@@ -2,8 +2,6 @@ package com.msoft.mbi.cube.multi.renderers.linkHTML;
 
 public class LinkHTMLImagemColuna extends LinkHTML {
 
-    public static final String FWJ_VERSAO = "$Revision: 1.2 $";
-
     private String caminhoImagem;
     private String idImagem;
     private Integer largura;

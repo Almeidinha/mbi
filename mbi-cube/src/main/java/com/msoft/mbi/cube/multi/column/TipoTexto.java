@@ -1,6 +1,5 @@
 package com.msoft.mbi.cube.multi.column;
 
-import java.io.Serial;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -9,8 +8,6 @@ import com.msoft.mbi.cube.util.logicOperators.LogicalOperators;
 
 public class TipoTexto implements DataType<String> {
 
-    @Serial
-    private static final long serialVersionUID = -679817482559706559L;
 
     public static final String BRANCO = "";
     private String texto = null;
