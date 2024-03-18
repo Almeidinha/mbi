@@ -1,7 +1,5 @@
 package com.msoft.mbi.cube.multi.partialTotalization;
 
-import java.util.Iterator;
-
 import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.MapaMetricas;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
@@ -28,9 +26,8 @@ public class TotalizacaoParcialAplicarTipoSoma implements TotalizacaoParcialApli
         if (!dimensionEixoReferencia.getDimensoesAbaixo().isEmpty()) {
             Dimension dimensionAbaixo;
             Double valorDimensao;
-            Iterator<Dimension> iDimensoesAbaixo = dimensionEixoReferencia.getDimensoesAbaixo().values().iterator();
-            while (iDimensoesAbaixo.hasNext()) {
-                dimensionAbaixo = iDimensoesAbaixo.next();
+            for (Dimension value : dimensionEixoReferencia.getDimensoesAbaixo().values()) {
+                dimensionAbaixo = value;
                 valorDimensao = calculaValor(dimensionAbaixo, dimension, metaData, mapaMetricas);
                 retorno += (valorDimensao != null ? valorDimensao : 0);
             }
