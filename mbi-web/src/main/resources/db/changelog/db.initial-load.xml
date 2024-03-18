@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="bi_interface-initial-data" author="admin">
+        <sqlFile dbms="mysql"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 path="bi-interface-data.sql"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true"/>
+    </changeSet>
+
+    <changeSet id="bi_company-data" author="admin">
+        <insert tableName="bi_company">
+            <column name="id" value="1" />
+            <column name="name" value="Demo Company" />
+            <column name="is_active" valueBoolean="true" />
+        </insert>
+        <rollback />
+    </changeSet>
+
+    <changeSet id="bi_user_group-initial-data" author="admin">
+        <insert tableName="bi_user_group">
+            <column name="id" value="1" />
+            <column name="name" value="Administrador" />
+            <column name="role_code" value="ADMIN" />
+            <column name="description" value="System Admin" />
+        </insert>
+        <insert tableName="bi_user_group">
+            <column name="id" value="2" />
+            <column name="name" value="User" />
+            <column name="role_code" value="USER" />
+            <column name="description" value="Common User" />
+        </insert>
+        <rollback />
+    </changeSet>
+
+    <changeSet id="user_group_company-initial-data" author="admin">
+        <insert tableName="user_group_company">
+            <column name="user_group_id" value="1" />
+            <column name="company_id" value="1" />
+        </insert>
+        <insert tableName="user_group_company">
+            <column name="user_group_id" value="2" />
+            <column name="company_id" value="1" />
+        </insert>
+        <rollback />
+    </changeSet>
+
+    <changeSet id="bi-interface-initial-load" author="admin">
+        <sqlFile dbms="mysql"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 path="bi-interface-action-data.sql"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true"/>
+    </changeSet>
+
+    <changeSet id="bi-area-initial-load" author="admin">
+        <sqlFile dbms="mysql"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 path="bi-area-data.sql"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true"/>
+    </changeSet>
+
+    <changeSet id="bi-user-group-interface-data" author="admin">
+        <insert tableName="bi_user_group_interface">
+            <column name="user_group_id" value="1" />
+            <column name="interface_id" value="1" />
+            <column name="permission_level" value="1" />
+        </insert>
+        <rollback />
+    </changeSet>
+
+    <changeSet id="bi-parameter-initial-load" author="admin">
+        <sqlFile dbms="mysql"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 path="bi-parameter.sql"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true"/>
+    </changeSet>
+
+    <changeSet id="bi-product-data" author="admin">
+        <insert tableName="bi_product">
+            <column name="id" value="1" />
+            <column name="description" value="LBA - Logix BI Análise" />
+        </insert>
+        <insert tableName="bi_product">
+            <column name="id" value="2" />
+            <column name="description" value="GRL - Gerenciadorde Relatório" />
+        </insert>
+        <insert tableName="bi_product">
+            <column name="id" value="3" />
+            <column name="description" value="GPE - Gerenciadorde Processos de Extração" />
+        </insert>
+        <rollback />
+    </changeSet>
+
+    <changeSet id="bi-rule-type-initial-load" author="admin">
+        <sqlFile dbms="mysql"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 path="bi-rule-type.sql"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true"/>
+    </changeSet>
+
+    <changeSet id="bi-rule-type-action-initial-load" author="admin">
+        <sqlFile dbms="mysql"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 path="bi-rule-type-action.sql"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true"/>
+    </changeSet>
+
+    <changeSet id="bi-user-data" author="admin">
+        <insert tableName="bi_user">
+            <column name="id" value="1" />
+            <column name="user_group_id" value="1" />
+            <column name="company_id" value="1" />
+            <column name="email" value="bidemo@gmail.com" />
+            <column name="password" value="$2a$10$nTnlwFms8RJVeb8KroNAMeU1C3z259VXombRJEARgicUuCjDZVv/2" />
+            <column name="first_name" value="bi" />
+            <column name="last_name" value="demo" />
+            <column name="is_active" valueBoolean="true" />
+            <column name="default_panel" value="null" />
+        </insert>
+        <rollback />
+    </changeSet>
+
+    <changeSet id="bi-user-interface-initial-load" author="admin">
+        <sqlFile dbms="mysql"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 path="bi-user-interface.sql"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true"/>
+    </changeSet>
+
+    <changeSet id="bi-user-area-initial-load" author="admin">
+        <sqlFile dbms="mysql"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 path="bi-user-area.sql"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true"/>
+    </changeSet>
+
+</databaseChangeLog>

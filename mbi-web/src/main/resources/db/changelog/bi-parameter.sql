@@ -1,0 +1,11 @@
+INSERT INTO bi_parameter(parameter_code, parameter_value) VALUES(1, '1000000');
+INSERT INTO bi_parameter(parameter_code, parameter_value) VALUES(2, 'INFORMIX');
+INSERT INTO bi_parameter(parameter_code, parameter_value) VALUES(3, '1');
+INSERT INTO bi_parameter(parameter_code, parameter_value) VALUES(4, '10');
+INSERT INTO bi_parameter(parameter_code, parameter_value) VALUES(7, 'gif');
+INSERT INTO bi_parameter(parameter_code, parameter_value) VALUES(8, 'yyyy-MM-dd');
+INSERT INTO bi_parameter(parameter_code, parameter_value) VALUES(9, '.');
+INSERT INTO bi_parameter(parameter_code, parameter_value) VALUES(10, 'N');
+INSERT INTO bi_parameter(parameter_code, parameter_value) VALUES(11, '1');
+INSERT INTO bi_parameter(parameter_code, parameter_value) VALUES(12, 'N');
+INSERT INTO bi_parameter(parameter_code, parameter_value) VALUES(13, 'S');
