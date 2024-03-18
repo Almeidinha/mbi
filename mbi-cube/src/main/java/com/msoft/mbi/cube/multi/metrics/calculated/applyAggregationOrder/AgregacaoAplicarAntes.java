@@ -1,10 +1,10 @@
 package com.msoft.mbi.cube.multi.metrics.calculated.applyAggregationOrder;
 
 import com.msoft.mbi.cube.multi.MetricLine;
-import com.msoft.mbi.cube.multi.MapaMetricas;
-import com.msoft.mbi.cube.multi.metrics.calculated.MetricaCalculada;
+import com.msoft.mbi.cube.multi.MetricsMap;
+import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculated;
 
-public class AgregacaoAplicarAntes implements AgregacaoAplicarOrdem {
+public class AgregacaoAplicarAntes implements AggregationApplyOrder {
 
   public static AgregacaoAplicarAntes agregacaoAplicarAntes;
 
@@ -20,13 +20,13 @@ public class AgregacaoAplicarAntes implements AgregacaoAplicarOrdem {
   }
 
   @Override
-  public void populaNovoValor(MetricaCalculada metricaCalculada, Double novoValor) {
-    metricaCalculada.agregaValor(novoValor);
+  public void populateNewValue(MetricCalculated metricCalculated, Double newValue) {
+    metricCalculated.aggregateValue(newValue);
   }
 
   @Override
-  public MetricLine getLinhaMetricaUtilizar(MetricLine metricLineValoresAtuais, MapaMetricas mapaMetricas) {
-    return metricLineValoresAtuais;
+  public MetricLine getMetricLineUse(MetricLine metricLine, MetricsMap metricsMap) {
+    return metricLine;
   }
 
 }

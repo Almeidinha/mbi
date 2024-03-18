@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Set;
 
 import com.msoft.mbi.cube.exception.CubeMathParserException;
-import com.msoft.mbi.cube.multi.Cubo;
+import com.msoft.mbi.cube.multi.Cube;
 import com.msoft.mbi.cube.multi.MetricLine;
-import com.msoft.mbi.cube.multi.MapaMetricas;
+import com.msoft.mbi.cube.multi.MetricsMap;
 import com.msoft.mbi.cube.multi.calculation.Calculo;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.metrics.MetricaValorUtilizar;
@@ -22,17 +22,17 @@ public class MetricFilters {
         this.filterExpression = new Calculo(expressao);
     }
 
-    public List<Dimension> getColumnDimensionsUse(Cubo cubo) {
-        return this.metricValueUse.getDimensoesColunaUtilizar(cubo);
+    public List<Dimension> getColumnDimensionsUse(Cube cube) {
+        return this.metricValueUse.getDimensoesColunaUtilizar(cube);
     }
 
-    public boolean testCondition(MapaMetricas mapaMetricas, MetricLine metricLine) {
+    public boolean testCondition(MetricsMap metricsMap, MetricLine metricLine) {
         boolean result;
         Set<String> variables = this.filterExpression.getVariables().keySet();
         try {
             for (String variable : variables) {
                 String tituloMetrica = this.filterExpression.getVariables().get(variable);
-                Double valorMetrica = this.metricValueUse.getValor(mapaMetricas, metricLine, tituloMetrica);
+                Double valorMetrica = this.metricValueUse.getValor(metricsMap, metricLine, tituloMetrica);
                 this.filterExpression.setValorVariable(variable, valorMetrica);
             }
             result = this.filterExpression.calculaValor() == 1;

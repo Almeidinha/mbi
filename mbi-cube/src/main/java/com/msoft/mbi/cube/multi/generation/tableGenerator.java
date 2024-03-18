@@ -2,27 +2,27 @@ package com.msoft.mbi.cube.multi.generation;
 
 import java.util.List;
 
-import com.msoft.mbi.cube.multi.Cubo;
-import com.msoft.mbi.cube.multi.column.ColunaMetaData;
+import com.msoft.mbi.cube.multi.Cube;
+import com.msoft.mbi.cube.multi.column.ColumnMetaData;
 import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditions;
-import com.msoft.mbi.cube.multi.metrics.MetricaMetaData;
+import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
 
 public abstract class tableGenerator {
 
     protected Impressor impressor = null;
-    protected Cubo cube = null;
+    protected Cube cube = null;
     protected int metricsAmount = 0;
-    protected List<MetricaMetaData> visibleMetrics;
+    protected List<MetricMetaData> visibleMetrics;
     protected int currentLine = 0;
     private boolean scheduled = false;
 
     public abstract void processar(Impressor iImpressor);
 
     protected void createsSpecificStylesColumns() {
-        List<ColunaMetaData> columns = this.cube.getColunasVisualizadas();
+        List<ColumnMetaData> columns = this.cube.getColumnsViewed();
         int index = 0;
-        for (ColunaMetaData metaData : columns) {
+        for (ColumnMetaData metaData : columns) {
             String classname = CellProperty.PROPRIEDADE_CELULA_PREFIXO + index++;
             this.impressor.adicionaEstiloPropriedadeEspecificaColuna(metaData.getCellProperty(), classname);
         }

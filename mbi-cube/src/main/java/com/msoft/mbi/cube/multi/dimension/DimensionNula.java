@@ -3,26 +3,26 @@ package com.msoft.mbi.cube.multi.dimension;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.msoft.mbi.cube.multi.Cubo;
+import com.msoft.mbi.cube.multi.Cube;
 import com.msoft.mbi.cube.multi.metaData.CampoMetaData;
 
 public abstract class DimensionNula extends Dimension {
 
-    protected DimensionNula(Cubo cubo) {
+    protected DimensionNula(Cube cube) {
         super(new DimensaoMetaData(null, null, null));
-        this.cube = cubo;
+        this.cube = cube;
         this.keyValue = BRANCO;
     }
 
-    public static DimensionNula createDimensaoNula(int eixoReferencia, Cubo cubo) {
+    public static DimensionNula createDimensaoNula(int eixoReferencia, Cube cube) {
         if (eixoReferencia == CampoMetaData.LINHA) {
-            return new DimensionLinhaNula(cubo);
+            return new DimensionLinhaNula(cube);
         } else {
-            return new DimensionColunaNula(cubo);
+            return new DimensionColunaNula(cube);
         }
     }
 
-    public void processar(ResultSet set) throws SQLException {
+    public void process(ResultSet set) throws SQLException {
         throw new UnsupportedOperationException();
     }
 

@@ -1,8 +1,8 @@
 package com.msoft.mbi.cube.multi.generation;
 
-import com.msoft.mbi.cube.multi.column.ColunaMetaData;
+import com.msoft.mbi.cube.multi.column.ColumnMetaData;
 import com.msoft.mbi.cube.multi.dimension.DimensaoMetaData;
-import com.msoft.mbi.cube.multi.metrics.MetricaMetaData;
+import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
 
 public interface Impressor {
@@ -33,9 +33,9 @@ public interface Impressor {
 
     public void imprimeColuna(String propriedadeCelula, String valorFormatado, int colspan, int rowspan);
 
-    public void imprimeCabecalhoColuna(String propriedadeCelula, ColunaMetaData metaData);
+    public void imprimeCabecalhoColuna(String propriedadeCelula, ColumnMetaData metaData);
 
-    public void imprimeCabecalhoColuna(String propriedadeCelula, ColunaMetaData metaData, int colspan, int rowspan);
+    public void imprimeCabecalhoColuna(String propriedadeCelula, ColumnMetaData metaData, int colspan, int rowspan);
 
     public void imprimeCabecalhoColuna(String propriedadeCelula, String tituloColuna);
 
@@ -45,14 +45,14 @@ public interface Impressor {
                                              DimensaoMetaData dimensaoTotalizada);
 
     public void imprimeValorColuna(String propriedadeCelula, int colspan, int rowspan, Object valor,
-                                   ColunaMetaData metaData);
+                                   ColumnMetaData metaData);
 
-    public void imprimeValorColuna(String propriedadeCelula, Object valor, ColunaMetaData metaData);
+    public void imprimeValorColuna(String propriedadeCelula, Object valor, ColumnMetaData metaData);
 
     public void imprimeValorDimensaoLinha(String propriedadeCelula, int colspan, int rowspan, Object valor,
                                           DimensaoMetaData metaData);
 
-    public void imprimeValorMetrica(String propriedadeCelula, Double valor, MetricaMetaData metaData);
+    public void imprimeValorMetrica(String propriedadeCelula, Double valor, MetricMetaData metaData);
 
     public void imprimeValorNumero(String propriedadeCelula, Double valor, int nCasasDecimais);
 

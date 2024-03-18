@@ -9,9 +9,9 @@ import java.text.NumberFormat;
 import java.util.*;
 
 import com.msoft.mbi.cube.exception.CubeMathParserException;
-import com.msoft.mbi.cube.multi.column.ColunaMetaData;
+import com.msoft.mbi.cube.multi.column.ColumnMetaData;
 import com.msoft.mbi.cube.multi.dimension.DimensaoMetaData;
-import com.msoft.mbi.cube.multi.metrics.MetricaMetaData;
+import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.renderers.MascaraRenderer;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
 import com.msoft.mbi.cube.multi.renderers.linkHTML.MascaraLinkHTMLValorDinamicoRenderer;
@@ -165,7 +165,7 @@ public class ImpressorHTML implements Impressor {
         return this.aplicadorEfeitoHTML.aplicaEfeitoHTMLDinamico(valorImprimir, valorParametro, efeitoHTMLDecorator);
     }
 
-    private String getConteudoCabecalhoColuna(ColunaMetaData metaData, int colspan, int rowspan, String estiloCabecalho) {
+    private String getConteudoCabecalhoColuna(ColumnMetaData metaData, int colspan, int rowspan, String estiloCabecalho) {
         StringBuilder sb = new StringBuilder();
         sb.append("	<th colspan='").append(colspan).append("' rowspan='").append(rowspan).append("' class='").append(estiloCabecalho).append("'>");
         sb.append("		<div class='header'>");
@@ -177,7 +177,7 @@ public class ImpressorHTML implements Impressor {
 
     @Override
     public void imprimeCabecalhoDimensaoLinha(DimensaoMetaData dimensaoMetaData) {
-        if (!dimensaoMetaData.hasCampoSequencia()) {
+        if (!dimensaoMetaData.hasSequenceFields()) {
             this.imprimeCabecalhoColuna(CellProperty.PROPRIEDADE_CELULA_CABECALHO_DIMENSAO, dimensaoMetaData);
         } else {
             this.imprimeCabecalhoColuna(CellProperty.PROPRIEDADE_CELULA_CABECALHO_DIMENSAO, dimensaoMetaData, 2, 1);
@@ -217,21 +217,21 @@ public class ImpressorHTML implements Impressor {
         this.corBordasPadrao = corBorda;
     }
 
-    public String getEstiloEspeficoColuna(ColunaMetaData metaData) {
+    public String getEstiloEspeficoColuna(ColumnMetaData metaData) {
         return this.propriedadesEspecificasColuna.get(metaData.getCellProperty());
     }
 
-    private String getValorImprimir(ColunaMetaData metaData) {
-        return this.aplicaEfeitoHTML(metaData.getTitulo(), metaData.getEfeitoHTMLDecorator());
+    private String getValorImprimir(ColumnMetaData metaData) {
+        return this.aplicaEfeitoHTML(metaData.getTitle(), metaData.getHTMLEffectRenderer());
     }
 
     @Override
-    public void imprimeCabecalhoColuna(String propriedadeCelula, ColunaMetaData metaData) {
+    public void imprimeCabecalhoColuna(String propriedadeCelula, ColumnMetaData metaData) {
         this.imprime(this.getConteudoCabecalhoColuna(metaData, 1, 1, propriedadeCelula));
     }
 
     @Override
-    public void imprimeCabecalhoColuna(String propriedadeCelula, ColunaMetaData metaData, int colspan, int rowspan) {
+    public void imprimeCabecalhoColuna(String propriedadeCelula, ColumnMetaData metaData, int colspan, int rowspan) {
         this.imprime(this.getConteudoCabecalhoColuna(metaData, colspan, rowspan, propriedadeCelula));
     }
 
@@ -252,14 +252,14 @@ public class ImpressorHTML implements Impressor {
     }
 
     @Override
-    public void imprimeValorColuna(String propriedadeCelula, int colspan, int rowspan, Object valor, ColunaMetaData metaData) {
-        String valorImprimir = this.aplicaEfeitoHTMLDinamico(metaData.getFormattedValue(valor), (metaData.getFormattedValue(valor)), metaData.getEfeitosHTMLValorDecorator());
+    public void imprimeValorColuna(String propriedadeCelula, int colspan, int rowspan, Object valor, ColumnMetaData metaData) {
+        String valorImprimir = this.aplicaEfeitoHTMLDinamico(metaData.getFormattedValue(valor), (metaData.getFormattedValue(valor)), metaData.getHTMLDynamicEffectRenderer());
         this.imprimeColuna(propriedadeCelula + " " + this.getEstiloEspeficoColuna(metaData), valorImprimir, colspan, rowspan);
     }
 
     @Override
-    public void imprimeValorColuna(String propriedadeCelula, Object valor, ColunaMetaData metaData) {
-        String valorImprimir = this.aplicaEfeitoHTMLDinamico(metaData.getFormattedValue(valor), (valor != null ? valor.toString() : null), metaData.getEfeitosHTMLValorDecorator());
+    public void imprimeValorColuna(String propriedadeCelula, Object valor, ColumnMetaData metaData) {
+        String valorImprimir = this.aplicaEfeitoHTMLDinamico(metaData.getFormattedValue(valor), (valor != null ? valor.toString() : null), metaData.getHTMLDynamicEffectRenderer());
         this.imprimeColuna(propriedadeCelula + " " + this.getEstiloEspeficoColuna(metaData), valorImprimir);
     }
 
@@ -269,15 +269,15 @@ public class ImpressorHTML implements Impressor {
     }
 
     @Override
-    public void imprimeValorMetrica(String propriedadeCelula, Double valor, MetricaMetaData metaData) {
+    public void imprimeValorMetrica(String propriedadeCelula, Double valor, MetricMetaData metaData) {
         String propriedadeMetrica = this.getEstiloEspeficoColuna(metaData);
         if (propriedadeMetrica != null) {
             propriedadeCelula += " " + propriedadeMetrica;
         }
-        if (!metaData.isUtilizaPercentual())
-            this.imprimeValorNumero(propriedadeCelula, valor, metaData.getNCasasDecimais());
+        if (!metaData.isUsePercent())
+            this.imprimeValorNumero(propriedadeCelula, valor, metaData.getDecimalPlacesNumber());
         else
-            this.imprimeValorNumeroPercentual(propriedadeCelula, valor, metaData.getNCasasDecimais());
+            this.imprimeValorNumeroPercentual(propriedadeCelula, valor, metaData.getDecimalPlacesNumber());
     }
 
     @Override

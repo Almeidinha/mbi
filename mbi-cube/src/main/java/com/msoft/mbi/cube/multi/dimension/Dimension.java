@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-import com.msoft.mbi.cube.multi.Cubo;
+import com.msoft.mbi.cube.multi.Cube;
 import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.column.DataType;
 import com.msoft.mbi.cube.multi.column.TipoData;
@@ -16,7 +16,7 @@ import com.msoft.mbi.cube.multi.column.TipoTexto;
 import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditionsDimensao;
 import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditionsMetrica;
 import com.msoft.mbi.cube.multi.dimension.comparator.DimensaoComparator;
-import com.msoft.mbi.cube.multi.metrics.MetricaMetaData;
+import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -34,7 +34,7 @@ public abstract class Dimension implements Comparable<Dimension> {
     @Setter(AccessLevel.NONE)
     protected DimensaoMetaData metaData;
     @Setter(AccessLevel.NONE)
-    protected Cubo cube = null;
+    protected Cube cube = null;
     @Getter
     private Comparable<String> value = null;
     private Comparable<String> visualizationValue = null;
@@ -71,7 +71,7 @@ public abstract class Dimension implements Comparable<Dimension> {
     }
 
     public int getSize() {
-        return this.getDimensoesAbaixo().size();
+        return this.getDimensionsBelow().size();
     }
 
     public Comparable<Object> getOrderValue() {
@@ -138,7 +138,7 @@ public abstract class Dimension implements Comparable<Dimension> {
     }
 
     public boolean isSameAxis(String titulo) {
-        if ((this.metaData.getTitulo()).equals(titulo)) {
+        if ((this.metaData.getTitle()).equals(titulo)) {
             return true;
         } else if (this.parent != null && this.parent.isSameAxis(this)) {
             return this.parent.isSameAxis(titulo);
@@ -156,11 +156,11 @@ public abstract class Dimension implements Comparable<Dimension> {
             return 0;
         }
 
-        if (DimensionLinhaOutros.VALOR_OUTROS.equals(o.getValue())) {
+        if (DimensionLineOutros.VALOR_OUTROS.equals(o.getValue())) {
             return -1;
         }
 
-        if (DimensionLinhaOutros.VALOR_OUTROS.equals(this.value)) {
+        if (DimensionLineOutros.VALOR_OUTROS.equals(this.value)) {
             return 1;
         }
 
@@ -229,7 +229,7 @@ public abstract class Dimension implements Comparable<Dimension> {
             if (!Objects.equals(dimensionPai.getMetaData(), this.getDimensionTotalizedLevelUp())) {
                 Dimension dimensionAnteriorPai = dimensionPai.getPreviousDimension(parentDimensionLimit);
                 if (dimensionAnteriorPai != null) {
-                    return (Dimension) dimensionAnteriorPai.getDimensoesAbaixo().lastKey();
+                    return (Dimension) dimensionAnteriorPai.getDimensionsBelow().lastKey();
                 }
             }
         }
@@ -326,7 +326,7 @@ public abstract class Dimension implements Comparable<Dimension> {
     }
 
     private void removeLastLevelDimensionColumnLine(Dimension dimension) {
-        List<Dimension> lastLevelColumnLine = this.cube.getDimensoesUltimoNivelLinha();
+        List<Dimension> lastLevelColumnLine = this.cube.getDimensionsLastLevelLines();
         Dimensions dimensionColumnLine = lastLevelColumnLine.get(0).getDimensionsColumn();
         if (!dimensionColumnLine.isEmpty()) {
             Dimension tempDimensionColumn = (Dimension) dimensionColumnLine.firstKey();
@@ -345,11 +345,11 @@ public abstract class Dimension implements Comparable<Dimension> {
 
         int result = 0;
 
-        result += (this.metaData.isTotalizacaoParcial() || this.metaData.isExpressaoParcialTotal()) ? 1 : 0;
+        result += (this.metaData.isTotalizacaoParcial() || this.metaData.isPartialTotalExpression()) ? 1 : 0;
         result += this.metaData.isMediaParcial() ? 1 : 0;
         result += this.metaData.isExpressaoParcial() ? 1 : 0;
 
-        result += this.getDimensoesAbaixo().values().stream()
+        result += this.getDimensionsBelow().values().stream()
                 .mapToInt(Dimension::countPartialAggregatesInHierarchy)
                 .sum();
 
@@ -371,26 +371,26 @@ public abstract class Dimension implements Comparable<Dimension> {
     }
 
     public String searchDimensionAlertCellProperty() {
-        return searchDimensionAlertProperty(this.getMetaData().getAlertasCoresCelula());
+        return searchDimensionAlertProperty(this.getMetaData().getColorAlertCells());
     }
 
-    public String searchMetricAlertLineProperty(List<MetricaMetaData> metricasMetaData, String function, Dimension dimensionColumn) {
+    public String searchMetricAlertLineProperty(List<MetricMetaData> metricasMetaData, String function, Dimension dimensionColumn) {
         
-        MetricLine metricLine = this.cube.getMapaMetricas().getMetricLine(this);
+        MetricLine metricLine = this.cube.getMetricsMap().getMetricLine(this);
         if (metricLine == null) {
             return null;
         }
 
         return metricasMetaData.stream()
-                .map(metaData -> metricLine.getMetrics().get(metaData.getTitulo()))
+                .map(metaData -> metricLine.getMetrics().get(metaData.getTitle()))
                 .filter(Objects::nonNull)
-                .map(metricExpression -> metricExpression.buscaAlertaMetricaLinha(function, this, dimensionColumn))
+                .map(metricExpression -> metricExpression.searchMetricLineAlert(function, this, dimensionColumn))
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElse(null);
     }
 
-    public String searchMetricsPropertyAlertsRowFunctionsTotalColumns(List<MetricaMetaData> metricasMetaData, List<String> functions) {
+    public String searchMetricsPropertyAlertsRowFunctionsTotalColumns(List<MetricMetaData> metricasMetaData, List<String> functions) {
         String propriedadeAlerta = null;
         DimensionColunaNula dimensaoColunaNula = new DimensionColunaNula(this.cube);
         for (String funcao : functions) {
@@ -402,7 +402,7 @@ public abstract class Dimension implements Comparable<Dimension> {
         return propriedadeAlerta;
     }
 
-    public String searchMetricAlertLineProperty(List<MetricaMetaData> metricasMetaData, String funcao, List<Dimension> dimensoesColuna) {
+    public String searchMetricAlertLineProperty(List<MetricMetaData> metricasMetaData, String funcao, List<Dimension> dimensoesColuna) {
         String propriedadeAlerta = null;
         for (Dimension dimensionColuna : dimensoesColuna) {
             String propriedadeDimensaoColuna = searchMetricAlertLineProperty(metricasMetaData, funcao, dimensionColuna);
@@ -427,9 +427,9 @@ public abstract class Dimension implements Comparable<Dimension> {
         return null;
     }
 
-    public abstract void processar(ResultSet set) throws SQLException;
+    public abstract void process(ResultSet set) throws SQLException;
 
     public abstract void setKeyValue();
 
-    public abstract Dimensions getDimensoesAbaixo();
+    public abstract Dimensions getDimensionsBelow();
 }

@@ -2,32 +2,32 @@ package com.msoft.mbi.cube.multi.generation;
 
 import java.util.List;
 
-import com.msoft.mbi.cube.multi.Cubo;
+import com.msoft.mbi.cube.multi.Cube;
 import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditionsMetrica;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
-import com.msoft.mbi.cube.multi.metrics.MetricaMetaData;
+import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 
 public abstract class ImpressaoMetricaLinha {
 
-    protected List<MetricaMetaData> metricas;
+    protected List<MetricMetaData> metricas;
     private String funcaoAlertaCelulaMetrica;
     private CalculoSumarizacaoTipo tipoCalculo;
 
-    public ImpressaoMetricaLinha(List<MetricaMetaData> metricas, CalculoSumarizacaoTipo tipoCalculo, String funcaoAlertaCelulaMetrica) {
+    public ImpressaoMetricaLinha(List<MetricMetaData> metricas, CalculoSumarizacaoTipo tipoCalculo, String funcaoAlertaCelulaMetrica) {
         this.metricas = metricas;
         this.tipoCalculo = tipoCalculo;
         this.funcaoAlertaCelulaMetrica = funcaoAlertaCelulaMetrica;
     }
 
-    protected List<ColorAlertConditionsMetrica> getAlertasCoresMetrica(MetricaMetaData metaData) {
-        return metaData.getAlertasCoresCelula(this.funcaoAlertaCelulaMetrica);
+    protected List<ColorAlertConditionsMetrica> getAlertasCoresMetrica(MetricMetaData metaData) {
+        return metaData.getColorAlertCells(this.funcaoAlertaCelulaMetrica);
     }
 
-    public List<MetricaMetaData> getMetricas() {
+    public List<MetricMetaData> getMetricas() {
         return metricas;
     }
 
-    public void setMetricas(List<MetricaMetaData> metricas) {
+    public void setMetricas(List<MetricMetaData> metricas) {
         this.metricas = metricas;
     }
 
@@ -35,11 +35,11 @@ public abstract class ImpressaoMetricaLinha {
         return funcaoAlertaCelulaMetrica;
     }
 
-    protected void imprimeValorMetrica(MetricaMetaData metaData, String propriedadeCelulaLinha, Dimension dimensionEixoReferencia, Dimension dimensionLinhaAnterior, Dimension dimension, Impressor impressor, Cubo cubo, String tipoLinha) {
-        this.imprimeValorMetrica(metaData, propriedadeCelulaLinha, dimensionEixoReferencia, dimensionLinhaAnterior, dimension, impressor, cubo, this.tipoCalculo, tipoLinha);
+    protected void imprimeValorMetrica(MetricMetaData metaData, String propriedadeCelulaLinha, Dimension dimensionEixoReferencia, Dimension dimensionLinhaAnterior, Dimension dimension, Impressor impressor, Cube cube, String tipoLinha) {
+        this.imprimeValorMetrica(metaData, propriedadeCelulaLinha, dimensionEixoReferencia, dimensionLinhaAnterior, dimension, impressor, cube, this.tipoCalculo, tipoLinha);
     }
 
-    protected void imprimeValorMetrica(MetricaMetaData metaData, String propriedadeCelulaLinha, Dimension dimensionEixoReferencia, Dimension dimensionLinhaAnterior, Dimension dimension, Impressor impressor, Cubo cubo, CalculoSumarizacaoTipo tipoCalculo, String tipoLinha) {
+    protected void imprimeValorMetrica(MetricMetaData metaData, String propriedadeCelulaLinha, Dimension dimensionEixoReferencia, Dimension dimensionLinhaAnterior, Dimension dimension, Impressor impressor, Cube cube, CalculoSumarizacaoTipo tipoCalculo, String tipoLinha) {
         Double valor = tipoCalculo.calcula(dimensionEixoReferencia, dimensionLinhaAnterior, dimension, metaData, tipoLinha);
         String propriedadeAplicar = propriedadeCelulaLinha;
         String nomeEstilo = dimensionEixoReferencia.searchAlertMetricCell(this.getAlertasCoresMetrica(metaData), valor, dimension);
@@ -49,10 +49,10 @@ public abstract class ImpressaoMetricaLinha {
         this.imprimeValorMetrica(metaData, propriedadeAplicar, valor, impressor);
     }
 
-    protected void imprimeValorMetrica(MetricaMetaData metaData, String propriedadeAplicar, Double valor, Impressor impressor) {
+    protected void imprimeValorMetrica(MetricMetaData metaData, String propriedadeAplicar, Double valor, Impressor impressor) {
         impressor.imprimeValorMetrica(propriedadeAplicar, valor, metaData);
     }
 
-    public abstract void imprimeValoresMetrica(Dimension dimensionLinha, Dimension dimensionLinhaAnterior, Dimension dimensionColuna, String propriedadeCelula, Impressor impressor, Cubo cubo, String tipoLinha);
+    public abstract void imprimeValoresMetrica(Dimension dimensionLinha, Dimension dimensionLinhaAnterior, Dimension dimensionColuna, String propriedadeCelula, Impressor impressor, Cube cube, String tipoLinha);
 
 }

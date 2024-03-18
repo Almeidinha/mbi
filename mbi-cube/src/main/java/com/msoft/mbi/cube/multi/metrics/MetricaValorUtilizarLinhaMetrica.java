@@ -2,9 +2,9 @@ package com.msoft.mbi.cube.multi.metrics;
 
 import java.util.List;
 
-import com.msoft.mbi.cube.multi.Cubo;
+import com.msoft.mbi.cube.multi.Cube;
 import com.msoft.mbi.cube.multi.MetricLine;
-import com.msoft.mbi.cube.multi.MapaMetricas;
+import com.msoft.mbi.cube.multi.MetricsMap;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 
 public class MetricaValorUtilizarLinhaMetrica implements MetricaValorUtilizar {
@@ -19,19 +19,19 @@ public class MetricaValorUtilizarLinhaMetrica implements MetricaValorUtilizar {
     }
 
     @Override
-    public Double getValor(MapaMetricas mapaMetricas, MetricLine metricLine, String tituloCampo) {
-        Metrica expressao = metricLine.getMetrics().get(tituloCampo);
-        return expressao.getValor(mapaMetricas, metricLine, (MetricLine) null);
+    public Double getValor(MetricsMap metricsMap, MetricLine metricLine, String tituloCampo) {
+        Metric expressao = metricLine.getMetrics().get(tituloCampo);
+        return expressao.getValor(metricsMap, metricLine, (MetricLine) null);
     }
 
     @Override
-    public Double calculaValor(Metrica metrica, MetricLine metricLine, MapaMetricas mapaMetricas) {
-        return metrica.calcula(mapaMetricas, metricLine, (MetricLine) null);
+    public Double calculaValor(Metric metric, MetricLine metricLine, MetricsMap metricsMap) {
+        return metric.calculate(metricsMap, metricLine, (MetricLine) null);
     }
 
     @Override
-    public List<Dimension> getDimensoesColunaUtilizar(Cubo cubo) {
-        return cubo.getDimensoesUltimoNivelColuna();
+    public List<Dimension> getDimensoesColunaUtilizar(Cube cube) {
+        return cube.getDimensionsLastLevelColumns();
     }
 
 }

@@ -16,7 +16,7 @@ public class DimensaoOutrosMetaData extends DimensaoMetaData {
     }
 
     @Override
-    public List<ColorAlertConditionsDimensao> getAlertasCoresCelula() {
+    public List<ColorAlertConditionsDimensao> getColorAlertCells() {
         return new ArrayList<>();
     }
 
@@ -26,14 +26,14 @@ public class DimensaoOutrosMetaData extends DimensaoMetaData {
     }
 
     public DimensaoOutrosMetaData(DimensaoMetaData metaDataDimensaoRanking) {
-        super(metaDataDimensaoRanking.getTitulo(), metaDataDimensaoRanking.getColuna(), metaDataDimensaoRanking.getTipo());
+        super(metaDataDimensaoRanking.getTitle(), metaDataDimensaoRanking.getColuna(), metaDataDimensaoRanking.getTipo());
         this.metaDataDimensaoRanking = metaDataDimensaoRanking;
         this.setCubo(metaDataDimensaoRanking.getCubo());
         this.setEixoReferencia(DimensaoMetaData.LINHA);
         this.setParent(metaDataDimensaoRanking.getParent());
         this.setNivelAcimaTotalizado(metaDataDimensaoRanking.getNivelAcimaTotalizado());
         this.setAscendente(false);
-        this.setHasCampoSequencia(metaDataDimensaoRanking.hasCampoSequencia());
+        this.setHasSequenceFields(metaDataDimensaoRanking.hasSequenceFields());
         this.setComparator(DimensaoPadraoComparator.getInstance());
     }
 

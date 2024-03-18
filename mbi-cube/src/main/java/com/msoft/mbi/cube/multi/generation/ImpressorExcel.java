@@ -23,10 +23,10 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
 
 import com.msoft.mbi.cube.exception.CubeMathParserException;
-import com.msoft.mbi.cube.multi.column.ColunaMetaData;
+import com.msoft.mbi.cube.multi.column.ColumnMetaData;
 import com.msoft.mbi.cube.multi.column.TipoData;
 import com.msoft.mbi.cube.multi.dimension.DimensaoMetaData;
-import com.msoft.mbi.cube.multi.metrics.MetricaMetaData;
+import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
 
 public class ImpressorExcel implements Impressor {
@@ -233,12 +233,12 @@ public class ImpressorExcel implements Impressor {
             }
             HSSFCellStyle novoStilo = this.copiaEstilo(this.estilosExcel.get(propriedadeCelula));
             novoStilo.setAlignment(HorizontalAlignment.valueOf(metaData.getCellProperty().getAlignment().toUpperCase()));
-            this.imprimeColuna(novoStilo, valor, colspan, rowspan, (short) (this.indicesCelulaDimensoesLinha.get(metaData.getTitulo()) + this.auxCampoSequencia));
+            this.imprimeColuna(novoStilo, valor, colspan, rowspan, (short) (this.indicesCelulaDimensoesLinha.get(metaData.getTitle()) + this.auxCampoSequencia));
         } else {
             HSSFCellStyle novoStilo = this.copiaEstilo(this.estilosExcel.get(propriedadeCelula));
             novoStilo.setAlignment(HorizontalAlignment.valueOf(metaData.getCellProperty().getAlignment().toUpperCase()));
 
-            this.imprimeColuna(novoStilo, metaData.getFormattedValue(valor), colspan, rowspan, (short) (this.indicesCelulaDimensoesLinha.get(metaData.getTitulo()) + this.auxCampoSequencia));
+            this.imprimeColuna(novoStilo, metaData.getFormattedValue(valor), colspan, rowspan, (short) (this.indicesCelulaDimensoesLinha.get(metaData.getTitle()) + this.auxCampoSequencia));
         }
         this.auxCampoSequencia = 0;
     }
@@ -269,17 +269,17 @@ public class ImpressorExcel implements Impressor {
     @Override
     public void imprimeCabecalhoDimensaoLinha(DimensaoMetaData dimensaoMetaData) {
         int decremento = 1;
-        if (!dimensaoMetaData.hasCampoSequencia()) {
-            this.imprimeColuna(this.estilosExcel.get(CellProperty.PROPRIEDADE_CELULA_CABECALHO_DIMENSAO), dimensaoMetaData.getTitulo());
+        if (!dimensaoMetaData.hasSequenceFields()) {
+            this.imprimeColuna(this.estilosExcel.get(CellProperty.PROPRIEDADE_CELULA_CABECALHO_DIMENSAO), dimensaoMetaData.getTitle());
         } else {
             decremento++;
-            this.imprimeColuna(this.estilosExcel.get(CellProperty.PROPRIEDADE_CELULA_CABECALHO_DIMENSAO), dimensaoMetaData.getTitulo(), 2, 1);
+            this.imprimeColuna(this.estilosExcel.get(CellProperty.PROPRIEDADE_CELULA_CABECALHO_DIMENSAO), dimensaoMetaData.getTitle(), 2, 1);
         }
-        this.indicesCelulaDimensoesLinha.put(dimensaoMetaData.getTitulo(), (short) (this.proximoIndiceCelula - decremento));
+        this.indicesCelulaDimensoesLinha.put(dimensaoMetaData.getTitle(), (short) (this.proximoIndiceCelula - decremento));
     }
 
     public void imprimeCabecalhoTotalParcial(String propriedadeCelula, String valor, int colspan, int rowspan, DimensaoMetaData dimensaoTotalizada) {
-        this.imprimeColuna(this.estilosExcel.get(propriedadeCelula), valor, colspan, rowspan, this.indicesCelulaDimensoesLinha.get(dimensaoTotalizada.getTitulo()));
+        this.imprimeColuna(this.estilosExcel.get(propriedadeCelula), valor, colspan, rowspan, this.indicesCelulaDimensoesLinha.get(dimensaoTotalizada.getTitle()));
     }
 
     private void imprimeValorDecimalPercentual(String propriedadeCelula, Double valor, int nCasasDecimais) {
@@ -312,7 +312,7 @@ public class ImpressorExcel implements Impressor {
         this.imprimeValorDecimal(valor, estilo);
     }
 
-    private String getEstiloTotalColuna(ColunaMetaData metaData, String estiloAplicar) {
+    private String getEstiloTotalColuna(ColumnMetaData metaData, String estiloAplicar) {
         CellProperty propriedadeMetrica = metaData.getCellProperty();
         String nomeEstiloEspecifico = this.propriedadesEspecificasColuna.get(propriedadeMetrica);
         String nomeEstiloTotal = estiloAplicar + "_" + nomeEstiloEspecifico;
@@ -374,10 +374,10 @@ public class ImpressorExcel implements Impressor {
     }
 
     @Override
-    public void imprimeCabecalhoColuna(String propriedadeCelula, ColunaMetaData metaData) {
+    public void imprimeCabecalhoColuna(String propriedadeCelula, ColumnMetaData metaData) {
         // propriedadeCelula = this.getEstiloTotalColuna(metaData, propriedadeCelula);
-        this.imprimeColuna(this.estilosExcel.get(propriedadeCelula), metaData.getTitulo());
-        this.indicesCelulaDimensoesLinha.put(metaData.getTitulo(), (short) (this.proximoIndiceCelula - 1));
+        this.imprimeColuna(this.estilosExcel.get(propriedadeCelula), metaData.getTitle());
+        this.indicesCelulaDimensoesLinha.put(metaData.getTitle(), (short) (this.proximoIndiceCelula - 1));
     }
 
     @Override
@@ -393,21 +393,21 @@ public class ImpressorExcel implements Impressor {
 
     @Override
     public void imprimeCampoSequencia(DimensaoMetaData dimensaoMetaData, String sequencia, int colspan, int rowspan) {
-        this.imprimeColuna(this.estilosExcel.get(CellProperty.PROPRIEDADE_CELULA_SEQUENCIA), sequencia, colspan, rowspan, (short) (this.indicesCelulaDimensoesLinha.get(dimensaoMetaData.getTitulo())));
+        this.imprimeColuna(this.estilosExcel.get(CellProperty.PROPRIEDADE_CELULA_SEQUENCIA), sequencia, colspan, rowspan, (short) (this.indicesCelulaDimensoesLinha.get(dimensaoMetaData.getTitle())));
         this.auxCampoSequencia++;
     }
 
     @Override
-    public void imprimeValorMetrica(String propriedadeCelula, Double valor, MetricaMetaData metaData) {
+    public void imprimeValorMetrica(String propriedadeCelula, Double valor, MetricMetaData metaData) {
         String nomeEstiloTotal = this.getEstiloTotalColuna(metaData, propriedadeCelula);
         if (this.mantemMascaras) {
             this.imprimeColuna(this.estilosExcel.get(nomeEstiloTotal), metaData.getFormattedValue(valor));
         } else {
             if (valor != null) {
-                if (!metaData.isUtilizaPercentual())
-                    this.imprimeValorNumero(nomeEstiloTotal, valor, metaData.getNCasasDecimais());
+                if (!metaData.isUsePercent())
+                    this.imprimeValorNumero(nomeEstiloTotal, valor, metaData.getDecimalPlacesNumber());
                 else
-                    this.imprimeValorNumeroPercentual(nomeEstiloTotal, valor, metaData.getNCasasDecimais());
+                    this.imprimeValorNumeroPercentual(nomeEstiloTotal, valor, metaData.getDecimalPlacesNumber());
             } else {
                 this.imprimeColuna(this.estilosExcel.get(nomeEstiloTotal), "");
             }
@@ -416,12 +416,12 @@ public class ImpressorExcel implements Impressor {
     }
 
     @Override
-    public void imprimeValorColuna(String propriedadeCelula, int colspan, int rowspan, Object valor, ColunaMetaData metaData) {
+    public void imprimeValorColuna(String propriedadeCelula, int colspan, int rowspan, Object valor, ColumnMetaData metaData) {
         this.imprimeColuna(this.estilosExcel.get(propriedadeCelula), metaData.getFormattedValue(valor), colspan, rowspan);
     }
 
     @Override
-    public void imprimeValorColuna(String propriedadeCelula, Object valor, ColunaMetaData metaData) {
+    public void imprimeValorColuna(String propriedadeCelula, Object valor, ColumnMetaData metaData) {
         if (valor instanceof Date) {
             this.imprimeColuna(this.estilosExcel.get(propriedadeCelula), valor, 1, 1, this.proximoIndiceCelula);
         } else {
@@ -435,8 +435,8 @@ public class ImpressorExcel implements Impressor {
     }
 
     @Override
-    public void imprimeCabecalhoColuna(String propriedadeCelula, ColunaMetaData metaData, int colspan, int rowspan) {
-        this.imprimeColuna(this.estilosExcel.get(propriedadeCelula), metaData.getTitulo(), colspan, rowspan);
+    public void imprimeCabecalhoColuna(String propriedadeCelula, ColumnMetaData metaData, int colspan, int rowspan) {
+        this.imprimeColuna(this.estilosExcel.get(propriedadeCelula), metaData.getTitle(), colspan, rowspan);
     }
 
     @Override

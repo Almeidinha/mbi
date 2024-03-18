@@ -3,8 +3,8 @@ package com.msoft.mbi.cube.multi.dimension;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.msoft.mbi.cube.multi.Cubo;
-import com.msoft.mbi.cube.multi.column.ColunaMetaData;
+import com.msoft.mbi.cube.multi.Cube;
+import com.msoft.mbi.cube.multi.column.ColumnMetaData;
 import com.msoft.mbi.cube.multi.column.DataType;
 import com.msoft.mbi.cube.multi.column.TipoData;
 import com.msoft.mbi.cube.multi.column.TipoDecimal;
@@ -26,7 +26,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class DimensaoMetaData extends ColunaMetaData {
+public class DimensaoMetaData extends ColumnMetaData {
 
     private DimensaoMetaData parent = null;
     @Setter(AccessLevel.NONE)
@@ -45,7 +45,7 @@ public class DimensaoMetaData extends ColunaMetaData {
     private DimensaoMetaData filho = null;
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    private transient Cubo cube = null;
+    private transient Cube cube = null;
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     private final DataType<?> tipo;
@@ -53,7 +53,7 @@ public class DimensaoMetaData extends ColunaMetaData {
     private int qtdNiveisAbaixoComSequencia = 0;
     private final List<ColorAlertConditionsDimensao> alertasCoresLinha;
     @Setter(AccessLevel.NONE)
-    private final List<ColorAlertConditionsDimensao> alertasCoresCelula;
+    private final List<ColorAlertConditionsDimensao> colorAlertCells;
     private DimensaoComparator comparator;
     private transient DimensaoMetaData nivelAcimaTotalizado = null;
     private int eixoReferencia = LINHA;
@@ -66,12 +66,12 @@ public class DimensaoMetaData extends ColunaMetaData {
         super(titulo, CampoMetaData.DIMENSAO);
         this.coluna = coluna;
         this.tipo = tipo;
-        this.alertasCoresCelula = new ArrayList<>();
+        this.colorAlertCells = new ArrayList<>();
         this.alertasCoresLinha = new ArrayList<>();
         this.comparator = DimensaoPadraoComparator.getInstance();
     }
 
-    public Cubo getCubo() {
+    public Cube getCubo() {
         return cube;
     }
 
@@ -93,14 +93,14 @@ public class DimensaoMetaData extends ColunaMetaData {
 
     public void setFilho(DimensaoMetaData filho) {
         this.filho = filho;
-        if (filho.hasCampoSequencia()) {
+        if (filho.hasSequenceFields()) {
             incrementaNiveis(2);
         } else {
             incrementaNiveis(1);
         }
     }
 
-    public void setCubo(Cubo cube) {
+    public void setCubo(Cube cube) {
         this.cube = cube;
     }
 
@@ -130,7 +130,7 @@ public class DimensaoMetaData extends ColunaMetaData {
     }
 
     private void addAlertaCorCelula(ColorAlertConditionsDimensao alertaCor) {
-        this.alertasCoresCelula.add(alertaCor);
+        this.colorAlertCells.add(alertaCor);
     }
 
     private void addAlertaCor(ColorAlertConditionsDimensao alertaCor) {
@@ -143,7 +143,7 @@ public class DimensaoMetaData extends ColunaMetaData {
 
     @Override
     public String toString() {
-        return this.getTitulo();
+        return this.getTitle();
     }
 
     public static DimensaoMetaData factory(CampoMetaData campoMetaData) {
@@ -176,7 +176,7 @@ public class DimensaoMetaData extends ColunaMetaData {
             DimensaoMetaData dimensaoOrdenacao = factory(campoMetaData.getCampoOrdenacao());
             dimensaoMetaData.setDimensaoOrdenacao(dimensaoOrdenacao);
         }
-        ColunaMetaData.factory(dimensaoMetaData, campoMetaData);
+        ColumnMetaData.factory(dimensaoMetaData, campoMetaData);
         dimensaoMetaData.setAscendente(!("DESC".equals(campoMetaData.getSentidoOrdem()) && campoMetaData.getOrdem() > 0));
 
         ColorAlertProperties propriedadeAlerta = null;
@@ -196,7 +196,7 @@ public class DimensaoMetaData extends ColunaMetaData {
         dimensaoMetaData.setTotalizacaoParcial(campoMetaData.isTotalizacaoParcial());
         dimensaoMetaData.setMediaParcial(campoMetaData.isMediaParcial());
         dimensaoMetaData.setExpressaoParcial(campoMetaData.isExpressaoNaParcial());
-        dimensaoMetaData.setExpressaoParcialTotal(campoMetaData.isExpressaoNaParcialTotal());
+        dimensaoMetaData.setPartialTotalExpression(campoMetaData.isExpressaoNaParcialTotal());
         return dimensaoMetaData;
     }
 
@@ -219,13 +219,13 @@ public class DimensaoMetaData extends ColunaMetaData {
     }
 
     @Override
-    public String getTextoValorNulo() {
+    public String getTextNullValue() {
         return "";
     }
 
     @Override
-    public void imprimeValorTipoCampo(Object valor, String propriedadeCelula, Impressor impressor) {
-        impressor.imprimeValorColuna(propriedadeCelula, valor, this);
+    public void printFieldTypeValue(Object valor, String cellProperty, Impressor impressor) {
+        impressor.imprimeValorColuna(cellProperty, valor, this);
     }
 
     public String getEstiloPadrao() {

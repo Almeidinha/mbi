@@ -1,10 +1,10 @@
 package com.msoft.mbi.cube.multi.metrics.calculated.applyAggregationOrder;
 
 import com.msoft.mbi.cube.multi.MetricLine;
-import com.msoft.mbi.cube.multi.MapaMetricas;
-import com.msoft.mbi.cube.multi.metrics.calculated.MetricaCalculada;
+import com.msoft.mbi.cube.multi.MetricsMap;
+import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculated;
 
-public class AgregacaoAplicarDepois implements AgregacaoAplicarOrdem {
+public class AgregacaoAplicarDepois implements AggregationApplyOrder {
 
     private AgregacaoAplicarDepois() {
         super();
@@ -20,13 +20,13 @@ public class AgregacaoAplicarDepois implements AgregacaoAplicarOrdem {
     }
 
     @Override
-    public void populaNovoValor(MetricaCalculada metricaCalculada, Double novoValor) {
-        metricaCalculada.setValor(novoValor);
+    public void populateNewValue(MetricCalculated metricCalculated, Double newValue) {
+        metricCalculated.setValue(newValue);
     }
 
     @Override
-    public MetricLine getLinhaMetricaUtilizar(MetricLine metricLineValoresAtuais, MapaMetricas mapaMetricas) {
-        return mapaMetricas.getMetricLine(metricLineValoresAtuais.getDimensionLine(), metricLineValoresAtuais.getDimensionColumn());
+    public MetricLine getMetricLineUse(MetricLine metricLine, MetricsMap metricsMap) {
+        return metricsMap.getMetricLine(metricLine.getDimensionLine(), metricLine.getDimensionColumn());
     }
 
 }

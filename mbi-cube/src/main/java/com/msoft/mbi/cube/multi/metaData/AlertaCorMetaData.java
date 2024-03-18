@@ -4,13 +4,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.msoft.mbi.cube.multi.metrics.MetricaMetaData;
-import com.msoft.mbi.cube.multi.metrics.calculated.MetricaCalculadaAcumuladoParticipacaoAHMetaData;
-import com.msoft.mbi.cube.multi.metrics.calculated.MetricaCalculadaAcumuladoParticipacaoAVMetaData;
-import com.msoft.mbi.cube.multi.metrics.calculated.MetricaCalculadaAcumuladoValorAVMetaData;
-import com.msoft.mbi.cube.multi.metrics.calculated.MetricaCalculadaEvolucaoAHMetaData;
-import com.msoft.mbi.cube.multi.metrics.calculated.MetricaCalculadaParticipacaoAHMetaData;
-import com.msoft.mbi.cube.multi.metrics.calculated.MetricaCalculadaParticipacaoAVMetaData;
+import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
+import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedAcumuladoParticipacaoAHMetaData;
+import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedAcumuladoParticipacaoAVMetaData;
+import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedAcumuladoValorAVMetaData;
+import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedEvolucaoAHMetaData;
+import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedParticipacaoAHMetaData;
+import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedParticipacaoAVMetaData;
 import lombok.Setter;
 
 public class AlertaCorMetaData implements Serializable {
@@ -98,9 +98,9 @@ public class AlertaCorMetaData implements Serializable {
         this.italico = italico;
         this.tamanhoFonte = tamanhoFonte;
         this.funcao = funcao;
-        FUNCOES_AH.add(MetricaMetaData.TOTALIZACAO_AH);
-        FUNCOES_AH.add(MetricaMetaData.MEDIA_AH);
-        FUNCOES_AH.add(MetricaMetaData.VALOR_ACUMULADO_AH);
+        FUNCOES_AH.add(MetricMetaData.TOTAL_AH);
+        FUNCOES_AH.add(MetricMetaData.MEDIA_AH);
+        FUNCOES_AH.add(MetricMetaData.ACCUMULATED_VALUE_AH);
     }
 
     public int getSequencia() {
@@ -148,12 +148,12 @@ public class AlertaCorMetaData implements Serializable {
     }
 
     public boolean isFuncaoCampoRelativo() {
-        return this.funcao.equals(MetricaCalculadaParticipacaoAVMetaData.AV)
-                || this.funcao.equals(MetricaCalculadaAcumuladoParticipacaoAVMetaData.PARTICIPACAO_ACUMULADA_AV)
-                || this.funcao.equals(MetricaCalculadaAcumuladoValorAVMetaData.VALOR_ACUMULADO_AV)
-                || this.funcao.equals(MetricaCalculadaAcumuladoParticipacaoAHMetaData.PARTICIPACAO_ACUMULADA_AH)
-                || this.funcao.equals(MetricaCalculadaParticipacaoAHMetaData.PARTICIPACAO_AH)
-                || this.funcao.equals(MetricaCalculadaEvolucaoAHMetaData.AH);
+        return this.funcao.equals(MetricCalculatedParticipacaoAVMetaData.AV)
+                || this.funcao.equals(MetricCalculatedAcumuladoParticipacaoAVMetaData.PARTICIPACAO_ACUMULADA_AV)
+                || this.funcao.equals(MetricCalculatedAcumuladoValorAVMetaData.VALOR_ACUMULADO_AV)
+                || this.funcao.equals(MetricCalculatedAcumuladoParticipacaoAHMetaData.PARTICIPACAO_ACUMULADA_AH)
+                || this.funcao.equals(MetricCalculatedParticipacaoAHMetaData.PARTICIPACAO_AH)
+                || this.funcao.equals(MetricCalculatedEvolucaoAHMetaData.AH);
     }
 
     public static List<String> getListaFuncoesTotalizacaoHorizontal() {

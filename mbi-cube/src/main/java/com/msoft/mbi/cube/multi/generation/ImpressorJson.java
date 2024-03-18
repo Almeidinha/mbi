@@ -3,9 +3,9 @@ package com.msoft.mbi.cube.multi.generation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.msoft.mbi.cube.multi.column.ColunaMetaData;
+import com.msoft.mbi.cube.multi.column.ColumnMetaData;
 import com.msoft.mbi.cube.multi.dimension.DimensaoMetaData;
-import com.msoft.mbi.cube.multi.metrics.MetricaMetaData;
+import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.renderers.MascaraRenderer;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
 import com.msoft.mbi.cube.multi.renderers.linkHTML.MascaraLinkHTMLValorDinamicoRenderer;
@@ -152,18 +152,18 @@ public class ImpressorJson implements Impressor {
     }
 
     @Override
-    public void imprimeCabecalhoColuna(String property, ColunaMetaData metaData) {
+    public void imprimeCabecalhoColuna(String property, ColumnMetaData metaData) {
         ObjectNode jsonObject = this.mapper.createObjectNode();
-        jsonObject.put("title", metaData.getTitulo());
+        jsonObject.put("title", metaData.getTitle());
         jsonObject.set("properties", this.getHeaderColumnContent(metaData, 1, 1, property));
 
         headers.add(jsonObject);
     }
 
     @Override
-    public void imprimeCabecalhoColuna(String property, ColunaMetaData metaData, int colspan, int rowspan) {
+    public void imprimeCabecalhoColuna(String property, ColumnMetaData metaData, int colspan, int rowspan) {
         ObjectNode jsonObject = this.mapper.createObjectNode();
-        jsonObject.put("title", metaData.getTitulo());
+        jsonObject.put("title", metaData.getTitle());
         jsonObject.set("properties", this.getHeaderColumnContent(metaData, colspan, rowspan, property));
         this.headers.add(jsonObject);
     }
@@ -178,7 +178,7 @@ public class ImpressorJson implements Impressor {
 
     @Override
     public void imprimeCabecalhoDimensaoLinha(DimensaoMetaData dimensaoMetaData) {
-        if (!dimensaoMetaData.hasCampoSequencia()) {
+        if (!dimensaoMetaData.hasSequenceFields()) {
             this.imprimeCabecalhoColuna(CellProperty.PROPRIEDADE_CELULA_CABECALHO_DIMENSAO, dimensaoMetaData);
         } else {
             this.imprimeCabecalhoColuna(CellProperty.PROPRIEDADE_CELULA_CABECALHO_DIMENSAO, dimensaoMetaData, 2, 1);
@@ -191,14 +191,14 @@ public class ImpressorJson implements Impressor {
     }
 
     @Override
-    public void imprimeValorColuna(String cellProperty, int colspan, int rowspan, Object value, ColunaMetaData metaData) {
-        String printValue = this.applyDynamicHtmlEffect(metaData.getFormattedValue(value), (metaData.getFormattedValue(value)), metaData.getEfeitosHTMLValorDecorator());
+    public void imprimeValorColuna(String cellProperty, int colspan, int rowspan, Object value, ColumnMetaData metaData) {
+        String printValue = this.applyDynamicHtmlEffect(metaData.getFormattedValue(value), (metaData.getFormattedValue(value)), metaData.getHTMLDynamicEffectRenderer());
         this.imprimeColuna(cellProperty + " " + this.getColumnSpecificStyle(metaData), printValue, colspan, rowspan);
     }
 
     @Override
-    public void imprimeValorColuna(String cellProperty, Object value, ColunaMetaData metaData) {
-        String printValue = this.applyDynamicHtmlEffect(metaData.getFormattedValue(value), (value != null ? value.toString() : null), metaData.getEfeitosHTMLValorDecorator());
+    public void imprimeValorColuna(String cellProperty, Object value, ColumnMetaData metaData) {
+        String printValue = this.applyDynamicHtmlEffect(metaData.getFormattedValue(value), (value != null ? value.toString() : null), metaData.getHTMLDynamicEffectRenderer());
         this.imprimeColuna(cellProperty + " " + this.getColumnSpecificStyle(metaData), printValue);
     }
 
@@ -209,15 +209,15 @@ public class ImpressorJson implements Impressor {
     }
 
     @Override
-    public void imprimeValorMetrica(String property, Double valor, MetricaMetaData metaData) {
+    public void imprimeValorMetrica(String property, Double valor, MetricMetaData metaData) {
         String propriedadeMetrica = this.getColumnSpecificStyle(metaData);
         if (propriedadeMetrica != null) {
             property += " " + propriedadeMetrica;
         }
-        if (!metaData.isUtilizaPercentual())
-            this.imprimeValorNumero(property, valor, metaData.getNCasasDecimais());
+        if (!metaData.isUsePercent())
+            this.imprimeValorNumero(property, valor, metaData.getDecimalPlacesNumber());
         else
-            this.imprimeValorNumeroPercentual(property, valor, metaData.getNCasasDecimais());
+            this.imprimeValorNumeroPercentual(property, valor, metaData.getDecimalPlacesNumber());
     }
 
     @Override
@@ -268,7 +268,7 @@ public class ImpressorJson implements Impressor {
         return numberInstance.format(valor.doubleValue());
     }
 
-    public String getColumnSpecificStyle(ColunaMetaData metaData) {
+    public String getColumnSpecificStyle(ColumnMetaData metaData) {
         return this.propriedadesEspecificasColuna.get(metaData.getCellProperty());
     }
 
@@ -309,7 +309,7 @@ public class ImpressorJson implements Impressor {
 
     }
 
-    private ObjectNode getHeaderColumnContent(ColunaMetaData metaData, int colspan, int rowspan, String headerStyle) {
+    private ObjectNode getHeaderColumnContent(ColumnMetaData metaData, int colspan, int rowspan, String headerStyle) {
         ObjectNode jsonObject = this.mapper.createObjectNode();
 
         jsonObject.put("colspan", colspan);
@@ -320,8 +320,8 @@ public class ImpressorJson implements Impressor {
         return jsonObject;
     }
 
-    private String getPrintValue(ColunaMetaData metaData) {
-        return this.applyHtmlEffect(metaData.getTitulo(), metaData.getEfeitoHTMLDecorator());
+    private String getPrintValue(ColumnMetaData metaData) {
+        return this.applyHtmlEffect(metaData.getTitle(), metaData.getHTMLEffectRenderer());
     }
 
     private String applyHtmlEffect(Object value, MascaraRenderer htmlDecoratorEffect) {

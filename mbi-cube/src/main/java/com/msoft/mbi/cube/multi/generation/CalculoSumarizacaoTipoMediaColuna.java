@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.dimension.DimensionColunaNula;
-import com.msoft.mbi.cube.multi.metrics.MetricaMetaData;
+import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 
 public class CalculoSumarizacaoTipoMediaColuna implements CalculoSumarizacaoTipo {
 
@@ -22,16 +22,16 @@ public class CalculoSumarizacaoTipoMediaColuna implements CalculoSumarizacaoTipo
     }
 
     @Override
-    public Double calcula(Dimension dimensionEixoReferencia, Dimension dimensionLinhaAnterior, Dimension dimension, MetricaMetaData metaData, String tipoLinha) {
+    public Double calcula(Dimension dimensionEixoReferencia, Dimension dimensionLinhaAnterior, Dimension dimension, MetricMetaData metaData, String tipoLinha) {
         DimensionColunaNula dimensaoColunaNula = new DimensionColunaNula(dimension.getCube());
         Double soma = metaData.calculaValorTotalParcial(dimensionEixoReferencia, dimensaoColunaNula);
-        int qtdDimensoesCol = dimensionEixoReferencia.getCube().getDimensoesUltimoNivelColuna().size();
+        int qtdDimensoesCol = dimensionEixoReferencia.getCube().getDimensionsLastLevelColumns().size();
         int qtdDimensoesLin = 0;
         Double resultado;
 
         if (tipoLinha.equals(CalculoSumarizacaoTipo.MEDIA)) {
             if (dimensionEixoReferencia.toString().lastIndexOf("[") == 6) {
-                Iterator<Dimension> it = dimensionEixoReferencia.getCube().getDimensoesUltimoNivelLinha().iterator();
+                Iterator<Dimension> it = dimensionEixoReferencia.getCube().getDimensionsLastLevelLines().iterator();
 
                 while (it.hasNext()) {
                     Dimension dim = it.next();

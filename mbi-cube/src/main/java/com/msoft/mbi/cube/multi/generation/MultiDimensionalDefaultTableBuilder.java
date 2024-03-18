@@ -2,24 +2,24 @@ package com.msoft.mbi.cube.multi.generation;
 
 import java.util.*;
 
-import com.msoft.mbi.cube.multi.Cubo;
+import com.msoft.mbi.cube.multi.Cube;
 import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditions;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.dimension.DimensionColunaNula;
-import com.msoft.mbi.cube.multi.dimension.DimensionLinha;
+import com.msoft.mbi.cube.multi.dimension.DimensionLine;
 import com.msoft.mbi.cube.multi.dimension.DimensaoMetaData;
 import com.msoft.mbi.cube.multi.dimension.Dimensions;
 import com.msoft.mbi.cube.multi.metaData.AlertaCorMetaData;
-import com.msoft.mbi.cube.multi.metrics.MetricaMetaData;
-import com.msoft.mbi.cube.multi.metrics.calculated.MetricaCalculadaEvolucaoAHMetaData;
+import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
+import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedEvolucaoAHMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricaCalculadaFuncaoMetaData;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
 
 public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
-    private final List<MetricaMetaData> metricasTotalizaSomaColunas;
-    private List<MetricaMetaData> metricasTotalizaSomaGeralColunas;
-    private final List<MetricaMetaData> metricasTotalizaMediaColunas;
-    private final List<MetricaMetaData> metricasAH;
+    private final List<MetricMetaData> metricasTotalizaSomaColunas;
+    private List<MetricMetaData> metricasTotalizaSomaGeralColunas;
+    private final List<MetricMetaData> metricasTotalizaMediaColunas;
+    private final List<MetricMetaData> metricasAH;
     private ImpressaoMetricaLinhaAtual impressaoMetricaLinha = null;
     private DimensionColunaNula dimensaoColunaNula = null;
     private String alertaMetricaLinhaAtual;
@@ -27,16 +27,16 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
 
     private Dimension dimensionLinhaAnterior = null;
 
-    public MultiDimensionalDefaultTableBuilder(Cubo cubo) {
-        this.cube = cubo;
-        dimensaoColunaNula = new DimensionColunaNula(cubo);
+    public MultiDimensionalDefaultTableBuilder(Cube cube) {
+        this.cube = cube;
+        dimensaoColunaNula = new DimensionColunaNula(cube);
         this.metricsAmount = 0;
         this.visibleMetrics = new ArrayList<>();
         this.metricasTotalizaSomaColunas = new ArrayList<>();
         this.metricasTotalizaSomaGeralColunas = new ArrayList<>();
         this.metricasTotalizaMediaColunas = new ArrayList<>();
         this.metricasAH = new ArrayList<>();
-        this.dimensoesColunaUltimoNivel = this.cube.getDimensoesUltimoNivelColuna();
+        this.dimensoesColunaUltimoNivel = this.cube.getDimensionsLastLevelColumns();
         this.populaMetricasVisualizadas();
         this.impressaoMetricaLinha = new ImpressaoMetricaLinhaAtual(this.visibleMetrics);
     }
@@ -57,9 +57,9 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
             this.impressor.abreLinhaHead();
             int nivelImpressao = 0;
             int colspanNiveisLinhaComSequencia = this.cube.getMetaData().getQtdNiveisAbaixoComSequencia();
-            int expansaoMaximaColuna = this.cube.getHierarquiaColuna().size();
+            int expansaoMaximaColuna = this.cube.getHierarchyColumn().size();
             int verificaProcessamento = 0;
-            for (DimensaoMetaData metadata : this.cube.getHierarquiaColuna()) {
+            for (DimensaoMetaData metadata : this.cube.getHierarchyColumn()) {
                 verificaProcessamento++;
                 if (verificaProcessamento % 100 == 0) {
                     if (this.cube.getCubeListener().stopProcess())
@@ -129,16 +129,16 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
     }
 
     private void criaEstilosAlertasDeCores() {
-        for (MetricaMetaData metaData : this.cube.getHierarquiaMetrica()) {
-            this.createColorAlertStyles(metaData.getAlertasCoresCelula());
+        for (MetricMetaData metaData : this.cube.getHierarchyMetric()) {
+            this.createColorAlertStyles(metaData.getColorAlertCells());
+            this.createColorAlertStyles(metaData.getColorsAlertLines());
+        }
+        for (DimensaoMetaData metaData : this.cube.getHierarchyColumn()) {
+            this.createColorAlertStyles(metaData.getColorAlertCells());
             this.createColorAlertStyles(metaData.getAlertasCoresLinha());
         }
-        for (DimensaoMetaData metaData : this.cube.getHierarquiaColuna()) {
-            this.createColorAlertStyles(metaData.getAlertasCoresCelula());
-            this.createColorAlertStyles(metaData.getAlertasCoresLinha());
-        }
-        for (DimensaoMetaData metaData : this.cube.getHierarquiaLinha()) {
-            this.criaEstilosAlertasDeCoresComLink(metaData.getAlertasCoresCelula());
+        for (DimensaoMetaData metaData : this.cube.getHierarchyLine()) {
+            this.criaEstilosAlertasDeCoresComLink(metaData.getColorAlertCells());
             this.criaEstilosAlertasDeCoresComLink(metaData.getAlertasCoresLinha());
         }
     }
@@ -256,25 +256,25 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
     }
 
     private void populaMetricasVisualizadas() {
-        boolean temDimensaoColuna = !this.cube.getHierarquiaColuna().isEmpty();
-        this.metricasTotalizaSomaGeralColunas = this.cube.getMetricasTotalizacaoHorizontal();
+        boolean temDimensaoColuna = !this.cube.getHierarchyColumn().isEmpty();
+        this.metricasTotalizaSomaGeralColunas = this.cube.getMetricsTotalHorizontal();
         int verificaProcessamento = 0;
-        for (MetricaMetaData metaData : this.cube.getHierarquiaMetrica()) {
+        for (MetricMetaData metaData : this.cube.getHierarchyMetric()) {
             verificaProcessamento++;
             if (verificaProcessamento % 100 == 0) {
                 if (this.cube.getCubeListener().stopProcess())
                     return;
             }
-            if (metaData.isVisualizada()) {
-                if (metaData.isTotalizarSomaColunas()) {
+            if (metaData.isViewed()) {
+                if (metaData.isTotalSumColumns()) {
                     this.metricasTotalizaSomaColunas.add(metaData);
                 }
-                if (metaData.isTotalizarMediaColunas()) {
+                if (metaData.isTotalMediaColumns()) {
                     this.metricasTotalizaMediaColunas.add(metaData);
                 }
 
                 if (metaData instanceof MetricaCalculadaFuncaoMetaData metricaDeAnalise) {
-                    if (metricaDeAnalise.getFuncaoCampo().equals(MetricaCalculadaEvolucaoAHMetaData.AH)) {
+                    if (metricaDeAnalise.getFuncaoCampo().equals(MetricCalculatedEvolucaoAHMetaData.AH)) {
                         if (temDimensaoColuna) {
                             this.metricasAH.add(metaData);
                             this.visibleMetrics.add(metaData);
@@ -292,16 +292,16 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
 
     private void imprimeCabecalhoTotalizadoresColunas() {
         if (!this.metricasTotalizaSomaColunas.isEmpty()) {
-            this.impressor.imprimeColuna(CellProperty.PROPRIEDADE_CELULA_CABECALHO_TOTAISCOLUNAS, "Acumulado", this.metricasTotalizaSomaColunas.size(), this.cube.getHierarquiaColuna().size());
+            this.impressor.imprimeColuna(CellProperty.PROPRIEDADE_CELULA_CABECALHO_TOTAISCOLUNAS, "Acumulado", this.metricasTotalizaSomaColunas.size(), this.cube.getHierarchyColumn().size());
         }
         if (!this.metricasTotalizaMediaColunas.isEmpty()) {
-            this.impressor.imprimeColuna(CellProperty.PROPRIEDADE_CELULA_CABECALHO_TOTAISCOLUNAS, "M�dia", this.metricasTotalizaMediaColunas.size(), this.cube.getHierarquiaColuna().size());
+            this.impressor.imprimeColuna(CellProperty.PROPRIEDADE_CELULA_CABECALHO_TOTAISCOLUNAS, "M�dia", this.metricasTotalizaMediaColunas.size(), this.cube.getHierarchyColumn().size());
         }
     }
 
     private void imprimeCabecalhoTotalGeralMetricasColunas() {
         if (!this.metricasTotalizaSomaGeralColunas.isEmpty()) {
-            this.impressor.imprimeColuna(CellProperty.PROPRIEDADE_CELULA_CABECALHO_TOTAISCOLUNAS, "Total", 1, this.cube.getHierarquiaColuna().size() + 1);
+            this.impressor.imprimeColuna(CellProperty.PROPRIEDADE_CELULA_CABECALHO_TOTAISCOLUNAS, "Total", 1, this.cube.getHierarchyColumn().size() + 1);
         }
     }
 
@@ -309,7 +309,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
         this.openLine();
         this.impressor.imprimeColuna(CellProperty.PROPRIEDADE_CELULA_TOTALGERAL, this.impressor.getValorVazio(), colspanNiveisLinhaComSequencia, 1);
         List<String> funcoesAlerta = new ArrayList<>();
-        funcoesAlerta.add(MetricaMetaData.TOTALIZACAO_GERAL);
+        funcoesAlerta.add(MetricMetaData.TOTAL_GENERAL);
 
         String propriedadeTotalGeral = CellProperty.PROPRIEDADE_CELULA_TOTALGERAL;
         String propriedadeAlertaCoresMetricaLinhaFuncoes = this.cube.searchMetricsPropertyAlertsRowFunctionsTotalColumns(this.visibleMetrics, funcoesAlerta);
@@ -317,30 +317,30 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
             propriedadeTotalGeral = propriedadeAlertaCoresMetricaLinhaFuncoes;
             this.alertaMetricaLinhaAtual = propriedadeAlertaCoresMetricaLinhaFuncoes;
         }
-        funcoesAlerta.add(MetricaMetaData.TOTALIZACAO_AV);
-        this.imprimeMetricas(this.cube, propriedadeTotalGeral, new ImpressaoMetricaLinhaTotalizacaoLinhas(this.visibleMetrics, funcoesAlerta), funcoesAlerta, MetricaMetaData.TOTALIZACAO_AV);
+        funcoesAlerta.add(MetricMetaData.TOTAL_AV);
+        this.imprimeMetricas(this.cube, propriedadeTotalGeral, new ImpressaoMetricaLinhaTotalizacaoLinhas(this.visibleMetrics, funcoesAlerta), funcoesAlerta, MetricMetaData.TOTAL_AV);
         this.impressor.fechaLinha();
     }
 
-    private List<MetricaMetaData> getMetricasSemAH(List<MetricaMetaData> metricasImprimirPadrao) {
-        List<MetricaMetaData> metricasRetorno = new ArrayList<>(metricasImprimirPadrao);
+    private List<MetricMetaData> getMetricasSemAH(List<MetricMetaData> metricasImprimirPadrao) {
+        List<MetricMetaData> metricasRetorno = new ArrayList<>(metricasImprimirPadrao);
         metricasRetorno.removeAll(this.metricasAH);
         return metricasRetorno;
     }
 
-    private void imprimeCabecalhoMetricas(List<MetricaMetaData> metricas) {
-        for (MetricaMetaData metaData : metricas) {
+    private void imprimeCabecalhoMetricas(List<MetricMetaData> metricas) {
+        for (MetricMetaData metaData : metricas) {
             this.impressor.imprimeCabecalhoColuna(CellProperty.PROPRIEDADE_CELULA_CABECALHO_METRICA, metaData);
         }
     }
 
     private void imprimeCabecalhoMetricasTotalizadoresColunas() {
-        if (this.cube.getHierarquiaColuna().isEmpty()) {
-            for (MetricaMetaData metaData : this.metricasTotalizaSomaColunas) {
-                this.impressor.imprimeColuna(CellProperty.PROPRIEDADE_CELULA_CABECALHO_TOTAISCOLUNAS, "Acumulado " + metaData.getTitulo());
+        if (this.cube.getHierarchyColumn().isEmpty()) {
+            for (MetricMetaData metaData : this.metricasTotalizaSomaColunas) {
+                this.impressor.imprimeColuna(CellProperty.PROPRIEDADE_CELULA_CABECALHO_TOTAISCOLUNAS, "Acumulado " + metaData.getTitle());
             }
-            for (MetricaMetaData metaData : this.metricasTotalizaMediaColunas) {
-                this.impressor.imprimeColuna(CellProperty.PROPRIEDADE_CELULA_CABECALHO_TOTAISCOLUNAS, "M�dia " + metaData.getTitulo());
+            for (MetricMetaData metaData : this.metricasTotalizaMediaColunas) {
+                this.impressor.imprimeColuna(CellProperty.PROPRIEDADE_CELULA_CABECALHO_TOTAISCOLUNAS, "M�dia " + metaData.getTitle());
             }
             this.imprimeCabecalhoTotalGeralMetricasColunas();
         } else {
@@ -351,15 +351,15 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
     }
 
     private void imprimeCabecalhoMetricas(Dimension dimensionColunaPai) {
-        if (!this.cube.getHierarquiaColuna().isEmpty()) {
-            List<MetricaMetaData> metricasSemAH = this.getMetricasSemAH(this.visibleMetrics);
+        if (!this.cube.getHierarchyColumn().isEmpty()) {
+            List<MetricMetaData> metricasSemAH = this.getMetricasSemAH(this.visibleMetrics);
             for (Dimension dimension : dimensionColunaPai.getDimensionsColumn().values()) {
                 if (this.cube.getCubeListener().stopProcess())
                     return;
                 if (!dimension.getDimensionsColumn().isEmpty()) {
                     this.imprimeCabecalhoMetricas(dimension);
                 } else {
-                    List<MetricaMetaData> metricasImprimir = this.visibleMetrics;
+                    List<MetricMetaData> metricasImprimir = this.visibleMetrics;
                     if (dimension.isFirstDimensionColumnSameLevel()) {
                         metricasImprimir = metricasSemAH;
                     }
@@ -367,7 +367,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
                 }
             }
             if (dimensionColunaPai.getMetaData().isTotalizacaoParcial()) {
-                List<MetricaMetaData> metricasImprimir = this.visibleMetrics;
+                List<MetricMetaData> metricasImprimir = this.visibleMetrics;
                 if (dimensionColunaPai.isFirstDimensionColumnSameLevel()) {
                     metricasImprimir = metricasSemAH;
                 }
@@ -379,7 +379,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
     }
 
     private void imprimeCabecalhoDimensoesLinha() {
-        for (DimensaoMetaData metaData : this.cube.getHierarquiaLinha()) {
+        for (DimensaoMetaData metaData : this.cube.getHierarchyLine()) {
             this.impressor.imprimeCabecalhoDimensaoLinha(metaData);
         }
     }
@@ -389,9 +389,9 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
         this.impressor.imprimeCabecalhoTotalParcial(CellProperty.PROPRIEDADE_CELULA_CABECALHO_TOTALPARCIAL,
                 "Total", (dimensionLinha.getMetaData().getQtdNiveisAbaixoComSequencia()), 1, dimensionLinha.getMetaData().getFilho());
         List<String> funcoesAlerta = new ArrayList<String>();
-        funcoesAlerta.add(MetricaMetaData.TOTALIZACAO_PARCIAL);
+        funcoesAlerta.add(MetricMetaData.TOTAL_PARTIAL);
         this.imprimeMetricas(dimensionLinha, CellProperty.PROPRIEDADE_CELULA_VALOR_TOTALPARCIALLINHAS,
-                new ImpressaoMetricaLinhaTotalizacaoParcialLinhas(this.visibleMetrics), funcoesAlerta, MetricaMetaData.TOTALIZACAO_PARCIAL);
+                new ImpressaoMetricaLinhaTotalizacaoParcialLinhas(this.visibleMetrics), funcoesAlerta, MetricMetaData.TOTAL_PARTIAL);
         this.impressor.fechaLinha();
     }
 
@@ -400,9 +400,9 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
         this.impressor.imprimeCabecalhoTotalParcial(CellProperty.PROPRIEDADE_CELULA_CABECALHO_TOTALPARCIAL,
                 "M�dia", (dimensionLinha.getMetaData().getQtdNiveisAbaixoComSequencia()), 1, dimensionLinha.getMetaData().getFilho());
         List<String> funcoesAlerta = new ArrayList<>();
-        funcoesAlerta.add(MetricaMetaData.MEDIA_PARCIAL);
+        funcoesAlerta.add(MetricMetaData.MEDIA_PARTIAL);
         this.imprimeMetricas(dimensionLinha, CellProperty.PROPRIEDADE_CELULA_VALOR_TOTALPARCIALLINHAS,
-                new ImpressaoMetricaLinhaMediaParcialLinhas(this.visibleMetrics), funcoesAlerta, MetricaMetaData.MEDIA_PARCIAL); // cria o objeto ImpressaoMetricaLinhaTotalizacaoParcialLinhas que vai fazer o calculo
+                new ImpressaoMetricaLinhaMediaParcialLinhas(this.visibleMetrics), funcoesAlerta, MetricMetaData.MEDIA_PARTIAL); // cria o objeto ImpressaoMetricaLinhaTotalizacaoParcialLinhas que vai fazer o calculo
         this.impressor.fechaLinha();
     }
 
@@ -411,9 +411,9 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
         this.impressor.imprimeCabecalhoTotalParcial(CellProperty.PROPRIEDADE_CELULA_CABECALHO_TOTALPARCIAL,
                 "Express�o", (dimensionLinha.getMetaData().getQtdNiveisAbaixoComSequencia()), 1, dimensionLinha.getMetaData().getFilho());
         List<String> funcoesAlerta = new ArrayList<>();
-        funcoesAlerta.add(MetricaMetaData.EXPRESSAO_PARCIAL);
+        funcoesAlerta.add(MetricMetaData.EXPRESSION_PARTIAL);
         this.imprimeMetricas(dimensionLinha, CellProperty.PROPRIEDADE_CELULA_VALOR_TOTALPARCIALLINHAS,
-                new ImpressaoMetricaLinhaExpressaoParcialLinhas(this.visibleMetrics), funcoesAlerta, MetricaMetaData.EXPRESSAO_PARCIAL); // cria o objeto ImpressaoMetricaLinhaTotalizacaoParcialLinhas que vai fazer o calculo
+                new ImpressaoMetricaLinhaExpressaoParcialLinhas(this.visibleMetrics), funcoesAlerta, MetricMetaData.EXPRESSION_PARTIAL); // cria o objeto ImpressaoMetricaLinhaTotalizacaoParcialLinhas que vai fazer o calculo
         this.impressor.fechaLinha();
     }
 
@@ -494,7 +494,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
                 Iterator<Dimension> iDimensoes = dims.values().iterator();
                 this.mergulhaNivelLinha(iDimensoes, propriedadeCelulaNivelAnteriorAplicar);
 
-                if (dimension.getMetaData().isTotalizacaoParcial() || dimension.getMetaData().isExpressaoParcialTotal()) {
+                if (dimension.getMetaData().isTotalizacaoParcial() || dimension.getMetaData().isPartialTotalExpression()) {
                     this.imprimeLinhaTotalParcialLinhas(dimension);
                 }
                 if (dimension.getMetaData().isMediaParcial()) {
@@ -521,7 +521,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
     private void imprimeValorMetricasTotalizacaoParcialColunas(Dimension dimensionLinha, Dimension dimensionColuna,
                                                                ImpressaoMetricaLinha impressao) {
         if (dimensionColuna.getMetaData().isTotalizacaoParcial()) {
-            List<MetricaMetaData> metricasImprimirOld = impressao.getMetricas();
+            List<MetricMetaData> metricasImprimirOld = impressao.getMetricas();
             if (dimensionColuna.isFirstDimensionColumnSameLevel()) {
                 impressao.setMetricas(this.getMetricasSemAH(metricasImprimirOld));
             }
@@ -553,7 +553,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
             propriedadeAplicar = propriedadeCelulaNivelAnterior;
             this.alertaMetricaLinhaAtual = propriedadeCelulaNivelAnterior;
         }
-        if (!this.cube.getHierarquiaColuna().isEmpty()) {
+        if (!this.cube.getHierarchyColumn().isEmpty()) {
             String propriedadeAlertaCoresMetricaLinha = dimensionLinha.searchMetricAlertLineProperty(this.visibleMetrics, funcaoAlertaLinhaPesquisar, this.dimensoesColunaUltimoNivel);
             if (propriedadeAlertaCoresMetricaLinha != null) {
                 propriedadeAplicar = propriedadeAlertaCoresMetricaLinha;
@@ -566,8 +566,8 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
                         return;
                 }
                 Dimension ultimaDimensionColuna = this.dimensoesColunaUltimoNivel.get(x);
-                List<MetricaMetaData> metricasImprimirOld = impressaoMetrica.getMetricas();
-                List<MetricaMetaData> metricasImprimir = metricasImprimirOld;
+                List<MetricMetaData> metricasImprimirOld = impressaoMetrica.getMetricas();
+                List<MetricMetaData> metricasImprimir = metricasImprimirOld;
                 if (x == 0) {
                     metricasImprimir = this.getMetricasSemAH(metricasImprimirOld);
                 }
@@ -618,11 +618,11 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
         }
 
         ImpressaoMetricaLinhaTotalizacaoColunas impressaoSoma = new ImpressaoMetricaLinhaTotalizacaoColunas(
-                this.metricasTotalizaSomaColunas, CalculoSumarizacaoTipoSomatorio.getInstance(), MetricaMetaData.VALOR_ACUMULADO_AH, funcoesAlertaAtuais);
+                this.metricasTotalizaSomaColunas, CalculoSumarizacaoTipoSomatorio.getInstance(), MetricMetaData.ACCUMULATED_VALUE_AH, funcoesAlertaAtuais);
         impressaoSoma.imprimeValoresMetrica(dimensionLinha, null, dimensaoColunaNula, propriedadeCelula, this.impressor, cube, tipoLinha);
 
         ImpressaoMetricaLinhaTotalizacaoColunas impressaoMedia = new ImpressaoMetricaLinhaTotalizacaoColunas(
-                this.metricasTotalizaMediaColunas, CalculoSumarizacaoTipoMediaColuna.getInstance(), MetricaMetaData.MEDIA_AH, funcoesAlertaAtuais);
+                this.metricasTotalizaMediaColunas, CalculoSumarizacaoTipoMediaColuna.getInstance(), MetricMetaData.MEDIA_AH, funcoesAlertaAtuais);
         impressaoMedia.imprimeValoresMetrica(dimensionLinha, null, dimensaoColunaNula, propriedadeCelula, this.impressor, cube, tipoLinha);
     }
 
@@ -645,7 +645,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
                     retorno += qtdMetricasSemAH;
                 }
             }
-            for (Dimension dimensionFilha : dimension.getDimensoesAbaixo().values()) {
+            for (Dimension dimensionFilha : dimension.getDimensionsBelow().values()) {
                 retorno += getQtdMetricasTotaisParciaisAbaixoColuna(dimensionFilha, qtdMetricasTotal, qtdMetricasSemAH);
             }
         }
@@ -664,11 +664,11 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
     }
 
     public void imprimeDimensaoLinha(Dimension dim, String propriedadeCelulaNivelAnterior, int sequencia) {
-        DimensionLinha dimensaoLinha = (DimensionLinha) dim;
+        DimensionLine dimensaoLinha = (DimensionLine) dim;
         int rowspan = dimensaoLinha.getTotalSize() + dimensaoLinha.countPartialAggregatesInHierarchy();
         int colspan = dimensaoLinha.getColspanImpressaoLinha();
         String sequenciaRanking = Optional.ofNullable(dimensaoLinha.getRankingSequence()).map(String::valueOf).orElse(this.impressor.getValorVazio());
-        if (dim.getMetaData().hasCampoSequencia()) {
+        if (dim.getMetaData().hasSequenceFields()) {
             this.impressor.imprimeCampoSequencia(dim.getMetaData(), sequenciaRanking, 1, rowspan);
         }
         this.impressor.imprimeValorDimensaoLinha(propriedadeCelulaNivelAnterior, colspan, rowspan, dimensaoLinha.getVisualizationValue(), dimensaoLinha.getMetaData());

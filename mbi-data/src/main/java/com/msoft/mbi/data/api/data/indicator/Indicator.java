@@ -3,11 +3,11 @@ package com.msoft.mbi.data.api.data.indicator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.msoft.mbi.cube.multi.Cubo;
+import com.msoft.mbi.cube.multi.Cube;
 import com.msoft.mbi.cube.multi.generation.*;
 import com.msoft.mbi.cube.multi.metaData.AlertaCorMetaData;
 import com.msoft.mbi.cube.multi.metaData.CampoMetaData;
-import com.msoft.mbi.cube.multi.metaData.CuboMetaData;
+import com.msoft.mbi.cube.multi.metaData.CubeMetaData;
 import com.msoft.mbi.cube.util.CubeListener;
 import com.msoft.mbi.cube.util.DefaultCubeListener;
 import com.msoft.mbi.cube.util.logicOperators.LogicalOperators;
@@ -122,7 +122,7 @@ public class Indicator {
     private List<String> childrenIndicatorsDoNotReplicateFields;
     transient private AnalysisParameters analysisParameters;
 
-    transient private Cubo cubo;
+    transient private Cube cube;
     transient private tableGenerator cubeTable;
 
     private List<Field> dimensionColumn;
@@ -649,18 +649,18 @@ public class Indicator {
             if (this.stopProcess())
                 return;
             configureFieldsNavigation(this.dimensionColumn);
-            this.cubo = Cubo.factoryCuboFormatoMultiDimensional(createCuboMetaData());
-            this.cubeTable = new MultiDimensionalDefaultTableBuilder(this.cubo);
+            this.cube = Cube.factoryMultiDimensionalCube(createCuboMetaData());
+            this.cubeTable = new MultiDimensionalDefaultTableBuilder(this.cube);
         } else {
-            this.cubo = Cubo.factoryCuboFormatoPadrao(createStandardMetaDataCube());
-            this.cubeTable = new DefaultTableBuilder(this.cubo);
+            this.cube = Cube.factoryDefaultCube(createStandardMetaDataCube());
+            this.cubeTable = new DefaultTableBuilder(this.cube);
         }
         configureCubeListener();
     }
 
     private void configureCubeListener() {
-        if (this.cubo != null && this.cubeListener != null) {
-            this.cubo.setCubeListener(new CubeProcessor(this));
+        if (this.cube != null && this.cubeListener != null) {
+            this.cube.setCubeListener(new CubeProcessor(this));
         }
     }
 
@@ -672,8 +672,8 @@ public class Indicator {
                 .orElse(0);
     }
 
-    private CuboMetaData createStandardMetaDataCube() throws BIException {
-        CuboMetaData cuboMetaData = new CuboMetaData();
+    private CubeMetaData createStandardMetaDataCube() throws BIException {
+        CubeMetaData cubeMetaData = new CubeMetaData();
         loadDefaultFieldRegisters();
         int lastDrillDownSequence = getMaxDrillDownSequence();
 
@@ -683,7 +683,7 @@ public class Indicator {
             if (isFieldValid(field)) {
                 CampoMetaData campo = createCampoMetaData(field);
                 configureCampoMetaData(field, campo, lastDrillDownSequence);
-                cuboMetaData.addCampo(campo, field.getFieldType());
+                cubeMetaData.addCampo(campo, field.getFieldType());
 
                 if (this.usesSequence && firtsColumn == null) {
                     firtsColumn = campo;
@@ -692,8 +692,8 @@ public class Indicator {
             }
         }
 
-        createFiltroseRestricoesMetricasCuboMetaData(cuboMetaData);
-        return cuboMetaData;
+        createFiltroseRestricoesMetricasCuboMetaData(cubeMetaData);
+        return cubeMetaData;
     }
 
     private boolean isFieldValid(Field field) {
@@ -740,7 +740,7 @@ public class Indicator {
         try {
             long startTime = System.nanoTime();
 
-            this.cubo.processar(resultSet);
+            this.cube.process(resultSet);
 
             long elapsedTime = System.nanoTime() - startTime;
             System.out.println("Total execution time to cubo.processarCubo in millis: " + elapsedTime/1000000);
@@ -903,9 +903,9 @@ public class Indicator {
         return new Expression(expressionSlice);
     }
 
-    private CuboMetaData createCuboMetaData() throws BIException, DateException {
+    private CubeMetaData createCuboMetaData() throws BIException, DateException {
         Map<Field, CampoMetaData> BICubeMapedFields = new HashMap<>();
-        CuboMetaData cuboMetaData = new CuboMetaData();
+        CubeMetaData cubeMetaData = new CubeMetaData();
 
         loadMultiDimensionalFieldRegisters();
         checkForPartialTotalization();
@@ -945,7 +945,7 @@ public class Indicator {
                 metadataField.setSequencia(field.getVisualizationSequence());
             }
 
-            cuboMetaData.addCampo(metadataField, fieldType);
+            cubeMetaData.addCampo(metadataField, fieldType);
             BICubeMapedFields.put(field, metadataField);
         }
 
@@ -959,8 +959,8 @@ public class Indicator {
 
         processColorAlerts(BICubeMapedFields);
 
-        createFiltroseRestricoesMetricasCuboMetaData(cuboMetaData);
-        return cuboMetaData;
+        createFiltroseRestricoesMetricasCuboMetaData(cubeMetaData);
+        return cubeMetaData;
     }
 
     private void processColorAlerts(Map<Field, CampoMetaData> biCubeMappedFields) throws BIException, DateException {
@@ -993,12 +993,12 @@ public class Indicator {
         }
     }
 
-    private void createFiltroseRestricoesMetricasCuboMetaData(CuboMetaData cuboMetaData) throws BIException {
+    private void createFiltroseRestricoesMetricasCuboMetaData(CubeMetaData cubeMetaData) throws BIException {
         String metricFilterExpression = buildMetricFiltersExpression();
-        cuboMetaData.setExpressaoFiltrosMetrica(metricFilterExpression);
+        cubeMetaData.setExpressaoFiltrosMetrica(metricFilterExpression);
 
         String accumulatedFilterExpression = buildAccumulatedFiltersExpression();
-        cuboMetaData.setExpressaoFiltrosAcumulado(accumulatedFilterExpression);
+        cubeMetaData.setExpressaoFiltrosAcumulado(accumulatedFilterExpression);
     }
 
     private String buildMetricFiltersExpression() throws BIException {
