@@ -12,7 +12,7 @@ import com.msoft.mbi.cube.multi.column.TipoData;
 import com.msoft.mbi.cube.multi.column.TipoDecimal;
 import com.msoft.mbi.cube.multi.column.TipoHora;
 import com.msoft.mbi.cube.multi.column.TipoNumero;
-import com.msoft.mbi.cube.multi.column.TipoTexto;
+import com.msoft.mbi.cube.multi.column.TextType;
 import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditionsDimensao;
 import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditionsMetrica;
 import com.msoft.mbi.cube.multi.dimension.comparator.DimensaoComparator;
@@ -84,14 +84,14 @@ public abstract class Dimension implements Comparable<Dimension> {
             } else if (this.metaData.getTipo() instanceof TipoHora) {
                 obj = TipoHora.BRANCO;
             } else {
-                obj = TipoTexto.BRANCO;
+                obj = TextType.EMPTY;
             }
         } else {
             DimensaoMetaData metaData = this.metaData;
             if (this.metaData.getDimensaoOrdenacao() != null) {
                 metaData = this.metaData.getDimensaoOrdenacao();
             }
-            if (metaData.getTipo() instanceof TipoTexto) {
+            if (metaData.getTipo() instanceof TextType) {
                 obj = this.getValue().toString().trim();
                 int posIni = obj.toString().indexOf("(*");
                 if (posIni > -1) {

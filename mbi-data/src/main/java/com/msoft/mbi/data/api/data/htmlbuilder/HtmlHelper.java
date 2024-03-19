@@ -1,7 +1,7 @@
 package com.msoft.mbi.data.api.data.htmlbuilder;
 
-import com.msoft.mbi.cube.multi.metaData.CampoMetaData;
-import com.msoft.mbi.cube.multi.metaData.MascaraLinkHTMLMetaData;
+import com.msoft.mbi.cube.multi.metaData.MetaDataField;
+import com.msoft.mbi.cube.multi.metaData.HTMLLineMask;
 import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLSVGColuna;
 import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLTextoDinamico;
 import com.msoft.mbi.data.api.data.exception.BIException;
@@ -99,7 +99,7 @@ public class HtmlHelper {
         return titleTab;
     }
 
-    public static void createMascarasHTMLDimensaoLinha(Field dimensionField, CampoMetaData dimensionCube, Indicator indicator) {
+    public static void createMascarasHTMLDimensaoLinha(Field dimensionField, MetaDataField dimensionCube, Indicator indicator) {
         if (dimensionField == null || dimensionCube == null) {
             return;
         }
@@ -120,7 +120,7 @@ public class HtmlHelper {
         }
     }
 
-    public static void createMascaraHTMLDrillDownDimensao(Field dimensionField, CampoMetaData dimensionCube, Integer indicatorCode) {
+    public static void createMascaraHTMLDrillDownDimensao(Field dimensionField, MetaDataField dimensionCube, Integer indicatorCode) {
         if (dimensionField == null || dimensionCube == null) {
             return;
         }
@@ -129,25 +129,25 @@ public class HtmlHelper {
         linkTextoDinamico.addParametro("data-code-col", String.valueOf(dimensionField.getFieldId()));
         linkTextoDinamico.addParametro("data-code-indicador", String.valueOf(indicatorCode));
 
-        MascaraLinkHTMLMetaData mascaraLinkHTML = new MascaraLinkHTMLMetaData("drilldownFiltro", MascaraLinkHTMLMetaData.TIPO_DINAMICO, linkTextoDinamico);
-        dimensionCube.addMascaraLinkHTML(mascaraLinkHTML);
+        HTMLLineMask mascaraLinkHTML = new HTMLLineMask("drilldownFiltro", HTMLLineMask.DYNAMIC_TYPE, linkTextoDinamico);
+        dimensionCube.addHTMLLineMask(mascaraLinkHTML);
     }
 
-    private static void addSVGLinkToDimensionCube(CampoMetaData dimensionCube, Field dimensionField, String id, String svgClass, String svgTitle, int width, int height) {
+    private static void addSVGLinkToDimensionCube(MetaDataField dimensionCube, Field dimensionField, String id, String svgClass, String svgTitle, int width, int height) {
         LinkHTMLSVGColuna svgHTML = new LinkHTMLSVGColuna(id, svgClass, svgTitle, width, height);
         svgHTML.addParametro("data-code-col", String.valueOf(dimensionField.getFieldId()));
-        MascaraLinkHTMLMetaData mascaraLinkHTML = new MascaraLinkHTMLMetaData("drilldown", MascaraLinkHTMLMetaData.TIPO_DEPOIS_VALOR, svgHTML);
-        dimensionCube.addMascaraLinkHTML(mascaraLinkHTML);
+        HTMLLineMask mascaraLinkHTML = new HTMLLineMask("drilldown", HTMLLineMask.VALUE_TYPE_AFTER, svgHTML);
+        dimensionCube.addHTMLLineMask(mascaraLinkHTML);
     }
 
-    public static void configureSorting(Field field, CampoMetaData campo) {
+    public static void configureSorting(Field field, MetaDataField campo) {
         LinkHTMLSVGColuna svgHTML = new LinkHTMLSVGColuna("desc", "btOrdena vect-sort-down", "Ordenar de forma decrescente", 14, 14);
         // configure svgHTML
-        campo.addMascaraLinkHTML(new MascaraLinkHTMLMetaData("ordenacao", MascaraLinkHTMLMetaData.TIPO_DEPOIS_VALOR, svgHTML));
+        campo.addHTMLLineMask(new HTMLLineMask("ordenacao", HTMLLineMask.VALUE_TYPE_AFTER, svgHTML));
 
         svgHTML = new LinkHTMLSVGColuna("asc", "btOrdena vect-sort-up", "Ordenar de forma crescente", 14, 14);
         // configure svgHTML
-        campo.addMascaraLinkHTML(new MascaraLinkHTMLMetaData("ordenacao", MascaraLinkHTMLMetaData.TIPO_DEPOIS_VALOR, svgHTML));
+        campo.addHTMLLineMask(new HTMLLineMask("ordenacao", HTMLLineMask.VALUE_TYPE_AFTER, svgHTML));
     }
 
 }

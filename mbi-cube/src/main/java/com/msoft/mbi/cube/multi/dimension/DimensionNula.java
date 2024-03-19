@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.msoft.mbi.cube.multi.Cube;
-import com.msoft.mbi.cube.multi.metaData.CampoMetaData;
+import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 
 public abstract class DimensionNula extends Dimension {
 
@@ -15,7 +15,7 @@ public abstract class DimensionNula extends Dimension {
     }
 
     public static DimensionNula createDimensaoNula(int eixoReferencia, Cube cube) {
-        if (eixoReferencia == CampoMetaData.LINHA) {
+        if (eixoReferencia == MetaDataField.LINE) {
             return new DimensionLinhaNula(cube);
         } else {
             return new DimensionColunaNula(cube);

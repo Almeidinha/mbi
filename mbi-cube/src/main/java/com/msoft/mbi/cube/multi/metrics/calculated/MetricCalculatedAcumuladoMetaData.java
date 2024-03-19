@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.msoft.mbi.cube.multi.analytics.AnaliseParticipacaoTipo;
 import com.msoft.mbi.cube.multi.calculation.Calculo;
-import com.msoft.mbi.cube.multi.metaData.AlertaCorMetaData;
+import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLTextoColuna;
 import com.msoft.mbi.cube.multi.renderers.linkHTML.MascaraLinkHTMLTextoRenderer;
@@ -17,7 +17,7 @@ public abstract class MetricCalculatedAcumuladoMetaData extends MetricCalculated
     private final AnaliseParticipacaoTipo analiseParticipacaoTipo;
 
     public MetricCalculatedAcumuladoMetaData(MetricMetaData colunaReferencia, AnaliseParticipacaoTipo analiseParticipacaoTipo,
-                                             List<AlertaCorMetaData> alertasCores) {
+                                             List<ColorAlertMetadata> alertasCores) {
         super(colunaReferencia.getTitle() + " Acum.");
         this.setTotalPartialColumns(false);
         this.setTotalLines(colunaReferencia.isTotalLines());

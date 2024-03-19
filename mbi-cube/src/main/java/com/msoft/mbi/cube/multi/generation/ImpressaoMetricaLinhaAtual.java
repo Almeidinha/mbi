@@ -4,13 +4,13 @@ import java.util.List;
 
 import com.msoft.mbi.cube.multi.Cube;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
-import com.msoft.mbi.cube.multi.metaData.AlertaCorMetaData;
+import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 
 public class ImpressaoMetricaLinhaAtual extends ImpressaoMetricaLinha {
 
     public ImpressaoMetricaLinhaAtual(List<MetricMetaData> metricas) {
-        super(metricas, CalculoSumarizacaoTipoLinhaMetricaAtual.getInstance(), AlertaCorMetaData.SEM_FUNCAO);
+        super(metricas, CalculoSumarizacaoTipoLinhaMetricaAtual.getInstance(), ColorAlertMetadata.NO_FUNCTION);
     }
 
     @Override

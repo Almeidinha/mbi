@@ -90,7 +90,7 @@ public class MetricsMap {
 
             MetricAditiva currentMetricValue = metricaMetaData.createMetrica();
             mapActualMetrics.put(titulo, currentMetricValue);
-            Double valor = metricaMetaData.getType().getValor(set, coluna);
+            Double valor = metricaMetaData.getType().getValue(set, coluna);
             currentMetricValue.add(valor);
 
             metrica.add(valor);

@@ -1,7 +1,7 @@
 package com.msoft.mbi.cube.multi.dimension;
 
 import com.msoft.mbi.cube.multi.Cube;
-import com.msoft.mbi.cube.multi.metaData.CampoMetaData;
+import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 
 
 public class DimensionLinhaNula extends DimensionNula {
@@ -9,7 +9,7 @@ public class DimensionLinhaNula extends DimensionNula {
 
     public DimensionLinhaNula(Cube cube) {
         super(cube);
-        this.getMetaData().setEixoReferencia(CampoMetaData.LINHA);
+        this.getMetaData().setEixoReferencia(MetaDataField.LINE);
     }
 
     @Override

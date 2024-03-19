@@ -6,15 +6,15 @@ import java.sql.SQLException;
 import com.msoft.mbi.cube.util.logicOperators.OperaTor;
 import com.msoft.mbi.cube.util.logicOperators.LogicalOperators;
 
-public class TipoTexto implements DataType<String> {
+public class TextType implements DataType<String> {
 
 
-    public static final String BRANCO = "";
-    private String texto = null;
+    public static final String EMPTY = "";
+    private String text = null;
 
-    public String getValor(ResultSet set, String campo) throws SQLException {
-        this.texto = set.getString(campo);
-        return ((set.wasNull()) ? BRANCO : this.texto.trim());
+    public String getValue(ResultSet set, String campo) throws SQLException {
+        this.text = set.getString(campo);
+        return ((set.wasNull()) ? EMPTY : this.text.trim());
     }
 
     public String format(String t) {

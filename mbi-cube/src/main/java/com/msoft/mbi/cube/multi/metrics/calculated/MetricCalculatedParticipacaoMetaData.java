@@ -5,8 +5,8 @@ import java.util.List;
 import com.msoft.mbi.cube.multi.analytics.AnaliseParticipacaoTipo;
 import com.msoft.mbi.cube.multi.calculation.Calculo;
 import com.msoft.mbi.cube.multi.column.MascaraColunaMetaData;
-import com.msoft.mbi.cube.multi.metaData.AlertaCorMetaData;
-import com.msoft.mbi.cube.multi.metaData.CampoMetaData;
+import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
+import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLTextoColuna;
 import com.msoft.mbi.cube.multi.renderers.linkHTML.MascaraLinkHTMLTextoRenderer;
@@ -19,12 +19,12 @@ public abstract class MetricCalculatedParticipacaoMetaData extends MetricCalcula
     private final AnaliseParticipacaoTipo analiseVertical;
 
     public MetricCalculatedParticipacaoMetaData(String prefixoTitulo, MetricMetaData colunaParticipacao, AnaliseParticipacaoTipo analiseVerticalTipo,
-                                                List<AlertaCorMetaData> alertasCores) {
+                                                List<ColorAlertMetadata> alertasCores) {
         super(prefixoTitulo + " " + colunaParticipacao.getTitle());
         this.setUsePercent(true);
         this.setTotalPartialLines(colunaParticipacao.isTotalPartialLines());
         this.setTotalPartialColumns(colunaParticipacao.isTotalPartialColumns());
-        this.setTotalLinesType(CampoMetaData.TOTALIZAR_APLICAR_EXPRESSAO);
+        this.setTotalLinesType(MetaDataField.TOTAL_APPLY_EXPRESSION);
         this.setDecimalPlaces(2);
         this.setCellProperty(colunaParticipacao.getCellProperty());
         MascaraColunaMetaData mascaraAV = new MascaraColunaMetaData("%", MascaraColunaMetaData.TIPO_DEPOIS);

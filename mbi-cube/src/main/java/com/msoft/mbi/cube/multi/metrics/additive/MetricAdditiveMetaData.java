@@ -3,7 +3,7 @@ package com.msoft.mbi.cube.multi.metrics.additive;
 import com.msoft.mbi.cube.multi.column.DataType;
 import com.msoft.mbi.cube.multi.column.TipoDecimal;
 import com.msoft.mbi.cube.multi.column.TipoMetricaInteiro;
-import com.msoft.mbi.cube.multi.metaData.CampoMetaData;
+import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,28 +20,28 @@ public class MetricAdditiveMetaData extends MetricMetaData {
         this.column = column;
     }
 
-    public static MetricAdditiveMetaData factory(CampoMetaData campoMetaData) {
-        String title = campoMetaData.getTituloCampo();
+    public static MetricAdditiveMetaData factory(MetaDataField metaDataField) {
+        String title = metaDataField.getTitle();
         String column;
-        if (campoMetaData.getApelidoCampo() != null) {
-            column = campoMetaData.getApelidoCampo();
+        if (metaDataField.getFieldNickname() != null) {
+            column = metaDataField.getFieldNickname();
         } else {
-            column = campoMetaData.getNomeCampo();
+            column = metaDataField.getName();
         }
         MetricAdditiveMetaData additiveMetaData;
         DataType<Double> dataType = null;
-        if (CampoMetaData.TIPO_INTEIRO.equals(campoMetaData.getTipoDado())) {
+        if (MetaDataField.INT_TYPE.equals(metaDataField.getDataType())) {
             dataType = new TipoMetricaInteiro();
-        } else if (CampoMetaData.TIPO_DECIMAL.equals(campoMetaData.getTipoDado()) || CampoMetaData.TIPO_TEXTO.equals(campoMetaData.getTipoDado())) {
+        } else if (MetaDataField.DECIMAL_TYPE.equals(metaDataField.getDataType()) || MetaDataField.TEST_TYPE.equals(metaDataField.getDataType())) {
             dataType = new TipoDecimal();
         }
         additiveMetaData = new MetricAdditiveMetaData(title, column, dataType);
         if (additiveMetaData.isExpressionPartialLines()) {
-            additiveMetaData.setTotalLinesType(CampoMetaData.TOTALIZAR_APLICAR_EXPRESSAO);
+            additiveMetaData.setTotalLinesType(MetaDataField.TOTAL_APPLY_EXPRESSION);
         } else {
-            additiveMetaData.setTotalLinesType(CampoMetaData.TOTALIZAR_APLICAR_SOMA);
+            additiveMetaData.setTotalLinesType(MetaDataField.TOTAL_APPLY_SUM);
         }
-        MetricMetaData.factory(additiveMetaData, campoMetaData);
+        MetricMetaData.factory(additiveMetaData, metaDataField);
         return additiveMetaData;
     }
 

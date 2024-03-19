@@ -133,7 +133,7 @@ public class DefaultTableBuilder extends tableGenerator {
             for (DimensaoMetaData metaData : this.cube.getHierarchyLine()) {
                 if (metaData.getTipo() instanceof TipoData) {
 
-                    mask = metaData.getCampoMetadadata().getMascarasCampo().get(0).getMascara().replace("'", "");
+                    mask = metaData.getCampoMetadadata().getFieldMask().get(0).getMascara().replace("'", "");
 
                     CellProperty cellPropertyDataMetrica1 = new CellProperty();
                     cellPropertyDataMetrica1.setAlignment(CellProperty.ALINHAMENTO_DIREITA);

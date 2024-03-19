@@ -3,7 +3,7 @@ package com.msoft.mbi.cube.multi.metaData;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.msoft.mbi.cube.multi.column.TipoTextoRoot;
+import com.msoft.mbi.cube.multi.column.TextTypeRoot;
 import com.msoft.mbi.cube.multi.dimension.DimensaoMetaData;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,49 +11,49 @@ import lombok.Setter;
 @Getter
 public class CubeMetaData extends DimensaoMetaData {
 
-    private List<CampoMetaData> camposDimensao;
-    private List<CampoMetaData> camposMetrica;
-    private List<CampoMetaData> campos;
+    private final List<MetaDataField> dimensionFields;
+    private final List<MetaDataField> metricFields;
+    private final List<MetaDataField> fields;
     @Setter
-    private String expressaoFiltrosMetrica;
+    private String metricFieldsExpression;
     @Setter
-    private String expressaoFiltrosAcumulado;
+    private String accumulatedFieldExpression;
 
     public CubeMetaData() {
-        super("Cubo", null, new TipoTextoRoot());
-        this.camposDimensao = new ArrayList<>();
-        this.camposMetrica = new ArrayList<>();
-        this.campos = new ArrayList<>();
+        super("Cube", null, new TextTypeRoot());
+        this.dimensionFields = new ArrayList<>();
+        this.metricFields = new ArrayList<>();
+        this.fields = new ArrayList<>();
     }
 
-    public void addCampo(CampoMetaData campo, String tipo) {
-        if (CampoMetaData.DIMENSAO.equals(tipo)) {
-            this.camposDimensao.add(campo);
+    public void addField(MetaDataField campo, String type) {
+        if (MetaDataField.DIMENSION.equals(type)) {
+            this.dimensionFields.add(campo);
         } else {
-            this.camposMetrica.add(campo);
+            this.metricFields.add(campo);
         }
-        campo.setTipoCampo(tipo);
-        this.campos.add(campo);
+        campo.setFieldType(type);
+        this.fields.add(campo);
     }
 
-    public void ordenaCampos() {
+    public void orderFields() {
         SequenciaCampoComparator comparator = new SequenciaCampoComparator();
-        this.campos.sort(comparator);
+        this.fields.sort(comparator);
     }
 
-    public void ordenaCamposDimensao() {
+    public void orderDimensionFields() {
         SequenciaCampoComparator comparator = new SequenciaCampoComparator();
-        this.camposDimensao.sort(comparator);
+        this.dimensionFields.sort(comparator);
     }
 
-    public void ordenaCamposMetrica() {
+    public void orderMetricFields() {
         SequenciaCampoComparator comparator = new SequenciaCampoComparator();
-        this.camposMetrica.sort(comparator);
+        this.metricFields.sort(comparator);
     }
 
-    public CampoMetaData getCampoMetricaByCodigo(int codigo) {
-        for (CampoMetaData campo : this.camposMetrica) {
-            if (campo.getCampo() == codigo) {
+    public MetaDataField getMetricFieldByCode(int code) {
+        for (MetaDataField campo : this.metricFields) {
+            if (campo.getId() == code) {
                 return campo;
             }
         }

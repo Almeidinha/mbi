@@ -13,8 +13,8 @@ import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditionsMetricaV
 import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertProperties;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.generation.Impressor;
-import com.msoft.mbi.cube.multi.metaData.AlertaCorMetaData;
-import com.msoft.mbi.cube.multi.metaData.CampoMetaData;
+import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
+import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 import com.msoft.mbi.cube.multi.renderers.DecimalMaskRender;
 import com.msoft.mbi.cube.multi.renderers.NullValueMask;
 import com.msoft.mbi.cube.multi.partialTotalization.PartialTotalizationApplyType;
@@ -95,7 +95,7 @@ public abstract class MetricMetaData extends ColumnMetaData {
     public static final String TOTAL_GENERAL = "totalizacao";
 
     protected MetricMetaData(String title, DataType<Double> type) {
-        super(title, CampoMetaData.METRICA);
+        super(title, MetaDataField.METRIC);
         this.type = type;
         this.cellColorAlertConditions = new HashMap<>();
         this.lineColorAlertConditions = new HashMap<>();
@@ -106,48 +106,48 @@ public abstract class MetricMetaData extends ColumnMetaData {
         this.aggregationType = SUM_AGGREGATION;
     }
 
-    public static void factory(MetricMetaData metricMetaData, CampoMetaData campoMetaData) {
-        ColumnMetaData.factory(metricMetaData, campoMetaData);
-        if (campoMetaData.getOrdem() > 0) {
-            MetricOrdering metricOrdering = new MetricOrdering(campoMetaData.getSentidoOrdem(), campoMetaData.getOrdem(),
+    public static void factory(MetricMetaData metricMetaData, MetaDataField metaDataField) {
+        ColumnMetaData.factory(metricMetaData, metaDataField);
+        if (metaDataField.getOrder() > 0) {
+            MetricOrdering metricOrdering = new MetricOrdering(metaDataField.getOrderDirection(), metaDataField.getOrder(),
                     metricMetaData.getTitle(), MetricaValorUtilizarLinhaMetrica.getInstance());
             metricMetaData.addMetricOrdering(metricOrdering);
         }
-        if (campoMetaData.getOrdemAcumulado() > 0) {
-            MetricOrdering metricOrdering = new MetricOrdering(campoMetaData.getSentidoOrdemAcumulado(), campoMetaData.getOrdemAcumulado(),
+        if (metaDataField.getAccumulatedOrder() > 0) {
+            MetricOrdering metricOrdering = new MetricOrdering(metaDataField.getAccumulatedOrderDirection(), metaDataField.getAccumulatedOrder(),
                     metricMetaData.getTitle(), MetricaValorUtilizarTotal.getInstance());
             metricMetaData.addMetricOrdering(metricOrdering);
         }
-        if (campoMetaData.getMascaraValorNulo() != null) {
-            metricMetaData.setNullValueMask(new NullValueMask(campoMetaData.getMascaraValorNulo()));
+        if (metaDataField.getNullValueMask() != null) {
+            metricMetaData.setNullValueMask(new NullValueMask(metaDataField.getNullValueMask()));
         }
-        factoryColorsAlert(metricMetaData, campoMetaData.getAlertasCoresValor());
+        factoryColorsAlert(metricMetaData, metaDataField.getColorAlertMetadata());
 
-        metricMetaData.setDecimalPlaces(campoMetaData.getNumPosDecimais());
-        metricMetaData.setTotalSumColumns(campoMetaData.isAcumulaCampoLinha());
-        metricMetaData.setTotalSumGeneralColumns(campoMetaData.isTotalizaCampoLinha());
-        metricMetaData.setTotalLines(campoMetaData.isTotalizaCampo());
-        metricMetaData.setTotalPartialLines(campoMetaData.isTotalizacaoParcial());
-        metricMetaData.setTotalPartialColumns(campoMetaData.isTotalizacaoParcial());
+        metricMetaData.setDecimalPlaces(metaDataField.getNumDecimalPositions());
+        metricMetaData.setTotalSumColumns(metaDataField.isAccumulateLineField());
+        metricMetaData.setTotalSumGeneralColumns(metaDataField.isTotalLineField());
+        metricMetaData.setTotalLines(metaDataField.isTotalField());
+        metricMetaData.setTotalPartialLines(metaDataField.isTotalPartial());
+        metricMetaData.setTotalPartialColumns(metaDataField.isTotalPartial());
 
-        metricMetaData.setMediaPartialColumns(campoMetaData.isMediaParcial());
-        metricMetaData.setMediaPartialLines(campoMetaData.isMediaParcial());
-        metricMetaData.setExpressionPartialColumns(campoMetaData.isExpressaoNaParcial());
-        metricMetaData.setExpressionPartialLines(campoMetaData.isExpressaoNaParcial());
-        metricMetaData.setPartialTotalExpression(campoMetaData.isExpressaoNaParcialTotal());
-        metricMetaData.setTotalMediaColumns(campoMetaData.isUtilizaMediaLinha());
-        metricMetaData.setAggregationType(campoMetaData.getAgregacaoTipo());
+        metricMetaData.setMediaPartialColumns(metaDataField.isMediaPartial());
+        metricMetaData.setMediaPartialLines(metaDataField.isMediaPartial());
+        metricMetaData.setExpressionPartialColumns(metaDataField.isExpressionInPartial());
+        metricMetaData.setExpressionPartialLines(metaDataField.isExpressionInPartial());
+        metricMetaData.setPartialTotalExpression(metaDataField.isExpressionInTotalPartial());
+        metricMetaData.setTotalMediaColumns(metaDataField.isUsesMediaLine());
+        metricMetaData.setAggregationType(metaDataField.getAggregationType());
     }
 
-    protected static void factoryColorsAlert(MetricMetaData metricMetaData, List<AlertaCorMetaData> alerts) {
+    protected static void factoryColorsAlert(MetricMetaData metricMetaData, List<ColorAlertMetadata> alerts) {
         ColorAlertProperties propriedadeAlerta;
         ColorAlertConditionsMetricaValor condicaoAlertaCores;
-        for (AlertaCorMetaData colorAlert : alerts) {
-            propriedadeAlerta = ColorAlertProperties.factory(colorAlert.getCorFonte(), colorAlert.getCorFundo(), colorAlert.getEstiloFonte(),
-                    colorAlert.isNegrito(), colorAlert.isItalico(), colorAlert.getTamanhoFonte());
+        for (ColorAlertMetadata colorAlert : alerts) {
+            propriedadeAlerta = ColorAlertProperties.factory(colorAlert.getFontColor(), colorAlert.getBackGroundColor(), colorAlert.getFontStyle(),
+                    colorAlert.isBold(), colorAlert.isItalic(), colorAlert.getFontSize());
             propriedadeAlerta.setAlignment(ColorAlertProperties.ALINHAMENTO_DIREITA);
-            condicaoAlertaCores = new ColorAlertConditionsMetricaValor(colorAlert.getSequencia(), propriedadeAlerta, colorAlert.getFuncao(),
-                    colorAlert.getAcao(), colorAlert.getOperador(), metricMetaData, colorAlert.getValores());
+            condicaoAlertaCores = new ColorAlertConditionsMetricaValor(colorAlert.getSequence(), propriedadeAlerta, colorAlert.getFunction(),
+                    colorAlert.getAction(), colorAlert.getOperator(), metricMetaData, colorAlert.getValues());
             metricMetaData.addColorAlert(condicaoAlertaCores);
         }
     }
@@ -169,7 +169,7 @@ public abstract class MetricMetaData extends ColumnMetaData {
     }
 
     protected void setTotalLinesType(String total) {
-        if (CampoMetaData.TOTALIZAR_APLICAR_SOMA.equals(total)) {
+        if (MetaDataField.TOTAL_APPLY_SUM.equals(total)) {
             this.partialTotalizationApplyType = PartialTotalizationApplyTypeSoma.getInstance();
         } else {
             this.partialTotalizationApplyType = PartialTotalizationApplyTypeExpressao.getInstance();
@@ -229,7 +229,7 @@ public abstract class MetricMetaData extends ColumnMetaData {
     }
 
     public void addColorAlert(ColorAlertConditionsMetrica colorAlert) {
-        if (AlertaCorMetaData.ACAO_PINTAR_LINHA == colorAlert.getAction()) {
+        if (ColorAlertMetadata.PAINT_LINE_ACTION == colorAlert.getAction()) {
             this.addColorAlertLine(colorAlert);
         } else {
             this.addColorAlertCell(colorAlert);

@@ -12,7 +12,7 @@ public class TipoHora implements DataType<Time> {
     private Time hora = null;
     public static final Time BRANCO = new Time(Integer.MIN_VALUE - 1);
 
-    public Time getValor(ResultSet set, String campo) throws SQLException {
+    public Time getValue(ResultSet set, String campo) throws SQLException {
         this.hora = set.getTime(campo);
         return this.hora;
     }

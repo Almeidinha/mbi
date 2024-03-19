@@ -9,8 +9,8 @@ import com.msoft.mbi.cube.multi.analytics.AnaliseParticipacaoTipoGeral;
 import com.msoft.mbi.cube.multi.calculation.Calculo;
 import com.msoft.mbi.cube.multi.column.MascaraColunaMetaData;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
-import com.msoft.mbi.cube.multi.metaData.AlertaCorMetaData;
-import com.msoft.mbi.cube.multi.metaData.CampoMetaData;
+import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
+import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLTextoColuna;
 import com.msoft.mbi.cube.multi.renderers.linkHTML.MascaraLinkHTMLTextoRenderer;
@@ -26,12 +26,12 @@ public class MetricCalculatedEvolucaoAHMetaData extends MetricCalculatedMetaData
     private final AnaliseEvolucaoTipo analiseEvolucaoTipo;
     public static final String AH = "analiseHorizontal";
 
-    public MetricCalculatedEvolucaoAHMetaData(MetricMetaData colunaReferencia, List<AlertaCorMetaData> alertasCores, AnaliseEvolucaoTipo tipoAnaliseEvolucao) {
+    public MetricCalculatedEvolucaoAHMetaData(MetricMetaData colunaReferencia, List<ColorAlertMetadata> alertasCores, AnaliseEvolucaoTipo tipoAnaliseEvolucao) {
         super("AH% " + colunaReferencia.getTitle());
         this.setTotalPartialLines(colunaReferencia.isTotalPartialLines());
         this.setTotalPartialColumns(colunaReferencia.isTotalPartialColumns());
         this.setTotalLines(colunaReferencia.isTotalLines());
-        this.setTotalLinesType(CampoMetaData.TOTALIZAR_APLICAR_EXPRESSAO);
+        this.setTotalLinesType(MetaDataField.TOTAL_APPLY_EXPRESSION);
         this.setDecimalPlaces(2);
         this.setCellProperty(colunaReferencia.getCellProperty());
         MascaraColunaMetaData mascaraAH = new MascaraColunaMetaData("%", MascaraColunaMetaData.TIPO_DEPOIS);

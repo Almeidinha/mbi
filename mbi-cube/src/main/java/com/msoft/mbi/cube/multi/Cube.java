@@ -21,7 +21,7 @@ import com.msoft.mbi.cube.multi.dimension.Dimensions;
 import com.msoft.mbi.cube.multi.resumeFunctions.MetricFilters;
 import com.msoft.mbi.cube.multi.resumeFunctions.MetricFiltersAccumulatedValue;
 import com.msoft.mbi.cube.multi.resumeFunctions.FunctionRanking;
-import com.msoft.mbi.cube.multi.metaData.CampoMetaData;
+import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 import com.msoft.mbi.cube.multi.metaData.CubeMetaData;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.metrics.MetricOrdering;
@@ -127,29 +127,29 @@ public abstract class Cube extends Dimension {
         return dimensionsLastLevelLines;
     }
 
-    protected boolean isMetricUsedInCalculation(CampoMetaData campoMetaData) {
-        List<CampoMetaData> camposMetric = this.getMetaData().getCamposMetrica();
-        for (CampoMetaData campoMetric : camposMetric) {
-            if (isMetricPresent(campoMetric.getNomeCampo(), campoMetaData)) {
+    protected boolean isMetricUsedInCalculation(MetaDataField metaDataField) {
+        List<MetaDataField> camposMetric = this.getMetaData().getMetricFields();
+        for (MetaDataField campoMetric : camposMetric) {
+            if (isMetricPresent(campoMetric.getName(), metaDataField)) {
                 return true;
             }
         }
         return false;
     }
 
-    protected boolean isMetricUsedInMetricFilter(CampoMetaData campoMetaData) {
-        String filterExpression = this.getMetaData().getExpressaoFiltrosMetrica();
-        String filterExpressionAcc = this.getMetaData().getExpressaoFiltrosAcumulado();
-        return this.isMetricPresent(filterExpression, campoMetaData) || this.isMetricPresent(filterExpressionAcc, campoMetaData);
+    protected boolean isMetricUsedInMetricFilter(MetaDataField metaDataField) {
+        String filterExpression = this.getMetaData().getMetricFieldsExpression();
+        String filterExpressionAcc = this.getMetaData().getAccumulatedFieldExpression();
+        return this.isMetricPresent(filterExpression, metaDataField) || this.isMetricPresent(filterExpressionAcc, metaDataField);
     }
 
-    private boolean isMetricPresent(String expression, CampoMetaData metric) {
+    private boolean isMetricPresent(String expression, MetaDataField metric) {
         if (expression.contains("[")) {
             StringTokenizer tokenizer = new StringTokenizer(expression, "]");
             while (tokenizer.hasMoreElements()) {
                 String parte = tokenizer.nextToken();
                 parte = parte.substring(parte.indexOf("[") + 1);
-                if (metric.getTituloCampo().equalsIgnoreCase(parte)) {
+                if (metric.getTitle().equalsIgnoreCase(parte)) {
                     return true;
                 }
             }
@@ -163,7 +163,7 @@ public abstract class Cube extends Dimension {
             while (m.find()) {
                 String chaveCampo = m.group();
                 chaveCampo = chaveCampo.substring(2, chaveCampo.length() - 2);
-                if (metric.getCampo() == Integer.parseInt(chaveCampo)) {
+                if (metric.getId() == Integer.parseInt(chaveCampo)) {
                     return true;
                 }
             }
@@ -171,13 +171,13 @@ public abstract class Cube extends Dimension {
         return false;
     }
 
-    protected String getMetricVisualizationStatus(CampoMetaData campoMetaData) {
-        String visualizacao = campoMetaData.getPadrao();
+    protected String getMetricVisualizationStatus(MetaDataField metaDataField) {
+        String visualizacao = metaDataField.getDefaultField();
         if ("N".equals(visualizacao)) {
-            if (this.isMetricUsedInCalculation(campoMetaData) || this.isMetricUsedInMetricFilter(campoMetaData)) {
-                visualizacao = CampoMetaData.METRICA_VISUALIZACAO_RESTRITA;
+            if (this.isMetricUsedInCalculation(metaDataField) || this.isMetricUsedInMetricFilter(metaDataField)) {
+                visualizacao = MetaDataField.METRIC_RESTRICTED_VIEW;
             } else {
-                visualizacao = CampoMetaData.METRICA_NAO_ADICIONADA;
+                visualizacao = MetaDataField.NOT_ADDED_METRIC;
             }
         }
         return visualizacao;
@@ -207,11 +207,11 @@ public abstract class Cube extends Dimension {
 
             Pattern pChaveCampo = Pattern.compile("\\d+");
             Matcher mChaveCampo = pChaveCampo.matcher(chaveCampo);
-            CampoMetaData campoAux;
+            MetaDataField campoAux;
             if (mChaveCampo.find()) {
                 String codCampo = mChaveCampo.group();
-                campoAux = this.getMetaData().getCampoMetricaByCodigo(Integer.parseInt(codCampo));
-                String tituloCampo = campoAux.getTituloCampo().replaceAll("\\$", "###");
+                campoAux = this.getMetaData().getMetricFieldByCode(Integer.parseInt(codCampo));
+                String tituloCampo = campoAux.getTitle().replaceAll("\\$", "###");
                 tituloCampo = chaveCampo.replaceAll(codCampo, tituloCampo);
                 expressaoOriginal = expressaoOriginal.replaceAll(expRegChaveCampo, "[" + tituloCampo + "]");
                 expressaoOriginal = expressaoOriginal.replaceAll("###", "\\$");

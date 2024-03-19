@@ -6,7 +6,7 @@ import java.util.List;
 import com.msoft.mbi.cube.multi.Cube;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.generation.CalculoSumarizacaoTipo;
-import com.msoft.mbi.cube.multi.metaData.AlertaCorMetaData;
+import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 
 public class ColorAlertConditionsMetricaOutroCampo extends ColorAlertConditionsMetrica {
@@ -29,7 +29,7 @@ public class ColorAlertConditionsMetricaOutroCampo extends ColorAlertConditionsM
     }
 
     public void setTipoComparacao(String tipoComparacao) {
-        if (AlertaCorMetaData.TIPO_COMPARACAO_PERCENTUAL.equals(tipoComparacao)) {
+        if (ColorAlertMetadata.PERCENT_COMPARISON_ALERT_TYPE.equals(tipoComparacao)) {
             this.tipoComparacao = TipoComparacaoOutroCampoPercentual.getInstance();
         } else {
             this.tipoComparacao = TipoComparacaoOutroCampoValor.getInstance();

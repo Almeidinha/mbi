@@ -8,7 +8,7 @@ public class TipoDimensaoInteiro extends TipoNumero<Integer> {
     private Integer inteiro = null;
     public static final Integer BRANCO = Integer.MIN_VALUE - 1;
 
-    public Integer getValor(ResultSet set, String campo) throws SQLException {
+    public Integer getValue(ResultSet set, String campo) throws SQLException {
         this.inteiro = set.getInt(campo);
         return ((set.wasNull() ? BRANCO : this.inteiro));
     }

@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.msoft.mbi.cube.multi.Cube;
 import com.msoft.mbi.cube.multi.generation.*;
-import com.msoft.mbi.cube.multi.metaData.AlertaCorMetaData;
-import com.msoft.mbi.cube.multi.metaData.CampoMetaData;
+import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
+import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 import com.msoft.mbi.cube.multi.metaData.CubeMetaData;
 import com.msoft.mbi.cube.util.CubeListener;
 import com.msoft.mbi.cube.util.DefaultCubeListener;
@@ -127,7 +127,7 @@ public class Indicator {
 
     private List<Field> dimensionColumn;
 
-    transient private Map<Field, CampoMetaData> BICubeMappedFields;
+    transient private Map<Field, MetaDataField> BICubeMappedFields;
     private int panelIndex;
     private boolean hasData;
     private final ObjectMapper mapper;
@@ -677,13 +677,13 @@ public class Indicator {
         loadDefaultFieldRegisters();
         int lastDrillDownSequence = getMaxDrillDownSequence();
 
-        CampoMetaData firtsColumn = null;
+        MetaDataField firtsColumn = null;
 
         for (Field field : fields) {
             if (isFieldValid(field)) {
-                CampoMetaData campo = createCampoMetaData(field);
+                MetaDataField campo = createCampoMetaData(field);
                 configureCampoMetaData(field, campo, lastDrillDownSequence);
-                cubeMetaData.addCampo(campo, field.getFieldType());
+                cubeMetaData.addField(campo, field.getFieldType());
 
                 if (this.usesSequence && firtsColumn == null) {
                     firtsColumn = campo;
@@ -700,13 +700,13 @@ public class Indicator {
         return field != null && !(field.getTitle().equalsIgnoreCase("Não visualizado") && field.isFixedValue());
     }
 
-    private CampoMetaData createCampoMetaData(Field field) {
-        CampoMetaData campo = createMetaDataCubeField(field);
-        campo.setSequencia(field.getVisualizationSequence());
+    private MetaDataField createCampoMetaData(Field field) {
+        MetaDataField campo = createMetaDataCubeField(field);
+        campo.setSequence(field.getVisualizationSequence());
         return campo;
     }
 
-    private void configureCampoMetaData(Field field, CampoMetaData campo, int lastDrillDownSequence) {
+    private void configureCampoMetaData(Field field, MetaDataField campo, int lastDrillDownSequence) {
         HtmlHelper.configureSorting(field, campo);
         if (field.isDrillDown() && field.getDrillDownSequence() != lastDrillDownSequence) {
             HtmlHelper.createMascaraHTMLDrillDownDimensao(field, campo, this.code);
@@ -714,25 +714,25 @@ public class Indicator {
         configureAlertColor(field, campo);
     }
 
-    private void configureAlertColor(Field field, CampoMetaData campo) {
+    private void configureAlertColor(Field field, MetaDataField campo) {
         int alertSequence = 1;
         for (LineColor corLinha : field.getLineColors()) {
             if (corLinha != null) {
                 String corFundo = corLinha.getBackGroundColor().startsWith("#") ? corLinha.getBackGroundColor().substring(1) : corLinha.getBackGroundColor();
                 String corFonte = corLinha.getFontColor().startsWith("#") ? corLinha.getFontColor().substring(1) : corLinha.getFontColor();
-                AlertaCorMetaData alertaCor = new AlertaCorMetaData(alertSequence++, LogicalOperators.BETWEEN_INCLUSIVE,
+                ColorAlertMetadata alertaCor = new ColorAlertMetadata(alertSequence++, LogicalOperators.BETWEEN_INCLUSIVE,
                         Double.parseDouble(corLinha.getInitialValue()), Double.parseDouble(corLinha.getInitialValue()), corFonte, corFundo,
                         "Verdana", false, false, 10);
-                campo.addAlertaCor(alertaCor, AlertaCorMetaData.TIPO_ALERTA_VALOR);
+                campo.addColorAlert(alertaCor, ColorAlertMetadata.VALUE_ALERT_TYPE);
             }
         }
     }
 
-    private void configurePrimerColumn(CampoMetaData firstColumn) {
-        firstColumn.setMostraSequencia(true);
+    private void configurePrimerColumn(MetaDataField firstColumn) {
+        firstColumn.setShowSequence(true);
         FilterSequence filterSequence = getFiltersFunction().getFilterSequence();
         if (filterSequence != null) {
-            firstColumn.setExpressaoRanking(filterSequence.toString());
+            firstColumn.setRankingExpression(filterSequence.toString());
         }
     }
 
@@ -804,31 +804,31 @@ public class Indicator {
         });
     }
 
-    private CampoMetaData createMetaDataCubeField(Field field) {
-        CampoMetaData metaDataField = new CampoMetaData();
+    private MetaDataField createMetaDataCubeField(Field field) {
+        MetaDataField metaDataField = new MetaDataField();
 
         if (field == null) {
             return metaDataField;
         }
 
-        metaDataField.setAcumulaCampoLinha("S".equals(field.getAccumulatedLine()));
-        metaDataField.setAgregacaoTipo(field.getAggregationType());
-        metaDataField.setAnaliseHorizontalTipo(field.getHorizontalAnalysisType());
-        metaDataField.setAnaliseVerticalTipo(field.getVerticalAnalysisType());
-        metaDataField.setApelidoCampo(field.getNickname());
-        metaDataField.setCampo(field.getFieldId());
+        metaDataField.setAccumulateLineField("S".equals(field.getAccumulatedLine()));
+        metaDataField.setAggregationType(field.getAggregationType());
+        metaDataField.setHorizontalAnalysisType(field.getHorizontalAnalysisType());
+        metaDataField.setVerticalAnalysisType(field.getVerticalAnalysisType());
+        metaDataField.setFieldNickname(field.getNickname());
+        metaDataField.setId(field.getFieldId());
         metaDataField.setDrillDown(field.isDrillDown());
-        metaDataField.setExpressao(field.isExpression());
-        metaDataField.setLarguraColuna(field.getColumnWidth());
-        metaDataField.setLocalApresentacao(field.getDisplayLocation() == Constants.LINE ? Constants.COLUMN : Constants.LINE);
-        metaDataField.setMascaraValorNulo("-");
-        metaDataField.setMostraSequencia(false);
-        metaDataField.setNomeCampo(field.getName());
-        metaDataField.setNumPosDecimais(field.getNumDecimalPositions());
-        metaDataField.setOrdem(field.getOrder());
-        metaDataField.setOrdem(field.getAccumulatedOrder());
-        metaDataField.setPadrao(field.getDefaultField());
-        metaDataField.setTituloCampo(field.getTitle());
+        metaDataField.setExpression(field.isExpression());
+        metaDataField.setColumnWidth(field.getColumnWidth());
+        metaDataField.setDisplayLocation(field.getDisplayLocation() == Constants.LINE ? Constants.COLUMN : Constants.LINE);
+        metaDataField.setNullValueMask("-");
+        metaDataField.setShowSequence(false);
+        metaDataField.setName(field.getName());
+        metaDataField.setNumDecimalPositions(field.getNumDecimalPositions());
+        metaDataField.setOrder(field.getOrder());
+        metaDataField.setOrder(field.getAccumulatedOrder());
+        metaDataField.setDefaultField(field.getDefaultField());
+        metaDataField.setTitle(field.getTitle());
 
         setMetaDataFieldOrder(metaDataField, field);
         setMetaDataFieldMask(metaDataField, field);
@@ -841,40 +841,40 @@ public class Indicator {
         return metaDataField;
     }
 
-    private void setMetaDataFieldOrder(CampoMetaData metaDataField, Field field) {
+    private void setMetaDataFieldOrder(MetaDataField metaDataField, Field field) {
         if (field.getDelegateOrder() != null) {
             Field campoIndicator = getFieldByCode(field.getDelegateOrder());
             if (campoIndicator != null) {
-                metaDataField.setCampoOrdenacao(createMetaDataCubeField(campoIndicator));
+                metaDataField.setOrderingField(createMetaDataCubeField(campoIndicator));
             }
         }
     }
 
-    private void setMetaDataFieldMask(CampoMetaData metaDataField, Field field) {
+    private void setMetaDataFieldMask(MetaDataField metaDataField, Field field) {
         // Set masks based on certain conditions
     }
 
-    private void setMetaDataFieldOrderDirection(CampoMetaData metaDataField, Field field) {
-        metaDataField.setSentidoOrdem(field.getOrderDirection().trim().toUpperCase());
-        metaDataField.setSentidoOrdemAcumulado(field.getAccumulatedOrderDirection() != null ?
+    private void setMetaDataFieldOrderDirection(MetaDataField metaDataField, Field field) {
+        metaDataField.setOrderDirection(field.getOrderDirection().trim().toUpperCase());
+        metaDataField.setAccumulatedOrderDirection(field.getAccumulatedOrderDirection() != null ?
                 field.getAccumulatedOrderDirection().trim().toUpperCase() : "ASC");
     }
 
-    private void setMetaDataFieldLineTotalizationType(CampoMetaData metaDataField, Field field) {
+    private void setMetaDataFieldLineTotalizationType(MetaDataField metaDataField, Field field) {
         // Set type of totalization for rows
     }
 
 
-    private void setMetaDataFieldFlags(CampoMetaData metaDataField, Field field) {
+    private void setMetaDataFieldFlags(MetaDataField metaDataField, Field field) {
         // Set various flags based on conditions
     }
 
-    private void setMetaDataFieldDataType(CampoMetaData metaDataField, Field field) {
+    private void setMetaDataFieldDataType(MetaDataField metaDataField, Field field) {
         String tipoDado = field.getDataType();
         if (Constants.DIMENSION.equals(field.getFieldType()) && Constants.NUMBER.equals(field.getDataType())) {
-            tipoDado = CampoMetaData.TIPO_DECIMAL;
+            tipoDado = MetaDataField.DECIMAL_TYPE;
         }
-        metaDataField.setTipoDado(tipoDado);
+        metaDataField.setDataType(tipoDado);
     }
 
     public boolean checkFilters(DimensionFilter dimensionFilter, Field campo) {
@@ -904,7 +904,7 @@ public class Indicator {
     }
 
     private CubeMetaData createCuboMetaData() throws BIException, DateException {
-        Map<Field, CampoMetaData> BICubeMapedFields = new HashMap<>();
+        Map<Field, MetaDataField> BICubeMapedFields = new HashMap<>();
         CubeMetaData cubeMetaData = new CubeMetaData();
 
         loadMultiDimensionalFieldRegisters();
@@ -912,7 +912,7 @@ public class Indicator {
 
         int sequenceDrillDown = Integer.MAX_VALUE;
         int sequence = Integer.MAX_VALUE;
-        CampoMetaData firtsLineDimensionDrillDown = null;
+        MetaDataField firtsLineDimensionDrillDown = null;
 
         int verificationActivity = 0;
 
@@ -926,11 +926,11 @@ public class Indicator {
                 continue;
             }
 
-            CampoMetaData metadataField = createMetaDataCubeField(field);
+            MetaDataField metadataField = createMetaDataCubeField(field);
             String fieldType = field.getFieldType();
 
             if (Constants.DIMENSION.equals(fieldType)) {
-                metadataField.setSequencia(field.getDrillDownSequence());
+                metadataField.setSequence(field.getDrillDownSequence());
                 if (field.getDisplayLocation() == Constants.COLUMN && "S".equals(field.getDefaultField())) {
                     if (field.getDrillDownSequence() < sequenceDrillDown) {
                         firtsLineDimensionDrillDown = metadataField;
@@ -942,18 +942,18 @@ public class Indicator {
                     HtmlHelper.createMascarasHTMLDimensaoLinha(field, metadataField, this);
                 }
             } else {
-                metadataField.setSequencia(field.getVisualizationSequence());
+                metadataField.setSequence(field.getVisualizationSequence());
             }
 
-            cubeMetaData.addCampo(metadataField, fieldType);
+            cubeMetaData.addField(metadataField, fieldType);
             BICubeMapedFields.put(field, metadataField);
         }
 
         if (this.usesSequence && firtsLineDimensionDrillDown != null) {
-            firtsLineDimensionDrillDown.setMostraSequencia(true);
+            firtsLineDimensionDrillDown.setShowSequence(true);
             FilterSequence filterSequence = getFiltersFunction().getFilterSequence();
             if (filterSequence != null) {
-                firtsLineDimensionDrillDown.setExpressaoRanking(filterSequence.toString());
+                firtsLineDimensionDrillDown.setRankingExpression(filterSequence.toString());
             }
         }
 
@@ -963,42 +963,42 @@ public class Indicator {
         return cubeMetaData;
     }
 
-    private void processColorAlerts(Map<Field, CampoMetaData> biCubeMappedFields) throws BIException, DateException {
+    private void processColorAlerts(Map<Field, MetaDataField> biCubeMappedFields) throws BIException, DateException {
         List<ColorAlert> colorAlertsList = colorAlerts.getColorAlertList();
         for (ColorAlert colorAlert : colorAlertsList) {
-            CampoMetaData metadataField = biCubeMappedFields.get(colorAlert.getFirstField());
+            MetaDataField metadataField = biCubeMappedFields.get(colorAlert.getFirstField());
             if (metadataField == null) {
                 continue;
             }
 
-            int action = Objects.equals(colorAlert.getAction(), ColorAlert.LINHA) ? AlertaCorMetaData.ACAO_PINTAR_LINHA : AlertaCorMetaData.ACAO_PINTAR_CELULA;
+            int action = Objects.equals(colorAlert.getAction(), ColorAlert.LINHA) ? ColorAlertMetadata.PAINT_LINE_ACTION : ColorAlertMetadata.PAINT_CELL_ACTION;
             AlertProperty props = colorAlert.getAlertProperty();
             String backgroundColor = props.getCellBackgroundColor().startsWith("#") ? props.getCellBackgroundColor().substring(1) : props.getCellBackgroundColor();
             String fontColor = props.getFontColor().startsWith("#") ? props.getFontColor().substring(1) : props.getFontColor();
 
             if (!colorAlert.isCompareToAnotherField()) {
-                AlertaCorMetaData alertaCubo = createAlertaCuboMetaData(colorAlert, action, fontColor, backgroundColor);
-                metadataField.addAlertaCor(alertaCubo, AlertaCorMetaData.TIPO_ALERTA_VALOR);
+                ColorAlertMetadata alertaCubo = createAlertaCuboMetaData(colorAlert, action, fontColor, backgroundColor);
+                metadataField.addColorAlert(alertaCubo, ColorAlertMetadata.VALUE_ALERT_TYPE);
             } else {
                 String value = colorAlert.getFirstDoubleValue();
                 if ("".equals(value)) {
                     value = "0.00";
                 }
-                AlertaCorMetaData alertaCubo = new AlertaCorMetaData(colorAlert.getSequence(), colorAlert.getOperator().getSymbol(),
+                ColorAlertMetadata alertaCubo = new ColorAlertMetadata(colorAlert.getSequence(), colorAlert.getOperator().getSymbol(),
                         Double.parseDouble(value), action, colorAlert.getFirstFieldFunction(), fontColor, backgroundColor, props.getFontName(),
                         props.hasBold(), props.hasItalic(), props.getFontSize(), colorAlert.getValueType(), colorAlert.getSecondField().getTitle(),
                         colorAlert.getSecondFieldFunction());
-                metadataField.addAlertaCor(alertaCubo, AlertaCorMetaData.TIPO_ALERTA_OUTRO_CAMPO);
+                metadataField.addColorAlert(alertaCubo, ColorAlertMetadata.SECOND_FIELD_ALERT_TYPE);
             }
         }
     }
 
     private void createFiltroseRestricoesMetricasCuboMetaData(CubeMetaData cubeMetaData) throws BIException {
         String metricFilterExpression = buildMetricFiltersExpression();
-        cubeMetaData.setExpressaoFiltrosMetrica(metricFilterExpression);
+        cubeMetaData.setMetricFieldsExpression(metricFilterExpression);
 
         String accumulatedFilterExpression = buildAccumulatedFiltersExpression();
-        cubeMetaData.setExpressaoFiltrosAcumulado(accumulatedFilterExpression);
+        cubeMetaData.setAccumulatedFieldExpression(accumulatedFilterExpression);
     }
 
     private String buildMetricFiltersExpression() throws BIException {
@@ -1022,7 +1022,7 @@ public class Indicator {
         return "";
     }
 
-    private AlertaCorMetaData createAlertaCuboMetaData(ColorAlert colorAlert, int action, String fontColor, String backGroundColor) throws BIException, DateException {
+    private ColorAlertMetadata createAlertaCuboMetaData(ColorAlert colorAlert, int action, String fontColor, String backGroundColor) throws BIException, DateException {
         Field campo = colorAlert.getFirstField();
         AlertProperty props = colorAlert.getAlertProperty();
 
@@ -1033,7 +1033,7 @@ public class Indicator {
         Object firstValueObject = parseAlertValue(campo, firstValue, operatorSymbol);
         Object segundoValor = (secondValue != null) ? parseAlertValue(campo, secondValue, operatorSymbol) : null;
 
-        return new AlertaCorMetaData(colorAlert.getSequence(), operatorSymbol, firstValueObject, segundoValor, action,
+        return new ColorAlertMetadata(colorAlert.getSequence(), operatorSymbol, firstValueObject, segundoValor, action,
                 colorAlert.getFirstFieldFunction(), fontColor, backGroundColor, props.getFontName(), props.hasBold(), props.hasItalic(),
                 props.getFontSize());
     }

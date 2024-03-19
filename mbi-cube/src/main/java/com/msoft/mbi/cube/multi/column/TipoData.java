@@ -13,7 +13,7 @@ public class TipoData implements DataType<Date> {
     private Date data = null;
     public static final Date BRANCO = new Date(Integer.MIN_VALUE - 1);
 
-    public Date getValor(ResultSet set, String campo) throws SQLException {
+    public Date getValue(ResultSet set, String campo) throws SQLException {
         this.data = set.getDate(campo);
         return this.data;
     }

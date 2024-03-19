@@ -36,12 +36,12 @@ public class DimensionColumn extends Dimension {
 
     @SuppressWarnings("unchecked")
     public void process(ResultSet set) throws SQLException {
-        Comparable<String> valor = (Comparable<String>) this.type.getValor(set, this.metaData.getColuna());
+        Comparable<String> valor = (Comparable<String>) this.type.getValue(set, this.metaData.getColuna());
         valor = (Comparable<String>) this.type.format(valor);
         this.setVisualizationValue(valor);
         DimensaoMetaData dimensionOrdering = this.metaData.getDimensaoOrdenacao();
         if (dimensionOrdering != null) {
-            this.setValue((Comparable<String>) dimensionOrdering.getTipo().getValor(set, dimensionOrdering.getColuna()));
+            this.setValue((Comparable<String>) dimensionOrdering.getTipo().getValue(set, dimensionOrdering.getColuna()));
         } else {
             this.setValue(valor);
         }

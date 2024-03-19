@@ -9,7 +9,7 @@ import com.msoft.mbi.cube.multi.dimension.DimensionColunaNula;
 import com.msoft.mbi.cube.multi.dimension.DimensionLine;
 import com.msoft.mbi.cube.multi.dimension.DimensaoMetaData;
 import com.msoft.mbi.cube.multi.dimension.Dimensions;
-import com.msoft.mbi.cube.multi.metaData.AlertaCorMetaData;
+import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedEvolucaoAHMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricaCalculadaFuncaoMetaData;
@@ -506,13 +506,13 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
 
             } else {
                 String propriedadeAlertaCoresMetricaLinhaFuncoes = dimension
-                        .searchMetricsPropertyAlertsRowFunctionsTotalColumns(this.visibleMetrics, AlertaCorMetaData.getListaFuncoesTotalizacaoHorizontal());
+                        .searchMetricsPropertyAlertsRowFunctionsTotalColumns(this.visibleMetrics, ColorAlertMetadata.getHorizaontalToalFunctionList());
                 if (propriedadeAlertaCoresMetricaLinhaFuncoes != null) {
                     propriedadeCelulaNivelAnteriorAplicar = propriedadeAlertaCoresMetricaLinhaFuncoes;
                     this.alertaMetricaLinhaAtual = propriedadeAlertaCoresMetricaLinhaFuncoes;
                 }
                 this.imprimeMetricas(dimension, propriedadeCelulaNivelAnteriorAplicar, impressaoMetricaLinha,
-                        AlertaCorMetaData.getListaFuncoesTotalizacaoHorizontal(), AlertaCorMetaData.SEM_FUNCAO);
+                        ColorAlertMetadata.getHorizaontalToalFunctionList(), ColorAlertMetadata.NO_FUNCTION);
                 this.impressor.fechaLinha();
             }
         }

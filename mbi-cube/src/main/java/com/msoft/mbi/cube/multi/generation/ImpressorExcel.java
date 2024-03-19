@@ -219,8 +219,8 @@ public class ImpressorExcel implements Impressor {
     public void imprimeValorDimensaoLinha(String propriedadeCelula, int colspan, int rowspan, Object valor, DimensaoMetaData metaData) {
 
         String mascara = "";
-        mascara = (metaData.getCampoMetadadata() == null || metaData.getCampoMetadadata().getMascarasCampo().isEmpty() || metaData.getCampoMetadadata().getMascarasCampo().get(0)
-                .getMascara().isEmpty() ? "dd/mm/yyyy" : metaData.getCampoMetadadata().getMascarasCampo().get(0).getMascara()).replace("'", "");
+        mascara = (metaData.getCampoMetadadata() == null || metaData.getCampoMetadadata().getFieldMask().isEmpty() || metaData.getCampoMetadadata().getFieldMask().get(0)
+                .getMascara().isEmpty() ? "dd/mm/yyyy" : metaData.getCampoMetadadata().getFieldMask().get(0).getMascara()).replace("'", "");
 
         if (metaData.getTipo() instanceof TipoData) {
             String nomeEstiloData = propriedadeCelula + "_Data";

@@ -2,7 +2,7 @@ package com.msoft.mbi.cube.multi.metrics.calculated;
 
 import com.msoft.mbi.cube.multi.calculation.Calculo;
 import com.msoft.mbi.cube.multi.column.TipoDecimal;
-import com.msoft.mbi.cube.multi.metaData.CampoMetaData;
+import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.applyAggregationOrder.AgregacaoAplicarAntes;
 import com.msoft.mbi.cube.multi.metrics.calculated.applyAggregationOrder.AgregacaoAplicarDepois;
@@ -26,13 +26,13 @@ public class MetricCalculatedMetaData extends MetricMetaData {
         this.expression = expression;
     }
 
-    public static MetricCalculatedMetaData factory(CampoMetaData campoMetaData) {
-        String title = campoMetaData.getTituloCampo();
-        String expression = campoMetaData.getNomeCampo();
+    public static MetricCalculatedMetaData factory(MetaDataField metaDataField) {
+        String title = metaDataField.getTitle();
+        String expression = metaDataField.getName();
         MetricCalculatedMetaData metricMetadata = new MetricCalculatedMetaData(title, expression);
-        MetricMetaData.factory(metricMetadata, campoMetaData);
-        metricMetadata.setTotalLinesType(campoMetaData.getTipoTotalizacaoLinhas());
-        metricMetadata.setAggregationApplyOrder(campoMetaData.getAgregacaoAplicarOrdem());
+        MetricMetaData.factory(metricMetadata, metaDataField);
+        metricMetadata.setTotalLinesType(metaDataField.getTotalLinesType());
+        metricMetadata.setAggregationApplyOrder(metaDataField.getAggregationApplyOrder());
         return metricMetadata;
     }
 
@@ -41,7 +41,7 @@ public class MetricCalculatedMetaData extends MetricMetaData {
     }
 
     public void setAggregationApplyOrder(String aggregationOrder) {
-        if (CampoMetaData.AGREGACAO_APLICAR_ANTES.equals(aggregationOrder)) {
+        if (MetaDataField.AGGREGATION_APPLY_BEFORE.equals(aggregationOrder)) {
             this.aggregationApplyOrder = AgregacaoAplicarAntes.getInstance();
         } else {
             this.aggregationApplyOrder = AgregacaoAplicarDepois.getInstance();

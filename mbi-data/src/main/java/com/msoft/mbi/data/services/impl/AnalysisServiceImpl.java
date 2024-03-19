@@ -17,13 +17,8 @@ import com.msoft.mbi.model.*;
 import com.msoft.mbi.model.support.DatabaseType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCallback;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Service;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 
 @Service
@@ -89,10 +84,8 @@ public class AnalysisServiceImpl implements AnalysisService {
             BITenantEntity biTenant = tenantService.findById(dto.getConnectionId());
             Indicator ind = biIndLogicToIndMapper.dtoToIndicator(dto);
 
-            String sql = ind.getSqlExpression(DatabaseType.MSSQL, false);
-
+            String sql = ind.getSqlExpression(biTenant.getDatabaseType(), false);
             JdbcTemplate jdbcTemplate = connectionManager.getNewConnection(biTenant);
-
             ind.startTableProcess();
 
             jdbcTemplate.query(sql, resultSet -> {

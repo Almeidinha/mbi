@@ -15,8 +15,8 @@ import com.msoft.mbi.cube.multi.dimension.DimensaoMetaData;
 import com.msoft.mbi.cube.multi.dimension.comparator.DimensaoMetricaComparator;
 import com.msoft.mbi.cube.multi.resumeFunctions.MetricFilters;
 import com.msoft.mbi.cube.multi.resumeFunctions.MetricFiltersAccumulatedValue;
-import com.msoft.mbi.cube.multi.metaData.AlertaCorMetaData;
-import com.msoft.mbi.cube.multi.metaData.CampoMetaData;
+import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
+import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 import com.msoft.mbi.cube.multi.metaData.CubeMetaData;
 import com.msoft.mbi.cube.multi.metaData.OrdenacaoCampoComparator;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
@@ -41,42 +41,42 @@ public class CubeDefaultFormat extends Cube {
     @Override
     protected void factory() {
         CubeMetaData cubeMetaData = (CubeMetaData) this.metaData;
-        cubeMetaData.ordenaCampos();
-        cubeMetaData.ordenaCamposDimensao();
+        cubeMetaData.orderFields();
+        cubeMetaData.orderDimensionFields();
 
-        Map<CampoMetaData, DimensaoMetaData> dimensions = new HashMap<>();
+        Map<MetaDataField, DimensaoMetaData> dimensions = new HashMap<>();
 
-        List<CampoMetaData> dimensionsByOrder = new ArrayList<>(cubeMetaData.getCamposDimensao());
+        List<MetaDataField> dimensionsByOrder = new ArrayList<>(cubeMetaData.getDimensionFields());
         OrdenacaoCampoComparator comparator = new OrdenacaoCampoComparator();
         dimensionsByOrder.sort(comparator);
         DimensaoAuxiliarMetaData dimensaoMetaDataFicticia = new DimensaoAuxiliarMetaData();
         this.addHierarchyLine(dimensaoMetaDataFicticia);
-        for (CampoMetaData campo : dimensionsByOrder) {
-            if ("S".equals(campo.getPadrao())) {
+        for (MetaDataField campo : dimensionsByOrder) {
+            if ("S".equals(campo.getDefaultField())) {
                 DimensaoMetaData dimensaoMetaData = DimensaoMetaData.factory(campo);
                 this.addHierarchyLine(dimensaoMetaData);
                 dimensions.put(campo, dimensaoMetaData);
-                if (campo.getOrdem() > 0) {
+                if (campo.getOrder() > 0) {
                     this.lastOrderedDimension = dimensaoMetaData;
                 }
             }
         }
 
-        for (CampoMetaData campo : cubeMetaData.getCampos()) {
-            if (CampoMetaData.DIMENSAO.equals(campo.getTipoCampo())) {
-                if ("S".equals(campo.getPadrao())) {
+        for (MetaDataField campo : cubeMetaData.getFields()) {
+            if (MetaDataField.DIMENSION.equals(campo.getFieldType())) {
+                if ("S".equals(campo.getDefaultField())) {
                     this.columnsViewed.add(dimensions.get(campo));
                 }
             } else {
                 AnaliseParticipacaoTipo tipoAnaliseVerticalCampo = AnaliseParticipacaoTipoGeral.getInstance();
                 String visualizacaoMetrica = this.getMetricVisualizationStatus(campo);
-                if (!CampoMetaData.METRICA_NAO_ADICIONADA.equals(visualizacaoMetrica)) {
+                if (!MetaDataField.NOT_ADDED_METRIC.equals(visualizacaoMetrica)) {
                     MetricMetaData metaDataCampoOriginal;
-                    if (!campo.isExpressao()) {
+                    if (!campo.isExpression()) {
                         metaDataCampoOriginal = MetricAdditiveMetaData.factory(campo);
                         this.addHierarchyLineMetricAdditive((MetricAdditiveMetaData) metaDataCampoOriginal);
                     } else {
-                        campo.setNomeCampo(this.convertConditionalExpression(campo.getNomeCampo()));
+                        campo.setName(this.convertConditionalExpression(campo.getName()));
 
                         metaDataCampoOriginal = MetricCalculatedMetaData.factory(campo);
 
@@ -85,7 +85,7 @@ public class CubeDefaultFormat extends Cube {
 
                         try {
                             resultExpr = ((MetricCalculatedMetaData) metaDataCampoOriginal).createCalculo().calculaValor();
-                            valorExpr = Double.valueOf(campo.getNomeCampo());
+                            valorExpr = Double.valueOf(campo.getName());
                         } catch (Exception e) {
                         }
 
@@ -97,35 +97,35 @@ public class CubeDefaultFormat extends Cube {
                         }
                     }
 
-                    if (CampoMetaData.METRICA_VISUALIZACAO_RESTRITA.equals(visualizacaoMetrica)) {
+                    if (MetaDataField.METRIC_RESTRICTED_VIEW.equals(visualizacaoMetrica)) {
                         metaDataCampoOriginal.setViewed(false);
                     } else {
                         this.columnsViewed.add(metaDataCampoOriginal);
                     }
 
-                    if (campo.temAnaliseVertical()) {
-                        List<AlertaCorMetaData> alertasAV = campo.getAlertasValorFuncaoDeCampoRelativo(MetricCalculatedParticipacaoAVMetaData.AV);
+                    if (campo.hasVerticalAnalysis()) {
+                        List<ColorAlertMetadata> alertasAV = campo.getRelativeFieldFunctionValueAlert(MetricCalculatedParticipacaoAVMetaData.AV);
                         MetricCalculatedParticipacaoAVMetaData metricaAV = new MetricCalculatedParticipacaoAVMetaData(metaDataCampoOriginal, tipoAnaliseVerticalCampo, alertasAV);
                         metricaAV.setTotalLines(true);
                         this.addHierarchyLineMetricCalculated(metricaAV);
                         this.columnsViewed.add(metricaAV);
                     }
-                    if (campo.temValorAcumulado()) {
-                        List<AlertaCorMetaData> alertasAV = campo.getAlertasValorFuncaoDeCampoRelativo(MetricCalculatedAcumuladoValorAVMetaData.VALOR_ACUMULADO_AV);
+                    if (campo.hasAccumulatedValue()) {
+                        List<ColorAlertMetadata> alertasAV = campo.getRelativeFieldFunctionValueAlert(MetricCalculatedAcumuladoValorAVMetaData.VALOR_ACUMULADO_AV);
                         MetricCalculatedAcumuladoValorAVMetaData metricaValorAcumuladoAV = new MetricCalculatedAcumuladoValorAVMetaData(metaDataCampoOriginal, tipoAnaliseVerticalCampo, alertasAV);
                         this.addHierarchyLineMetricCalculated(metricaValorAcumuladoAV);
                         this.columnsViewed.add(metricaValorAcumuladoAV);
                     }
-                    if (campo.temParticipacaoAcumulada()) {
+                    if (campo.hasAccumulatedParticipation()) {
                         MetricCalculatedParticipacaoMetaData metaDataAVAuxiliar = null;
-                        if (!campo.temAnaliseVertical()) {
+                        if (!campo.hasVerticalAnalysis()) {
                             metaDataAVAuxiliar = new MetricCalculatedParticipacaoAVMetaData(metaDataCampoOriginal, tipoAnaliseVerticalCampo, null);
                             metaDataAVAuxiliar.setViewed(false);
                             this.addHierarchyLineMetricCalculated(metaDataAVAuxiliar);
                         } else {
-                            metaDataAVAuxiliar = (MetricCalculatedParticipacaoMetaData) this.getMetricMetaDataRelativeField(campo.getTituloCampo(), MetricCalculatedParticipacaoAVMetaData.AV);
+                            metaDataAVAuxiliar = (MetricCalculatedParticipacaoMetaData) this.getMetricMetaDataRelativeField(campo.getTitle(), MetricCalculatedParticipacaoAVMetaData.AV);
                         }
-                        List<AlertaCorMetaData> alertasAV = campo.getAlertasValorFuncaoDeCampoRelativo(MetricCalculatedAcumuladoParticipacaoAVMetaData.PARTICIPACAO_ACUMULADA_AV);
+                        List<ColorAlertMetadata> alertasAV = campo.getRelativeFieldFunctionValueAlert(MetricCalculatedAcumuladoParticipacaoAVMetaData.PARTICIPACAO_ACUMULADA_AV);
                         MetricCalculatedAcumuladoParticipacaoAVMetaData metricaPartAcumAV = new MetricCalculatedAcumuladoParticipacaoAVMetaData(metaDataAVAuxiliar, tipoAnaliseVerticalCampo, alertasAV);
                         this.addHierarchyLineMetricCalculated(metricaPartAcumAV);
                         this.columnsViewed.add(metricaPartAcumAV);
@@ -139,12 +139,12 @@ public class CubeDefaultFormat extends Cube {
         metricasCalculadas = hierarquiaCalculo.getMetricasCalculadasOrdenadas();
         this.setHierarchyMetricCalculated(metricasCalculadas);
 
-        if (cubeMetaData.getExpressaoFiltrosMetrica() != null && !"".equals(cubeMetaData.getExpressaoFiltrosMetrica().trim())) {
-            String expressaoFiltro = this.convertMetricFilterToFieldTitle(cubeMetaData.getExpressaoFiltrosMetrica());
+        if (cubeMetaData.getMetricFieldsExpression() != null && !"".equals(cubeMetaData.getMetricFieldsExpression().trim())) {
+            String expressaoFiltro = this.convertMetricFilterToFieldTitle(cubeMetaData.getMetricFieldsExpression());
             this.metricFilters = new MetricFilters(expressaoFiltro, MetricaValorUtilizarLinhaMetrica.getInstance());
         }
-        if (cubeMetaData.getExpressaoFiltrosAcumulado() != null && !"".equals(cubeMetaData.getExpressaoFiltrosAcumulado().trim())) {
-            String expressaoFiltro = this.convertMetricFilterToFieldTitle(cubeMetaData.getExpressaoFiltrosAcumulado());
+        if (cubeMetaData.getAccumulatedFieldExpression() != null && !"".equals(cubeMetaData.getAccumulatedFieldExpression().trim())) {
+            String expressaoFiltro = this.convertMetricFilterToFieldTitle(cubeMetaData.getAccumulatedFieldExpression());
             this.metricFiltersAccumulatedValue = new MetricFiltersAccumulatedValue(expressaoFiltro);
         }
     }

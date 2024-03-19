@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.msoft.mbi.cube.multi.resumeFunctions.FunctionRanking;
 import com.msoft.mbi.cube.multi.generation.Impressor;
-import com.msoft.mbi.cube.multi.metaData.CampoMetaData;
-import com.msoft.mbi.cube.multi.metaData.MascaraLinkHTMLMetaData;
+import com.msoft.mbi.cube.multi.metaData.MetaDataField;
+import com.msoft.mbi.cube.multi.metaData.HTMLLineMask;
 import com.msoft.mbi.cube.multi.renderers.MascaraAntesRenderer;
 import com.msoft.mbi.cube.multi.renderers.MascaraDataRenderer;
 import com.msoft.mbi.cube.multi.renderers.MascaraDepoisRenderer;
@@ -134,18 +134,18 @@ public abstract class ColumnMetaData {
         return decorator;
     }
 
-    protected static void buildDecoratorHTMLLink(List<MascaraLinkHTMLMetaData> mascarasHTML,
+    protected static void buildDecoratorHTMLLink(List<HTMLLineMask> mascarasHTML,
                                                  ColumnMetaData columnMetaData) {
-        for (MascaraLinkHTMLMetaData mascara : mascarasHTML) {
-            switch (mascara.getTipo()) {
-                case MascaraLinkHTMLMetaData.TIPO_DEPOIS_VALOR:
+        for (HTMLLineMask mascara : mascarasHTML) {
+            switch (mascara.getType()) {
+                case HTMLLineMask.VALUE_TYPE_AFTER:
                     columnMetaData.setHTMLEffectRenderer(new MascaraLinkHTMLDepoisRenderer(columnMetaData.getHTMLEffectRenderer(), mascara.getLinkHTML()));
                     break;
-                case MascaraLinkHTMLMetaData.TIPO_VALOR:
+                case HTMLLineMask.VALUE_TYPE:
                     MascaraLinkHTMLTextoRenderer mascaraHTML = new MascaraLinkHTMLTextoRenderer((LinkHTMLTexto) mascara.getLinkHTML());
                     columnMetaData.setHTMLEffectRenderer(mascaraHTML);
                     break;
-                case MascaraLinkHTMLMetaData.TIPO_DINAMICO:
+                case HTMLLineMask.DYNAMIC_TYPE:
                     MascaraLinkHTMLValorDinamicoRenderer mascaraHTMLValor = new MascaraLinkHTMLValorDinamicoRenderer((LinkHTMLTextoDinamico) mascara.getLinkHTML());
                     columnMetaData.setHTMLDynamicEffectRenderer(mascaraHTMLValor);
                     break;
@@ -153,19 +153,19 @@ public abstract class ColumnMetaData {
         }
     }
 
-    protected static void factory(ColumnMetaData columnMetaData, CampoMetaData campoMetaData) {
-        List<MascaraColunaMetaData> mascarasCampo = campoMetaData.getMascarasCampo();
+    protected static void factory(ColumnMetaData columnMetaData, MetaDataField metaDataField) {
+        List<MascaraColunaMetaData> mascarasCampo = metaDataField.getFieldMask();
         MascaraRenderer decorator = new MascaraPadraoRenderer();
         for (MascaraColunaMetaData mascara : mascarasCampo) {
             decorator = montaDecorator(mascara, decorator);
         }
         columnMetaData.setDecorator(decorator);
 
-        buildDecoratorHTMLLink(campoMetaData.getMascarasLinkHTML(), columnMetaData);
-        columnMetaData.setCellProperty(campoMetaData.getLarguraColuna(), campoMetaData.getPosicaoAlinhamentoColuna());
-        columnMetaData.setHasSequenceFields(campoMetaData.isMostraSequencia());
-        if (campoMetaData.getExpressaoRanking() != null) {
-            columnMetaData.setFunctionRanking(FunctionRanking.factory(campoMetaData.getExpressaoRanking()));
+        buildDecoratorHTMLLink(metaDataField.getHtmlLineMasks(), columnMetaData);
+        columnMetaData.setCellProperty(metaDataField.getColumnWidth(), metaDataField.getColumnAlignmentPosition());
+        columnMetaData.setHasSequenceFields(metaDataField.isShowSequence());
+        if (metaDataField.getRankingExpression() != null) {
+            columnMetaData.setFunctionRanking(FunctionRanking.factory(metaDataField.getRankingExpression()));
         }
     }
 
