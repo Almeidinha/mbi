@@ -12,7 +12,7 @@ public class MetricAditiva extends Metric {
 
 
   public void add(ResultSet set, String campo) throws SQLException {
-    Double valor = (Double) this.getMetaData().getType().getValor(set, campo);
+    Double valor = (Double) this.getMetaData().getType().getValue(set, campo);
     this.add(valor);
   }
 

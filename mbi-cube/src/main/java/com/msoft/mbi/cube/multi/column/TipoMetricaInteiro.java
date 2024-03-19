@@ -9,7 +9,7 @@ public class TipoMetricaInteiro extends TipoNumero<Double> {
     public static final Integer BRANCO = Integer.MIN_VALUE - 1;
 
     @Override
-    public Double getValor(ResultSet set, String campo) throws SQLException {
+    public Double getValue(ResultSet set, String campo) throws SQLException {
         return set.getDouble(campo);
     }
 

@@ -37,18 +37,18 @@ public class DimensionLine extends Dimension {
 
     @SuppressWarnings("unchecked")
     private void processValue(ResultSet resultSet) throws SQLException {
-        Comparable<String> valor = (Comparable<String>) type.getValor(resultSet, metaData.getColuna());
+        Comparable<String> valor = (Comparable<String>) type.getValue(resultSet, metaData.getColuna());
         valor = (Comparable<String>) type.format(valor);
         setVisualizationValue(valor);
         DimensaoMetaData dimensaoOrdenacao = metaData.getDimensaoOrdenacao();
-        setValue(dimensaoOrdenacao != null ? (Comparable<String>) dimensaoOrdenacao.getTipo().getValor(resultSet, dimensaoOrdenacao.getColuna()) : valor);
+        setValue(dimensaoOrdenacao != null ? (Comparable<String>) dimensaoOrdenacao.getTipo().getValue(resultSet, dimensaoOrdenacao.getColuna()) : valor);
     }
 
     @SuppressWarnings("unchecked")
     private void processDimensionOrdering(ResultSet resultSet) throws SQLException {
         DimensaoMetaData dimensaoOrdenacao = metaData.getDimensaoOrdenacao();
         if (dimensaoOrdenacao == null) return;
-        Comparable<String> valorOrdenacao = (Comparable<String>) dimensaoOrdenacao.getTipo().getValor(resultSet, dimensaoOrdenacao.getColuna());
+        Comparable<String> valorOrdenacao = (Comparable<String>) dimensaoOrdenacao.getTipo().getValue(resultSet, dimensaoOrdenacao.getColuna());
         setValue(valorOrdenacao);
     }
 

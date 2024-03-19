@@ -8,7 +8,7 @@ public class TipoDecimal extends TipoNumero<Double> {
     private Double decimal = null;
     public static final Double BRANCO = Double.valueOf(Integer.MIN_VALUE - 1);
 
-    public Double getValor(ResultSet set, String campo) throws SQLException {
+    public Double getValue(ResultSet set, String campo) throws SQLException {
         this.decimal = set.getDouble(campo);
         return ((set.wasNull()) ? Double.valueOf(0) : this.decimal);
     }

@@ -8,7 +8,7 @@ import com.msoft.mbi.cube.util.logicOperators.OperatorSelector;
 
 public interface DataType<T> extends OperatorSelector<T> {
 
-    T getValor(ResultSet set, String campo) throws SQLException;
+    T getValue(ResultSet set, String campo) throws SQLException;
 
     Object format(T t);
 
