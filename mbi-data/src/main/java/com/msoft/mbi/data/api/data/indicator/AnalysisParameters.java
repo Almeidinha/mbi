@@ -145,7 +145,7 @@ public class AnalysisParameters {
         } catch (SQLException e) {
             BISQLException biex = new BISQLException(e, "Erro ocorrido no indicador " + indicador + "\n" + sql);
             biex.setAction("Excluir Parâmetros da análise");
-            biex.setLocal("com.logocenter.logixbi.analysis.parametros.ParametrosAnalise",
+            biex.setLocal("ParametrosAnalise",
                     "excluiParametrosFromAnalise(Integer, ConexaoBean)");
             throw biex;
         } finally {

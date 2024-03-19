@@ -73,7 +73,7 @@ public class BIObject {
         } catch (Exception ex) {
             BIGeneralException biex = new BIGeneralException(ex);
             biex.setAction("carregar arquivo " + caminho);
-            biex.setLocal("com.logocenter.logixbi.documents.BIObjeto", "recuperaObjeto(String)");
+            biex.setLocal("BIObjeto", "recuperaObjeto(String)");
             throw biex;
         }
         return object;
@@ -95,7 +95,7 @@ public class BIObject {
         } catch (Exception ex) {
             BIGeneralException biex = new BIGeneralException(ex);
             biex.setAction("gravar o arquivo " + caminho);
-            biex.setLocal("com.logocenter.logixbi.documents.BIObjeto", "gravaObjecto(Indicator)");
+            biex.setLocal("BIObjeto", "gravaObjecto(Indicator)");
             throw biex;
         }
     }

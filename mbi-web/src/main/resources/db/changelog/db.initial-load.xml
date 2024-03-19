@@ -93,7 +93,7 @@
     <changeSet id="bi-product-data" author="admin">
         <insert tableName="bi_product">
             <column name="id" value="1" />
-            <column name="description" value="LBA - Logix BI Análise" />
+            <column name="description" value="BI Análise" />
         </insert>
         <insert tableName="bi_product">
             <column name="id" value="2" />

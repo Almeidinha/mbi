@@ -272,7 +272,7 @@ public class BIUtil {
                 } catch (SQLException sqle) {
                     BISQLException bisqlex = new BISQLException(sqle, sqlNovoDado);
                     bisqlex.setAction("buscar o indice do novo registro.");
-                    bisqlex.setLocal("com.logocenter.logixbi.util.BIUtil", "getNovoDado(String, String, String)");
+                    bisqlex.setLocal("BIUtil", "getNovoDado(String, String, String)");
                     throw bisqlex;
                 }
 
@@ -284,7 +284,7 @@ public class BIUtil {
                 } catch (SQLException sqle1) {
                     BIDatabaseException bidbex = new BIDatabaseException(sqle1);
                     bidbex.setAction("identificar o indice do novo registro.");
-                    bidbex.setLocal("com.logocenter.logixbi.util.BIUtil", "getNovoDado(String, String, String)");
+                    bidbex.setLocal("util.BIUtil", "getNovoDado(String, String, String)");
                     throw bidbex;
                 }
                 if (ultimoTemp != null) {
@@ -342,7 +342,7 @@ public class BIUtil {
         } catch (NullPointerException nullex) {
             BINullPointerException biex = new BINullPointerException(nullex);
             biex.setAction("substituir uma determinada palavra por outra.");
-            biex.setLocal("com.logocenter.logixbi.util.BIUtil", "substituirUmaString(String, String, String)");
+            biex.setLocal("BIUtil", "substituirUmaString(String, String, String)");
             throw biex;
         }
         return strOrigem;
@@ -357,7 +357,7 @@ public class BIUtil {
         } catch (NullPointerException nullex) {
             BINullPointerException biex = new BINullPointerException(nullex);
             biex.setAction("substituir uma determinada palavra por outra.");
-            biex.setLocal("com.logocenter.logixbi.util.BIUtil", "substituirUmaString(String, String, String)");
+            biex.setLocal("BIUtil.BIUtil", "substituirUmaString(String, String, String)");
             throw biex;
         }
         return strOrigem;
@@ -460,7 +460,7 @@ public class BIUtil {
         } catch (NullPointerException npex) {
             BINullPointerException binullex = new BINullPointerException(npex);
             binullex.setAction("capturar campo do banco.");
-            binullex.setLocal("com.logocenter.logixbi.util.BIUtil", "verificanullInt(ResultSet, String)");
+            binullex.setLocal("BIUtil", "verificanullInt(ResultSet, String)");
             throw binullex;
         } catch (SQLException sqle) {
             String tabela = "";
@@ -473,13 +473,13 @@ public class BIUtil {
             } catch (SQLException sqle1) {
                 BIDatabaseException bidbex = new BIDatabaseException(sqle1);
                 bidbex.setAction("capturar nome da tabela.");
-                bidbex.setLocal("com.logocenter.logixbi.util.BIUtil", "verificanullInt(ResultSet, String)");
+                bidbex.setLocal("BIUtil", "verificanullInt(ResultSet, String)");
                 throw bidbex;
             }
             sqle.printStackTrace();
             BIFieldNotFoundException bifnfex = new BIFieldNotFoundException(sqle, tabela, campo);
             bifnfex.setAction("capturar campo do banco.");
-            bifnfex.setLocal("com.logocenter.logixbi.util.BIUtil", "verificanullInt(ResultSet, String)");
+            bifnfex.setLocal("BIUtil", "verificanullInt(ResultSet, String)");
             throw bifnfex;
         }
     }
@@ -494,7 +494,7 @@ public class BIUtil {
         } catch (NullPointerException npex) {
             BINullPointerException binullex = new BINullPointerException(npex);
             binullex.setAction("capturar campo do banco.");
-            binullex.setLocal("com.logocenter.logixbi.util.BIUtil", "verificanullString(ResultSet, String)");
+            binullex.setLocal("BIUtil", "verificanullString(ResultSet, String)");
             throw binullex;
         } catch (SQLException sqle) {
             String tabela = "";
@@ -507,12 +507,12 @@ public class BIUtil {
             } catch (SQLException sqle1) {
                 BIDatabaseException bidbex = new BIDatabaseException(sqle1);
                 bidbex.setAction("capturar nome da tabela.");
-                bidbex.setLocal("com.logocenter.logixbi.util.BIUtil", "verificanullString(ResultSet, String)");
+                bidbex.setLocal("BIUtil", "verificanullString(ResultSet, String)");
                 throw bidbex;
             }
             BIFieldNotFoundException bifnfex = new BIFieldNotFoundException(sqle, tabela, campo);
             bifnfex.setAction("capturar nome da tabela.");
-            bifnfex.setLocal("com.logocenter.logixbi.util.BIUtil", "verificanullString(ResultSet, String)");
+            bifnfex.setLocal("BIUtil", "verificanullString(ResultSet, String)");
             throw bifnfex;
         }
     }

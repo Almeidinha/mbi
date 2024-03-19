@@ -71,7 +71,7 @@ public class FieldFactory {
         } catch (SQLException sqle) {
             BIDatabaseException biex = new BIDatabaseException(sqle);
             biex.setAction("buscar campos do indicador.");
-            biex.setLocal("com.logocenter.logixbi.analysis.FieldFactory", "setFields()");
+            biex.setLocal("FieldFactory", "setFields()");
             throw biex;
         }
         return fields;

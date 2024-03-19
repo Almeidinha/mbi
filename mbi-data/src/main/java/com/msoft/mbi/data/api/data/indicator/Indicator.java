@@ -1320,7 +1320,7 @@ public class Indicator {
 
         BIGeneralException biex = new BIGeneralException("Nao foi possivel encontrar o campo de codigo " + code + " no indicador atual.");
         biex.setAction("buscar indice de um campo");
-        biex.setLocal("com.logocenter.logixbi.analysis.Indicator", "getIndiceField(String)");
+        biex.setLocal("Indicator", "getIndiceField(String)");
         throw biex;
     }
 

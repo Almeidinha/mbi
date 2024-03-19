@@ -102,7 +102,7 @@ public class Comment {
         } catch (SQLException sqle) {
             BISQLException biex = new BISQLException(sqle, sql);
             biex.setAction("excluir comentario.");
-            biex.setLocal("com.logocenter.logixbi.analysis.BIComentario", "excluir(ConexaoBean, int)");
+            biex.setLocal("BIComentario", "excluir(ConexaoBean, int)");
             throw biex;
         }
     }
@@ -114,7 +114,7 @@ public class Comment {
         } catch (SQLException sqle) {
             BISQLException biex = new BISQLException(sqle, sql);
             biex.setAction("excluir comentario.");
-            biex.setLocal("com.logocenter.logixbi.analysis.BIComentario", "excluir(ConexaoBean, int)");
+            biex.setLocal("BIComentario", "excluir(ConexaoBean, int)");
             throw biex;
         }
     }
@@ -208,7 +208,7 @@ public class Comment {
         } catch (SQLException sqle) {
             BISQLException biex = new BISQLException(sqle, sql);
             biex.setAction("alterar envia email do  comentario.");
-            biex.setLocal("com.logocenter.logixbi.analysis.BIComentario", "atualizarEmail(ConexaoBean, int, String)");
+            biex.setLocal("BIComentario", "atualizarEmail(ConexaoBean, int, String)");
             throw biex;
         }
     }
