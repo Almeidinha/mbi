@@ -48,7 +48,7 @@ public class MultiDimensionalCube extends Cube {
         ColorAlertConditionsMetricaOutroCampo condicaoAlertaCores;
         for (ColorAlertMetadata colorAlert : alerts) {
             propriedadeAlerta = ColorAlertProperties.factory(colorAlert.getFontColor(), colorAlert.getBackGroundColor(), colorAlert.getFontStyle(), colorAlert.isBold(), colorAlert.isItalic(), colorAlert.getFontSize());
-            propriedadeAlerta.setAlignment(ColorAlertProperties.ALINHAMENTO_DIREITA);
+            propriedadeAlerta.setAlignment(ColorAlertProperties.ALIGNMENT_RIGHT);
             MetricMetaData outroCampo;
             if (!relatedFieldFunction) {
                 outroCampo = getMetricByTitle(colorAlert.getSecondFieldTitle());

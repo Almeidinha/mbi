@@ -18,7 +18,7 @@ import java.util.*;
 
 @Getter
 @Setter
-public class ImpressorJson implements Impressor {
+public class JsonPrinter implements Printer {
 
     private final ObjectMapper mapper;
 
@@ -30,84 +30,84 @@ public class ImpressorJson implements Impressor {
 
     ObjectNode resultNode;
 
-    private final Map<CellProperty, String> propriedadesEspecificasColuna;
+    private final Map<CellProperty, String> columnSpecificProperties;
 
     private final AplicadorEfeitoHTML aplicadorEfeitoHTML;
 
-    private static final String BACKGROUND_COLOR = "background-color";
-    private static final String FONT_SIZE = "font-size";
-    private static final String FONT_FAMILY = "font-family";
+    private static final String BACKGROUND_COLOR = "backgroundColor";
+    private static final String FONT_SIZE = "fontSize";
+    private static final String FONT_FAMILY = "fontFamily";
     private static final String COLOR = "color";
-    private static final String FONT_WEIGHT = "font-weight";
-    private static final String TEXT_ALIGN = "text-align";
+    private static final String FONT_WEIGHT = "fontWeight";
+    private static final String TEXT_ALIGN = "textAlign";
     private static final String FLOAT = "float";
     private static final String WIDTH = "width";
-    private static final String BORDER_COLOR = "border-color";
+    private static final String BORDER_COLOR = "borderColor";
 
-    public ImpressorJson() {
+    public JsonPrinter() {
         this.mapper = new ObjectMapper();
         this.rows = mapper.createArrayNode();
         this.headers = mapper.createArrayNode();
         this.styles = mapper.createObjectNode();
         this.resultNode = mapper.createObjectNode();
-        this.propriedadesEspecificasColuna = new HashMap<>();
+        this.columnSpecificProperties = new HashMap<>();
         this.aplicadorEfeitoHTML = new AplicadorEfeitoHTMLAplica();
     }
 
-    public ImpressorJson(ObjectNode jsonNode) {
+    public JsonPrinter(ObjectNode jsonNode) {
         this();
         this.resultNode = jsonNode;
     }
 
-    private void imprime(String texto) {
-        System.out.println("texto : " + texto);
+    private void print(String text) {
+        System.out.println("texto : " + text);
     }
 
     @Override
-    public void iniciaImpressao() {
+    public void startPrinting() {
 
     }
 
     @Override
-    public void finalizaImpressao() {
+    public void endPrinting() {
         this.resultNode.set("headers", this.headers);
         this.resultNode.set("rows", this.rows);
         this.resultNode.set("styles", this.styles);
     }
 
     @Override
-    public String getValorNulo() {
+    public String getNullValue() {
         return null;
     }
 
     @Override
-    public String getValorVazio() {
+    public String getEmptyValue() {
         return null;
     }
 
     @Override
-    public void setCorBordasPadrao(String corBorda) {
+    public void setDefaultBorderColor(String corBorda) {
 
     }
 
     @Override
-    public void abreLinha() {
+    public void openLine() {
 
     }
 
     @Override
-    public void fechaLinha() {
+    public void closeLine() {
 
     }
 
     @Override
-    public void adicionaEstilo(CellProperty cellProperty, String name) {
+    public void addStyle(CellProperty cellProperty, String name) {
         this.createStyles(cellProperty, name);
 
     }
 
     @Override
-    public void adicionaEstiloCabecalhoColuna(CellProperty cellProperty, String name) {
+    public void addColumnHeaderStyle(CellProperty cellProperty, String name) {
         CellProperty cellPropertyCabecalho = new CellProperty();
         cellPropertyCabecalho.setBorderColor(cellProperty.getBorderColor());
         cellPropertyCabecalho.setSpecificBorder(cellProperty.isSpecificBorder());
@@ -119,145 +119,145 @@ public class ImpressorJson implements Impressor {
         for (String attribute : cellProperty.getExtraAttributes().keySet()) {
             cellPropertyCabecalho.addExtraAttributes(attribute, cellProperty.getExtraAttributes().get(attribute));
         }
-        this.adicionaEstilo(cellPropertyCabecalho, name);
+        this.addStyle(cellPropertyCabecalho, name);
     }
 
     @Override
-    public void adicionaEstiloPropriedadeEspecificaColuna(CellProperty propriedadeMetrica, String nomeEstilo) {
-        this.propriedadesEspecificasColuna.put(propriedadeMetrica, nomeEstilo);
-        this.adicionaEstilo(propriedadeMetrica, nomeEstilo);
+    public void addColumnSpecificPropertyStyle(CellProperty cellProperty, String name) {
+        this.columnSpecificProperties.put(cellProperty, name);
+        this.addStyle(cellProperty, name);
     }
 
     @Override
-    public void adicionaEstiloLink(CellProperty cellProperty, String name) {
-        this.adicionaEstilo(cellProperty, name);
+    public void addLinkStyle(CellProperty cellProperty, String name) {
+        this.addStyle(cellProperty, name);
     }
 
     @Override
-    public void imprimeColuna(String property, String formattedValue) {
+    public void printColumn(String cellProperty, String formattedValue) {
         ObjectNode jsonObject = mapper.createObjectNode();
-        jsonObject.put("className", property);
+        jsonObject.put("className", cellProperty);
         jsonObject.put("value", formattedValue);
         this.rows.add(jsonObject);
     }
 
     @Override
-    public void imprimeColuna(String property, String formattedValue, int colspan, int rowspan) {
+    public void printColumn(String cellProperty, String formattedValue, int colspan, int rowspan) {
         ObjectNode jsonObject = this.mapper.createObjectNode();
         jsonObject.put("colspan", colspan);
         jsonObject.put("rowspan", rowspan);
-        jsonObject.put("className", property);
+        jsonObject.put("className", cellProperty);
         jsonObject.put("value", formattedValue);
         this.rows.add(jsonObject);
     }
 
     @Override
-    public void imprimeCabecalhoColuna(String property, ColumnMetaData metaData) {
+    public void printColumnHeader(String cellProperty, ColumnMetaData metaData) {
         ObjectNode jsonObject = this.mapper.createObjectNode();
         jsonObject.put("title", metaData.getTitle());
-        jsonObject.set("properties", this.getHeaderColumnContent(metaData, 1, 1, property));
+        jsonObject.set("properties", this.getHeaderColumnContent(metaData, 1, 1, cellProperty));
 
         headers.add(jsonObject);
     }
 
     @Override
-    public void imprimeCabecalhoColuna(String property, ColumnMetaData metaData, int colspan, int rowspan) {
+    public void printColumnHeader(String cellProperty, ColumnMetaData metaData, int colspan, int rowspan) {
         ObjectNode jsonObject = this.mapper.createObjectNode();
         jsonObject.put("title", metaData.getTitle());
-        jsonObject.set("properties", this.getHeaderColumnContent(metaData, colspan, rowspan, property));
+        jsonObject.set("properties", this.getHeaderColumnContent(metaData, colspan, rowspan, cellProperty));
         this.headers.add(jsonObject);
     }
 
     @Override
-    public void imprimeCabecalhoColuna(String property, String title) {
+    public void printColumnHeader(String cellProperty, String title) {
         ObjectNode jsonObject = mapper.createObjectNode();
         jsonObject.put("title", title);
-        jsonObject.put("property", property);
+        jsonObject.put("property", cellProperty);
         this.headers.add(jsonObject);
     }
 
     @Override
-    public void imprimeCabecalhoDimensaoLinha(DimensaoMetaData dimensaoMetaData) {
+    public void printDimensionLineHeader(DimensaoMetaData dimensaoMetaData) {
         if (!dimensaoMetaData.hasSequenceFields()) {
-            this.imprimeCabecalhoColuna(CellProperty.PROPRIEDADE_CELULA_CABECALHO_DIMENSAO, dimensaoMetaData);
+            this.printColumnHeader(CellProperty.CELL_PROPERTY_DIMENSION_HEADER, dimensaoMetaData);
         } else {
-            this.imprimeCabecalhoColuna(CellProperty.PROPRIEDADE_CELULA_CABECALHO_DIMENSAO, dimensaoMetaData, 2, 1);
+            this.printColumnHeader(CellProperty.CELL_PROPERTY_DIMENSION_HEADER, dimensaoMetaData, 2, 1);
         }
     }
 
     @Override
-    public void imprimeCabecalhoTotalParcial(String property, String valor, int colspan, int rowspan, DimensaoMetaData dimensaoTotalizada) {
-        this.imprimeColuna(property, valor, colspan, rowspan);
+    public void printTotalPartialHeader(String cellProperty, String value, int colspan, int rowspan, DimensaoMetaData dimensaoMetaData) {
+        this.printColumn(cellProperty, value, colspan, rowspan);
     }
 
     @Override
-    public void imprimeValorColuna(String cellProperty, int colspan, int rowspan, Object value, ColumnMetaData metaData) {
+    public void printColumnValue(String cellProperty, int colspan, int rowspan, Object value, ColumnMetaData metaData) {
         String printValue = this.applyDynamicHtmlEffect(metaData.getFormattedValue(value), (metaData.getFormattedValue(value)), metaData.getHTMLDynamicEffectRenderer());
-        this.imprimeColuna(cellProperty + " " + this.getColumnSpecificStyle(metaData), printValue, colspan, rowspan);
+        this.printColumn(cellProperty + " " + this.getColumnSpecificStyle(metaData), printValue, colspan, rowspan);
     }
 
     @Override
-    public void imprimeValorColuna(String cellProperty, Object value, ColumnMetaData metaData) {
+    public void printColumnValue(String cellProperty, Object value, ColumnMetaData metaData) {
         String printValue = this.applyDynamicHtmlEffect(metaData.getFormattedValue(value), (value != null ? value.toString() : null), metaData.getHTMLDynamicEffectRenderer());
-        this.imprimeColuna(cellProperty + " " + this.getColumnSpecificStyle(metaData), printValue);
+        this.printColumn(cellProperty + " " + this.getColumnSpecificStyle(metaData), printValue);
     }
 
 
     @Override
-    public void imprimeValorDimensaoLinha(String property, int colspan, int rowspan, Object valor, DimensaoMetaData metaData) {
-        this.imprimeValorColuna(metaData.getEstiloPadrao() + " " + property, colspan, rowspan, valor, metaData);
+    public void printDimensionLineValue(String cellProperty, int colspan, int rowspan, Object valor, DimensaoMetaData metaData) {
+        this.printColumnValue(metaData.getEstiloPadrao() + " " + cellProperty, colspan, rowspan, valor, metaData);
     }
 
     @Override
-    public void imprimeValorMetrica(String property, Double valor, MetricMetaData metaData) {
-        String propriedadeMetrica = this.getColumnSpecificStyle(metaData);
-        if (propriedadeMetrica != null) {
-            property += " " + propriedadeMetrica;
+    public void printMetricValue(String cellProperty, Double valor, MetricMetaData metaData) {
+        String metricCellProperty = this.getColumnSpecificStyle(metaData);
+        if (metricCellProperty != null) {
+            cellProperty += " " + metricCellProperty;
         }
         if (!metaData.isUsePercent())
-            this.imprimeValorNumero(property, valor, metaData.getDecimalPlacesNumber());
+            this.printNumberValue(cellProperty, valor, metaData.getDecimalPlacesNumber());
         else
-            this.imprimeValorNumeroPercentual(property, valor, metaData.getDecimalPlacesNumber());
+            this.printPercentNumberValue(cellProperty, valor, metaData.getDecimalPlacesNumber());
     }
 
     @Override
-    public void imprimeValorNumero(String property, Double valor, int decimalNumber) {
-        this.imprimeColuna(property, this.getDecimalPlacesValue(valor, decimalNumber));
+    public void printNumberValue(String cellProperty, Double valor, int decimalNumber) {
+        this.printColumn(cellProperty, this.getDecimalPlacesValue(valor, decimalNumber));
     }
 
     @Override
-    public void imprimeCampoSequencia(DimensaoMetaData dimensaoMetaData, String sequence, int colspan, int rowspan) {
-        this.imprimeColuna(CellProperty.PROPRIEDADE_CELULA_SEQUENCIA, sequence, colspan, rowspan);
+    public void printSequenceField(DimensaoMetaData dimensaoMetaData, String sequence, int colspan, int rowspan) {
+        this.printColumn(CellProperty.CELL_PROPERTY_SEQUENCE, sequence, colspan, rowspan);
     }
 
     @Override
-    public void imprimeCampoSequencia(String sequence) {
-        this.imprimeColuna(CellProperty.PROPRIEDADE_CELULA_SEQUENCIA, sequence);
+    public void printSequenceField(String sequence) {
+        this.printColumn(CellProperty.CELL_PROPERTY_SEQUENCE, sequence);
     }
 
     @Override
-    public void imprimeValorNumeroPercentual(String property, Double valor, int decimalNumber) {
-        String valueToApply = this.getDecimalPlacesValue(valor, decimalNumber) + "%";
-        this.imprimeColuna(property, valueToApply);
+    public void printPercentNumberValue(String name, Double value, int decimalNumber) {
+        String valueToApply = this.getDecimalPlacesValue(value, decimalNumber) + "%";
+        this.printColumn(name, valueToApply);
     }
 
     @Override
-    public void abreLinhaHead() {
-
-    }
-
-    @Override
-    public void fechaLinhaHead() {
+    public void openHeadLine() {
 
     }
 
     @Override
-    public void abreLinhaBody() {
+    public void closeHeadLine() {
 
     }
 
     @Override
-    public void fechaLinhaBody() {
+    public void openBodyLine() {
+
+    }
+
+    @Override
+    public void closeBodyLine() {
 
     }
 
@@ -269,7 +269,7 @@ public class ImpressorJson implements Impressor {
     }
 
     public String getColumnSpecificStyle(ColumnMetaData metaData) {
-        return this.propriedadesEspecificasColuna.get(metaData.getCellProperty());
+        return this.columnSpecificProperties.get(metaData.getCellProperty());
     }
 
     private void addToPropertyTOJsonObject(ObjectNode jsonObject, String propName, Object propValue) {

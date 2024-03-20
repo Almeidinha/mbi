@@ -29,7 +29,7 @@ import com.msoft.mbi.cube.multi.dimension.DimensaoMetaData;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
 
-public class ImpressorExcel implements Impressor {
+public class PrinterExcel implements Printer {
 
     private String titulo = "";
     private FileOutputStream saida = null;
@@ -47,11 +47,11 @@ public class ImpressorExcel implements Impressor {
     private short corBordasPadrao = HSSFColor.HSSFColorPredefined.WHITE.getIndex();
     private Map<CellProperty, String> propriedadesEspecificasColuna;
 
-    public ImpressorExcel(String arquivoExcel, boolean manterMascaras, String titulo) throws FileNotFoundException {
+    public PrinterExcel(String arquivoExcel, boolean manterMascaras, String titulo) throws FileNotFoundException {
         this(new FileOutputStream(new File("C:/" + arquivoExcel)), manterMascaras, titulo);
     }
 
-    public ImpressorExcel(FileOutputStream output, boolean manterMascaras, String titulo) {
+    public PrinterExcel(FileOutputStream output, boolean manterMascaras, String titulo) {
         this.titulo = titulo;
         this.saida = output;
         this.indicesCelulaDimensoesLinha = new HashMap<String, Short>();
@@ -72,9 +72,9 @@ public class ImpressorExcel implements Impressor {
     }
 
     private short getAlinhamentoExcel(String alinhamento) {
-        if (CellProperty.ALINHAMENTO_ESQUERDA.equals(alinhamento)) {
+        if (CellProperty.ALIGNMENT_LEFT.equals(alinhamento)) {
             return HorizontalAlignment.LEFT.getCode();
-        } else if (CellProperty.ALINHAMENTO_DIREITA.equals(alinhamento)) {
+        } else if (CellProperty.ALIGNMENT_RIGHT.equals(alinhamento)) {
             return HorizontalAlignment.RIGHT.getCode();
         } else {
             return HorizontalAlignment.CENTER.getCode();
@@ -82,21 +82,21 @@ public class ImpressorExcel implements Impressor {
     }
 
     @Override
-    public void abreLinha() {
+    public void openLine() {
         this.linhaAtual = this.planilha.createRow(this.proximoIndiceLinha);
         this.proximoIndiceCelula = 0;
         this.proximoIndiceLinha++;
     }
 
     @Override
-    public void adicionaEstilo(CellProperty cellProperty, String nomeEstilo) {
+    public void addStyle(CellProperty cellProperty, String name) {
         HSSFCellStyle estilo = this.criaEstilo(cellProperty);
-        if ((nomeEstilo.equals(CellProperty.PROPRIEDADE_CELULA_DATA_METRICA1)) || (nomeEstilo.equals(CellProperty.PROPRIEDADE_CELULA_DATA_METRICA2))) {
+        if ((name.equals(CellProperty.CELL_PROPERTY_METRIC_DATA_ONE)) || (name.equals(CellProperty.CELL_PROPERTY_METRIC_DATA_TWO))) {
             estilo.setDataFormat(this.livroPlanilhas.createDataFormat().getFormat("dd/mm/yyyy"));
         } else if (!cellProperty.getDateMask().isEmpty())
             estilo.setDataFormat(this.livroPlanilhas.createDataFormat().getFormat(cellProperty.getDateMask()));
 
-        this.adicionaEstilo(nomeEstilo, estilo);
+        this.adicionaEstilo(name, estilo);
     }
 
     public void adicionaEstilo(String nomeEstilo, HSSFCellStyle estiloExcel) {
@@ -136,21 +136,21 @@ public class ImpressorExcel implements Impressor {
     }
 
     @Override
-    public void fechaLinha() {
+    public void closeLine() {
     }
 
     @Override
-    public String getValorNulo() {
+    public String getNullValue() {
         return "-";
     }
 
     @Override
-    public void imprimeColuna(String propriedadeCelula, String valorFormatado) {
-        this.imprimeColuna(this.estilosExcel.get(propriedadeCelula), valorFormatado);
+    public void printColumn(String cellProperty, String formattedValue) {
+        this.printColumn(this.estilosExcel.get(cellProperty), formattedValue);
     }
 
 
-    private void imprimeColuna(HSSFCellStyle estilo, String valorFormatado) {
+    private void printColumn(HSSFCellStyle estilo, String valorFormatado) {
         HSSFCell celula = this.linhaAtual.createCell(this.proximoIndiceCelula);
         celula.setCellStyle(estilo);
         celula.setCellValue(new HSSFRichTextString(valorFormatado));
@@ -176,7 +176,7 @@ public class ImpressorExcel implements Impressor {
         }
     }
 
-    private void imprimeColuna(HSSFCellStyle estilo, Object valorFormatado, int colspan, int rowspan, short numCel) {
+    private void printColumn(HSSFCellStyle estilo, Object valorFormatado, int colspan, int rowspan, short numCel) {
         HSSFCell celula = this.linhaAtual.createCell(numCel);
         this.proximoIndiceCelula = (short) (numCel + colspan);
         if (valorFormatado instanceof java.sql.Date) {
@@ -207,44 +207,44 @@ public class ImpressorExcel implements Impressor {
     }
 
     @Override
-    public void imprimeColuna(String propriedadeCelula, String valorFormatado, int colspan, int rowspan) {
-        this.imprimeColuna(this.estilosExcel.get(propriedadeCelula), valorFormatado, colspan, rowspan);
+    public void printColumn(String cellProperty, String formattedValue, int colspan, int rowspan) {
+        this.printColumn(this.estilosExcel.get(cellProperty), formattedValue, colspan, rowspan);
     }
 
-    private void imprimeColuna(HSSFCellStyle estilo, String valorFormatado, int colspan, int rowspan) {
-        this.imprimeColuna(estilo, valorFormatado, colspan, rowspan, this.proximoIndiceCelula);
+    private void printColumn(HSSFCellStyle estilo, String valorFormatado, int colspan, int rowspan) {
+        this.printColumn(estilo, valorFormatado, colspan, rowspan, this.proximoIndiceCelula);
     }
 
     @Override
-    public void imprimeValorDimensaoLinha(String propriedadeCelula, int colspan, int rowspan, Object valor, DimensaoMetaData metaData) {
+    public void printDimensionLineValue(String cellProperty, int colspan, int rowspan, Object valor, DimensaoMetaData metaData) {
 
         String mascara = "";
         mascara = (metaData.getCampoMetadadata() == null || metaData.getCampoMetadadata().getFieldMask().isEmpty() || metaData.getCampoMetadadata().getFieldMask().get(0)
                 .getMascara().isEmpty() ? "dd/mm/yyyy" : metaData.getCampoMetadadata().getFieldMask().get(0).getMascara()).replace("'", "");
 
         if (metaData.getTipo() instanceof TipoData) {
-            String nomeEstiloData = propriedadeCelula + "_Data";
+            String nomeEstiloData = cellProperty + "_Data";
             HSSFCellStyle estilo = this.estilosExcel.get(nomeEstiloData);
             if (estilo == null) {
-                estilo = this.copiaEstilo(this.estilosExcel.get(propriedadeCelula));
+                estilo = this.copiaEstilo(this.estilosExcel.get(cellProperty));
                 estilo.setDataFormat(this.livroPlanilhas.createDataFormat().getFormat(mascara));
 
                 this.adicionaEstilo(nomeEstiloData, estilo);
             }
-            HSSFCellStyle novoStilo = this.copiaEstilo(this.estilosExcel.get(propriedadeCelula));
+            HSSFCellStyle novoStilo = this.copiaEstilo(this.estilosExcel.get(cellProperty));
             novoStilo.setAlignment(HorizontalAlignment.valueOf(metaData.getCellProperty().getAlignment().toUpperCase()));
-            this.imprimeColuna(novoStilo, valor, colspan, rowspan, (short) (this.indicesCelulaDimensoesLinha.get(metaData.getTitle()) + this.auxCampoSequencia));
+            this.printColumn(novoStilo, valor, colspan, rowspan, (short) (this.indicesCelulaDimensoesLinha.get(metaData.getTitle()) + this.auxCampoSequencia));
         } else {
-            HSSFCellStyle novoStilo = this.copiaEstilo(this.estilosExcel.get(propriedadeCelula));
+            HSSFCellStyle novoStilo = this.copiaEstilo(this.estilosExcel.get(cellProperty));
             novoStilo.setAlignment(HorizontalAlignment.valueOf(metaData.getCellProperty().getAlignment().toUpperCase()));
 
-            this.imprimeColuna(novoStilo, metaData.getFormattedValue(valor), colspan, rowspan, (short) (this.indicesCelulaDimensoesLinha.get(metaData.getTitle()) + this.auxCampoSequencia));
+            this.printColumn(novoStilo, metaData.getFormattedValue(valor), colspan, rowspan, (short) (this.indicesCelulaDimensoesLinha.get(metaData.getTitle()) + this.auxCampoSequencia));
         }
         this.auxCampoSequencia = 0;
     }
 
     @Override
-    public void finalizaImpressao() {
+    public void endPrinting() {
         try {
             this.setBordersToMergedCells(this.planilha);
 
@@ -262,24 +262,24 @@ public class ImpressorExcel implements Impressor {
     }
 
     @Override
-    public void adicionaEstiloCabecalhoColuna(CellProperty cellProperty, String nomeEstilo) {
-        this.adicionaEstilo(cellProperty, nomeEstilo);
+    public void addColumnHeaderStyle(CellProperty cellProperty, String name) {
+        this.addStyle(cellProperty, name);
     }
 
     @Override
-    public void imprimeCabecalhoDimensaoLinha(DimensaoMetaData dimensaoMetaData) {
+    public void printDimensionLineHeader(DimensaoMetaData dimensaoMetaData) {
         int decremento = 1;
         if (!dimensaoMetaData.hasSequenceFields()) {
-            this.imprimeColuna(this.estilosExcel.get(CellProperty.PROPRIEDADE_CELULA_CABECALHO_DIMENSAO), dimensaoMetaData.getTitle());
+            this.printColumn(this.estilosExcel.get(CellProperty.CELL_PROPERTY_DIMENSION_HEADER), dimensaoMetaData.getTitle());
         } else {
             decremento++;
-            this.imprimeColuna(this.estilosExcel.get(CellProperty.PROPRIEDADE_CELULA_CABECALHO_DIMENSAO), dimensaoMetaData.getTitle(), 2, 1);
+            this.printColumn(this.estilosExcel.get(CellProperty.CELL_PROPERTY_DIMENSION_HEADER), dimensaoMetaData.getTitle(), 2, 1);
         }
         this.indicesCelulaDimensoesLinha.put(dimensaoMetaData.getTitle(), (short) (this.proximoIndiceCelula - decremento));
     }
 
-    public void imprimeCabecalhoTotalParcial(String propriedadeCelula, String valor, int colspan, int rowspan, DimensaoMetaData dimensaoTotalizada) {
-        this.imprimeColuna(this.estilosExcel.get(propriedadeCelula), valor, colspan, rowspan, this.indicesCelulaDimensoesLinha.get(dimensaoTotalizada.getTitle()));
+    public void printTotalPartialHeader(String cellProperty, String value, int colspan, int rowspan, DimensaoMetaData dimensaoMetaData) {
+        this.printColumn(this.estilosExcel.get(cellProperty), value, colspan, rowspan, this.indicesCelulaDimensoesLinha.get(dimensaoMetaData.getTitle()));
     }
 
     private void imprimeValorDecimalPercentual(String propriedadeCelula, Double valor, int nCasasDecimais) {
@@ -319,7 +319,7 @@ public class ImpressorExcel implements Impressor {
         HSSFCellStyle estilo = this.estilosExcel.get(nomeEstiloTotal);
         if (estilo == null) {
             estilo = this.copiaEstilo(this.estilosExcel.get(estiloAplicar));
-            estilo.setAlignment(HorizontalAlignment.forInt(this.getAlinhamentoExcel(propriedadeMetrica.getAlignment() != null ? propriedadeMetrica.getAlignment() : CellProperty.ALINHAMENTO_DIREITA)));
+            estilo.setAlignment(HorizontalAlignment.forInt(this.getAlinhamentoExcel(propriedadeMetrica.getAlignment() != null ? propriedadeMetrica.getAlignment() : CellProperty.ALIGNMENT_RIGHT)));
             this.adicionaEstilo(nomeEstiloTotal, estilo);
         }
         return nomeEstiloTotal;
@@ -344,19 +344,19 @@ public class ImpressorExcel implements Impressor {
     }
 
     @Override
-    public void imprimeValorNumero(String propriedadeCelula, Double valor, int casasDecimais) {
-        this.imprimeValorDecimal(propriedadeCelula, valor, casasDecimais);
+    public void printNumberValue(String cellProperty, Double valor, int decimalNumber) {
+        this.imprimeValorDecimal(cellProperty, valor, decimalNumber);
     }
 
     @Override
-    public void iniciaImpressao() {
-        this.abreLinha();
-        this.abreLinha();
+    public void startPrinting() {
+        this.openLine();
+        this.openLine();
         HSSFCell celula = this.linhaAtual.createCell(proximoIndiceCelula);
         celula.setCellValue(new HSSFRichTextString(this.titulo));
         CellProperty cellProperty = new CellProperty();
         cellProperty.setBold(true);
-        cellProperty.setAlignment(CellProperty.ALINHAMENTO_CENTRO);
+        cellProperty.setAlignment(CellProperty.ALIGNMENT_CENTER);
         cellProperty.setFontColor("336699");
         cellProperty.setFontSize(12);
         cellProperty.setFontName("verdana");
@@ -365,108 +365,108 @@ public class ImpressorExcel implements Impressor {
         cellProperty.setSpecificBorder(true);
         HSSFCellStyle estilo = criaEstilo(cellProperty);
         this.mesclarCelulas(this.linhaAtual.getRowNum(), 0, this.linhaAtual.getRowNum(), 3, estilo);
-        this.abreLinha();
+        this.openLine();
     }
 
     @Override
-    public void setCorBordasPadrao(String corBorda) {
+    public void setDefaultBorderColor(String corBorda) {
         this.corBordasPadrao = CorUtil.getCorExcel(corBorda);
     }
 
     @Override
-    public void imprimeCabecalhoColuna(String propriedadeCelula, ColumnMetaData metaData) {
+    public void printColumnHeader(String cellProperty, ColumnMetaData metaData) {
         // propriedadeCelula = this.getEstiloTotalColuna(metaData, propriedadeCelula);
-        this.imprimeColuna(this.estilosExcel.get(propriedadeCelula), metaData.getTitle());
+        this.printColumn(this.estilosExcel.get(cellProperty), metaData.getTitle());
         this.indicesCelulaDimensoesLinha.put(metaData.getTitle(), (short) (this.proximoIndiceCelula - 1));
     }
 
     @Override
-    public void adicionaEstiloPropriedadeEspecificaColuna(CellProperty propriedadeMetrica, String nomeEstilo) {
-        this.propriedadesEspecificasColuna.put(propriedadeMetrica, nomeEstilo);
+    public void addColumnSpecificPropertyStyle(CellProperty cellProperty, String name) {
+        this.propriedadesEspecificasColuna.put(cellProperty, name);
 
     }
 
     @Override
-    public String getValorVazio() {
+    public String getEmptyValue() {
         return "";
     }
 
     @Override
-    public void imprimeCampoSequencia(DimensaoMetaData dimensaoMetaData, String sequencia, int colspan, int rowspan) {
-        this.imprimeColuna(this.estilosExcel.get(CellProperty.PROPRIEDADE_CELULA_SEQUENCIA), sequencia, colspan, rowspan, (short) (this.indicesCelulaDimensoesLinha.get(dimensaoMetaData.getTitle())));
+    public void printSequenceField(DimensaoMetaData dimensaoMetaData, String sequence, int colspan, int rowspan) {
+        this.printColumn(this.estilosExcel.get(CellProperty.CELL_PROPERTY_SEQUENCE), sequence, colspan, rowspan, (short) (this.indicesCelulaDimensoesLinha.get(dimensaoMetaData.getTitle())));
         this.auxCampoSequencia++;
     }
 
     @Override
-    public void imprimeValorMetrica(String propriedadeCelula, Double valor, MetricMetaData metaData) {
-        String nomeEstiloTotal = this.getEstiloTotalColuna(metaData, propriedadeCelula);
+    public void printMetricValue(String cellProperty, Double valor, MetricMetaData metaData) {
+        String nomeEstiloTotal = this.getEstiloTotalColuna(metaData, cellProperty);
         if (this.mantemMascaras) {
-            this.imprimeColuna(this.estilosExcel.get(nomeEstiloTotal), metaData.getFormattedValue(valor));
+            this.printColumn(this.estilosExcel.get(nomeEstiloTotal), metaData.getFormattedValue(valor));
         } else {
             if (valor != null) {
                 if (!metaData.isUsePercent())
-                    this.imprimeValorNumero(nomeEstiloTotal, valor, metaData.getDecimalPlacesNumber());
+                    this.printNumberValue(nomeEstiloTotal, valor, metaData.getDecimalPlacesNumber());
                 else
-                    this.imprimeValorNumeroPercentual(nomeEstiloTotal, valor, metaData.getDecimalPlacesNumber());
+                    this.printPercentNumberValue(nomeEstiloTotal, valor, metaData.getDecimalPlacesNumber());
             } else {
-                this.imprimeColuna(this.estilosExcel.get(nomeEstiloTotal), "");
+                this.printColumn(this.estilosExcel.get(nomeEstiloTotal), "");
             }
         }
 
     }
 
     @Override
-    public void imprimeValorColuna(String propriedadeCelula, int colspan, int rowspan, Object valor, ColumnMetaData metaData) {
-        this.imprimeColuna(this.estilosExcel.get(propriedadeCelula), metaData.getFormattedValue(valor), colspan, rowspan);
+    public void printColumnValue(String cellProperty, int colspan, int rowspan, Object valor, ColumnMetaData metaData) {
+        this.printColumn(this.estilosExcel.get(cellProperty), metaData.getFormattedValue(valor), colspan, rowspan);
     }
 
     @Override
-    public void imprimeValorColuna(String propriedadeCelula, Object valor, ColumnMetaData metaData) {
-        if (valor instanceof Date) {
-            this.imprimeColuna(this.estilosExcel.get(propriedadeCelula), valor, 1, 1, this.proximoIndiceCelula);
+    public void printColumnValue(String cellProperty, Object value, ColumnMetaData metaData) {
+        if (value instanceof Date) {
+            this.printColumn(this.estilosExcel.get(cellProperty), value, 1, 1, this.proximoIndiceCelula);
         } else {
-            this.imprimeColuna(this.estilosExcel.get(propriedadeCelula), metaData.getFormattedValue(valor));
+            this.printColumn(this.estilosExcel.get(cellProperty), metaData.getFormattedValue(value));
         }
     }
 
     @Override
-    public void imprimeCabecalhoColuna(String propriedadeCelula, String tituloColuna) {
-        this.imprimeColuna(this.estilosExcel.get(propriedadeCelula), tituloColuna);
+    public void printColumnHeader(String cellProperty, String title) {
+        this.printColumn(this.estilosExcel.get(cellProperty), title);
     }
 
     @Override
-    public void imprimeCabecalhoColuna(String propriedadeCelula, ColumnMetaData metaData, int colspan, int rowspan) {
-        this.imprimeColuna(this.estilosExcel.get(propriedadeCelula), metaData.getTitle(), colspan, rowspan);
+    public void printColumnHeader(String cellProperty, ColumnMetaData metaData, int colspan, int rowspan) {
+        this.printColumn(this.estilosExcel.get(cellProperty), metaData.getTitle(), colspan, rowspan);
     }
 
     @Override
-    public void imprimeCampoSequencia(String sequencia) {
-        this.imprimeColuna(this.estilosExcel.get(CellProperty.PROPRIEDADE_CELULA_SEQUENCIA), sequencia);
+    public void printSequenceField(String sequence) {
+        this.printColumn(this.estilosExcel.get(CellProperty.CELL_PROPERTY_SEQUENCE), sequence);
     }
 
     @Override
-    public void adicionaEstiloLink(CellProperty cellProperty, String nomeEstilo) {
+    public void addLinkStyle(CellProperty cellProperty, String name) {
     }
 
     @Override
-    public void imprimeValorNumeroPercentual(String nomeEstiloTotal, Double valor, int nCasasDecimais) {
-        this.imprimeValorDecimalPercentual(nomeEstiloTotal, valor, nCasasDecimais);
+    public void printPercentNumberValue(String name, Double value, int decimalNumber) {
+        this.imprimeValorDecimalPercentual(name, value, decimalNumber);
     }
 
     @Override
-    public void abreLinhaHead() {
+    public void openHeadLine() {
     }
 
     @Override
-    public void fechaLinhaHead() {
+    public void closeHeadLine() {
     }
 
     @Override
-    public void abreLinhaBody() {
+    public void openBodyLine() {
     }
 
     @Override
-    public void fechaLinhaBody() {
+    public void closeBodyLine() {
     }
 
 }

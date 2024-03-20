@@ -10,50 +10,50 @@ import com.msoft.mbi.cube.multi.renderers.CellProperty;
 
 public abstract class tableGenerator {
 
-    protected Impressor impressor = null;
+    protected Printer printer = null;
     protected Cube cube = null;
     protected int metricsAmount = 0;
     protected List<MetricMetaData> visibleMetrics;
     protected int currentLine = 0;
     private boolean scheduled = false;
 
-    public abstract void processar(Impressor iImpressor);
+    public abstract void processar(Printer iPrinter);
 
     protected void createsSpecificStylesColumns() {
         List<ColumnMetaData> columns = this.cube.getColumnsViewed();
         int index = 0;
         for (ColumnMetaData metaData : columns) {
-            String classname = CellProperty.PROPRIEDADE_CELULA_PREFIXO + index++;
-            this.impressor.adicionaEstiloPropriedadeEspecificaColuna(metaData.getCellProperty(), classname);
+            String classname = CellProperty.CELL_PROPERTY_PREFIX + index++;
+            this.printer.addColumnSpecificPropertyStyle(metaData.getCellProperty(), classname);
         }
     }
 
     protected void createColorAlertStyles(List<?> alertColors) {
         for (Object colors : alertColors) {
             ColorAlertConditions colorAlertConditions = (ColorAlertConditions) colors;
-            this.impressor.adicionaEstilo(colorAlertConditions.getAlertProperty(), CellProperty.PROPRIEDADE_CELULA_ALERTAS_PREFIXO + colorAlertConditions.getSequence());
+            this.printer.addStyle(colorAlertConditions.getAlertProperty(), CellProperty.CELL_PROPERTY_ALERTS_PREFIX + colorAlertConditions.getSequence());
         }
     }
 
     protected void createDefaultStyles() {
-        CellProperty cellPropertyOne = createCellProperty(CellProperty.ALINHAMENTO_DIREITA, "000080", "CCCCCC", "Verdana", 10, "3377CC", true);
-        this.impressor.adicionaEstilo(cellPropertyOne, CellProperty.PROPRIEDADE_CELULA_TOTALGERAL);
+        CellProperty cellPropertyOne = createCellProperty(CellProperty.ALIGNMENT_RIGHT, "000080", "CCCCCC", "Verdana", 10, "3377CC", true);
+        this.printer.addStyle(cellPropertyOne, CellProperty.CELL_PROPERTY_TOTAL_GENERAL);
 
-        CellProperty metricOneProperty = createCellProperty(CellProperty.ALINHAMENTO_DIREITA, "000080", "D7E3F7", "Verdana", 10, "3377CC", true);
-        this.impressor.adicionaEstilo(metricOneProperty, CellProperty.PROPRIEDADE_CELULA_VALOR_METRICA1);
+        CellProperty metricOneProperty = createCellProperty(CellProperty.ALIGNMENT_RIGHT, "000080", "D7E3F7", "Verdana", 10, "3377CC", true);
+        this.printer.addStyle(metricOneProperty, CellProperty.CELL_PROPERTY_METRIC_VALUE_ONE);
 
-        CellProperty metricTwoProperty = createCellProperty(CellProperty.ALINHAMENTO_DIREITA, "000080", "FFFFFF", "Verdana", 10, "3377CC", true);
-        this.impressor.adicionaEstilo(metricTwoProperty, CellProperty.PROPRIEDADE_CELULA_VALOR_METRICA2);
+        CellProperty metricTwoProperty = createCellProperty(CellProperty.ALIGNMENT_RIGHT, "000080", "FFFFFF", "Verdana", 10, "3377CC", true);
+        this.printer.addStyle(metricTwoProperty, CellProperty.CELL_PROPERTY_METRIC_VALUE_TWO);
 
-        CellProperty dataMetricOneProperty = createCellProperty(CellProperty.ALINHAMENTO_DIREITA, "000080", "D7E3F7", "Verdana", 10, "3377CC", true);
-        this.impressor.adicionaEstilo(dataMetricOneProperty, CellProperty.PROPRIEDADE_CELULA_DATA_METRICA1);
+        CellProperty dataMetricOneProperty = createCellProperty(CellProperty.ALIGNMENT_RIGHT, "000080", "D7E3F7", "Verdana", 10, "3377CC", true);
+        this.printer.addStyle(dataMetricOneProperty, CellProperty.CELL_PROPERTY_METRIC_DATA_ONE);
 
-        CellProperty dataMetricTwoProperty = createCellProperty(CellProperty.ALINHAMENTO_DIREITA, "000080", "FFFFFF", "Verdana", 10, "3377CC", true);
-        this.impressor.adicionaEstilo(dataMetricTwoProperty, CellProperty.PROPRIEDADE_CELULA_DATA_METRICA2);
+        CellProperty dataMetricTwoProperty = createCellProperty(CellProperty.ALIGNMENT_RIGHT, "000080", "FFFFFF", "Verdana", 10, "3377CC", true);
+        this.printer.addStyle(dataMetricTwoProperty, CellProperty.CELL_PROPERTY_METRIC_DATA_TWO);
 
-        CellProperty cellPropertyTwo = createCellProperty(CellProperty.ALINHAMENTO_CENTRO, "FFFFFF", "3377CC", "Verdana", 10, "000000", true);
+        CellProperty cellPropertyTwo = createCellProperty(CellProperty.ALIGNMENT_CENTER, "FFFFFF", "3377CC", "Verdana", 10, "000000", true);
         cellPropertyTwo.setWidth(10);
-        this.impressor.adicionaEstilo(cellPropertyTwo, CellProperty.PROPRIEDADE_CELULA_SEQUENCIA);
+        this.printer.addStyle(cellPropertyTwo, CellProperty.CELL_PROPERTY_SEQUENCE);
     }
 
     protected CellProperty createCellProperty(String alignment, String fontColor, String backgroundColor,
@@ -70,7 +70,7 @@ public abstract class tableGenerator {
     }
 
     protected void openLine() {
-        this.impressor.abreLinha();
+        this.printer.openLine();
         this.currentLine++;
     }
 

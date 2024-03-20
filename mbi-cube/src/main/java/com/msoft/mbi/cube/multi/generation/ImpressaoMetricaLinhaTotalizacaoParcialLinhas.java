@@ -13,14 +13,14 @@ public class ImpressaoMetricaLinhaTotalizacaoParcialLinhas extends ImpressaoMetr
     }
 
     @Override
-    public void imprimeValoresMetrica(Dimension dimensionLinha, Dimension dimensionLinhaAnterior, Dimension dimensionColuna, String propriedadeCelula, Impressor impressor, Cube cube, String tipoLinha) {
+    public void imprimeValoresMetrica(Dimension dimensionLinha, Dimension dimensionLinhaAnterior, Dimension dimensionColuna, String propriedadeCelula, Printer printer, Cube cube, String tipoLinha) {
         for (MetricMetaData metaData : this.metricas) {
             if (metaData.isTotalPartialLines()) {
-                this.imprimeValorMetrica(metaData, propriedadeCelula, dimensionLinha, null, dimensionColuna, impressor, cube, tipoLinha);
+                this.imprimeValorMetrica(metaData, propriedadeCelula, dimensionLinha, null, dimensionColuna, printer, cube, tipoLinha);
             } else if (metaData.isPartialTotalExpression()) {
-                this.imprimeValorMetrica(metaData, propriedadeCelula, dimensionLinha, null, dimensionColuna, impressor, cube, CalculoSumarizacaoTipoExpressao.getInstance(), tipoLinha);
+                this.imprimeValorMetrica(metaData, propriedadeCelula, dimensionLinha, null, dimensionColuna, printer, cube, CalculoSumarizacaoTipoExpressao.getInstance(), tipoLinha);
             } else {
-                impressor.imprimeColuna(propriedadeCelula, impressor.getValorNulo());
+                printer.printColumn(propriedadeCelula, printer.getNullValue());
             }
         }
     }

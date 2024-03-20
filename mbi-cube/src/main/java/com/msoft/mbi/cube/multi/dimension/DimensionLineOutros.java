@@ -89,7 +89,7 @@ public class DimensionLineOutros extends DimensionLine {
 
     @Override
     public String getMetricDefaultStyles(int currentLine) {
-        return CellProperty.PROPRIEDADE_CELULA_OUTROS;
+        return CellProperty.CELL_PROPERTY_OTHERS;
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

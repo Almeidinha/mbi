@@ -29,7 +29,7 @@ public abstract class Metric {
         if (alerts != null) {
             for (ColorAlertConditionsMetrica colorsAlert : alerts) {
                 if (colorsAlert.testaCondicao(dimensionLine, dimensionColumn, this.metaData.getCube())) {
-                    nomeEstilo = CellProperty.PROPRIEDADE_CELULA_ALERTAS_PREFIXO + colorsAlert.getSequence();
+                    nomeEstilo = CellProperty.CELL_PROPERTY_ALERTS_PREFIX + colorsAlert.getSequence();
                 }
             }
         }

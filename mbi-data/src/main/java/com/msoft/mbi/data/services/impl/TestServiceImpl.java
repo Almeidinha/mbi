@@ -9,6 +9,7 @@ import com.msoft.mbi.data.api.dtos.filters.FiltersDTO;
 import com.msoft.mbi.data.api.dtos.indicators.BIIndLogicDTO;
 import com.msoft.mbi.data.api.mapper.filters.FiltersMapper;
 import com.msoft.mbi.data.api.mapper.indicators.BIAnalysisFieldToFieldMapper;
+import com.msoft.mbi.data.api.mapper.indicators.BIIndLogicToIndMapper;
 import com.msoft.mbi.data.connection.ConnectionManager;
 import com.msoft.mbi.data.repositories.TestRepository;
 import com.msoft.mbi.data.services.BIIndService;
@@ -37,6 +38,7 @@ public class TestServiceImpl implements TestService {
     private final BIAnalysisFieldToFieldMapper analysisFieldToFieldMapper;
     private final BITenantService tenantService;
     private final FiltersMapper filtersMapper;
+    private final BIIndLogicToIndMapper biIndLogicToIndMapper;
 
     @Override
     public List<Object> getObjects() {
@@ -104,10 +106,7 @@ public class TestServiceImpl implements TestService {
             BIIndLogicDTO dto = this.indService.getBIIndLogicDTO(id);
             BITenantEntity biTenant = tenantService.findById(dto.getConnectionId());
 
-            Indicator ind = new Indicator(id);
-
-            this.setIndicatorValues(dto, ind);
-
+            Indicator ind =  biIndLogicToIndMapper.dtoToIndicator(dto);
 
             String sql = ind.getSqlExpression(DatabaseType.MSSQL, false);
 
@@ -150,6 +149,7 @@ public class TestServiceImpl implements TestService {
                 } catch (BIException e) {
                     throw new RuntimeException(e);
                 }
+                return null;
             });
 
             return ind.getStringTable(true);
@@ -175,9 +175,7 @@ public class TestServiceImpl implements TestService {
             BIIndLogicDTO dto = this.indService.getBIIndLogicDTO(id);
             BITenantEntity biTenant = tenantService.findById(dto.getConnectionId());
 
-            Indicator ind = new Indicator(id);
-
-            this.setIndicatorValues(dto, ind);
+            Indicator ind =  biIndLogicToIndMapper.dtoToIndicator(dto);
 
             String sql = ind.getSqlExpression(DatabaseType.MSSQL, false);
             JdbcTemplate jdbcTemplate = connectionManager.getNewConnection(biTenant);
@@ -207,9 +205,7 @@ public class TestServiceImpl implements TestService {
     public String getJsonTree(Integer id) throws BIException {
         BIIndLogicDTO dto = this.indService.getBIIndLogicDTO(id);
 
-        Indicator ind = new Indicator(id);
-
-        this.setIndicatorValues(dto, ind);
+        Indicator ind =  biIndLogicToIndMapper.dtoToIndicator(dto);
 
         FiltersTree tree = new FiltersTree(ind.getFilters(), true);
 
@@ -220,32 +216,9 @@ public class TestServiceImpl implements TestService {
     public FiltersDTO getFiltersDTO(Integer id) throws BIException {
         BIIndLogicDTO dto = this.indService.getBIIndLogicDTO(id);
 
-        Indicator ind = new Indicator(id);
-
-        this.setIndicatorValues(dto, ind);
+        Indicator ind =  biIndLogicToIndMapper.dtoToIndicator(dto);
 
         return filtersMapper.filterToDTO(ind.getFilters());
-
-    }
-
-    private void setIndicatorValues(BIIndLogicDTO dto, Indicator indicator) throws BIException {
-        indicator.setTenantId(dto.getConnectionId());
-        indicator.setName(dto.getName());
-        indicator.setSearchClause(dto.getBiSearchClause().getSqlText());
-        indicator.setFromClause(dto.getBiFromClause().getSqlText());
-        indicator.setWhereClause(dto.getBiWhereClause().getSqlText());
-
-        indicator.setFields(analysisFieldToFieldMapper.setDTOToEntity(dto.getBiAnalysisFields()));
-
-        if (dto.getBiDimensionFilter() != null) {
-            indicator.setDimensionFilters(dto.getBiDimensionFilter().getSqlText());
-        }
-        if (dto.getBiIndSqlMetricFilter() != null) {
-            indicator.setMetricSqlFilters(dto.getBiIndSqlMetricFilter().getSqlText());
-        }
-        if (dto.getBiIndMetricFilter() != null) {
-            indicator.setMetricFilters(dto.getBiIndMetricFilter().getSqlText());
-        }
 
     }
 

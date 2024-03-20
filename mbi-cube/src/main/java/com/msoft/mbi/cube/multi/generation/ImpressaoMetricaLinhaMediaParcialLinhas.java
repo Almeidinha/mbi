@@ -13,12 +13,12 @@ public class ImpressaoMetricaLinhaMediaParcialLinhas extends ImpressaoMetricaLin
     }
 
     @Override
-    public void imprimeValoresMetrica(Dimension dimensionLinha, Dimension dimensionLinhaAnterior, Dimension dimensionColuna, String propriedadeCelula, Impressor impressor, Cube cube, String tipoLinha) {
+    public void imprimeValoresMetrica(Dimension dimensionLinha, Dimension dimensionLinhaAnterior, Dimension dimensionColuna, String propriedadeCelula, Printer printer, Cube cube, String tipoLinha) {
         for (MetricMetaData metaData : this.metricas) {
             if (metaData.isMediaPartialLines()) {
-                this.imprimeValorMetrica(metaData, propriedadeCelula, dimensionLinha, dimensionLinhaAnterior, dimensionColuna, impressor, cube, tipoLinha);
+                this.imprimeValorMetrica(metaData, propriedadeCelula, dimensionLinha, dimensionLinhaAnterior, dimensionColuna, printer, cube, tipoLinha);
             } else {
-                impressor.imprimeColuna(propriedadeCelula, impressor.getValorNulo());
+                printer.printColumn(propriedadeCelula, printer.getNullValue());
             }
         }
     }

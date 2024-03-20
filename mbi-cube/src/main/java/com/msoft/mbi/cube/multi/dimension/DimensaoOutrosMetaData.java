@@ -39,7 +39,7 @@ public class DimensaoOutrosMetaData extends DimensaoMetaData {
 
     @Override
     public String getEstiloPadrao() {
-        return CellProperty.PROPRIEDADE_CELULA_OUTROS;
+        return CellProperty.CELL_PROPERTY_OTHERS;
     }
 
 }

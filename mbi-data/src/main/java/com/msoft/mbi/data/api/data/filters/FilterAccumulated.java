@@ -6,11 +6,12 @@ import com.msoft.mbi.data.api.data.indicator.Operators;
 import com.msoft.mbi.data.api.data.util.BIUtil;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+@Log4j2
 @Getter
 @Setter
 public class FilterAccumulated implements FilterFunction, Cloneable {
@@ -90,17 +91,16 @@ public class FilterAccumulated implements FilterFunction, Cloneable {
 
 
     public String getFormattedValue() {
-        NumberFormat numberFormat = BIUtil.getFormatter(2);
-        StringBuilder retorno = new StringBuilder();
+
+        StringBuilder result = new StringBuilder();
         List<String> values = BIUtil.stringtoList(this.value, ";");
-        for (String sValor : values) {
-            retorno.append(numberFormat.format(Double.parseDouble(sValor))).append(";");
-            ;
+        for (String value : values) {
+            result.append(BIUtil.formatDoubleToText(value, 2));
         }
         if (!values.isEmpty()) {
-            retorno = new StringBuilder(retorno.substring(0, retorno.length() - 1));
+            result = new StringBuilder(result.substring(0, result.length() - 1));
         }
-        return retorno.toString();
+        return result.toString();
 
     }
 
@@ -117,8 +117,7 @@ public class FilterAccumulated implements FilterFunction, Cloneable {
         try {
             retorno = super.clone();
         } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-            System.out.println("Não foi possível clonar o objeto FiltroAcumulado");
+            log.error("FilterAccumulated.clone: Não foi possível clonar o objeto FiltroAcumulado");
         }
         return retorno;
     }
@@ -128,6 +127,6 @@ public class FilterAccumulated implements FilterFunction, Cloneable {
     }
 
     public static double formatValue(double valor) {
-        return BIUtil.formatValue(valor, 2);
+        return BIUtil.formatDoubleValue(valor, 2);
     }
 }

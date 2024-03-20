@@ -12,7 +12,7 @@ import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditionsMetrica;
 import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditionsMetricaValor;
 import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertProperties;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
-import com.msoft.mbi.cube.multi.generation.Impressor;
+import com.msoft.mbi.cube.multi.generation.Printer;
 import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
 import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 import com.msoft.mbi.cube.multi.renderers.DecimalMaskRender;
@@ -145,7 +145,7 @@ public abstract class MetricMetaData extends ColumnMetaData {
         for (ColorAlertMetadata colorAlert : alerts) {
             propriedadeAlerta = ColorAlertProperties.factory(colorAlert.getFontColor(), colorAlert.getBackGroundColor(), colorAlert.getFontStyle(),
                     colorAlert.isBold(), colorAlert.isItalic(), colorAlert.getFontSize());
-            propriedadeAlerta.setAlignment(ColorAlertProperties.ALINHAMENTO_DIREITA);
+            propriedadeAlerta.setAlignment(ColorAlertProperties.ALIGNMENT_RIGHT);
             condicaoAlertaCores = new ColorAlertConditionsMetricaValor(colorAlert.getSequence(), propriedadeAlerta, colorAlert.getFunction(),
                     colorAlert.getAction(), colorAlert.getOperator(), metricMetaData, colorAlert.getValues());
             metricMetaData.addColorAlert(condicaoAlertaCores);
@@ -246,8 +246,8 @@ public abstract class MetricMetaData extends ColumnMetaData {
     }
 
     @Override
-    public void printFieldTypeValue(Object valor, String cellProperty, Impressor impressor) {
-        impressor.imprimeValorMetrica(cellProperty, ((Double) valor), this);
+    public void printFieldTypeValue(Object valor, String cellProperty, Printer printer) {
+        printer.printMetricValue(cellProperty, ((Double) valor), this);
     }
 
     public abstract Metric createMetrica();

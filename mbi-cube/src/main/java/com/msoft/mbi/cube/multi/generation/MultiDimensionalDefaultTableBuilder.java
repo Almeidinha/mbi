@@ -42,19 +42,19 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
     }
 
     private void processarTabelaSemDados() {
-        this.impressor.iniciaImpressao();
+        this.printer.startPrinting();
         this.openLine();
-        this.impressor.imprimeColuna(CellProperty.PROPRIEDADE_CELULA_CABECALHO_DIMENSAO, "A pesquisa não retornou dados");
-        this.impressor.fechaLinha();
-        this.impressor.finalizaImpressao();
+        this.printer.printColumn(CellProperty.CELL_PROPERTY_DIMENSION_HEADER, "A pesquisa não retornou dados");
+        this.printer.closeLine();
+        this.printer.endPrinting();
     }
 
-    public void processar(Impressor iImpressor) {
-        this.impressor = iImpressor;
+    public void processar(Printer iPrinter) {
+        this.printer = iPrinter;
         if (!cube.getDimensionsLine().isEmpty()) {
             this.createDefaultStyles();
-            this.impressor.iniciaImpressao();
-            this.impressor.abreLinhaHead();
+            this.printer.startPrinting();
+            this.printer.openHeadLine();
             int nivelImpressao = 0;
             int colspanNiveisLinhaComSequencia = this.cube.getMetaData().getQtdNiveisAbaixoComSequencia();
             int expansaoMaximaColuna = this.cube.getHierarchyColumn().size();
@@ -66,12 +66,12 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
                         return;
                 }
                 this.openLine();
-                this.impressor.imprimeCabecalhoColuna(CellProperty.PROPRIEDADE_CELULA_CABECALHO_DIMENSAO, metadata, colspanNiveisLinhaComSequencia, 1);
+                this.printer.printColumnHeader(CellProperty.CELL_PROPERTY_DIMENSION_HEADER, metadata, colspanNiveisLinhaComSequencia, 1);
 
                 if (!this.cube.getDimensionsColumn().isEmpty()) {
                     Collection<Dimension> set = this.cube.getDimensionsColumn().values();
                     Iterator<Dimension> it = set.iterator();
-                    this.mergulhaNivelColuna(it, nivelImpressao, CellProperty.PROPRIEDADE_CELULA_VALOR_DIMENSAO);
+                    this.mergulhaNivelColuna(it, nivelImpressao, CellProperty.CELL_PROPERTY_DIMENSION_VALUE);
                 }
 
                 nivelImpressao++;
@@ -81,7 +81,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
                 } else if (nivelImpressao == expansaoMaximaColuna) {
                     break;
                 }
-                this.impressor.fechaLinha();
+                this.printer.closeLine();
             }
 
             this.openLine();
@@ -90,10 +90,10 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
             this.imprimeCabecalhoMetricas(this.cube);
             this.imprimeCabecalhoMetricasTotalizadoresColunas();
 
-            this.impressor.fechaLinha();
-            this.impressor.fechaLinhaHead();
+            this.printer.closeLine();
+            this.printer.closeHeadLine();
 
-            this.impressor.abreLinhaBody();
+            this.printer.openBodyLine();
             if (!this.cube.getDimensionsLine().isEmpty()) {
                 Collection<Dimension> set = ((Dimensions) this.cube.getDimensionsLine().clone()).values();
                 Iterator<Dimension> it = set.iterator();
@@ -103,11 +103,11 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
                 this.imprimeLinhaTotalGeralLinhas(colspanNiveisLinhaComSequencia);
             }
             nivelImpressao++;
-            this.impressor.fechaLinhaBody();
-            this.impressor.finalizaImpressao();
+            this.printer.closeBodyLine();
+            this.printer.endPrinting();
 
         } else {
-            this.impressor.setCorBordasPadrao("3377CC");
+            this.printer.setDefaultBorderColor("3377CC");
             criaEstiloCabecalhoDimensao();
             this.processarTabelaSemDados();
         }
@@ -116,10 +116,10 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
     private void criaEstilosAlertasDeCoresComLink(List<?> alertasCores) {
         for (Object oAlertaCores : alertasCores) {
             ColorAlertConditions alertaCores = (ColorAlertConditions) oAlertaCores;
-            this.impressor.adicionaEstilo(alertaCores.getAlertProperty(), CellProperty.PROPRIEDADE_CELULA_ALERTAS_PREFIXO + alertaCores.getSequence());
+            this.printer.addStyle(alertaCores.getAlertProperty(), CellProperty.CELL_PROPERTY_ALERTS_PREFIX + alertaCores.getSequence());
             CellProperty cellProperty = new CellProperty();
             cellProperty.addExtraAttributes("cursor", "pointer");
-            this.impressor.adicionaEstiloLink(cellProperty, CellProperty.PROPRIEDADE_CELULA_ALERTAS_PREFIXO + alertaCores.getSequence() + " span");
+            this.printer.addLinkStyle(cellProperty, CellProperty.CELL_PROPERTY_ALERTS_PREFIX + alertaCores.getSequence() + " span");
         }
     }
 
@@ -153,14 +153,14 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
         cellProperty.setSpecificBorder(true);
         cellProperty.setBorderColor("000000");
 
-        this.impressor.adicionaEstiloCabecalhoColuna(cellProperty, CellProperty.PROPRIEDADE_CELULA_CABECALHO_DIMENSAO);
+        this.printer.addColumnHeaderStyle(cellProperty, CellProperty.CELL_PROPERTY_DIMENSION_HEADER);
     }
 
     protected void createDefaultStyles() {
-        this.impressor.setCorBordasPadrao("3377CC");
+        this.printer.setDefaultBorderColor("3377CC");
         super.createDefaultStyles();
         CellProperty propriedadeDimensaoPadrao = new CellProperty();
-        propriedadeDimensaoPadrao.setAlignment(CellProperty.ALINHAMENTO_ESQUERDA);
+        propriedadeDimensaoPadrao.setAlignment(CellProperty.ALIGNMENT_LEFT);
         propriedadeDimensaoPadrao.setFontColor("000080");
         propriedadeDimensaoPadrao.setBackGroundColor("A2C8E8");
         propriedadeDimensaoPadrao.setFontName("Verdana");
@@ -169,14 +169,14 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
         propriedadeDimensaoPadrao.setBorderColor("3377CC");
         propriedadeDimensaoPadrao.addExtraAttributes("border-top", "none");
         propriedadeDimensaoPadrao.addExtraAttributes("border-left", "none");
-        this.impressor.adicionaEstilo(propriedadeDimensaoPadrao, CellProperty.PROPRIEDADE_CELULA_VALOR_DIMENSAO);
+        this.printer.addStyle(propriedadeDimensaoPadrao, CellProperty.CELL_PROPERTY_DIMENSION_VALUE);
 
         CellProperty cellProperty = new CellProperty();
         cellProperty.addExtraAttributes("cursor", "pointer");
-        this.impressor.adicionaEstiloLink(cellProperty, CellProperty.PROPRIEDADE_CELULA_VALOR_DIMENSAO + " span");
+        this.printer.addLinkStyle(cellProperty, CellProperty.CELL_PROPERTY_DIMENSION_VALUE + " span");
 
         cellProperty = new CellProperty();
-        cellProperty.setAlignment(CellProperty.ALINHAMENTO_DIREITA);
+        cellProperty.setAlignment(CellProperty.ALIGNMENT_RIGHT);
         cellProperty.setFontColor("000080");
         cellProperty.setBackGroundColor("CCCCCC");
         cellProperty.setFontName("Verdana");
@@ -186,10 +186,10 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
         cellProperty.setBorderColor("3377CC");
         cellProperty.setSpecificBorder(true);
         cellProperty.addExtraAttributes("border-top", "none");
-        this.impressor.adicionaEstilo(cellProperty, CellProperty.PROPRIEDADE_CELULA_VALOR_TOTALPARCIALLINHAS);
+        this.printer.addStyle(cellProperty, CellProperty.CELL_PROPERTY_TOTAL_PARTIAL_LINES);
 
         cellProperty = new CellProperty();
-        cellProperty.setAlignment(CellProperty.ALINHAMENTO_ESQUERDA);
+        cellProperty.setAlignment(CellProperty.ALIGNMENT_LEFT);
         cellProperty.setFontColor("000080");
         cellProperty.setBackGroundColor("CCCCCC");
         cellProperty.setFontName("Verdana");
@@ -198,10 +198,10 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
         cellProperty.setBorderColor("3377CC");
         cellProperty.setSpecificBorder(true);
         cellProperty.addExtraAttributes("border-top", "none");
-        this.impressor.adicionaEstilo(cellProperty, CellProperty.PROPRIEDADE_CELULA_CABECALHO_TOTALPARCIAL);
+        this.printer.addStyle(cellProperty, CellProperty.CELL_PROPERTY_TOTAL_PARTIAL_HEADER);
 
         cellProperty = new CellProperty();
-        cellProperty.setAlignment(CellProperty.ALINHAMENTO_CENTRO);
+        cellProperty.setAlignment(CellProperty.ALIGNMENT_CENTER);
         cellProperty.setFontColor("000080");
         cellProperty.setBackGroundColor("CCCCCC");
         cellProperty.setFontName("Verdana");
@@ -210,20 +210,20 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
         cellProperty.setBorderColor("3377CC");
         cellProperty.setSpecificBorder(true);
         cellProperty.addExtraAttributes("border-top", "none");
-        this.impressor.adicionaEstilo(cellProperty, CellProperty.PROPRIEDADE_CELULA_CABECALHO_TOTAISCOLUNAS);
+        this.printer.addStyle(cellProperty, CellProperty.CELL_PROPERTY_COLUMN_TOTAL_HEADER);
 
         criaEstiloCabecalhoDimensao();
 
         cellProperty = new CellProperty();
         cellProperty.addExtraAttributes("cursor", "pointer");
-        this.impressor.adicionaEstiloLink(cellProperty, CellProperty.PROPRIEDADE_CELULA_CABECALHO_DIMENSAO + " span");
+        this.printer.addLinkStyle(cellProperty, CellProperty.CELL_PROPERTY_DIMENSION_HEADER + " span");
 
         cellProperty = new CellProperty();
         cellProperty.addExtraAttributes("cursor", "pointer");
-        this.impressor.adicionaEstiloLink(cellProperty, CellProperty.PROPRIEDADE_CELULA_CABECALHO_DIMENSAO + " IMG");
+        this.printer.addLinkStyle(cellProperty, CellProperty.CELL_PROPERTY_DIMENSION_HEADER + " IMG");
 
         CellProperty propriedadeCabecalhoMetrica = new CellProperty();
-        propriedadeCabecalhoMetrica.setAlignment(CellProperty.ALINHAMENTO_CENTRO);
+        propriedadeCabecalhoMetrica.setAlignment(CellProperty.ALIGNMENT_CENTER);
         propriedadeCabecalhoMetrica.setFontColor("000080");
         propriedadeCabecalhoMetrica.setBackGroundColor("A2C8E8");
         propriedadeCabecalhoMetrica.setFontName("Verdana");
@@ -231,14 +231,14 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
         propriedadeCabecalhoMetrica.setFontSize(10);
         propriedadeCabecalhoMetrica.setSpecificBorder(true);
         propriedadeCabecalhoMetrica.setBorderColor("3377CC");
-        this.impressor.adicionaEstiloCabecalhoColuna(propriedadeCabecalhoMetrica, CellProperty.PROPRIEDADE_CELULA_CABECALHO_METRICA);
+        this.printer.addColumnHeaderStyle(propriedadeCabecalhoMetrica, CellProperty.CELL_PROPERTY_METRIC_HEADER);
 
         cellProperty = new CellProperty();
         cellProperty.addExtraAttributes("cursor", "pointer");
-        this.impressor.adicionaEstiloLink(cellProperty, CellProperty.PROPRIEDADE_CELULA_CABECALHO_METRICA + " span");
+        this.printer.addLinkStyle(cellProperty, CellProperty.CELL_PROPERTY_METRIC_HEADER + " span");
 
         CellProperty cellPropertyValorMetricaOutros = new CellProperty();
-        cellPropertyValorMetricaOutros.setAlignment(CellProperty.ALINHAMENTO_ESQUERDA);
+        cellPropertyValorMetricaOutros.setAlignment(CellProperty.ALIGNMENT_LEFT);
         cellPropertyValorMetricaOutros.setFontColor("000080");
         cellPropertyValorMetricaOutros.setBackGroundColor("A2C8E8");
         cellPropertyValorMetricaOutros.setFontName("Verdana");
@@ -248,7 +248,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
         cellPropertyValorMetricaOutros.addExtraAttributes("border-right", "1px solid #3377CC");
         cellPropertyValorMetricaOutros.setBorderColor("3377CC");
         cellPropertyValorMetricaOutros.setSpecificBorder(true);
-        this.impressor.adicionaEstilo(cellPropertyValorMetricaOutros, CellProperty.PROPRIEDADE_CELULA_OUTROS);
+        this.printer.addStyle(cellPropertyValorMetricaOutros, CellProperty.CELL_PROPERTY_OTHERS);
 
         this.criaEstilosAlertasDeCores();
 
@@ -292,26 +292,26 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
 
     private void imprimeCabecalhoTotalizadoresColunas() {
         if (!this.metricasTotalizaSomaColunas.isEmpty()) {
-            this.impressor.imprimeColuna(CellProperty.PROPRIEDADE_CELULA_CABECALHO_TOTAISCOLUNAS, "Acumulado", this.metricasTotalizaSomaColunas.size(), this.cube.getHierarchyColumn().size());
+            this.printer.printColumn(CellProperty.CELL_PROPERTY_COLUMN_TOTAL_HEADER, "Acumulado", this.metricasTotalizaSomaColunas.size(), this.cube.getHierarchyColumn().size());
         }
         if (!this.metricasTotalizaMediaColunas.isEmpty()) {
-            this.impressor.imprimeColuna(CellProperty.PROPRIEDADE_CELULA_CABECALHO_TOTAISCOLUNAS, "M�dia", this.metricasTotalizaMediaColunas.size(), this.cube.getHierarchyColumn().size());
+            this.printer.printColumn(CellProperty.CELL_PROPERTY_COLUMN_TOTAL_HEADER, "M�dia", this.metricasTotalizaMediaColunas.size(), this.cube.getHierarchyColumn().size());
         }
     }
 
     private void imprimeCabecalhoTotalGeralMetricasColunas() {
         if (!this.metricasTotalizaSomaGeralColunas.isEmpty()) {
-            this.impressor.imprimeColuna(CellProperty.PROPRIEDADE_CELULA_CABECALHO_TOTAISCOLUNAS, "Total", 1, this.cube.getHierarchyColumn().size() + 1);
+            this.printer.printColumn(CellProperty.CELL_PROPERTY_COLUMN_TOTAL_HEADER, "Total", 1, this.cube.getHierarchyColumn().size() + 1);
         }
     }
 
     private void imprimeLinhaTotalGeralLinhas(int colspanNiveisLinhaComSequencia) {
         this.openLine();
-        this.impressor.imprimeColuna(CellProperty.PROPRIEDADE_CELULA_TOTALGERAL, this.impressor.getValorVazio(), colspanNiveisLinhaComSequencia, 1);
+        this.printer.printColumn(CellProperty.CELL_PROPERTY_TOTAL_GENERAL, this.printer.getEmptyValue(), colspanNiveisLinhaComSequencia, 1);
         List<String> funcoesAlerta = new ArrayList<>();
         funcoesAlerta.add(MetricMetaData.TOTAL_GENERAL);
 
-        String propriedadeTotalGeral = CellProperty.PROPRIEDADE_CELULA_TOTALGERAL;
+        String propriedadeTotalGeral = CellProperty.CELL_PROPERTY_TOTAL_GENERAL;
         String propriedadeAlertaCoresMetricaLinhaFuncoes = this.cube.searchMetricsPropertyAlertsRowFunctionsTotalColumns(this.visibleMetrics, funcoesAlerta);
         if (propriedadeAlertaCoresMetricaLinhaFuncoes != null) {
             propriedadeTotalGeral = propriedadeAlertaCoresMetricaLinhaFuncoes;
@@ -319,7 +319,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
         }
         funcoesAlerta.add(MetricMetaData.TOTAL_AV);
         this.imprimeMetricas(this.cube, propriedadeTotalGeral, new ImpressaoMetricaLinhaTotalizacaoLinhas(this.visibleMetrics, funcoesAlerta), funcoesAlerta, MetricMetaData.TOTAL_AV);
-        this.impressor.fechaLinha();
+        this.printer.closeLine();
     }
 
     private List<MetricMetaData> getMetricasSemAH(List<MetricMetaData> metricasImprimirPadrao) {
@@ -330,17 +330,17 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
 
     private void imprimeCabecalhoMetricas(List<MetricMetaData> metricas) {
         for (MetricMetaData metaData : metricas) {
-            this.impressor.imprimeCabecalhoColuna(CellProperty.PROPRIEDADE_CELULA_CABECALHO_METRICA, metaData);
+            this.printer.printColumnHeader(CellProperty.CELL_PROPERTY_METRIC_HEADER, metaData);
         }
     }
 
     private void imprimeCabecalhoMetricasTotalizadoresColunas() {
         if (this.cube.getHierarchyColumn().isEmpty()) {
             for (MetricMetaData metaData : this.metricasTotalizaSomaColunas) {
-                this.impressor.imprimeColuna(CellProperty.PROPRIEDADE_CELULA_CABECALHO_TOTAISCOLUNAS, "Acumulado " + metaData.getTitle());
+                this.printer.printColumn(CellProperty.CELL_PROPERTY_COLUMN_TOTAL_HEADER, "Acumulado " + metaData.getTitle());
             }
             for (MetricMetaData metaData : this.metricasTotalizaMediaColunas) {
-                this.impressor.imprimeColuna(CellProperty.PROPRIEDADE_CELULA_CABECALHO_TOTAISCOLUNAS, "M�dia " + metaData.getTitle());
+                this.printer.printColumn(CellProperty.CELL_PROPERTY_COLUMN_TOTAL_HEADER, "M�dia " + metaData.getTitle());
             }
             this.imprimeCabecalhoTotalGeralMetricasColunas();
         } else {
@@ -380,41 +380,41 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
 
     private void imprimeCabecalhoDimensoesLinha() {
         for (DimensaoMetaData metaData : this.cube.getHierarchyLine()) {
-            this.impressor.imprimeCabecalhoDimensaoLinha(metaData);
+            this.printer.printDimensionLineHeader(metaData);
         }
     }
 
     private void imprimeLinhaTotalParcialLinhas(Dimension dimensionLinha) {
         this.openLine();
-        this.impressor.imprimeCabecalhoTotalParcial(CellProperty.PROPRIEDADE_CELULA_CABECALHO_TOTALPARCIAL,
+        this.printer.printTotalPartialHeader(CellProperty.CELL_PROPERTY_TOTAL_PARTIAL_HEADER,
                 "Total", (dimensionLinha.getMetaData().getQtdNiveisAbaixoComSequencia()), 1, dimensionLinha.getMetaData().getFilho());
         List<String> funcoesAlerta = new ArrayList<String>();
         funcoesAlerta.add(MetricMetaData.TOTAL_PARTIAL);
-        this.imprimeMetricas(dimensionLinha, CellProperty.PROPRIEDADE_CELULA_VALOR_TOTALPARCIALLINHAS,
+        this.imprimeMetricas(dimensionLinha, CellProperty.CELL_PROPERTY_TOTAL_PARTIAL_LINES,
                 new ImpressaoMetricaLinhaTotalizacaoParcialLinhas(this.visibleMetrics), funcoesAlerta, MetricMetaData.TOTAL_PARTIAL);
-        this.impressor.fechaLinha();
+        this.printer.closeLine();
     }
 
     private void imprimeLinhaMediaParcialLinhas(Dimension dimensionLinha) {
         this.openLine();
-        this.impressor.imprimeCabecalhoTotalParcial(CellProperty.PROPRIEDADE_CELULA_CABECALHO_TOTALPARCIAL,
+        this.printer.printTotalPartialHeader(CellProperty.CELL_PROPERTY_TOTAL_PARTIAL_HEADER,
                 "M�dia", (dimensionLinha.getMetaData().getQtdNiveisAbaixoComSequencia()), 1, dimensionLinha.getMetaData().getFilho());
         List<String> funcoesAlerta = new ArrayList<>();
         funcoesAlerta.add(MetricMetaData.MEDIA_PARTIAL);
-        this.imprimeMetricas(dimensionLinha, CellProperty.PROPRIEDADE_CELULA_VALOR_TOTALPARCIALLINHAS,
+        this.imprimeMetricas(dimensionLinha, CellProperty.CELL_PROPERTY_TOTAL_PARTIAL_LINES,
                 new ImpressaoMetricaLinhaMediaParcialLinhas(this.visibleMetrics), funcoesAlerta, MetricMetaData.MEDIA_PARTIAL); // cria o objeto ImpressaoMetricaLinhaTotalizacaoParcialLinhas que vai fazer o calculo
-        this.impressor.fechaLinha();
+        this.printer.closeLine();
     }
 
     private void imprimeLinhaExpressaoParcialLinhas(Dimension dimensionLinha) {
         this.openLine();
-        this.impressor.imprimeCabecalhoTotalParcial(CellProperty.PROPRIEDADE_CELULA_CABECALHO_TOTALPARCIAL,
+        this.printer.printTotalPartialHeader(CellProperty.CELL_PROPERTY_TOTAL_PARTIAL_HEADER,
                 "Express�o", (dimensionLinha.getMetaData().getQtdNiveisAbaixoComSequencia()), 1, dimensionLinha.getMetaData().getFilho());
         List<String> funcoesAlerta = new ArrayList<>();
         funcoesAlerta.add(MetricMetaData.EXPRESSION_PARTIAL);
-        this.imprimeMetricas(dimensionLinha, CellProperty.PROPRIEDADE_CELULA_VALOR_TOTALPARCIALLINHAS,
+        this.imprimeMetricas(dimensionLinha, CellProperty.CELL_PROPERTY_TOTAL_PARTIAL_LINES,
                 new ImpressaoMetricaLinhaExpressaoParcialLinhas(this.visibleMetrics), funcoesAlerta, MetricMetaData.EXPRESSION_PARTIAL); // cria o objeto ImpressaoMetricaLinhaTotalizacaoParcialLinhas que vai fazer o calculo
-        this.impressor.fechaLinha();
+        this.printer.closeLine();
     }
 
     private void imprimeCabecalhoTotalizacaoParcialColunas(Dimension dimensionColuna) {
@@ -422,7 +422,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
         if (dimensionColuna.isFirstDimensionColumnSameLevel()) {
             qtdMetricas = this.getMetricasSemAH(this.visibleMetrics).size();
         }
-        this.impressor.imprimeColuna(CellProperty.PROPRIEDADE_CELULA_CABECALHO_TOTALPARCIAL, "Total", qtdMetricas, (dimensionColuna.getMetaData().getQtdNiveisAbaixo()));
+        this.printer.printColumn(CellProperty.CELL_PROPERTY_TOTAL_PARTIAL_HEADER, "Total", qtdMetricas, (dimensionColuna.getMetaData().getQtdNiveisAbaixo()));
     }
 
     private void mergulhaNivelColuna(Iterator<Dimension> it, int nivelImpressao, String propriedadeCelulaNivelAnterior) {
@@ -513,7 +513,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
                 }
                 this.imprimeMetricas(dimension, propriedadeCelulaNivelAnteriorAplicar, impressaoMetricaLinha,
                         ColorAlertMetadata.getHorizaontalToalFunctionList(), ColorAlertMetadata.NO_FUNCTION);
-                this.impressor.fechaLinha();
+                this.printer.closeLine();
             }
         }
     }
@@ -525,12 +525,12 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
             if (dimensionColuna.isFirstDimensionColumnSameLevel()) {
                 impressao.setMetricas(this.getMetricasSemAH(metricasImprimirOld));
             }
-            String propriedadeCelula = CellProperty.PROPRIEDADE_CELULA_VALOR_TOTALPARCIALLINHAS;
+            String propriedadeCelula = CellProperty.CELL_PROPERTY_TOTAL_PARTIAL_LINES;
             if (this.alertaMetricaLinhaAtual != null) {
                 propriedadeCelula = this.alertaMetricaLinhaAtual;
             }
             impressao.imprimeValoresMetrica(dimensionColuna, null, dimensionLinha, propriedadeCelula,
-                    this.impressor, this.cube, CalculoSumarizacaoTipo.TOTAL);
+                    this.printer, this.cube, CalculoSumarizacaoTipo.TOTAL);
             impressao.setMetricas(metricasImprimirOld);
         }
     }
@@ -574,7 +574,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
                 impressaoMetrica.setMetricas(metricasImprimir);
                 dimensionPaiAtual = verificaImprimeTotalizacoesParciaisColuna(dimensionLinha, dimensionPaiAtual, ultimaDimensionColuna, impressaoMetrica);
                 impressaoMetrica.imprimeValoresMetrica(dimensionLinha, this.dimensionLinhaAnterior, ultimaDimensionColuna,
-                        propriedadeAplicar, this.impressor, cube, impressaoMetrica instanceof ImpressaoMetricaLinhaMediaParcialLinhas ? CalculoSumarizacaoTipo.MEDIA : CalculoSumarizacaoTipo.NORMAL);
+                        propriedadeAplicar, this.printer, cube, impressaoMetrica instanceof ImpressaoMetricaLinhaMediaParcialLinhas ? CalculoSumarizacaoTipo.MEDIA : CalculoSumarizacaoTipo.NORMAL);
                 impressaoMetrica.setMetricas(metricasImprimirOld);
             }
             dimensionPaiAtual = this.dimensoesColunaUltimoNivel.get(this.dimensoesColunaUltimoNivel.size() - 1).getParent();
@@ -597,7 +597,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
             }
 
             impressaoMetrica.imprimeValoresMetrica(dimensionLinha, this.dimensionLinhaAnterior, dimensaoColunaNula,
-                    propriedadeAplicar, this.impressor, cube,
+                    propriedadeAplicar, this.printer, cube,
                     impressaoMetrica instanceof ImpressaoMetricaLinhaMediaParcialLinhas ? CalculoSumarizacaoTipo.MEDIA : CalculoSumarizacaoTipo.NORMAL);
             imprimeValoresTotalizadoresMetricasColunas(dimensionLinha, funcoesAlertaMetricaCelulaConsiderar,
                     impressaoMetrica instanceof ImpressaoMetricaLinhaMediaParcialLinhas ? CalculoSumarizacaoTipo.MEDIA : CalculoSumarizacaoTipo.NORMAL);
@@ -612,27 +612,27 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
     }
 
     private void imprimeValoresTotalizadoresMetricasColunas(Dimension dimensionLinha, List<String> funcoesAlertaAtuais, String tipoLinha) {
-        String propriedadeCelula = CellProperty.PROPRIEDADE_CELULA_TOTALGERAL;
+        String propriedadeCelula = CellProperty.CELL_PROPERTY_TOTAL_GENERAL;
         if (this.alertaMetricaLinhaAtual != null) {
             propriedadeCelula = this.alertaMetricaLinhaAtual;
         }
 
         ImpressaoMetricaLinhaTotalizacaoColunas impressaoSoma = new ImpressaoMetricaLinhaTotalizacaoColunas(
                 this.metricasTotalizaSomaColunas, CalculoSumarizacaoTipoSomatorio.getInstance(), MetricMetaData.ACCUMULATED_VALUE_AH, funcoesAlertaAtuais);
-        impressaoSoma.imprimeValoresMetrica(dimensionLinha, null, dimensaoColunaNula, propriedadeCelula, this.impressor, cube, tipoLinha);
+        impressaoSoma.imprimeValoresMetrica(dimensionLinha, null, dimensaoColunaNula, propriedadeCelula, this.printer, cube, tipoLinha);
 
         ImpressaoMetricaLinhaTotalizacaoColunas impressaoMedia = new ImpressaoMetricaLinhaTotalizacaoColunas(
                 this.metricasTotalizaMediaColunas, CalculoSumarizacaoTipoMediaColuna.getInstance(), MetricMetaData.MEDIA_AH, funcoesAlertaAtuais);
-        impressaoMedia.imprimeValoresMetrica(dimensionLinha, null, dimensaoColunaNula, propriedadeCelula, this.impressor, cube, tipoLinha);
+        impressaoMedia.imprimeValoresMetrica(dimensionLinha, null, dimensaoColunaNula, propriedadeCelula, this.printer, cube, tipoLinha);
     }
 
     private void imprimeValorTotalGeralMetricasColunas(Dimension dimensionLinha, List<String> funcoesAlertaAtuais, String tipoLinha) {
         ImpressaoMetricaLinhaTotalizacaoColunasGeral impressao = new ImpressaoMetricaLinhaTotalizacaoColunasGeral(this.metricasTotalizaSomaGeralColunas, funcoesAlertaAtuais);
-        String propriedadeCelula = CellProperty.PROPRIEDADE_CELULA_TOTALGERAL;
+        String propriedadeCelula = CellProperty.CELL_PROPERTY_TOTAL_GENERAL;
         if (this.alertaMetricaLinhaAtual != null) {
             propriedadeCelula = this.alertaMetricaLinhaAtual;
         }
-        impressao.imprimeValoresMetrica(dimensionLinha, null, dimensaoColunaNula, propriedadeCelula, impressor, cube, tipoLinha);
+        impressao.imprimeValoresMetrica(dimensionLinha, null, dimensaoColunaNula, propriedadeCelula, printer, cube, tipoLinha);
     }
 
     private int getQtdMetricasTotaisParciaisAbaixoColuna(Dimension dimension, int qtdMetricasTotal, int qtdMetricasSemAH) {
@@ -660,17 +660,17 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
         }
         int colspan = (this.metricsAmount * dim.getTotalSize()) - qtdMetricasRemover;
         colspan += this.getQtdMetricasTotaisParciaisAbaixoColuna(dim, this.metricsAmount, this.metricsAmount - qtdMetricasRemover);
-        this.impressor.imprimeValorColuna(propriedadeCelulaNivelAnterior, colspan, 1, dim.getVisualizationValue(), dim.getMetaData());
+        this.printer.printColumnValue(propriedadeCelulaNivelAnterior, colspan, 1, dim.getVisualizationValue(), dim.getMetaData());
     }
 
     public void imprimeDimensaoLinha(Dimension dim, String propriedadeCelulaNivelAnterior, int sequencia) {
         DimensionLine dimensaoLinha = (DimensionLine) dim;
         int rowspan = dimensaoLinha.getTotalSize() + dimensaoLinha.countPartialAggregatesInHierarchy();
         int colspan = dimensaoLinha.getColspanImpressaoLinha();
-        String sequenciaRanking = Optional.ofNullable(dimensaoLinha.getRankingSequence()).map(String::valueOf).orElse(this.impressor.getValorVazio());
+        String sequenciaRanking = Optional.ofNullable(dimensaoLinha.getRankingSequence()).map(String::valueOf).orElse(this.printer.getEmptyValue());
         if (dim.getMetaData().hasSequenceFields()) {
-            this.impressor.imprimeCampoSequencia(dim.getMetaData(), sequenciaRanking, 1, rowspan);
+            this.printer.printSequenceField(dim.getMetaData(), sequenciaRanking, 1, rowspan);
         }
-        this.impressor.imprimeValorDimensaoLinha(propriedadeCelulaNivelAnterior, colspan, rowspan, dimensaoLinha.getVisualizationValue(), dimensaoLinha.getMetaData());
+        this.printer.printDimensionLineValue(propriedadeCelulaNivelAnterior, colspan, rowspan, dimensaoLinha.getVisualizationValue(), dimensaoLinha.getMetaData());
     }
 }

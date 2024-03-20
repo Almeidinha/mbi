@@ -208,7 +208,7 @@ public abstract class Dimension implements Comparable<Dimension> {
     }
 
     public String getMetricDefaultStyles(int currentLine) {
-        return CellProperty.PROPRIEDADE_CELULA_VALOR_METRICAS[currentLine % 2];
+        return CellProperty.CELL_PROPERTY_METRIC_VALUES[currentLine % 2];
     }
 
     public Dimensions getSameLevelDimensions() {
@@ -360,7 +360,7 @@ public abstract class Dimension implements Comparable<Dimension> {
         String retorno = null;
         for (ColorAlertConditionsDimensao colorAerts : alerts) {
             if (colorAerts.testCondition(this.getValue())) {
-                retorno = CellProperty.PROPRIEDADE_CELULA_ALERTAS_PREFIXO + colorAerts.getSequence();
+                retorno = CellProperty.CELL_PROPERTY_ALERTS_PREFIX + colorAerts.getSequence();
             }
         }
         return retorno;
@@ -420,7 +420,7 @@ public abstract class Dimension implements Comparable<Dimension> {
 
         for (ColorAlertConditionsMetrica colorAlert : alertConditions) {
             if (colorAlert.testaCondicao(value, this, dimensionColumn, this.cube)) {
-                return CellProperty.PROPRIEDADE_CELULA_ALERTAS_PREFIXO + colorAlert.getSequence();
+                return CellProperty.CELL_PROPERTY_ALERTS_PREFIX + colorAlert.getSequence();
             }
         }
 

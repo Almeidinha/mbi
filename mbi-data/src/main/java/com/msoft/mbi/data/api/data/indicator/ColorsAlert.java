@@ -6,9 +6,9 @@ import com.msoft.mbi.data.api.data.exception.DateException;
 import com.msoft.mbi.data.api.data.filters.Condition;
 import com.msoft.mbi.data.api.data.filters.DimensionFilter;
 import com.msoft.mbi.data.api.data.filters.FilterFactory;
-import com.msoft.mbi.data.api.data.htmlbuilder.Celula;
-import com.msoft.mbi.data.api.data.htmlbuilder.EstiloHTML;
-import com.msoft.mbi.data.api.data.htmlbuilder.Linha;
+import com.msoft.mbi.data.api.data.htmlbuilder.Cell;
+import com.msoft.mbi.data.api.data.htmlbuilder.HTMLStyle;
+import com.msoft.mbi.data.api.data.htmlbuilder.Line;
 import com.msoft.mbi.data.api.data.htmlbuilder.LinkHTML;
 import com.msoft.mbi.data.api.data.util.BIData;
 import com.msoft.mbi.data.api.data.util.BIUtil;
@@ -75,7 +75,7 @@ public class ColorsAlert {
         }
     }
 
-    public boolean buscaAplicaAlertaValor(Object valor, Celula celula, Linha linha, Field campo, String funcao, int numeroPosicaoDecimais, Dimension dimensao, boolean ehHTML) throws BIException, DateException {
+    public boolean buscaAplicaAlertaValor(Object valor, Cell cell, Line line, Field campo, String funcao, int numeroPosicaoDecimais, Dimension dimensao, boolean ehHTML) throws BIException, DateException {
         boolean retorno = false;
         ColorAlert alertaCores;
         ArrayList<ColorAlert> listaAlertasField = this.getListaAlertasValorFuncaoField(funcao, campo);
@@ -86,15 +86,14 @@ public class ColorsAlert {
                     Operator operador = alertaCores.getOperator();
 
                     if (campo == null || campo.getFieldType().equals(Constants.METRIC)) {
-                        valor = BIUtil.formatValue(Double.parseDouble(String.valueOf(valor)), numeroPosicaoDecimais);
-                        double valComp = Double.parseDouble(alertaCores.getFirstDoubleValue());
-                        valComp = BIUtil.formatValue(valComp, numeroPosicaoDecimais);
+                        valor = BIUtil.formatDoubleValue(String.valueOf(valor), numeroPosicaoDecimais);
+                        double valComp = BIUtil.formatDoubleValue(alertaCores.getFirstDoubleValue(), numeroPosicaoDecimais);
                         double segundoValor = 0;
                         if (alertaCores.getSecondValue() != null) {
-                            segundoValor = BIUtil.formatValue(Double.parseDouble(alertaCores.getSegundoValorDouble()), numeroPosicaoDecimais);
+                            segundoValor = BIUtil.formatDoubleValue(alertaCores.getSegundoValorDouble(), numeroPosicaoDecimais);
                         }
                         if (this.comparaValorDouble((Double) valor, operador, valComp, segundoValor)) {
-                            Object estilo = this.aplicaPropriedade(alertaCores, celula, linha, ehHTML, Constants.DIMENSION.equals(alertaCores.getFirstField().getFieldType()));
+                            Object estilo = this.aplicaPropriedade(alertaCores, cell, line, ehHTML, Constants.DIMENSION.equals(alertaCores.getFirstField().getFieldType()));
                             if (alertaCores.getAction().equals(ColorAlert.LINHA)) {
                                 dimensao.setLineAppliedStyle(estilo);
                                 retorno = true;
@@ -110,7 +109,7 @@ public class ColorsAlert {
                                 valorComp = condicao.getValue();
                             }
                             if (this.comparaValorString((String) valor, operador, valorComp)) {
-                                Object estilo = this.aplicaPropriedade(alertaCores, celula, linha, ehHTML, Constants.DIMENSION.equals(alertaCores.getFirstField().getFieldType()));
+                                Object estilo = this.aplicaPropriedade(alertaCores, cell, line, ehHTML, Constants.DIMENSION.equals(alertaCores.getFirstField().getFieldType()));
                                 if (alertaCores.getAction().equals(ColorAlert.LINHA)) {
                                     dimensao.setLineAppliedStyle(estilo);
                                     retorno = true;
@@ -138,7 +137,7 @@ public class ColorsAlert {
                                             }
                                         }
                                         if (todosVerdadeiro) {
-                                            Object estilo = this.aplicaPropriedade(alertaCores, celula, linha, ehHTML, Constants.DIMENSION.equals(alertaCores.getFirstField().getFieldType()));
+                                            Object estilo = this.aplicaPropriedade(alertaCores, cell, line, ehHTML, Constants.DIMENSION.equals(alertaCores.getFirstField().getFieldType()));
                                             if (alertaCores.getAction().equals(ColorAlert.LINHA)) {
                                                 dimensao.setLineAppliedStyle(estilo);
                                                 retorno = true;
@@ -149,7 +148,7 @@ public class ColorsAlert {
                                         Condition condicao = filtroDimensao.getCondition();
                                         BIData dataComparacao = new BIData(condicao.getFormattedValue(), BIData.FORMATO_DIA_MES_ANO_TELA);
                                         if (comparaValorDate(data, condicao.getOperator(), dataComparacao, null)) {
-                                            Object estilo = this.aplicaPropriedade(alertaCores, celula, linha, ehHTML, Constants.DIMENSION.equals(alertaCores.getFirstField().getFieldType()));
+                                            Object estilo = this.aplicaPropriedade(alertaCores, cell, line, ehHTML, Constants.DIMENSION.equals(alertaCores.getFirstField().getFieldType()));
                                             if (alertaCores.getAction().equals(ColorAlert.LINHA)) {
                                                 dimensao.setLineAppliedStyle(estilo);
                                                 retorno = true;
@@ -164,7 +163,7 @@ public class ColorsAlert {
                                     }
 
                                     if (comparaValorDate(data, alertaCores.getOperator(), dataComparacao, dataComparacao2)) {
-                                        Object estilo = this.aplicaPropriedade(alertaCores, celula, linha, ehHTML, Constants.DIMENSION.equals(alertaCores.getFirstField().getFieldType()));
+                                        Object estilo = this.aplicaPropriedade(alertaCores, cell, line, ehHTML, Constants.DIMENSION.equals(alertaCores.getFirstField().getFieldType()));
                                         if (alertaCores.getAction().equals(ColorAlert.LINHA)) {
                                             dimensao.setLineAppliedStyle(estilo);
                                             retorno = true;
@@ -199,23 +198,22 @@ public class ColorsAlert {
         return retorno;
     }
 
-    public boolean buscaAplicaAlertaOutroCampo(double valor, Field primeiroField, String funcaoPrimeiroField, Object[][] valores, Celula celula, Linha linha,
+    public boolean buscaAplicaAlertaOutroCampo(double valor, Field primeiroField, String funcaoPrimeiroField, Object[][] valores, Cell cell, Line line,
                                                int numeroPosicaoDecimais, Dimension dimColuna, Dimension dimLinha, CachedResults registroTotalizado,
                                                int tipoComparacao, boolean ehHTML) throws BIException {
         boolean retorno = false;
         ColorAlert alertaCores;
         ArrayList<ColorAlert> listaAlertasField = this.getListaAlertasOutroFieldFuncaoField(funcaoPrimeiroField, primeiroField);
-        Iterator<ColorAlert> i = listaAlertasField.iterator();
-        while (i.hasNext()) {
-            alertaCores = i.next();
+        for (ColorAlert colorAlert : listaAlertasField) {
+            alertaCores = colorAlert;
             if (alertaCores != null) {
 
                 if (primeiroField == null || primeiroField.getFieldType().equals(Constants.METRIC)) {
                     if (alertaCores.getSecondField() != null && "S".equals(alertaCores.getSecondField().getDefaultField())) {
                         if (!ehRestritaPorLinha(alertaCores.getAction(), dimColuna)) {
-                            valor = BIUtil.formatValue(valor, numeroPosicaoDecimais);
+                            valor = BIUtil.formatDoubleValue(valor, numeroPosicaoDecimais);
 
-                            double valComp = 0;
+                            double valComp;
                             String funcaoField = alertaCores.getFirstFieldFunction();
                             boolean mesmoField = false;
                             if (alertaCores.getFirstField().equals(alertaCores.getSecondField())) {
@@ -223,8 +221,8 @@ public class ColorsAlert {
                                 mesmoField = true;
                             }
                             valComp = this.getValorComparacao(alertaCores.getSecondField(), alertaCores.getFirstField(), valores, funcaoField, dimColuna, dimLinha, alertaCores.getIndicator(), registroTotalizado, tipoComparacao, mesmoField);
-                            valComp = BIUtil.formatValue(valComp, numeroPosicaoDecimais);
-                            if (this.aplicaAlertaOutroField(alertaCores, valor, valComp, numeroPosicaoDecimais, celula, linha, ehHTML, dimColuna)) {
+                            valComp = BIUtil.formatDoubleValue(valComp, numeroPosicaoDecimais);
+                            if (this.aplicaAlertaOutroField(alertaCores, valor, valComp, numeroPosicaoDecimais, cell, line, ehHTML, dimColuna)) {
                                 if (alertaCores.getAction().equals(ColorAlert.LINHA)) {
                                     retorno = true;
                                 }
@@ -391,10 +389,10 @@ public class ColorsAlert {
     }
 
     private boolean aplicaAlertaOutroField(ColorAlert alertaCores, double valor, double valComp, int numeroPosicaoDecimais,
-                                           Celula celula, Linha linha, boolean ehHTML, Dimension dimensao) {
+                                           Cell cell, Line line, boolean ehHTML, Dimension dimensao) {
         boolean retorno = false;
         Operator operador = alertaCores.getOperator();
-        double valorAuxiliar = BIUtil.formatValue(Double.parseDouble(alertaCores.getSecondFieldFunction()), numeroPosicaoDecimais);
+        double valorAuxiliar = BIUtil.formatDoubleValue(alertaCores.getSecondFieldFunction(), numeroPosicaoDecimais);
 
         boolean aplica;
         if ("V".equals(alertaCores.getValueType())) {
@@ -403,7 +401,7 @@ public class ColorsAlert {
             aplica = this.comparaOutroFieldPercentualDouble(valor, operador, valComp, valorAuxiliar);
         }
         if (aplica) {
-            Object estilo = this.aplicaPropriedade(alertaCores, celula, linha, ehHTML, Constants.DIMENSION.equals(alertaCores.getFirstField().getFieldType()));
+            Object estilo = this.aplicaPropriedade(alertaCores, cell, line, ehHTML, Constants.DIMENSION.equals(alertaCores.getFirstField().getFieldType()));
             if (ColorAlert.LINHA.equals(alertaCores.getAction())) {
                 dimensao.setLineAppliedStyle(estilo);
                 retorno = true;
@@ -430,26 +428,26 @@ public class ColorsAlert {
         return retorno;
     }
 
-    private Object aplicaPropriedade(ColorAlert alertaCores, Celula celula, Linha linha, boolean ehHTML, boolean isDimensao) {
-        Object estilo = this.criaEstilo(alertaCores, ehHTML, celula);
+    private Object aplicaPropriedade(ColorAlert alertaCores, Cell cell, Line line, boolean ehHTML, boolean isDimensao) {
+        Object estilo = this.criaEstilo(alertaCores, ehHTML, cell);
 
         if (alertaCores.getAction().equals(ColorAlert.LINHA)) {
-            linha.setEstilo(estilo, isDimensao);
-            linha.setAlertaAplicado(true);
-            linha.setEstiloAplicado(estilo);
+            line.setStyle(estilo, isDimensao);
+            line.setAppliedAlert(true);
+            line.setAppliedStyle(estilo);
 
-            List<Celula> celulas = linha.getCelulas();
-            if (celulas != null) {
-                for (Celula celulaAux : celulas) {
-                    if (celulaAux != null) {
-                        if (!celulaAux.isAlertaAplicado() && !celulaAux.isDimensaoColuna()) {
-                            celulaAux.setEstilo(null);
-                            celulaAux.setClasse("");
-                            celulaAux.setAlertaAplicado(true);
-                            if (celulaAux.getConteudo().getClass().getName().endsWith("HTML")) {
-                                LinkHTML link = (LinkHTML) celulaAux.getConteudo();
-                                link.setClasse("");
-                                link.setEstilo((EstiloHTML) estilo);
+            List<Cell> cells = line.getCells();
+            if (cells != null) {
+                for (Cell cellAux : cells) {
+                    if (cellAux != null) {
+                        if (!cellAux.isAppliedAlert() && !cellAux.isDimensionColumn()) {
+                            cellAux.setStyle(null);
+                            cellAux.setCellClass("");
+                            cellAux.setAppliedAlert(true);
+                            if (cellAux.getContent().getClass().getName().endsWith("HTML")) {
+                                LinkHTML link = (LinkHTML) cellAux.getContent();
+                                link.setCellClass("");
+                                link.setStyle((HTMLStyle) estilo);
                             }
                         }
                     } else {
@@ -458,24 +456,24 @@ public class ColorsAlert {
                 }
             }
         } else {
-            celula.setEstilo(estilo);
-            if (celula.getConteudo().getClass().getName().endsWith("HTML")) {
-                LinkHTML link = (LinkHTML) celula.getConteudo();
-                link.setClasse("");
-                link.setEstilo((EstiloHTML) estilo);
+            cell.setStyle(estilo);
+            if (cell.getContent().getClass().getName().endsWith("HTML")) {
+                LinkHTML link = (LinkHTML) cell.getContent();
+                link.setCellClass("");
+                link.setStyle((HTMLStyle) estilo);
             }
-            celula.setAlertaAplicado(true);
+            cell.setAppliedAlert(true);
         }
         return estilo;
     }
 
 
-    public Object criaEstilo(ColorAlert alertaCores, boolean ehHTML, Celula celula) {
+    public Object criaEstilo(ColorAlert alertaCores, boolean ehHTML, Cell cell) {
         return criaEstiloHTML(alertaCores);
     }
 
         public Object criaEstiloHTML(ColorAlert alertaCores) {
-            EstiloHTML estilo = new EstiloHTML();
+            HTMLStyle estilo = new HTMLStyle();
             estilo.setFontFamily(alertaCores.getAlertProperty().getFontName());
             estilo.setFontSize(alertaCores.getAlertProperty().getFontSize());
             estilo.setFontColor(alertaCores.getAlertProperty().getFontColor());

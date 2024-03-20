@@ -29,9 +29,9 @@ public class Expression {
             obj_parte = objetosExpressao.get(i);
             if (obj_parte instanceof Parenthesis) {
                 parenthesis = (Parenthesis) obj_parte;
-                if (parenthesis.getType() == Parenthesis.ABRE) {
-                    expressionParts.add(new Expression(this.getArrayExpressao(parenthesis.getNivel(), objetosExpressao)));
-                    i = this.getIndiceFinalExpressao(parenthesis.getNivel(), objetosExpressao);
+                if (parenthesis.getType() == Parenthesis.OPEN) {
+                    expressionParts.add(new Expression(this.getArrayExpressao(parenthesis.getLevel(), objetosExpressao)));
+                    i = this.getIndiceFinalExpressao(parenthesis.getLevel(), objetosExpressao);
                 }
 
             } else {
@@ -49,9 +49,9 @@ public class Expression {
             obj_parte = objetosExpressao.get(i);
             if (obj_parte instanceof Parenthesis) {
                 parentese = (Parenthesis) obj_parte;
-                if (parentese.getNivel().equals(nivel_parentese) && parentese.getType() == Parenthesis.ABRE) {
+                if (parentese.getLevel().equals(nivel_parentese) && parentese.getType() == Parenthesis.OPEN) {
                     indice_inicial = i;
-                } else if (parentese.getNivel().equals(nivel_parentese) && parentese.getType() == Parenthesis.FECHA) {
+                } else if (parentese.getLevel().equals(nivel_parentese) && parentese.getType() == Parenthesis.CLOSE) {
                     indice_final = i;
                 }
             }
@@ -73,7 +73,7 @@ public class Expression {
             obj_parte = objetosExpressao.get(i);
             if (obj_parte instanceof Parenthesis) {
                 parentese = (Parenthesis) obj_parte;
-                if (parentese.getNivel().equals(nivel_parentese) && parentese.getType() == Parenthesis.FECHA) {
+                if (parentese.getLevel().equals(nivel_parentese) && parentese.getType() == Parenthesis.CLOSE) {
                     return i;
                 }
             }

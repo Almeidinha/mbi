@@ -2,7 +2,7 @@ package com.msoft.mbi.data.api.data.htmlbuilder;
 
 import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 import com.msoft.mbi.cube.multi.metaData.HTMLLineMask;
-import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLSVGColuna;
+import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLSVGColumn;
 import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLTextoDinamico;
 import com.msoft.mbi.data.api.data.exception.BIException;
 import com.msoft.mbi.data.api.data.indicator.Field;
@@ -13,19 +13,19 @@ import java.io.Writer;
 
 public class HtmlHelper {
 
-    public static TabelaHTML buildStringDrillUp(boolean isDrillUp) {
-        TabelaHTML tab_drillup = new TabelaHTML();
+    public static HTMLTable buildStringDrillUp(boolean isDrillUp) {
+        HTMLTable tab_drillup = new HTMLTable();
         tab_drillup.setId("opcao_drill_up");
-        tab_drillup.addLinha(new LinhaHTML());
-        tab_drillup.getLinhaAtual().addCelula(new CelulaHTML());
-        LinkHTMLSVGColuna imagem;
+        tab_drillup.addLine(new HTMLLine());
+        tab_drillup.getCurrentLine().addCell(new HTMLCell());
+        LinkHTMLSVGColumn imagem;
         if (isDrillUp) {
-            imagem = new LinkHTMLSVGColuna("vect-arrow-square-up-left", "Drill Up", 18, 18);
+            imagem = new LinkHTMLSVGColumn("vect-arrow-square-up-left", "Drill Up", 18, 18);
             imagem.addParametro("onclick", "addDrillUp(0)");
         } else {
-            imagem = new LinkHTMLSVGColuna();
+            imagem = new LinkHTMLSVGColumn();
         }
-        tab_drillup.getLinhaAtual().getCelulaAtual().setConteudo(imagem);
+        tab_drillup.getCurrentLine().getCurrentCell().setContent(imagem);
         return tab_drillup;
     }
 
@@ -62,29 +62,29 @@ public class HtmlHelper {
     }
 
     public static void buildStringTitleAndDrillUp(Writer out, boolean noLinks, Object drillUpTable, String name) throws BIException {
-        TabelaHTML titleTab = buildStringTitle(name);
-        TabelaHTML table = new TabelaHTML();
-        table.addLinha(new LinhaHTML());
-        table.getLinhaAtual().addCelula(new CelulaHTML());
-        table.getLinhaAtual().getCelulaAtual().setConteudo(titleTab);
-        table.addLinha(new LinhaHTML());
-        table.getLinhaAtual().addCelula(new CelulaHTML());
-        table.setLargura("100%");
-        table.getLinhaAtual().getCelulaAtual().setConteudo(drillUpTable);
+        HTMLTable titleTab = buildStringTitle(name);
+        HTMLTable table = new HTMLTable();
+        table.addLine(new HTMLLine());
+        table.getCurrentLine().addCell(new HTMLCell());
+        table.getCurrentLine().getCurrentCell().setContent(titleTab);
+        table.addLine(new HTMLLine());
+        table.getCurrentLine().addCell(new HTMLCell());
+        table.setWidth("100%");
+        table.getCurrentLine().getCurrentCell().setContent(drillUpTable);
         table.toString(out);
     }
 
-    public static TabelaHTML buildStringTitle(String name) {
-        TabelaHTML titleTab = new TabelaHTML();
+    public static HTMLTable buildStringTitle(String name) {
+        HTMLTable titleTab = new HTMLTable();
         titleTab.setId("nome_indicador");
-        titleTab.setLargura("100");
-        titleTab.addLinha(new LinhaHTML());
-        titleTab.getLinhaAtual().setEditable("yes");
-        titleTab.getLinhaAtual().addCelula(new CelulaHTML());
-        titleTab.getLinhaAtual().getCelulaAtual().setAlinhamento("center");
-        titleTab.getLinhaAtual().getCelulaAtual().setId("nome_titulo");
-        titleTab.getLinhaAtual().getCelulaAtual().setNowrap(true);
-        EstiloHTML titleStile = new EstiloHTML();
+        titleTab.setWidth("100");
+        titleTab.addLine(new HTMLLine());
+        titleTab.getCurrentLine().setEditable("yes");
+        titleTab.getCurrentLine().addCell(new HTMLCell());
+        titleTab.getCurrentLine().getCurrentCell().setAlignment("center");
+        titleTab.getCurrentLine().getCurrentCell().setId("nome_titulo");
+        titleTab.getCurrentLine().getCurrentCell().setNowrap(true);
+        HTMLStyle titleStile = new HTMLStyle();
         titleStile.setBackgroundColor("#FFFFFF");
         titleStile.setFontSize(14);
         titleStile.setFontFamily("verdana");
@@ -93,9 +93,9 @@ public class HtmlHelper {
         titleStile.setFontStyle("normal");
         titleStile.setTextDecoration("none");
         titleStile.setAdditionalParameters("cursor: pointer;");
-        titleTab.getLinhaAtual().getCelulaAtual().setEstilo(titleStile);
-        titleTab.getLinhaAtual().getCelulaAtual().setEditable("yes");
-        titleTab.getLinhaAtual().getCelulaAtual().setConteudo(name);
+        titleTab.getCurrentLine().getCurrentCell().setStyle(titleStile);
+        titleTab.getCurrentLine().getCurrentCell().setEditable("yes");
+        titleTab.getCurrentLine().getCurrentCell().setContent(name);
         return titleTab;
     }
 
@@ -134,18 +134,18 @@ public class HtmlHelper {
     }
 
     private static void addSVGLinkToDimensionCube(MetaDataField dimensionCube, Field dimensionField, String id, String svgClass, String svgTitle, int width, int height) {
-        LinkHTMLSVGColuna svgHTML = new LinkHTMLSVGColuna(id, svgClass, svgTitle, width, height);
+        LinkHTMLSVGColumn svgHTML = new LinkHTMLSVGColumn(id, svgClass, svgTitle, height, width);
         svgHTML.addParametro("data-code-col", String.valueOf(dimensionField.getFieldId()));
         HTMLLineMask mascaraLinkHTML = new HTMLLineMask("drilldown", HTMLLineMask.VALUE_TYPE_AFTER, svgHTML);
         dimensionCube.addHTMLLineMask(mascaraLinkHTML);
     }
 
     public static void configureSorting(Field field, MetaDataField campo) {
-        LinkHTMLSVGColuna svgHTML = new LinkHTMLSVGColuna("desc", "btOrdena vect-sort-down", "Ordenar de forma decrescente", 14, 14);
+        LinkHTMLSVGColumn svgHTML = new LinkHTMLSVGColumn("desc", "btOrdena vect-sort-down", "Ordenar de forma decrescente", 14, 14);
         // configure svgHTML
         campo.addHTMLLineMask(new HTMLLineMask("ordenacao", HTMLLineMask.VALUE_TYPE_AFTER, svgHTML));
 
-        svgHTML = new LinkHTMLSVGColuna("asc", "btOrdena vect-sort-up", "Ordenar de forma crescente", 14, 14);
+        svgHTML = new LinkHTMLSVGColumn("asc", "btOrdena vect-sort-up", "Ordenar de forma crescente", 14, 14);
         // configure svgHTML
         campo.addHTMLLineMask(new HTMLLineMask("ordenacao", HTMLLineMask.VALUE_TYPE_AFTER, svgHTML));
     }

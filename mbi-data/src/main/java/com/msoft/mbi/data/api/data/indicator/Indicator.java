@@ -4,10 +4,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.msoft.mbi.cube.multi.Cube;
+import com.msoft.mbi.cube.multi.column.MascaraColunaMetaData;
 import com.msoft.mbi.cube.multi.generation.*;
 import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
+import com.msoft.mbi.cube.multi.metaData.HTMLLineMask;
 import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 import com.msoft.mbi.cube.multi.metaData.CubeMetaData;
+import com.msoft.mbi.cube.multi.renderers.MascaraMes;
+import com.msoft.mbi.cube.multi.renderers.MascaraMesAno;
+import com.msoft.mbi.cube.multi.renderers.MascaraPeriodo;
+import com.msoft.mbi.cube.multi.renderers.MascaraSemana;
+import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLTexto;
+import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLTextoColuna;
 import com.msoft.mbi.cube.util.CubeListener;
 import com.msoft.mbi.cube.util.DefaultCubeListener;
 import com.msoft.mbi.cube.util.logicOperators.LogicalOperators;
@@ -21,6 +29,7 @@ import com.msoft.mbi.data.api.data.filters.*;
 import com.msoft.mbi.data.api.data.filters.interpreters.DimensionFilterInterpreter;
 import com.msoft.mbi.data.api.data.filters.interpreters.MetricFilterInterpreter;
 import com.msoft.mbi.data.api.data.htmlbuilder.*;
+import com.msoft.mbi.data.api.data.util.BIUtil;
 import com.msoft.mbi.data.api.data.util.Constants;
 import com.msoft.mbi.data.api.data.util.ValuesRepository;
 import com.msoft.mbi.model.support.DatabaseType;
@@ -482,7 +491,7 @@ public class Indicator {
 
         HtmlHelper.buildStringTitleAndDrillUp(out, montaSemLink, tabelaDrillUp, this.name);
 
-        this.cubeTable.processar(new ImpressorHTML(out, (!montaSemLink)));
+        this.cubeTable.processar(new PrinterHTML(out, (!montaSemLink)));
         return out.toString();
 
     }
@@ -500,11 +509,11 @@ public class Indicator {
 
         ObjectNode jsonTitle = this.buildJsonTitleAndDrillUp(montaSemLink, drillUpTable);
         ObjectNode objectNode = this.mapper.createObjectNode();
-        ImpressorJson impressorJson = new ImpressorJson(objectNode);
+        JsonPrinter jsonPrinter = new JsonPrinter(objectNode);
 
         long startTime = System.nanoTime();
 
-        this.cubeTable.processar(impressorJson);
+        this.cubeTable.processar(jsonPrinter);
 
         long elapsedTime = System.nanoTime() - startTime;
         System.out.println("Total execution time to cubeTable.processar in millis: " + elapsedTime/1000000);
@@ -681,12 +690,12 @@ public class Indicator {
 
         for (Field field : fields) {
             if (isFieldValid(field)) {
-                MetaDataField campo = createCampoMetaData(field);
-                configureCampoMetaData(field, campo, lastDrillDownSequence);
-                cubeMetaData.addField(campo, field.getFieldType());
+                MetaDataField metaDataField = createCampoMetaData(field);
+                configureCampoMetaData(field, metaDataField, lastDrillDownSequence);
+                cubeMetaData.addField(metaDataField, field.getFieldType());
 
                 if (this.usesSequence && firtsColumn == null) {
-                    firtsColumn = campo;
+                    firtsColumn = metaDataField;
                     configurePrimerColumn(firtsColumn);
                 }
             }
@@ -701,20 +710,20 @@ public class Indicator {
     }
 
     private MetaDataField createCampoMetaData(Field field) {
-        MetaDataField campo = createMetaDataCubeField(field);
-        campo.setSequence(field.getVisualizationSequence());
-        return campo;
+        MetaDataField dataCubeField = createMetaDataCubeField(field);
+        dataCubeField.setSequence(field.getVisualizationSequence());
+        return dataCubeField;
     }
 
-    private void configureCampoMetaData(Field field, MetaDataField campo, int lastDrillDownSequence) {
-        HtmlHelper.configureSorting(field, campo);
+    private void configureCampoMetaData(Field field, MetaDataField metaDataField, int lastDrillDownSequence) {
+        HtmlHelper.configureSorting(field, metaDataField);
         if (field.isDrillDown() && field.getDrillDownSequence() != lastDrillDownSequence) {
-            HtmlHelper.createMascaraHTMLDrillDownDimensao(field, campo, this.code);
+            HtmlHelper.createMascaraHTMLDrillDownDimensao(field, metaDataField, this.code);
         }
-        configureAlertColor(field, campo);
+        configureAlertColor(field, metaDataField);
     }
 
-    private void configureAlertColor(Field field, MetaDataField campo) {
+    private void configureAlertColor(Field field, MetaDataField metaDataField) {
         int alertSequence = 1;
         for (LineColor corLinha : field.getLineColors()) {
             if (corLinha != null) {
@@ -723,7 +732,7 @@ public class Indicator {
                 ColorAlertMetadata alertaCor = new ColorAlertMetadata(alertSequence++, LogicalOperators.BETWEEN_INCLUSIVE,
                         Double.parseDouble(corLinha.getInitialValue()), Double.parseDouble(corLinha.getInitialValue()), corFonte, corFundo,
                         "Verdana", false, false, 10);
-                campo.addColorAlert(alertaCor, ColorAlertMetadata.VALUE_ALERT_TYPE);
+                metaDataField.addColorAlert(alertaCor, ColorAlertMetadata.VALUE_ALERT_TYPE);
             }
         }
     }
@@ -829,6 +838,15 @@ public class Indicator {
         metaDataField.setOrder(field.getAccumulatedOrder());
         metaDataField.setDefaultField(field.getDefaultField());
         metaDataField.setTitle(field.getTitle());
+        metaDataField.setAccumulatedParticipation(field.isAccumulatedParticipation());
+        metaDataField.setHorizontalAccumulatedParticipation(field.isHorizontalParticipationAccumulated());
+        metaDataField.setColumnAlignmentPosition(field.getColumnAlignment());
+        metaDataField.setOrderDirection(field.getOrderDirection());
+        metaDataField.setAccumulatedOrderDirection(field.getAccumulatedOrderDirection());
+        metaDataField.setTotalField(field.isTotalizingField());
+        metaDataField.setTotalLineField(field.isSumLine());
+        metaDataField.setUsesMediaLine(field.isMediaLine());
+        metaDataField.setAccumulatedValue(field.isAccumulatedValue());
 
         setMetaDataFieldOrder(metaDataField, field);
         setMetaDataFieldMask(metaDataField, field);
@@ -837,6 +855,11 @@ public class Indicator {
 
         setMetaDataFieldFlags(metaDataField, field);
         setMetaDataFieldDataType(metaDataField, field);
+
+        LinkHTMLTexto testLink = new LinkHTMLTextoColuna(metaDataField.getTitle(), metaDataField.getColumnWidth());
+        testLink.addParametro("data-code-col", String.valueOf(field.getFieldId()));
+        HTMLLineMask  mascaraLinkHTML = new HTMLLineMask("field_maintenance",HTMLLineMask.VALUE_TYPE, testLink);
+        metaDataField.addHTMLLineMask(mascaraLinkHTML);
 
         return metaDataField;
     }
@@ -851,7 +874,41 @@ public class Indicator {
     }
 
     private void setMetaDataFieldMask(MetaDataField metaDataField, Field field) {
-        // Set masks based on certain conditions
+        String fieldDateMask = field.getDateMask();
+
+        if (!"".equalsIgnoreCase(field.getDateMask()) && fieldDateMask != null && !"".equalsIgnoreCase(field.getDataType())) {
+            if (Constants.DATE.equalsIgnoreCase(field.getDataType())) {
+                metaDataField.addMask(new MascaraColunaMetaData(fieldDateMask, MascaraColunaMetaData.TIPO_DATA));
+            } else if (Constants.DIMENSION.equals(field.getFieldType())) {
+                if (Constants.NUMBER.equals(field.getDataType()) || Constants.STRING.equals(field.getDataType())) {
+                    if (field.getName().equalsIgnoreCase("num_mes")) {
+                        if (fieldDateMask.equalsIgnoreCase(MascaraMes.ABREVIADO)
+                                || fieldDateMask.equalsIgnoreCase(MascaraMes.NAO_ABREVIADO)) {
+                            metaDataField.addMask(new MascaraColunaMetaData(fieldDateMask, MascaraColunaMetaData.TIPO_EIS_DIMENSAO_DAT_MES));
+                        }
+                    }
+                    if (field.getName().equalsIgnoreCase("num_dia_semana")) {
+                        if (fieldDateMask.equalsIgnoreCase(MascaraSemana.ABREVIADO)
+                                || fieldDateMask.equalsIgnoreCase(MascaraSemana.NAO_ABREVIADO)) {
+                            metaDataField.addMask(new MascaraColunaMetaData(fieldDateMask, MascaraColunaMetaData.TIPO_EIS_DIMENSAO_DAT_SEMANA));
+                        }
+                    }
+                    if (field.getName().equalsIgnoreCase("num_bimestre") || field.getName().equalsIgnoreCase("num_trimestre")
+                            || field.getName().equalsIgnoreCase("num_semestre")) {
+                        if (Constants.NUMBER.equals(field.getDataType()) && (MascaraPeriodo.validaMascara(fieldDateMask))) {
+                            metaDataField.addMask(new MascaraColunaMetaData(fieldDateMask, MascaraColunaMetaData.TIPO_EIS_DIMENSAO_DAT_PERIODO));
+                        }
+                    }
+                    if (field.getName().equalsIgnoreCase("ano_mes_dat")) {
+                        if (Constants.STRING.equals(field.getDataType()) && (MascaraMesAno.validaMascara(fieldDateMask))) {
+                            metaDataField.addMask(new MascaraColunaMetaData(fieldDateMask, MascaraColunaMetaData.TIPO_EIS_DIMENSAO_DAT_ANO_MES));
+                        }
+                    }
+                }
+            }
+        } else if (Constants.DATE.equals(field.getDataType())) {
+            metaDataField.addMask(new MascaraColunaMetaData(BIUtil.DEFAULT_DATE_FORMAT, MascaraColunaMetaData.TIPO_DATA));
+        }
     }
 
     private void setMetaDataFieldOrderDirection(MetaDataField metaDataField, Field field) {
@@ -861,12 +918,24 @@ public class Indicator {
     }
 
     private void setMetaDataFieldLineTotalizationType(MetaDataField metaDataField, Field field) {
-        // Set type of totalization for rows
+        if (metaDataField.isExpression()) {
+            if (field.isApplyTotalizationExpression() || field.isPartialExpression()) {
+                metaDataField.setTotalLinesType(MetaDataField.TOTAL_APPLY_EXPRESSION);
+            } else {
+                metaDataField.setTotalLinesType(MetaDataField.TOTAL_APPLY_SUM);
+            }
+            if (field.getName().toUpperCase().trim().indexOf("SE(") == 0 || field.getName().toUpperCase().trim().indexOf("IF(") == 0) {
+                metaDataField.setAggregationApplyOrder(MetaDataField.AGGREGATION_APPLY_AFTER);
+            }
+        }
     }
 
-
     private void setMetaDataFieldFlags(MetaDataField metaDataField, Field field) {
-        // Set various flags based on conditions
+        boolean isVisible = !"N".equalsIgnoreCase(field.getDefaultField());
+        metaDataField.setTotalPartial(field.isPartialTotalization() && isVisible);
+        metaDataField.setMediaPartial(field.isPartialMedia() && isVisible);
+        metaDataField.setExpressionInPartial(field.isPartialExpression() && isVisible);
+        metaDataField.setExpressionInTotalPartial(field.isPartialTotalExpression() && isVisible);
     }
 
     private void setMetaDataFieldDataType(MetaDataField metaDataField, Field field) {
@@ -877,20 +946,20 @@ public class Indicator {
         metaDataField.setDataType(tipoDado);
     }
 
-    public boolean checkFilters(DimensionFilter dimensionFilter, Field campo) {
-        if (dimensionFilter == null || campo == null || dimensionFilter.getCondition() != null) {
+    public boolean checkFilters(DimensionFilter dimensionFilter, Field field) {
+        if (dimensionFilter == null || field == null || dimensionFilter.getCondition() != null) {
             return false;
         }
 
         return dimensionFilter.getFilters().stream()
                 .filter(Objects::nonNull)
                 .filter(filter -> filter.getCondition() == null)
-                .anyMatch(filter -> isMatchingFilter(filter, campo));
+                .anyMatch(filter -> isMatchingFilter(filter, field));
     }
 
-    private boolean isMatchingFilter(DimensionFilter dimensionFilter, Field campo) {
+    private boolean isMatchingFilter(DimensionFilter dimensionFilter, Field field) {
         return dimensionFilter.getField() != null
-                && dimensionFilter.getField().getNickname().equalsIgnoreCase(campo.getNickname())
+                && dimensionFilter.getField().getNickname().equalsIgnoreCase(field.getNickname())
                 && "=".equalsIgnoreCase(dimensionFilter.getOperator().getSymbol());
     }
 
@@ -1023,28 +1092,28 @@ public class Indicator {
     }
 
     private ColorAlertMetadata createAlertaCuboMetaData(ColorAlert colorAlert, int action, String fontColor, String backGroundColor) throws BIException, DateException {
-        Field campo = colorAlert.getFirstField();
+        Field field = colorAlert.getFirstField();
         AlertProperty props = colorAlert.getAlertProperty();
 
         String operatorSymbol = colorAlert.getOperator().getSymbol();
         String firstValue = colorAlert.getFirstValue();
         String secondValue = colorAlert.getSecondValue();
 
-        Object firstValueObject = parseAlertValue(campo, firstValue, operatorSymbol);
-        Object segundoValor = (secondValue != null) ? parseAlertValue(campo, secondValue, operatorSymbol) : null;
+        Object firstValueObject = parseAlertValue(field, firstValue, operatorSymbol);
+        Object segundoValor = (secondValue != null) ? parseAlertValue(field, secondValue, operatorSymbol) : null;
 
         return new ColorAlertMetadata(colorAlert.getSequence(), operatorSymbol, firstValueObject, segundoValor, action,
                 colorAlert.getFirstFieldFunction(), fontColor, backGroundColor, props.getFontName(), props.hasBold(), props.hasItalic(),
                 props.getFontSize());
     }
 
-    private Object parseAlertValue(Field campo, String value, String operator) throws BIException, DateException {
-        if (campo == null || campo.getFieldType().equals(Constants.METRIC)) {
+    private Object parseAlertValue(Field field, String value, String operator) throws BIException, DateException {
+        if (field == null || field.getFieldType().equals(Constants.METRIC)) {
             return Double.parseDouble(value);
         } else {
-            if (campo.getDataType().equals(Constants.DATE)) {
-                return parseDateAlertValue(campo, value, operator);
-            } else if (campo.getDataType().equals(Constants.NUMBER)) {
+            if (field.getDataType().equals(Constants.DATE)) {
+                return parseDateAlertValue(field, value, operator);
+            } else if (field.getDataType().equals(Constants.NUMBER)) {
                 return Integer.parseInt(value);
             } else {
                 return value;
@@ -1312,14 +1381,14 @@ public class Indicator {
 
     public static int getFieldIndex(List<Field> campos, String code) throws BIException {
         for (int i = 0; i < campos.size(); i++) {
-            Field campo = campos.get(i);
-            if (campo != null && campo.getFieldId() == Integer.parseInt(code)) {
+            Field field = campos.get(i);
+            if (field != null && field.getFieldId() == Integer.parseInt(code)) {
                 return i;
             }
         }
 
         BIGeneralException biex = new BIGeneralException("Nao foi possivel encontrar o campo de codigo " + code + " no indicador atual.");
-        biex.setAction("buscar indice de um campo");
+        biex.setAction("buscar indice de um field");
         biex.setLocal("Indicator", "getIndiceField(String)");
         throw biex;
     }

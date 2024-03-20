@@ -1,56 +1,42 @@
 package com.msoft.mbi.data.api.data.consult;
 
+import com.msoft.mbi.data.api.data.exception.BIFilterException;
 import com.msoft.mbi.data.api.data.indicator.Field;
+import com.msoft.mbi.data.api.data.util.BIUtil;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Locale;
 
 public class ConsultResultNumber extends ConsultResult {
 
-    private NumberFormat nf;
     
     public ConsultResultNumber() {
         super();
-        this.setFormato();
     }
     
     public ConsultResultNumber(Field campo) {
         super(campo);
-        this.setFormato();
     }
 
     public ConsultResultNumber(Field campo, Object valor) {
         super(campo, valor);
-        this.setFormato();
     }
     
-    public ConsultResultNumber(Field campo, Collection<Object> valores) {
-        super(campo, valores);
-        this.setFormato();
+    public ConsultResultNumber(Field campo, Collection<Object> values) {
+        super(campo, values);
     }
     
-    public ConsultResultNumber(Field campo, ArrayList<Object> valores) {
-        super(campo, valores);
-        this.setFormato();
+    public ConsultResultNumber(Field campo, ArrayList<Object> values) {
+        super(campo, values);
     }
 
-    private void setFormato() {
-        nf = NumberFormat.getInstance(Locale.GERMANY);;
-        nf.setMaximumFractionDigits(this.field.getNumDecimalPositions());
-        nf.setMinimumFractionDigits(this.field.getNumDecimalPositions());
-    }
-
-    public Object getFormattedValue(int index) {
+    public Object getFormattedValue(int index) throws BIFilterException {
         Object obj = this.getValor(index);
         if (obj != null) {
             if (obj instanceof Number) {
-                obj = nf.format(obj);
-                return obj;
+                return BIUtil.formatDoubleToTextObject(String.valueOf(obj), this.field.getNumDecimalPositions());
             } else if (obj instanceof String && !obj.equals("")) {
-                Double d = Double.valueOf(obj.toString());
-                return nf.format(d);
+                return BIUtil.formatDoubleToTextObject(String.valueOf(obj), this.field.getNumDecimalPositions());
             }
         }
         return "-";

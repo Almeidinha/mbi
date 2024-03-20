@@ -1,5 +1,6 @@
 package com.msoft.mbi.data.api.data.consult;
 
+import com.msoft.mbi.data.api.data.exception.BIFilterException;
 import com.msoft.mbi.data.api.data.indicator.Field;
 import lombok.Getter;
 import lombok.Setter;
@@ -76,7 +77,7 @@ public abstract class ConsultResult {
         }
     }
 
-    public abstract Object getFormattedValue(int index);
+    public abstract Object getFormattedValue(int index) throws BIFilterException;
 
     public String toString() {
         return this.field + "\n" + this.values + "\n";
@@ -90,7 +91,7 @@ public abstract class ConsultResult {
         this.isSequenceFiltered = isSequenceFiltered;
     }
 
-    public ArrayList<Object> getFormattedValues() {
+    public ArrayList<Object> getFormattedValues() throws BIFilterException {
         ArrayList<Object> formattedValues = new ArrayList<>();
         for (int x = 0; x < this.values.size(); x++) {
             Object valor = this.getFormattedValue(x);

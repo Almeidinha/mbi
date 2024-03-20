@@ -7,14 +7,14 @@ import lombok.Setter;
 @Getter
 public class Parenthesis {
 
-    public static final int ABRE = 1;
-    public static final int FECHA = 2;
+    public static final int OPEN = 1;
+    public static final int CLOSE = 2;
 
     private int type;
-    private String nivel="";
+    private String level ="";
 
     public Parenthesis() {
-        this.type = Parenthesis.ABRE;
+        this.type = Parenthesis.OPEN;
     }
 
     public Parenthesis(int type) {
@@ -23,7 +23,7 @@ public class Parenthesis {
 
     public Parenthesis(int type, String level) {
         this.type = type;
-        this.nivel = level;
+        this.level = level;
     }
 
 }

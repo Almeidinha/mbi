@@ -18,12 +18,12 @@ public class ImpressaoMetricaLinhaTotalizacaoLinhas extends ImpressaoMetricaLinh
     }
 
     @Override
-    public void imprimeValoresMetrica(Dimension dimensionLinha, Dimension dimensionLinhaAnterior, Dimension dimensionColuna, String propriedadeCelula, Impressor impressor, Cube cube, String tipoLinha) {
+    public void imprimeValoresMetrica(Dimension dimensionLinha, Dimension dimensionLinhaAnterior, Dimension dimensionColuna, String propriedadeCelula, Printer printer, Cube cube, String tipoLinha) {
         for (MetricMetaData metaData : this.metricas) {
             if (metaData.isTotalLines()) {
-                this.imprimeValorMetrica(metaData, propriedadeCelula, dimensionLinha, dimensionLinhaAnterior, dimensionColuna, impressor, cube, tipoLinha);
+                this.imprimeValorMetrica(metaData, propriedadeCelula, dimensionLinha, dimensionLinhaAnterior, dimensionColuna, printer, cube, tipoLinha);
             } else {
-                impressor.imprimeColuna(propriedadeCelula, impressor.getValorVazio());
+                printer.printColumn(propriedadeCelula, printer.getEmptyValue());
             }
         }
     }

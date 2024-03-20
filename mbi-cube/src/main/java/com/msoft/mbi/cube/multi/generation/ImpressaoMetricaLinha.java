@@ -35,24 +35,24 @@ public abstract class ImpressaoMetricaLinha {
         return funcaoAlertaCelulaMetrica;
     }
 
-    protected void imprimeValorMetrica(MetricMetaData metaData, String propriedadeCelulaLinha, Dimension dimensionEixoReferencia, Dimension dimensionLinhaAnterior, Dimension dimension, Impressor impressor, Cube cube, String tipoLinha) {
-        this.imprimeValorMetrica(metaData, propriedadeCelulaLinha, dimensionEixoReferencia, dimensionLinhaAnterior, dimension, impressor, cube, this.tipoCalculo, tipoLinha);
+    protected void imprimeValorMetrica(MetricMetaData metaData, String propriedadeCelulaLinha, Dimension dimensionEixoReferencia, Dimension dimensionLinhaAnterior, Dimension dimension, Printer printer, Cube cube, String tipoLinha) {
+        this.imprimeValorMetrica(metaData, propriedadeCelulaLinha, dimensionEixoReferencia, dimensionLinhaAnterior, dimension, printer, cube, this.tipoCalculo, tipoLinha);
     }
 
-    protected void imprimeValorMetrica(MetricMetaData metaData, String propriedadeCelulaLinha, Dimension dimensionEixoReferencia, Dimension dimensionLinhaAnterior, Dimension dimension, Impressor impressor, Cube cube, CalculoSumarizacaoTipo tipoCalculo, String tipoLinha) {
+    protected void imprimeValorMetrica(MetricMetaData metaData, String propriedadeCelulaLinha, Dimension dimensionEixoReferencia, Dimension dimensionLinhaAnterior, Dimension dimension, Printer printer, Cube cube, CalculoSumarizacaoTipo tipoCalculo, String tipoLinha) {
         Double valor = tipoCalculo.calcula(dimensionEixoReferencia, dimensionLinhaAnterior, dimension, metaData, tipoLinha);
         String propriedadeAplicar = propriedadeCelulaLinha;
         String nomeEstilo = dimensionEixoReferencia.searchAlertMetricCell(this.getAlertasCoresMetrica(metaData), valor, dimension);
         if (nomeEstilo != null) {
             propriedadeAplicar = nomeEstilo;
         }
-        this.imprimeValorMetrica(metaData, propriedadeAplicar, valor, impressor);
+        this.imprimeValorMetrica(metaData, propriedadeAplicar, valor, printer);
     }
 
-    protected void imprimeValorMetrica(MetricMetaData metaData, String propriedadeAplicar, Double valor, Impressor impressor) {
-        impressor.imprimeValorMetrica(propriedadeAplicar, valor, metaData);
+    protected void imprimeValorMetrica(MetricMetaData metaData, String propriedadeAplicar, Double valor, Printer printer) {
+        printer.printMetricValue(propriedadeAplicar, valor, metaData);
     }
 
-    public abstract void imprimeValoresMetrica(Dimension dimensionLinha, Dimension dimensionLinhaAnterior, Dimension dimensionColuna, String propriedadeCelula, Impressor impressor, Cube cube, String tipoLinha);
+    public abstract void imprimeValoresMetrica(Dimension dimensionLinha, Dimension dimensionLinhaAnterior, Dimension dimensionColuna, String propriedadeCelula, Printer printer, Cube cube, String tipoLinha);
 
 }

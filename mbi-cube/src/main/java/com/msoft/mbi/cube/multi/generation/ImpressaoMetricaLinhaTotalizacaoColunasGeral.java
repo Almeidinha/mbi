@@ -32,8 +32,8 @@ public class ImpressaoMetricaLinhaTotalizacaoColunasGeral extends ImpressaoMetri
 
 
     @Override
-    public void imprimeValoresMetrica(Dimension dimensionLinha, Dimension dimensionLinhaAnterior, Dimension dimensionColuna, String propriedadeCelula, Impressor impressor, Cube cube, String tipoLinha) {
-        this.imprimeValorMetrica(null, propriedadeCelula, dimensionLinha, dimensionLinhaAnterior, dimensionColuna, impressor, cube, tipoLinha);
+    public void imprimeValoresMetrica(Dimension dimensionLinha, Dimension dimensionLinhaAnterior, Dimension dimensionColuna, String propriedadeCelula, Printer printer, Cube cube, String tipoLinha) {
+        this.imprimeValorMetrica(null, propriedadeCelula, dimensionLinha, dimensionLinhaAnterior, dimensionColuna, printer, cube, tipoLinha);
     }
 
     @Override
@@ -51,9 +51,9 @@ public class ImpressaoMetricaLinhaTotalizacaoColunasGeral extends ImpressaoMetri
     }
 
     @Override
-    protected void imprimeValorMetrica(MetricMetaData metaData, String propriedadeAplicar, Double valor, Impressor impressor) {
+    protected void imprimeValorMetrica(MetricMetaData metaData, String propriedadeAplicar, Double valor, Printer printer) {
         int nCasasDecimais = this.getNCasasDecimais();
-        impressor.imprimeValorNumero(propriedadeAplicar, valor, nCasasDecimais);
+        printer.printNumberValue(propriedadeAplicar, valor, nCasasDecimais);
     }
 
     private int getNCasasDecimais() {

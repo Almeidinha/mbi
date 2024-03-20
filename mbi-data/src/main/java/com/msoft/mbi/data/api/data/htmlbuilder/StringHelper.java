@@ -106,7 +106,7 @@ public class StringHelper {
     }
 
     private static void processOpeningParenthesis(List<Object> expressionSlice, int openCount) {
-        expressionSlice.add(new Parenthesis(Parenthesis.ABRE, getLevelAux(openCount)));
+        expressionSlice.add(new Parenthesis(Parenthesis.OPEN, getLevelAux(openCount)));
     }
 
     private static void processClosingParenthesis(List<Object> expressionSlice, StringBuilder constantString, int openCount) {
@@ -114,7 +114,7 @@ public class StringHelper {
             expressionSlice.add(constantString.toString());
             constantString.setLength(0);
         }
-        expressionSlice.add(new Parenthesis(Parenthesis.FECHA, getLevelAux(openCount)));
+        expressionSlice.add(new Parenthesis(Parenthesis.CLOSE, getLevelAux(openCount)));
     }
 
     private static boolean isArithmeticOperator(char ch) {

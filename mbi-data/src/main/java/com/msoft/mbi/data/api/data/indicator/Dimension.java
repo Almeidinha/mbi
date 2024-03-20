@@ -15,7 +15,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.text.NumberFormat;
 import java.util.*;
 
 @Getter
@@ -293,7 +292,7 @@ public class Dimension {
     }
 
 
-    private void caminha(Dimension dimensao, TabelaHTML tabela, Field[] metricas, boolean coluna, Object[][] resultadosTodos, int indiceDimensaoLinha, int indiceDimensaoRaizLinha) throws BIException, DateException {
+    private void caminha(Dimension dimensao, HTMLTable tabela, Field[] metricas, boolean coluna, Object[][] resultadosTodos, int indiceDimensaoLinha, int indiceDimensaoRaizLinha) throws BIException, DateException {
         Object[][] resultado = dimensao.consulta(resultadosTodos);
         if (resultado.length > 1 && dimensao.temDimensoesAbaixo()) {
             Dimension[] dimensoesAbaixo = dimensao.getBottomDimensions();
@@ -308,55 +307,51 @@ public class Dimension {
                 }
             }
         } else if (!this.filterByAccumulated) {
-            LinhaHTML linha;
+            HTMLLine linha;
 
-            NumberFormat nf = BIUtil.getFormatter(0);
-            NumberFormat numberFormat = BIUtil.getFormatter(2);
-
-            linha = tabela.getLinhaAtual();
-            if (tabela.getIndiceLinha(linha) % 2 == 1) {
-                linha.setCorFundo("#FFFFFF");
+            linha = tabela.getCurrentLine();
+            if (tabela.getLineIndex(linha) % 2 == 1) {
+                linha.setBackGroundColor("#FFFFFF");
             } else {
-                linha.setCorFundo("#D7E3F7");
+                linha.setBackGroundColor("#D7E3F7");
             }
             for (int i = 0; i < metricas.length; i++) {
                 if (metricas[i] != null && !metricas[i].getName().isEmpty()) {
                     if (coluna) {
                         for (int x = 0; x < metricas.length - (i + 1); x++) {
-                            linha = tabela.getLinhaSuperior(linha);
+                            linha = tabela.getPreviousLine(linha);
                         }
                     }
                     if (resultado.length > 1) {
                         for (int j = 0; j < resultado[0].length; j++) {
                             if (resultado[0][j] != null && resultado[0][j].equals(metricas[i])) {
                                 if (!((Field) resultado[0][j]).getDefaultField().equals("T")) {
-                                    linha.addCelula(new CelulaHTML());
-                                    linha.getCelulaAtual().setNowrap(true);
+                                    linha.addCell(new HTMLCell());
+                                    linha.getCurrentCell().setNowrap(true);
                                     if (resultado[0][j] == null) {
-                                        linha.getCelulaAtual().setAlinhamento("left");
+                                        linha.getCurrentCell().setAlignment("left");
                                     } else {
-                                        linha.getCelulaAtual().setAlinhamento(((Field) resultado[0][j]).getColumnAlignment());
+                                        linha.getCurrentCell().setAlignment(((Field) resultado[0][j]).getColumnAlignment());
                                     }
-                                    EstiloHTML estilo = MultidimensionalStyles.getInstancia().getEstilos().get(MultidimensionalStyles.ESTILO_VAL_METRICA_COLUNA);
+                                    HTMLStyle estilo = MultidimensionalStyles.getInstancia().getEstilos().get(MultidimensionalStyles.ESTILO_VAL_METRICA_COLUNA);
 
-                                    nf.setMinimumFractionDigits(((Field) resultado[0][j]).getNumDecimalPositions());
-                                    nf.setMaximumFractionDigits(((Field) resultado[0][j]).getNumDecimalPositions());
-                                    linha.getCelulaAtual().setConteudo(nf.format(resultado[1][j]));
+                                    int decimalPositions = ((Field) resultado[0][j]).getNumDecimalPositions();
+                                    linha.getCurrentCell().setContent(BIUtil.formatDoubleToText(resultado[1][j], decimalPositions));
 
-                                    boolean aplicouEstilo = false;
-                                    aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaValor(resultado[1][j], linha.getCelulaAtual(), linha, (Field) resultado[0][j], ColorAlert.SEM_FUNCAO, ((Field) resultado[0][j]).getNumDecimalPositions(), this, true);
+                                    boolean aplicouEstilo;
+                                    aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaValor(resultado[1][j], linha.getCurrentCell(), linha, (Field) resultado[0][j], ColorAlert.SEM_FUNCAO, ((Field) resultado[0][j]).getNumDecimalPositions(), this, true);
                                     if (aplicouEstilo) {
                                         this.setAlertLineStyle(aplicouEstilo);
                                     }
-                                    aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaOutroCampo((Double) resultado[1][j], (Field) resultado[0][j], ColorAlert.SEM_FUNCAO, resultado, linha.getCelulaAtual(), linha, ((Field) resultado[0][j]).getNumDecimalPositions(), this, dimensao, null, 0, true);
+                                    aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaOutroCampo((Double) resultado[1][j], (Field) resultado[0][j], ColorAlert.SEM_FUNCAO, resultado, linha.getCurrentCell(), linha, ((Field) resultado[0][j]).getNumDecimalPositions(), this, dimensao, null, 0, true);
                                     if (aplicouEstilo) {
                                         this.setAlertLineStyle(aplicouEstilo);
                                     }
 
                                     if (this.alertLineStyle) {
-                                        linha.setEstilo(lineAppliedStyle);
-                                    } else if (!linha.getCelulaAtual().isAlertaAplicado()) {
-                                        linha.getCelulaAtual().setEstilo(estilo);
+                                        linha.setStyle(lineAppliedStyle);
+                                    } else if (!linha.getCurrentCell().isAppliedAlert()) {
+                                        linha.getCurrentCell().setStyle(estilo);
                                     }
                                     Double soma = null;
                                     if (((Field) resultado[0][j]).isAccumulatedParticipation() || ((Field) resultado[0][j]).isAccumulatedValue()) {
@@ -364,94 +359,94 @@ public class Dimension {
                                     }
                                     if (((Field) resultado[0][j]).isTotalizingField()) {
                                         if (((Field) resultado[0][j]).isVerticalAnalysis()) {
-                                            linha.addCelula(new CelulaHTML());
-                                            linha.getCelulaAtual().setNowrap(true);
+                                            linha.addCell(new HTMLCell());
+                                            linha.getCurrentCell().setNowrap(true);
                                             if (resultado[0][j] == null || (Double) resultado[1][j + 1] == 0) {
-                                                linha.getCelulaAtual().setConteudo("-");
+                                                linha.getCurrentCell().setContent("-");
                                             } else {
-                                                linha.getCelulaAtual().setAlinhamento(((Field) resultado[0][j]).getColumnAlignment());
-                                                Double perc = (Double) resultado[1][j] / (Double) resultado[1][j + 1];
-                                                linha.getCelulaAtual().setConteudo(numberFormat.format(perc));
+                                                linha.getCurrentCell().setAlignment(((Field) resultado[0][j]).getColumnAlignment());
+                                                double perc = (Double) resultado[1][j] / (Double) resultado[1][j + 1];
+                                                linha.getCurrentCell().setContent(BIUtil.formatDoubleToText(perc, 2));
 
-                                                aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaValor(perc * 100, linha.getCelulaAtual(), linha, (Field) resultado[0][j], ColorAlert.ANALISE_VERTICAL, ((Field) resultado[0][j]).getNumDecimalPositions(), this, true);
+                                                aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaValor(perc * 100, linha.getCurrentCell(), linha, (Field) resultado[0][j], ColorAlert.ANALISE_VERTICAL, ((Field) resultado[0][j]).getNumDecimalPositions(), this, true);
                                                 if (aplicouEstilo) {
                                                     this.setAlertLineStyle(aplicouEstilo);
                                                 }
 
-                                                aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaOutroCampo(perc * 100, (Field) resultado[0][j], ColorAlert.ANALISE_VERTICAL, resultado, linha.getCelulaAtual(), linha, 2, this, null, null, 0, true);
+                                                aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaOutroCampo(perc * 100, (Field) resultado[0][j], ColorAlert.ANALISE_VERTICAL, resultado, linha.getCurrentCell(), linha, 2, this, null, null, 0, true);
                                                 if (aplicouEstilo) {
                                                     this.setAlertLineStyle(aplicouEstilo);
                                                 }
 
                                                 if (this.alertLineStyle) {
-                                                    linha.setEstilo(lineAppliedStyle);
-                                                } else if (!linha.getCelulaAtual().isAlertaAplicado()) {
-                                                    linha.getCelulaAtual().setEstilo(estilo);
+                                                    linha.setStyle(lineAppliedStyle);
+                                                } else if (!linha.getCurrentCell().isAppliedAlert()) {
+                                                    linha.getCurrentCell().setStyle(estilo);
                                                 }
 
                                             }
                                         }
                                         if (((Field) resultado[0][j]).isAccumulatedParticipation()) {
-                                            linha.addCelula(new CelulaHTML());
-                                            linha.getCelulaAtual().setNowrap(true);
+                                            linha.addCell(new HTMLCell());
+                                            linha.getCurrentCell().setNowrap(true);
                                             if (resultado[0][j] == null || (Double) resultado[1][j + 1] == 0) {
-                                                linha.getCelulaAtual().setConteudo("-");
+                                                linha.getCurrentCell().setContent("-");
                                             } else {
-                                                linha.getCelulaAtual().setAlinhamento(((Field) resultado[0][j]).getColumnAlignment());
+                                                linha.getCurrentCell().setAlignment(((Field) resultado[0][j]).getColumnAlignment());
 
-                                                linha.getCelulaAtual().setConteudo(numberFormat.format(Double.valueOf(soma / (Double) resultado[1][j + 1])));
+                                                linha.getCurrentCell().setContent(BIUtil.formatDoubleToText(soma / (Double) resultado[1][j + 1], 2));
 
-                                                aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaValor(soma / (Double) resultado[1][j + 1] * 100, linha.getCelulaAtual(), linha, (Field) resultado[0][j], ColorAlert.PARTICIPACAO_ACUMULADA, 2, this, true);
+                                                aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaValor(soma / (Double) resultado[1][j + 1] * 100, linha.getCurrentCell(), linha, (Field) resultado[0][j], ColorAlert.PARTICIPACAO_ACUMULADA, 2, this, true);
                                                 if (aplicouEstilo) {
                                                     this.setAlertLineStyle(aplicouEstilo);
                                                 }
-                                                aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaOutroCampo((soma / (Double) resultado[1][j + 1]) * 100, (Field) resultado[0][j], ColorAlert.PARTICIPACAO_ACUMULADA, resultado, linha.getCelulaAtual(), linha, 2, this, null, null, 0, true);
+                                                aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaOutroCampo((soma / (Double) resultado[1][j + 1]) * 100, (Field) resultado[0][j], ColorAlert.PARTICIPACAO_ACUMULADA, resultado, linha.getCurrentCell(), linha, 2, this, null, null, 0, true);
                                                 if (aplicouEstilo) {
                                                     this.setAlertLineStyle(aplicouEstilo);
                                                 }
 
                                                 if (this.alertLineStyle) {
-                                                    linha.setEstilo(lineAppliedStyle);
-                                                } else if (!linha.getCelulaAtual().isAlertaAplicado()) {
-                                                    linha.getCelulaAtual().setEstilo(estilo);
+                                                    linha.setStyle(lineAppliedStyle);
+                                                } else if (!linha.getCurrentCell().isAppliedAlert()) {
+                                                    linha.getCurrentCell().setStyle(estilo);
                                                 }
                                             }
                                         }
                                     }
                                     if (((Field) resultado[0][j]).isAccumulatedValue()) {
-                                        linha.addCelula(new CelulaHTML());
-                                        linha.getCelulaAtual().setNowrap(true);
+                                        linha.addCell(new HTMLCell());
+                                        linha.getCurrentCell().setNowrap(true);
                                         if (resultado[0][j] == null) {
-                                            linha.getCelulaAtual().setAlinhamento("left");
+                                            linha.getCurrentCell().setAlignment("left");
                                         } else {
-                                            linha.getCelulaAtual().setAlinhamento(((Field) resultado[0][j]).getColumnAlignment());
+                                            linha.getCurrentCell().setAlignment(((Field) resultado[0][j]).getColumnAlignment());
                                         }
 
-                                        linha.getCelulaAtual().setConteudo(nf.format(soma));
-                                        aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaValor(soma, linha.getCelulaAtual(), linha, (Field) resultado[0][j], ColorAlert.ACUMULADO_VERTICAL, ((Field) resultado[0][j]).getNumDecimalPositions(), this, true);
+                                        linha.getCurrentCell().setContent(BIUtil.formatDoubleToText(soma, decimalPositions));
+                                        aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaValor(soma, linha.getCurrentCell(), linha, (Field) resultado[0][j], ColorAlert.ACUMULADO_VERTICAL, ((Field) resultado[0][j]).getNumDecimalPositions(), this, true);
                                         if (aplicouEstilo) {
                                             this.setAlertLineStyle(aplicouEstilo);
                                         }
 
-                                        aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaOutroCampo(soma, (Field) resultado[0][j], ColorAlert.ACUMULADO_VERTICAL, resultado, linha.getCelulaAtual(), linha, ((Field) resultado[0][j]).getNumDecimalPositions(), this, null, null, 0, true);
+                                        aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaOutroCampo(soma, (Field) resultado[0][j], ColorAlert.ACUMULADO_VERTICAL, resultado, linha.getCurrentCell(), linha, ((Field) resultado[0][j]).getNumDecimalPositions(), this, null, null, 0, true);
                                         if (aplicouEstilo) {
                                             this.setAlertLineStyle(aplicouEstilo);
                                         }
 
                                         if (this.alertLineStyle) {
-                                            linha.setEstilo(lineAppliedStyle);
-                                        } else if (!linha.getCelulaAtual().isAlertaAplicado()) {
-                                            linha.getCelulaAtual().setEstilo(estilo);
+                                            linha.setStyle(lineAppliedStyle);
+                                        } else if (!linha.getCurrentCell().isAppliedAlert()) {
+                                            linha.getCurrentCell().setStyle(estilo);
                                         }
                                     }
 
                                     if (((Field) resultado[0][j]).isHorizontalAnalysis() && !(indiceDimensaoLinha == 0 && indiceDimensaoRaizLinha == 0)) {
-                                        linha.addCelula(new CelulaHTML());
-                                        linha.getCelulaAtual().setNowrap(true);
+                                        linha.addCell(new HTMLCell());
+                                        linha.getCurrentCell().setNowrap(true);
                                         if (resultado[0][j] == null) {
-                                            linha.getCelulaAtual().setAlinhamento("left");
+                                            linha.getCurrentCell().setAlignment("left");
                                         } else {
-                                            linha.getCelulaAtual().setAlinhamento(((Field) resultado[0][j]).getColumnAlignment());
+                                            linha.getCurrentCell().setAlignment(((Field) resultado[0][j]).getColumnAlignment());
                                         }
 
                                         for (int ii = j + 1; resultado[0][ii] != null; ii++) {
@@ -463,46 +458,46 @@ public class Dimension {
                                                     if (ini != fin) {
                                                         if (ini != 0) {
                                                             res = (ini - fin) / ini;
-                                                            linha.getCelulaAtual().setConteudo(numberFormat.format(Double.valueOf(-1 * res)));
-                                                            aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaValor(-1 * res * 100, linha.getCelulaAtual(), linha, (Field) resultado[0][j], ColorAlert.ANALISE_HORIZONTAL, ((Field) resultado[0][j]).getNumDecimalPositions(), this, true);
+                                                            linha.getCurrentCell().setContent(BIUtil.formatDoubleToText((-1 * res), 2));
+                                                            aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaValor(-1 * res * 100, linha.getCurrentCell(), linha, (Field) resultado[0][j], ColorAlert.ANALISE_HORIZONTAL, ((Field) resultado[0][j]).getNumDecimalPositions(), this, true);
                                                             if (aplicouEstilo) {
                                                                 this.setAlertLineStyle(aplicouEstilo);
                                                             }
 
-                                                            aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaOutroCampo(-1 * res * 100, (Field) resultado[0][j], ColorAlert.ANALISE_HORIZONTAL, resultado, linha.getCelulaAtual(), linha, 2, this, null, null, 0, true);
+                                                            aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaOutroCampo(-1 * res * 100, (Field) resultado[0][j], ColorAlert.ANALISE_HORIZONTAL, resultado, linha.getCurrentCell(), linha, 2, this, null, null, 0, true);
                                                             if (aplicouEstilo) {
                                                                 this.setAlertLineStyle(aplicouEstilo);
                                                             }
                                                         } else {
                                                             if (fin > 0) {
-                                                                linha.getCelulaAtual().setConteudo(numberFormat.format(1));
+                                                                linha.getCurrentCell().setContent(BIUtil.formatDoubleToText(1, 2));
                                                             } else if (fin < 0) {
-                                                                linha.getCelulaAtual().setConteudo(numberFormat.format(-1));
+                                                                linha.getCurrentCell().setContent(BIUtil.formatDoubleToText(-1, 2));
                                                             }
                                                         }
                                                     } else {
-                                                        linha.getCelulaAtual().setConteudo(numberFormat.format(0));
+                                                        linha.getCurrentCell().setContent(BIUtil.formatDoubleToText(0, 2));
                                                     }
                                                 } else {
-                                                    linha.getCelulaAtual().setConteudo("-");
+                                                    linha.getCurrentCell().setContent("-");
                                                 }
                                                 break;
                                             }
                                         }
                                         if (this.alertLineStyle) {
-                                            linha.setEstilo(lineAppliedStyle);
-                                        } else if (!linha.getCelulaAtual().isAlertaAplicado()) {
-                                            linha.getCelulaAtual().setEstilo(estilo);
+                                            linha.setStyle(lineAppliedStyle);
+                                        } else if (!linha.getCurrentCell().isAppliedAlert()) {
+                                            linha.getCurrentCell().setStyle(estilo);
                                         }
                                     }
 
                                     if (((Field) resultado[0][j]).isHorizontalParticipation()) {
-                                        linha.addCelula(new CelulaHTML());
-                                        linha.getCelulaAtual().setNowrap(true);
+                                        linha.addCell(new HTMLCell());
+                                        linha.getCurrentCell().setNowrap(true);
                                         if (resultado[0][j] == null) {
-                                            linha.getCelulaAtual().setAlinhamento("left");
+                                            linha.getCurrentCell().setAlignment("left");
                                         } else {
-                                            linha.getCelulaAtual().setAlinhamento(((Field) resultado[0][j]).getColumnAlignment());
+                                            linha.getCurrentCell().setAlignment(((Field) resultado[0][j]).getColumnAlignment());
                                         }
 
                                         Field campo = (Field) resultado[0][j];
@@ -512,39 +507,39 @@ public class Dimension {
                                                 double total = this.getTotalLines().get(String.valueOf(campo.getFieldId()));
 
                                                 if (total != 0) {
-                                                    aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaValor((ini / total) * 100, linha.getCelulaAtual(), linha, campo, ColorAlert.PARTICIPACAO_HORIZONTAL, 2, this, true);
+                                                    aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaValor((ini / total) * 100, linha.getCurrentCell(), linha, campo, ColorAlert.PARTICIPACAO_HORIZONTAL, 2, this, true);
                                                     if (aplicouEstilo) {
                                                         this.setAlertLineStyle(aplicouEstilo);
                                                     }
 
-                                                    aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaOutroCampo((ini / total) * 100, campo, ColorAlert.PARTICIPACAO_HORIZONTAL, resultado, linha.getCelulaAtual(), linha, 2, this, null, null, 0, true);
+                                                    aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaOutroCampo((ini / total) * 100, campo, ColorAlert.PARTICIPACAO_HORIZONTAL, resultado, linha.getCurrentCell(), linha, 2, this, null, null, 0, true);
                                                     if (aplicouEstilo) {
                                                         this.setAlertLineStyle(aplicouEstilo);
                                                     }
                                                 }
 
                                                 if (ini != 0) {
-                                                    linha.getCelulaAtual().setConteudo(numberFormat.format(ini / total));
+                                                    linha.getCurrentCell().setContent(BIUtil.formatDoubleToText((ini / total), 2));
                                                 } else {
-                                                    linha.getCelulaAtual().setConteudo("0");
+                                                    linha.getCurrentCell().setContent("0");
                                                 }
 
                                                 if (this.alertLineStyle) {
-                                                    linha.setEstilo(lineAppliedStyle);
-                                                } else if (!linha.getCelulaAtual().isAlertaAplicado()) {
-                                                    linha.getCelulaAtual().setEstilo(estilo);
+                                                    linha.setStyle(lineAppliedStyle);
+                                                } else if (!linha.getCurrentCell().isAppliedAlert()) {
+                                                    linha.getCurrentCell().setStyle(estilo);
                                                 }
                                             }
                                         }
                                     }
 
                                     if (((Field) resultado[0][j]).isHorizontalParticipationAccumulated()) {
-                                        linha.addCelula(new CelulaHTML());
-                                        linha.getCelulaAtual().setNowrap(true);
+                                        linha.addCell(new HTMLCell());
+                                        linha.getCurrentCell().setNowrap(true);
                                         if (resultado[0][j] == null) {
-                                            linha.getCelulaAtual().setAlinhamento("left");
+                                            linha.getCurrentCell().setAlignment("left");
                                         } else {
-                                            linha.getCelulaAtual().setAlinhamento(((Field) resultado[0][j]).getColumnAlignment());
+                                            linha.getCurrentCell().setAlignment(((Field) resultado[0][j]).getColumnAlignment());
                                         }
 
                                         Field campo = (Field) resultado[0][j];
@@ -565,25 +560,25 @@ public class Dimension {
                                                     ini = ini / total;
                                                 }
                                                 horizontalParticipation.put(campo, ini);
-                                                linha.getCelulaAtual().setConteudo(numberFormat.format(ini));
+                                                linha.getCurrentCell().setContent(BIUtil.formatDoubleToText(ini, 2));
 
-                                                aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaValor(ini * 100, linha.getCelulaAtual(), linha, campo, ColorAlert.PARTICIPACAO_ACUMULADA_HORIZONTAL, 2, this, true);
+                                                aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaValor(ini * 100, linha.getCurrentCell(), linha, campo, ColorAlert.PARTICIPACAO_ACUMULADA_HORIZONTAL, 2, this, true);
                                                 if (aplicouEstilo) {
                                                     this.setAlertLineStyle(aplicouEstilo);
                                                 }
 
-                                                aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaOutroCampo(ini * 100, campo, ColorAlert.PARTICIPACAO_ACUMULADA_HORIZONTAL, resultado, linha.getCelulaAtual(), linha, 2, this, null, null, 0, true);
+                                                aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaOutroCampo(ini * 100, campo, ColorAlert.PARTICIPACAO_ACUMULADA_HORIZONTAL, resultado, linha.getCurrentCell(), linha, 2, this, null, null, 0, true);
                                                 if (aplicouEstilo) {
                                                     this.setAlertLineStyle(aplicouEstilo);
                                                 }
                                             } else {
-                                                linha.getCelulaAtual().setConteudo("0");
+                                                linha.getCurrentCell().setContent("0");
                                             }
                                         }
                                         if (this.alertLineStyle) {
-                                            linha.setEstilo(lineAppliedStyle);
-                                        } else if (!linha.getCelulaAtual().isAlertaAplicado()) {
-                                            linha.getCelulaAtual().setEstilo(estilo);
+                                            linha.setStyle(lineAppliedStyle);
+                                        } else if (!linha.getCurrentCell().isAppliedAlert()) {
+                                            linha.getCurrentCell().setStyle(estilo);
                                         }
                                     }
                                     break;
@@ -596,57 +591,57 @@ public class Dimension {
                         if (folhas == 0)
                             folhas = 1;
 
-                        EstiloHTML estilo = MultidimensionalStyles.getInstancia().getEstilos().get(MultidimensionalStyles.ESTILO_VAL_METRICA_COLUNA);
+                        HTMLStyle estilo = MultidimensionalStyles.getInstancia().getEstilos().get(MultidimensionalStyles.ESTILO_VAL_METRICA_COLUNA);
 
                         for (int w = 0; w < folhas; w++) {
                             if (!metricas[i].getDefaultField().equals("T")) {
-                                linha.addCelula(new CelulaHTML());
-                                linha.getCelulaAtual().setNowrap(true);
-                                linha.getCelulaAtual().setAlinhamento(metricas[i].getColumnAlignment());
-                                linha.getCelulaAtual().setConteudo("-");
+                                linha.addCell(new HTMLCell());
+                                linha.getCurrentCell().setNowrap(true);
+                                linha.getCurrentCell().setAlignment(metricas[i].getColumnAlignment());
+                                linha.getCurrentCell().setContent("-");
                                 if (metricas[i].isTotalizingField()) {
                                     if (metricas[i].isVerticalAnalysis()) {
-                                        linha.addCelula(new CelulaHTML());
-                                        linha.getCelulaAtual().setNowrap(true);
-                                        linha.getCelulaAtual().setAlinhamento(metricas[i].getColumnAlignment());
-                                        linha.getCelulaAtual().setEstilo(estilo);
-                                        linha.getCelulaAtual().setConteudo("-");
+                                        linha.addCell(new HTMLCell());
+                                        linha.getCurrentCell().setNowrap(true);
+                                        linha.getCurrentCell().setAlignment(metricas[i].getColumnAlignment());
+                                        linha.getCurrentCell().setStyle(estilo);
+                                        linha.getCurrentCell().setContent("-");
                                     }
                                     if (metricas[i].isAccumulatedParticipation()) {
-                                        linha.addCelula(new CelulaHTML());
-                                        linha.getCelulaAtual().setNowrap(true);
-                                        linha.getCelulaAtual().setAlinhamento(metricas[i].getColumnAlignment());
-                                        linha.getCelulaAtual().setEstilo(estilo);
-                                        linha.getCelulaAtual().setConteudo("-");
+                                        linha.addCell(new HTMLCell());
+                                        linha.getCurrentCell().setNowrap(true);
+                                        linha.getCurrentCell().setAlignment(metricas[i].getColumnAlignment());
+                                        linha.getCurrentCell().setStyle(estilo);
+                                        linha.getCurrentCell().setContent("-");
                                     }
                                 }
                                 if (metricas[i].isAccumulatedValue()) {
-                                    linha.addCelula(new CelulaHTML());
-                                    linha.getCelulaAtual().setNowrap(true);
-                                    linha.getCelulaAtual().setAlinhamento(metricas[i].getColumnAlignment());
-                                    linha.getCelulaAtual().setEstilo(estilo);
-                                    linha.getCelulaAtual().setConteudo("-");
+                                    linha.addCell(new HTMLCell());
+                                    linha.getCurrentCell().setNowrap(true);
+                                    linha.getCurrentCell().setAlignment(metricas[i].getColumnAlignment());
+                                    linha.getCurrentCell().setStyle(estilo);
+                                    linha.getCurrentCell().setContent("-");
                                 }
                                 if (metricas[i].isHorizontalAnalysis() && !(w == 0 && indiceDimensaoLinha == 0 && indiceDimensaoRaizLinha == 0)) {
-                                    linha.addCelula(new CelulaHTML());
-                                    linha.getCelulaAtual().setNowrap(true);
-                                    linha.getCelulaAtual().setAlinhamento(metricas[i].getColumnAlignment());
-                                    linha.getCelulaAtual().setEstilo(estilo);
-                                    linha.getCelulaAtual().setConteudo("-");
+                                    linha.addCell(new HTMLCell());
+                                    linha.getCurrentCell().setNowrap(true);
+                                    linha.getCurrentCell().setAlignment(metricas[i].getColumnAlignment());
+                                    linha.getCurrentCell().setStyle(estilo);
+                                    linha.getCurrentCell().setContent("-");
                                 }
                                 if (metricas[i].isHorizontalParticipation()) {
-                                    linha.addCelula(new CelulaHTML());
-                                    linha.getCelulaAtual().setNowrap(true);
-                                    linha.getCelulaAtual().setAlinhamento(metricas[i].getColumnAlignment());
-                                    linha.getCelulaAtual().setEstilo(estilo);
-                                    linha.getCelulaAtual().setConteudo("-");
+                                    linha.addCell(new HTMLCell());
+                                    linha.getCurrentCell().setNowrap(true);
+                                    linha.getCurrentCell().setAlignment(metricas[i].getColumnAlignment());
+                                    linha.getCurrentCell().setStyle(estilo);
+                                    linha.getCurrentCell().setContent("-");
                                 }
                                 if (metricas[i].isHorizontalParticipationAccumulated()) {
-                                    linha.addCelula(new CelulaHTML());
-                                    linha.getCelulaAtual().setNowrap(true);
-                                    linha.getCelulaAtual().setAlinhamento(metricas[i].getColumnAlignment());
-                                    linha.getCelulaAtual().setEstilo(estilo);
-                                    linha.getCelulaAtual().setConteudo("-");
+                                    linha.addCell(new HTMLCell());
+                                    linha.getCurrentCell().setNowrap(true);
+                                    linha.getCurrentCell().setAlignment(metricas[i].getColumnAlignment());
+                                    linha.getCurrentCell().setStyle(estilo);
+                                    linha.getCurrentCell().setContent("-");
                                 }
                             }
                         }
@@ -806,39 +801,39 @@ public class Dimension {
         return objAux2;
     }
 
-    public void toHTMLLinha(TabelaHTML tabela, LinhaHTML linha, LinhaHTML linhaInferior, Field[] metricasLinha, Field[] camposColuna, int colspanHeader, int indiceDimensaoLinha, int indiceDimensaoRaizLinha) throws BIException, DateException, CloneNotSupportedException {
+    public void toHTMLLinha(HTMLTable tabela, HTMLLine linha, HTMLLine linhaInferior, Field[] metricasLinha, Field[] camposColuna, int colspanHeader, int indiceDimensaoLinha, int indiceDimensaoRaizLinha) throws BIException, DateException, CloneNotSupportedException {
         boolean todosNull = true;
         int contador_temp;
 
         MultidimensionalStyles multidimensionalEstilos = MultidimensionalStyles.getInstancia();
 
-        EstiloHTML estilo1 = multidimensionalEstilos.getEstilos().get(MultidimensionalStyles.ESTILO_DESC_DIMENSAO_LINHA);
+        HTMLStyle estilo1 = multidimensionalEstilos.getEstilos().get(MultidimensionalStyles.ESTILO_DESC_DIMENSAO_LINHA);
 
-        EstiloHTML estilo2 = multidimensionalEstilos.getEstilos().get(MultidimensionalStyles.ESTILO_VAL_DIMENSAO_LINHA);
+        HTMLStyle estilo2 = multidimensionalEstilos.getEstilos().get(MultidimensionalStyles.ESTILO_VAL_DIMENSAO_LINHA);
 
         for (int i = 0; i < this.bottomDimensions.length; i++) {
             if (this.bottomDimensions[i] != null) {
                 if (!this.bottomDimensions[i].getValue().getField().getDefaultField().equals("T")) {
                     this.bottomDimensions[i].setMountTableWithoutLink(this.mountTableWithoutLink);
-                    if (linha.getCelulas().isEmpty()) {
-                        linha.addCelula(new CelulaHTML());
-                        linha.getCelulaAtual().setAlinhamento("right");
+                    if (linha.getCells().isEmpty()) {
+                        linha.addCell(new HTMLCell());
+                        linha.getCurrentCell().setAlignment("right");
 
-                        linha.getCelulaAtual().setCelulaTH(true);
+                        linha.getCurrentCell().setTHCell(true);
 
-                        linha.getCelulaAtual().setEstilo(estilo1);
-                        linha.getCelulaAtual().setColspan(colspanHeader);
+                        linha.getCurrentCell().setStyle(estilo1);
+                        linha.getCurrentCell().setColspan(colspanHeader);
                         LinkHTML linkField = new LinkHTML("javascript:alteraField('" + this.bottomDimensions[i].getValue().getField().getFieldId() + "');", this.bottomDimensions[i].getValue().getField().getTitle(), "textWhiteOff");
                         if (!this.isMountTableWithoutLink()) {
-                            linha.getCelulaAtual().setConteudo("<b>" + linkField + "</b>");
+                            linha.getCurrentCell().setContent("<b>" + linkField + "</b>");
                         } else {
-                            linha.getCelulaAtual().setConteudo("<b>" + this.bottomDimensions[i].getValue().getField().getTitle() + "</b>");
+                            linha.getCurrentCell().setContent("<b>" + this.bottomDimensions[i].getValue().getField().getTitle() + "</b>");
                         }
-                        linha.getCelulaAtual().setAlertaAplicado(true);
+                        linha.getCurrentCell().setAppliedAlert(true);
                     }
 
                     todosNull = false;
-                    linha.addCelula(new CelulaHTML());
+                    linha.addCell(new HTMLCell());
                     if (this.bottomDimensions[i].temDimensoesAbaixo()) {
                         int colspan = this.bottomDimensions[i].getQtdeDimensoesAbaixo(false);
                         if (metricasLinha != null && metricasLinha.length > 0) {
@@ -854,7 +849,7 @@ public class Dimension {
 
                             colspan *= contador_temp;
                         }
-                        linha.getCelulaAtual().setColspan(colspan);
+                        linha.getCurrentCell().setColspan(colspan);
                     } else {
                         if (metricasLinha != null) {
                             contador_temp = 0;
@@ -865,32 +860,32 @@ public class Dimension {
                                     }
                                 }
                             }
-                            linha.getCelulaAtual().setColspan(contador_temp);
+                            linha.getCurrentCell().setColspan(contador_temp);
                         }
                     }
 
                     int quantidadeMetricasAH = this.getQuantidadeMetricasComAnaliseHorizontal(metricasLinha);
                     if (indiceDimensaoRaizLinha == 0 && i == 0 && quantidadeMetricasAH > 0) {
-                        linha.getCelulaAtual().setColspan(linha.getCelulaAtual().getColspan() - quantidadeMetricasAH);
+                        linha.getCurrentCell().setColspan(linha.getCurrentCell().getColspan() - quantidadeMetricasAH);
                     }
 
-                    linha.getCelulaAtual().setAlinhamento("center");
-                    linha.getCelulaAtual().setConteudo(this.bottomDimensions[i].getValue().getFormattedValue(0));
-                    boolean aplicouAlertaLinha = this.indicator.getColorAlerts().buscaAplicaAlertaValor(this.bottomDimensions[i].getValue().getFormattedValue(0), linha.getCelulaAtual(), linha, this.bottomDimensions[i].getValue().getField(), ColorAlert.SEM_FUNCAO, this.bottomDimensions[i].getValue().getField().getNumDecimalPositions(), this, true);
+                    linha.getCurrentCell().setAlignment("center");
+                    linha.getCurrentCell().setContent(this.bottomDimensions[i].getValue().getFormattedValue(0));
+                    boolean aplicouAlertaLinha = this.indicator.getColorAlerts().buscaAplicaAlertaValor(this.bottomDimensions[i].getValue().getFormattedValue(0), linha.getCurrentCell(), linha, this.bottomDimensions[i].getValue().getField(), ColorAlert.SEM_FUNCAO, this.bottomDimensions[i].getValue().getField().getNumDecimalPositions(), this, true);
                     if (aplicouAlertaLinha) {
-                        linha.setAlertaAplicado(true);
+                        linha.setAppliedAlert(true);
                     }
 
-                    if (!linha.isAlertaAplicado() && !linha.getCelulaAtual().isAlertaAplicado()) {
-                        linha.getCelulaAtual().setEstilo(estilo2);
+                    if (!linha.isAppliedAlert() && !linha.getCurrentCell().isAppliedAlert()) {
+                        linha.getCurrentCell().setStyle(estilo2);
                     }
 
-                    linha.getCelulaAtual().setAlinhamento(this.bottomDimensions[i].getValue().getField().getColumnAlignment());
-                    linha.getCelulaAtual().setLargura(String.valueOf(this.bottomDimensions[i].getValue().getField().getColumnWidth()));
+                    linha.getCurrentCell().setAlignment(this.bottomDimensions[i].getValue().getField().getColumnAlignment());
+                    linha.getCurrentCell().setWidth(String.valueOf(this.bottomDimensions[i].getValue().getField().getColumnWidth()));
 
                     if (linhaInferior == null) {
-                        linhaInferior = new LinhaHTML();
-                        tabela.addLinha(linhaInferior);
+                        linhaInferior = new HTMLLine();
+                        tabela.addLine(linhaInferior);
                     }
                     if (i != 0 && indiceDimensaoRaizLinha == 0) {
                         indiceDimensaoRaizLinha = -1;
@@ -898,7 +893,7 @@ public class Dimension {
 
                     this.bottomDimensions[i].setIndicator(this.indicator);
                     this.bottomDimensions[i].setMountTableWithoutLink(this.mountTableWithoutLink);
-                    this.bottomDimensions[i].toHTMLLinha(tabela, linhaInferior, tabela.getLinhaInferior(linhaInferior), metricasLinha, camposColuna, colspanHeader, i, indiceDimensaoRaizLinha);
+                    this.bottomDimensions[i].toHTMLLinha(tabela, linhaInferior, tabela.getNextLine(linhaInferior), metricasLinha, camposColuna, colspanHeader, i, indiceDimensaoRaizLinha);
                 } else {
 
                     if (i != 0 && indiceDimensaoRaizLinha == 0) {
@@ -908,47 +903,47 @@ public class Dimension {
                     todosNull = false;
                     this.bottomDimensions[i].setIndicator(this.indicator);
                     this.bottomDimensions[i].setMountTableWithoutLink(this.mountTableWithoutLink);
-                    this.bottomDimensions[i].toHTMLLinha(tabela, linha, tabela.getLinhaInferior(linha), metricasLinha, camposColuna, colspanHeader, i, indiceDimensaoRaizLinha);
+                    this.bottomDimensions[i].toHTMLLinha(tabela, linha, tabela.getNextLine(linha), metricasLinha, camposColuna, colspanHeader, i, indiceDimensaoRaizLinha);
                 }
             }
         }
         if (todosNull) {
-            if (linha.getCelulas().isEmpty()) {
+            if (linha.getCells().isEmpty()) {
                 if (camposColuna != null) {
-                    EstiloHTML estilo = multidimensionalEstilos.getEstilos().get(MultidimensionalStyles.ESTILO_DESC_DIMENSAO_LINHA);
+                    HTMLStyle estilo = multidimensionalEstilos.getEstilos().get(MultidimensionalStyles.ESTILO_DESC_DIMENSAO_LINHA);
 
                     if (this.indicator.isUsesSequence()) {
-                        linha.addCelula(new CelulaHTML());
-                        linha.getCelulaAtual().setCorFundo("#3377CC");
-                        linha.getCelulaAtual().setCorBorda("#FFFFFF");
-                        linha.getCelulaAtual().setEstilo(estilo);
-                        linha.getCelulaAtual().setAlinhamento("center");
-                        linha.getCelulaAtual().setConteudo("Seq");
+                        linha.addCell(new HTMLCell());
+                        linha.getCurrentCell().setBackGroundColor("#3377CC");
+                        linha.getCurrentCell().setBorderColor("#FFFFFF");
+                        linha.getCurrentCell().setStyle(estilo);
+                        linha.getCurrentCell().setAlignment("center");
+                        linha.getCurrentCell().setContent("Seq");
                     }
 
                     for (Field field : camposColuna) {
                         if (field != null && !field.getDefaultField().equals("T")) {
-                            linha.addCelula(new CelulaHTML());
-                            linha.getCelulaAtual().setCorFundo("#3377CC");
-                            linha.getCelulaAtual().setCorBorda("#FFFFFF");
-                            linha.getCelulaAtual().setEstilo(estilo);
-                            linha.getCelulaAtual().setAlinhamento("center");
-                            linha.getCelulaAtual().setCelulaTH(true);
-                            TabelaHTML tabelaAux = new TabelaHTML();
-                            tabelaAux.setLargura("100%");
-                            tabelaAux.addLinha(new LinhaHTML());
-                            tabelaAux.getLinhaAtual().addCelula(new CelulaHTML());
-                            tabelaAux.getLinhaAtual().getCelulaAtual().setLargura("100%");
-                            EstiloHTML estiloAux = (EstiloHTML) estilo.clone();
-                            tabelaAux.getLinhaAtual().getCelulaAtual().setEstilo(estiloAux);
+                            linha.addCell(new HTMLCell());
+                            linha.getCurrentCell().setBackGroundColor("#3377CC");
+                            linha.getCurrentCell().setBorderColor("#FFFFFF");
+                            linha.getCurrentCell().setStyle(estilo);
+                            linha.getCurrentCell().setAlignment("center");
+                            linha.getCurrentCell().setTHCell(true);
+                            HTMLTable tabelaAux = new HTMLTable();
+                            tabelaAux.setWidth("100%");
+                            tabelaAux.addLine(new HTMLLine());
+                            tabelaAux.getCurrentLine().addCell(new HTMLCell());
+                            tabelaAux.getCurrentLine().getCurrentCell().setWidth("100%");
+                            HTMLStyle estiloAux = (HTMLStyle) estilo.clone();
+                            tabelaAux.getCurrentLine().getCurrentCell().setStyle(estiloAux);
                             LinkHTML linkField = new LinkHTML("javascript:alteraField('" + field.getFieldId() + "');", field.getTitle(), "textWhiteOff");
                             if (!this.isMountTableWithoutLink()) {
-                                tabelaAux.getLinhaAtual().getCelulaAtual().setConteudo(linkField);
+                                tabelaAux.getCurrentLine().getCurrentCell().setContent(linkField);
                             } else {
-                                tabelaAux.getLinhaAtual().getCelulaAtual().setConteudo(field.getTitle());
+                                tabelaAux.getCurrentLine().getCurrentCell().setContent(field.getTitle());
                             }
 
-                            tabelaAux.getLinhaAtual().addCelula(new CelulaHTML());
+                            tabelaAux.getCurrentLine().addCell(new HTMLCell());
 
                             boolean temFiltro = false;
                             if (field.indicator.getFilters().getDimensionFilter() != null) {
@@ -956,68 +951,68 @@ public class Dimension {
                             }
 
                             LinkHTML link;
-                            ImagemHTML imagem;
+                            HTMLImage imagem;
 
                             if (temFiltro) {
-                                imagem = new ImagemHTML("imagens/_filter.gif", "12px", "12px");
+                                imagem = new HTMLImage("imagens/_filter.gif", "12px", "12px");
                             } else {
-                                imagem = new ImagemHTML("imagens/_not_filter.png", "16px", "16px");
+                                imagem = new HTMLImage("imagens/_not_filter.png", "16px", "16px");
                             }
 
                             imagem.setId(field.getNickname() + field.getFieldId());
 
                             link = new LinkHTML("javascript:filtroHeader(" + field.getFieldId() + ",'" + imagem.getId() + "');", imagem);
-                            tabelaAux.getLinhaAtual().getCelulaAtual().setConteudo("&nbsp;" + link);
+                            tabelaAux.getCurrentLine().getCurrentCell().setContent("&nbsp;" + link);
 
-                            tabelaAux.getLinhaAtual().addCelula(new CelulaHTML());
+                            tabelaAux.getCurrentLine().addCell(new HTMLCell());
 
                             link = null;
                             if (field.isNavigable()) {
-                                link = new LinkHTML("javascript:browseDown(" + field.getFieldId() + ");", new ImagemHTML("imagens/_mais.gif"));
+                                link = new LinkHTML("javascript:browseDown(" + field.getFieldId() + ");", new HTMLImage("imagens/_mais.gif"));
                             } else if (field.isNavigableUpwards()) {
-                                link = new LinkHTML("javascript:browseUp(" + field.getFieldId() + ");", new ImagemHTML("imagens/_menos.gif"));
+                                link = new LinkHTML("javascript:browseUp(" + field.getFieldId() + ");", new HTMLImage("imagens/_menos.gif"));
                             }
                             if (link != null && !this.isMountTableWithoutLink()) {
-                                tabelaAux.getLinhaAtual().getCelulaAtual().setConteudo(link);
+                                tabelaAux.getCurrentLine().getCurrentCell().setContent(link);
                             } else {
-                                tabelaAux.getLinhaAtual().getCelulaAtual().setConteudo("&nbsp;");
+                                tabelaAux.getCurrentLine().getCurrentCell().setContent("&nbsp;");
                             }
-                            linha.getCelulaAtual().setLargura(String.valueOf(field.getColumnWidth()));
-                            linha.getCelulaAtual().setConteudo(tabelaAux);
+                            linha.getCurrentCell().setWidth(String.valueOf(field.getColumnWidth()));
+                            linha.getCurrentCell().setContent(tabelaAux);
                         }
                     }
                 }
             }
             if (metricasLinha != null) {
 
-                EstiloHTML estilo = multidimensionalEstilos.getEstilos().get(MultidimensionalStyles.ESTILO_DESC_METRICA_LINHA);
+                HTMLStyle estilo = multidimensionalEstilos.getEstilos().get(MultidimensionalStyles.ESTILO_DESC_METRICA_LINHA);
 
                 for (Field field : metricasLinha) {
                     if (field != null) {
                         if (!field.getDefaultField().equals("T") && !(field.getName().isEmpty() && field.getTitle().equals("total"))) {
                             if (!(indiceDimensaoRaizLinha == 0 && indiceDimensaoLinha == 0 && field.isHorizontalAnalysis() && field.getTitle().contains("AH%"))) {
-                                linha.addCelula(new CelulaHTML());
-                                linha.getCelulaAtual().setCorFundo("#A2C8E8");
-                                linha.getCelulaAtual().setCelulaTH(true);
-                                linha.getCelulaAtual().setEstilo(estilo);
-                                linha.getCelulaAtual().setLargura(String.valueOf(field.getColumnWidth()));
-                                linha.getCelulaAtual().setAlinhamento(field.getColumnAlignment());
-                                linha.getCelulaAtual().setNowrap(true);
+                                linha.addCell(new HTMLCell());
+                                linha.getCurrentCell().setBackGroundColor("#A2C8E8");
+                                linha.getCurrentCell().setTHCell(true);
+                                linha.getCurrentCell().setStyle(estilo);
+                                linha.getCurrentCell().setWidth(String.valueOf(field.getColumnWidth()));
+                                linha.getCurrentCell().setAlignment(field.getColumnAlignment());
+                                linha.getCurrentCell().setNowrap(true);
                                 LinkHTML linkField = new LinkHTML("javascript:alteraField('" + field.getFieldId() + "');", field.getTitle(), "blueLinkDrillDown");
                                 if (!this.isMountTableWithoutLink() && !field.isChildField()) {
-                                    linha.getCelulaAtual().setConteudo(linkField);
+                                    linha.getCurrentCell().setContent(linkField);
                                 } else {
-                                    linha.getCelulaAtual().setConteudo(field.getTitle());
+                                    linha.getCurrentCell().setContent(field.getTitle());
                                 }
                             }
                         }
                     }
                 }
             } else {
-                linha.addCelula(new CelulaHTML());
-                linha.getCelulaAtual().setAlinhamento("center");
-                linha.getCelulaAtual().setCorFundo("#A2C8E8");
-                linha.getCelulaAtual().setConteudo("&nbsp;");
+                linha.addCell(new HTMLCell());
+                linha.getCurrentCell().setAlignment("center");
+                linha.getCurrentCell().setBackGroundColor("#A2C8E8");
+                linha.getCurrentCell().setContent("&nbsp;");
             }
         }
     }
@@ -1080,7 +1075,7 @@ public class Dimension {
         }
     }
 
-    public void caminhaDimensoesLinha(Dimension[] dimensoes, TabelaHTML tabela) {
+    public void caminhaDimensoesLinha(Dimension[] dimensoes, HTMLTable tabela) {
         if (dimensoes[0] != null) {
             for (Dimension dimensoe : dimensoes) {
                 if (dimensoe != null) {
@@ -1092,27 +1087,26 @@ public class Dimension {
         }
     }
 
-    private boolean escreveTotalParcial(LinhaHTML linhaHTML, int indiceLinha, int sequencia, List<DimensionTotalized> dimensoesTotalizadas) throws BIException, DateException {
+    private boolean escreveTotalParcial(HTMLLine linhaHTML, int indiceLinha, int sequencia, List<DimensionTotalized> dimensoesTotalizadas) throws BIException, DateException {
         boolean total = false;
         HashMap<Field, Object> participParcialHorizontal = new HashMap<>();
         HashMap<Field, List<Object>> participHorizontais = new HashMap<>();
 
-        CelulaHTML celula;
-        NumberFormat numberFormat = BIUtil.getFormatter(0);
+        HTMLCell celula;
         MultidimensionalStyles multidimensionalEstilos = MultidimensionalStyles.getInstancia();
 
-        EstiloHTML estilo = multidimensionalEstilos.getEstilos().get(MultidimensionalStyles.ESTILO_DESC_METRICA_LINHA);
+        HTMLStyle estilo = multidimensionalEstilos.getEstilos().get(MultidimensionalStyles.ESTILO_DESC_METRICA_LINHA);
 
         if (this.temDimensoesAbaixo()) {
-            celula = new CelulaHTML();
-            linhaHTML.addCelula(celula);
-            celula.setEstilo(estilo);
+            celula = new HTMLCell();
+            linhaHTML.addCell(celula);
+            celula.setStyle(estilo);
             celula.setNowrap(true);
-            celula.setConteudo("Total");
-            celula.setDimensaoColuna(true);
-            celula.setAlinhamento("left");
-            celula.setCorFundo("#CCCCCC");
-            celula.setCelulaTH(true);
+            celula.setContent("Total");
+            celula.setDimensionColumn(true);
+            celula.setAlignment("left");
+            celula.setBackGroundColor("#CCCCCC");
+            celula.setTHCell(true);
             celula.setColspan(this.getAlturaDimensoesAbaixo());
             for (int i = 0; i < this.columnDimension.length; i++) {
                 if (this.lineDimension[i] != null) {
@@ -1138,23 +1132,22 @@ public class Dimension {
                         }
                     }
                     if (!campo.getAccumulatedLine().equals("N")) {
-                        celula = new CelulaHTML();
-                        linhaHTML.addCelula(celula);
+                        celula = new HTMLCell();
+                        linhaHTML.addCell(celula);
                         celula.setNowrap(true);
-                        celula.setEstilo(estilo);
-                        celula.setAlinhamento(campo.getColumnAlignment());
-                        numberFormat.setMinimumFractionDigits(campo.getNumDecimalPositions());
-                        numberFormat.setMaximumFractionDigits(campo.getNumDecimalPositions());
+                        celula.setStyle(estilo);
+                        celula.setAlignment(campo.getColumnAlignment());
+                        int decimalPositions = campo.getNumDecimalPositions();
 
                         if (campo.isPartialTotalization()) {
                             this.accumulatedLine[ii] = this.getAcumuladoLinhaAtualizado(ii);
                             if ("E".equals(campo.getAccumulatedLine())) {
                                 this.accumulatedLine[ii] = this.calculaExpressaoAcumulado(campo, ii);
                             }
-                            celula.setConteudo(numberFormat.format(this.accumulatedLine[ii]));
+                            celula.setContent(BIUtil.formatDoubleToText(this.accumulatedLine[ii], decimalPositions));
                             this.indicator.getColorAlerts().buscaAplicaAlertaValor(this.accumulatedLine[ii], celula, linhaHTML, campo, ColorAlert.TOTALIZACAO_PARCIAL, campo.getNumDecimalPositions(), this, true);
                         } else {
-                            celula.setConteudo("-");
+                            celula.setContent("-");
                         }
                     }
                     if (campo.isSumLine() && this.accumulatedLine != null) {
@@ -1169,46 +1162,43 @@ public class Dimension {
                 campo = (Field) this.results[0][ii];
                 if (campo != null && !campo.getDefaultField().equals("T")) {
                     if (campo.isMediaLine()) {
-                        celula = new CelulaHTML();
-                        linhaHTML.addCelula(celula);
+                        celula = new HTMLCell();
+                        linhaHTML.addCell(celula);
                         celula.setNowrap(true);
-                        celula.setEstilo(estilo);
-                        celula.setAlinhamento(campo.getColumnAlignment());
-                        numberFormat.setMinimumFractionDigits(campo.getNumDecimalPositions());
-                        numberFormat.setMaximumFractionDigits(campo.getNumDecimalPositions());
+                        celula.setStyle(estilo);
+                        celula.setAlignment(campo.getColumnAlignment());
+                        int decimalPositions = campo.getNumDecimalPositions();
                         if (campo.isPartialTotalization()) {
                             if ("E".equals(campo.getAccumulatedLine())) {
                                 this.accumulatedLine[ii] = this.calculaExpressaoAcumulado(campo, ii);
                             }
                             if (getColumnLineAmount() > 0) {
-                                celula.setConteudo(numberFormat.format(this.accumulatedLine[ii] / getColumnLineAmount()));
+                                celula.setContent(BIUtil.formatDoubleToText(this.accumulatedLine[ii] / getColumnLineAmount(), decimalPositions));
                                 this.indicator.getColorAlerts().buscaAplicaAlertaValor(this.accumulatedLine[ii] / getColumnLineAmount(), celula, linhaHTML, campo, ColorAlert.TOTALIZACAO_PARCIAL, campo.getNumDecimalPositions(), this, true);
                             } else {
-                                celula.setConteudo(numberFormat.format(this.accumulatedLine[ii]));
+                                celula.setContent(BIUtil.formatDoubleToText(this.accumulatedLine[ii], decimalPositions));
                                 this.indicator.getColorAlerts().buscaAplicaAlertaValor(this.accumulatedLine[ii], celula, linhaHTML, campo, ColorAlert.TOTALIZACAO_PARCIAL, campo.getNumDecimalPositions(), this, true);
                             }
                         } else {
-                            celula.setConteudo("-");
+                            celula.setContent("-");
                         }
                     }
                 }
             }
             if (total) {
-                celula = new CelulaHTML();
-                linhaHTML.addCelula(celula);
-                celula.setEstilo(estilo);
+                celula = new HTMLCell();
+                linhaHTML.addCell(celula);
+                celula.setStyle(estilo);
                 celula.setNowrap(true);
-                celula.setAlinhamento("right");
-                numberFormat.setMinimumFractionDigits(2);
-                numberFormat.setMaximumFractionDigits(2);
-                celula.setConteudo(numberFormat.format(this.totalLine));
+                celula.setAlignment("right");
+                celula.setContent(BIUtil.formatDoubleToText(this.totalLine, 2));
             }
         }
         return total;
     }
 
     private boolean escreveTotalParcial(Dimension dimensao,
-                                        Object[][] resultados, LinhaHTML linha, int sequencia, int indiceDimensaoLinha, int indiceDimensaoRaizLinha,
+                                        Object[][] resultados, HTMLLine linha, int sequencia, int indiceDimensaoLinha, int indiceDimensaoRaizLinha,
                                         HashMap<Field, Object> participParcialHorizontal, List<DimensionTotalized> dimensoesTotalizadas,
                                         HashMap<Field, List<Object>> participHorizontais) throws BIException, DateException {
         Object[][] valores = dimensao.consulta(resultados);
@@ -1236,14 +1226,10 @@ public class Dimension {
 
             Field campo;
             double soma;
-            new CelulaHTML();
-            CelulaHTML celula;
+            new HTMLCell();
+            HTMLCell celula;
 
-            EstiloHTML estilo = MultidimensionalStyles.getInstancia().getEstilos().get(MultidimensionalStyles.ESTILO_VAL_METRICA_LINHA);
-
-            NumberFormat nf = BIUtil.getFormatter(0);
-
-            NumberFormat numberFormat = BIUtil.getFormatter(2);
+            HTMLStyle estilo = MultidimensionalStyles.getInstancia().getEstilos().get(MultidimensionalStyles.ESTILO_VAL_METRICA_LINHA);
 
             for (int ii = 3; ii < valores[0].length; ii++) {
                 campo = (Field) valores[0][ii];
@@ -1269,11 +1255,11 @@ public class Dimension {
                         }
                     } else {
                         if ((campo.getFieldType() == null && !campo.isTotalizingField()) || Constants.METRIC.equals(campo.getFieldType())) {
-                            celula = new CelulaHTML();
-                            linha.addCelula(celula);
+                            celula = new HTMLCell();
+                            linha.addCell(celula);
                             celula.setNowrap(true);
-                            celula.setEstilo(estilo);
-                            celula.setAlinhamento(campo.getColumnAlignment());
+                            celula.setStyle(estilo);
+                            celula.setAlignment(campo.getColumnAlignment());
                             if (campo.isPartialTotalization()) {
                                 if (!("".equals(campo.getName()))) {
                                     PartialTotalization totalizParcial = this.partialTotalizations.getTotalizacaoParcial(valores, campo);
@@ -1285,11 +1271,10 @@ public class Dimension {
                                     }
                                     totalizParcial.setPartialTotalization(soma);
                                     this.indicator.setPartialTotalizations(this.partialTotalizations);
-                                    nf.setMinimumFractionDigits(campo.getNumDecimalPositions());
-                                    nf.setMaximumFractionDigits(campo.getNumDecimalPositions());
-                                    celula.setConteudo(nf.format(Double.valueOf(soma)));
+
+                                    celula.setContent(BIUtil.formatDoubleToText(soma, campo.getNumDecimalPositions()));
                                     this.indicator.getColorAlerts().buscaAplicaAlertaValor(soma, celula, linha, campo, ColorAlert.TOTALIZACAO_PARCIAL, 2, this, true);
-                                    this.indicator.getColorAlerts().buscaAplicaAlertaOutroCampo(soma, campo, ColorAlert.TOTALIZACAO_PARCIAL, valores, linha.getCelulaAtual(), linha, campo.getNumDecimalPositions(), this, dimensao, registroTotalizado, 0, true);
+                                    this.indicator.getColorAlerts().buscaAplicaAlertaOutroCampo(soma, campo, ColorAlert.TOTALIZACAO_PARCIAL, valores, linha.getCurrentCell(), linha, campo.getNumDecimalPositions(), this, dimensao, registroTotalizado, 0, true);
                                 }
                             } else {
                                 String conteudo = "-";
@@ -1322,7 +1307,7 @@ public class Dimension {
                                                 } else {
                                                     this.indicator.getColorAlerts().buscaAplicaAlertaValor((soma / this.getAccumulatedLine(indice)) * 100, celula, linha, pai, ColorAlert.PARTICIPACAO_HORIZONTAL, 2, this, true);
                                                 }
-                                                conteudo = numberFormat.format(soma / this.getAccumulatedLine(indice));
+                                                conteudo = BIUtil.formatDoubleToText(soma / this.getAccumulatedLine(indice), 2);
                                             }
                                         }
                                     }
@@ -1352,16 +1337,16 @@ public class Dimension {
                                             if (ini != fin) {
                                                 if (ini != 0) {
                                                     double res = (ini - fin) / ini;
-                                                    conteudo = numberFormat.format(Double.valueOf(-1 * res));
+                                                    conteudo = BIUtil.formatDoubleToText(-1 * res, 2);
                                                 } else {
                                                     if (fin > 0) {
-                                                        conteudo = numberFormat.format(1);
+                                                        conteudo = BIUtil.formatDoubleToText(1, 2);
                                                     } else if (fin < 0) {
-                                                        conteudo = numberFormat.format(-1);
+                                                        conteudo = BIUtil.formatDoubleToText(-1, 2);
                                                     }
                                                 }
                                             } else {
-                                                conteudo = numberFormat.format(0);
+                                                conteudo = BIUtil.formatDoubleToText(0, 2);
                                             }
                                         } else {
                                             conteudo = "-";
@@ -1382,20 +1367,20 @@ public class Dimension {
                                                 }
                                                 totalizParcial.setPartialTotalization(soma);
                                                 this.indicator.setPartialTotalizations(this.partialTotalizations);
-                                                conteudo = numberFormat.format(soma);
+                                                conteudo = BIUtil.formatDoubleToText(soma, 2);
                                             }
                                         }
                                     }
                                 }
-                                celula.setAlinhamento(campo.getColumnAlignment());
-                                celula.setConteudo(conteudo);
+                                celula.setAlignment(campo.getColumnAlignment());
+                                celula.setContent(conteudo);
                             }
                         }
                     }
                 }
             }
-            if (linha.isAlertaAplicado()) {
-                linha.zeraEstiloCelulas();
+            if (linha.isAppliedAlert()) {
+                linha.resetCellStyles();
             }
         }
         return total;

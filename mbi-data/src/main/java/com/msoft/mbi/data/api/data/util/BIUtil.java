@@ -44,7 +44,7 @@ public class BIUtil {
             if (Constants.STRING.equals(type)) {
                 return formatStringToText(valor);
             } else if (Constants.NUMBER.equals(type)) {
-                return formatDoubleToText(valor, field.getNumDecimalPositions());
+                return formatDoubleToTextObject(valor, field.getNumDecimalPositions());
             } else {
                 return formatDateToText(valor, field);
             }
@@ -54,21 +54,40 @@ public class BIUtil {
         }
     }
 
-    private static Object formatDoubleToText(String value, int decimalPositions) {
+    public static Object formatDoubleToTextObject(String value, int decimalPositions) {
         if (value == null) {
             value = "0";
         }
 
-        NumberFormat numberFormat = getFormatter(decimalPositions);
-        value = value.replaceAll("\\.", "");
+        NumberFormat numberFormat = getNumberFormat(decimalPositions);
 
         try {
             double parsedValue = Double.parseDouble(value.trim());
-            return numberFormat.format(parsedValue);
+            double formattedValue = formatDoubleValue(parsedValue, decimalPositions);
+            return numberFormat.format(formattedValue);
         } catch (NumberFormatException e) {
             log.info("Error, canta parse the value " + value);
             return value;
         }
+    }
+
+    public static NumberFormat getNumberFormat(int decimalPositions) {
+        NumberFormat numberFormat = NumberFormat.getNumberInstance();
+        numberFormat.setMaximumFractionDigits(decimalPositions);
+        numberFormat.setMinimumFractionDigits(0);
+        numberFormat.setGroupingUsed(false);
+        return numberFormat;
+    }
+
+
+    public static String formatDoubleToText(String value, int decimalPositions) {
+       Object result = BIUtil.formatDoubleToTextObject(value, decimalPositions);
+       return String.valueOf(result);
+    }
+
+    public static String formatDoubleToText(Object value, int decimalPositions) {
+        Object result = BIUtil.formatDoubleToTextObject(String.valueOf(value), decimalPositions);
+        return String.valueOf(result);
     }
 
     private static String formatStringToText(String valor) {
@@ -172,7 +191,7 @@ public class BIUtil {
             if (Constants.STRING.equals(dataType)) {
                 return formatStringSQL(valor);
             } else if (Constants.NUMBER.equals(dataType)) {
-                return formatDoubleToText(valor, field.getNumDecimalPositions());
+                return formatDoubleToTextObject(valor, field.getNumDecimalPositions());
             } else {
                 return formatDateSQL(valor, field);
             }
@@ -318,19 +337,14 @@ public class BIUtil {
         return id;
     }
 
-    public static double formatValue(double valor, int decimalPositions) {
-        BigDecimal bd = new BigDecimal(valor);
+    public static double formatDoubleValue(double value, int decimalPositions) {
+        BigDecimal bd = new BigDecimal(value);
         bd = bd.setScale(decimalPositions, RoundingMode.HALF_UP);
         return bd.doubleValue();
     }
 
-    public static NumberFormat getFormatter(int decimalPositions) {
-        NumberFormat numberFormat = NumberFormat.getInstance(Locale.GERMANY);
-        numberFormat.setMaximumFractionDigits(decimalPositions);
-        numberFormat.setMinimumFractionDigits(decimalPositions);
-        numberFormat.setMinimumIntegerDigits(1);
-
-        return numberFormat;
+    public static double formatDoubleValue(String value, int decimalPositions) {
+        return formatDoubleValue(Double.parseDouble(value), decimalPositions);
     }
 
     public static String replaceString(String strOrigem, String strVelha, String strNova) throws BIException {

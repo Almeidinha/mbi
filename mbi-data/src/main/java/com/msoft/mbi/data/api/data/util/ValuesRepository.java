@@ -4,7 +4,6 @@ import com.msoft.mbi.data.api.data.filters.FilterFunction;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.text.NumberFormat;
 import java.util.*;
 
 public class ValuesRepository {
@@ -17,12 +16,12 @@ public class ValuesRepository {
     @Getter
     private int fieldCode;
 
-    public static final int TIPO_SEQUENCIA = 1;
-    public static final int TIPO_ACUMULADO = 2;
+    public static final int SEQUENCE_TYPE = 1;
+    public static final int ACCUMULATED_TYPE = 2;
 
-    public ValuesRepository(int tipo, int codigoCampo) {
-        this.type = tipo;
-        this.fieldCode = codigoCampo;
+    public ValuesRepository(int type, int fieldCode) {
+        this.type = type;
+        this.fieldCode = fieldCode;
         this.values = new ArrayList<>();
     }
 
@@ -34,20 +33,20 @@ public class ValuesRepository {
         this.values.add(String.valueOf(valor));
     }
 
-    public ArrayList<String> getValues(int tipoOrdenacao) {
-        ArrayList<String> retorno;
-        ordena(tipoOrdenacao);
+    public ArrayList<String> getValues(int orderingType) {
+        ArrayList<String> result;
+        order(orderingType);
         if (this.type == FilterFunction.ACCUMULATED_FILTER) {
-            retorno = formataValores();
-            return retorno;
+            result = formatValues();
+            return result;
         }
         return values;
     }
 
-    public void ordena(int tipoOrdenacao) {
+    public void order(int orderingType) {
         Comparator<String> comp;
         comp = stringCmp;
-        if (tipoOrdenacao == 2) {
+        if (orderingType == 2) {
             comp = stringCmpReverse;
         }
         values.sort(comp);
@@ -65,13 +64,11 @@ public class ValuesRepository {
         return Double.compare(s2, s1);
     };
 
-    public ArrayList<String> formataValores() {
-        ArrayList<String> retorno = new ArrayList<>();
-        for (String valore : this.values) {
-            NumberFormat numberFormat = BIUtil.getFormatter(2);
-            double valorFormatar = Double.parseDouble(valore);
-            retorno.add(numberFormat.format(valorFormatar));
+    public ArrayList<String> formatValues() {
+        ArrayList<String> result = new ArrayList<>();
+        for (String value : this.values) {
+            result.add(BIUtil.formatDoubleToText(value, 2));
         }
-        return retorno;
+        return result;
     }
 }

@@ -16,7 +16,7 @@ import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditionsValorDim
 import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertProperties;
 import com.msoft.mbi.cube.multi.dimension.comparator.DimensaoComparator;
 import com.msoft.mbi.cube.multi.dimension.comparator.DimensaoPadraoComparator;
-import com.msoft.mbi.cube.multi.generation.Impressor;
+import com.msoft.mbi.cube.multi.generation.Printer;
 import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
 import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
@@ -185,7 +185,7 @@ public class DimensaoMetaData extends ColumnMetaData {
         for (ColorAlertMetadata alertaCor : alertas) {
             propriedadeAlerta = ColorAlertProperties.factory(alertaCor.getFontColor(), alertaCor.getBackGroundColor(), alertaCor.getFontStyle(),
                     alertaCor.isBold(), alertaCor.isItalic(), alertaCor.getFontSize());
-            propriedadeAlerta.setAlignment(ColorAlertProperties.ALINHAMENTO_ESQUERDA);
+            propriedadeAlerta.setAlignment(ColorAlertProperties.ALIGNMENT_LEFT);
             condicaoAlertaCores = new ColorAlertConditionsValorDimensao(alertaCor.getSequence(), propriedadeAlerta, alertaCor.getFunction(),
                     alertaCor.getAction(), alertaCor.getOperator(), dimensaoMetaData, alertaCor.getValues());
             dimensaoMetaData.addAlertaCor(condicaoAlertaCores);
@@ -224,12 +224,12 @@ public class DimensaoMetaData extends ColumnMetaData {
     }
 
     @Override
-    public void printFieldTypeValue(Object valor, String cellProperty, Impressor impressor) {
-        impressor.imprimeValorColuna(cellProperty, valor, this);
+    public void printFieldTypeValue(Object valor, String cellProperty, Printer printer) {
+        printer.printColumnValue(cellProperty, valor, this);
     }
 
     public String getEstiloPadrao() {
-        return CellProperty.PROPRIEDADE_CELULA_VALOR_DIMENSAO;
+        return CellProperty.CELL_PROPERTY_DIMENSION_VALUE;
     }
 
 }

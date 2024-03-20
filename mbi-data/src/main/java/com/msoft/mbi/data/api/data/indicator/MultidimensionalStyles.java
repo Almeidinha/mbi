@@ -1,6 +1,6 @@
 package com.msoft.mbi.data.api.data.indicator;
 
-import com.msoft.mbi.data.api.data.htmlbuilder.EstiloHTML;
+import com.msoft.mbi.data.api.data.htmlbuilder.HTMLStyle;
 
 import java.util.HashMap;
 
@@ -29,22 +29,22 @@ public class MultidimensionalStyles {
         this.instanciaEstilos();
     }
 
-    public HashMap<String, EstiloHTML> estilos;
+    public HashMap<String, HTMLStyle> estilos;
 
-    public HashMap<String, EstiloHTML> getEstilos() {
+    public HashMap<String, HTMLStyle> getEstilos() {
         if (estilos == null) {
             this.estilos = new HashMap<>();
         }
         return estilos;
     }
 
-    public void setEstilos(HashMap<String, EstiloHTML> estilos) {
+    public void setEstilos(HashMap<String, HTMLStyle> estilos) {
         this.estilos = estilos;
     }
 
     private void instanciaEstilos() {
 
-        EstiloHTML estilo = new EstiloHTML();
+        HTMLStyle estilo = new HTMLStyle();
 
         estilo.setFontColor("#FFFFFF");
         estilo.setBorder(1, "solid", "#FFFFFF");
@@ -56,7 +56,7 @@ public class MultidimensionalStyles {
 
         this.getEstilos().put(ESTILO_DESC_DIMENSAO_LINHA, estilo);
 
-        estilo = new EstiloHTML();
+        estilo = new HTMLStyle();
         estilo.setFontColor("#000080");
         estilo.setFontSize(10);
         estilo.setFontFamily("verdana");
@@ -66,7 +66,7 @@ public class MultidimensionalStyles {
 
         this.getEstilos().put(ESTILO_VAL_DIMENSAO_LINHA, estilo);
 
-        estilo = new EstiloHTML();
+        estilo = new HTMLStyle();
         estilo.setFontColor("#000080");
         estilo.setFontSize(10);
         estilo.setFontFamily("verdana");
@@ -75,7 +75,7 @@ public class MultidimensionalStyles {
 
         this.getEstilos().put(ESTILO_DESC_METRICA_LINHA, estilo);
 
-        estilo = new EstiloHTML();
+        estilo = new HTMLStyle();
         estilo.setFontColor("#000080");
         estilo.setFontSize(10);
         estilo.setFontFamily("verdana");
@@ -85,7 +85,7 @@ public class MultidimensionalStyles {
 
         this.getEstilos().put(ESTILO_VAL_METRICA_LINHA, estilo);
 
-        estilo = new EstiloHTML();
+        estilo = new HTMLStyle();
         estilo.setFontColor("#FFFFFF");
         estilo.setFontSize(10);
         estilo.setFontFamily("verdana");
@@ -94,7 +94,7 @@ public class MultidimensionalStyles {
 
         this.getEstilos().put(ESTILO_DESC_DIMENSAO_COLUNA, estilo);
 
-        estilo = new EstiloHTML();
+        estilo = new HTMLStyle();
         estilo.setFontSize(10);
         estilo.setFontFamily("verdana");
         estilo.setFontColor("#000080");
@@ -103,7 +103,7 @@ public class MultidimensionalStyles {
 
         this.getEstilos().put(ESTILO_DIMENSAO_TOTALIZACAO, estilo);
 
-        estilo = new EstiloHTML();
+        estilo = new HTMLStyle();
         estilo.setFontColor("#000080");
         estilo.setFontSize(10);
         estilo.setFontFamily("verdana");
@@ -112,7 +112,7 @@ public class MultidimensionalStyles {
 
         this.getEstilos().put(ESTILO_VAL_METRICA_COLUNA, estilo);
 
-        estilo = new EstiloHTML();
+        estilo = new HTMLStyle();
         estilo.setBackgroundColor("#A2C8E8");
         estilo.setFontSize(10);
         estilo.setFontWeight("bold");

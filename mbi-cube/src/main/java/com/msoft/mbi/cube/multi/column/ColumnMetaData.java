@@ -3,7 +3,7 @@ package com.msoft.mbi.cube.multi.column;
 import java.util.List;
 
 import com.msoft.mbi.cube.multi.resumeFunctions.FunctionRanking;
-import com.msoft.mbi.cube.multi.generation.Impressor;
+import com.msoft.mbi.cube.multi.generation.Printer;
 import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 import com.msoft.mbi.cube.multi.metaData.HTMLLineMask;
 import com.msoft.mbi.cube.multi.renderers.MascaraAntesRenderer;
@@ -70,7 +70,8 @@ public abstract class ColumnMetaData {
 
     public void setCellProperty(int columnWidth, String alignment) {
         this.cellProperty.setWidth(columnWidth);
-        this.cellProperty.addExtraAttributes("min-width", columnWidth + "px");
+        // TODO Validate is this will work with excel export
+        this.cellProperty.addExtraAttributes("minWidth", columnWidth + "px");
         this.cellProperty.setAlignment(alignment);
     }
 
@@ -169,7 +170,7 @@ public abstract class ColumnMetaData {
         }
     }
 
-    public abstract void printFieldTypeValue(Object valor, String cellProperty, Impressor impressor);
+    public abstract void printFieldTypeValue(Object valor, String cellProperty, Printer printer);
 
     public abstract List<?> getColorAlertCells();
 

@@ -4,7 +4,6 @@ import com.msoft.mbi.data.api.data.exception.BIArrayIndexOutOfBoundsException;
 import com.msoft.mbi.data.api.data.exception.BIException;
 import com.msoft.mbi.data.api.data.exception.BISQLException;
 import com.msoft.mbi.data.api.data.htmlbuilder.*;
-import com.msoft.mbi.data.api.data.indicator.Indicator;
 import com.msoft.mbi.data.api.data.util.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -156,40 +155,40 @@ public class AnalysisComments {
             BIComparator.ordenaComentario(this.comments, Comment.DATAHORA);
             BINavegador navegador = new BINavegador(this.comments);
             Comment comment;
-            TabelaHTML tabela = new TabelaHTML();
-            tabela.setLargura("100%");
+            HTMLTable tabela = new HTMLTable();
+            tabela.setWidth("100%");
             int cont = 0;
             while (navegador.temProximo()) {
                 if (comments[cont] != null) {
-                    tabela.addLinha(new LinhaHTML());
-                    tabela.getLinhaAtual().addCelula(new CelulaHTML());
-                    tabela.getLinhaAtual().getCelulaAtual().setLargura("3%");
+                    tabela.addLine(new HTMLLine());
+                    tabela.getCurrentLine().addCell(new HTMLCell());
+                    tabela.getCurrentLine().getCurrentCell().setWidth("3%");
                     if (maintenance) {
-                        tabela.getLinhaAtual().getCelulaAtual().setConteudo("<input type=\"checkbox\" name=\"c" + cont + "\" value=\"" + cont + "\">");
+                        tabela.getCurrentLine().getCurrentCell().setContent("<input type=\"checkbox\" name=\"c" + cont + "\" value=\"" + cont + "\">");
                     } else {
-                        tabela.getLinhaAtual().getCelulaAtual().setConteudo("&nbsp;");
+                        tabela.getCurrentLine().getCurrentCell().setContent("&nbsp;");
                     }
-                    tabela.getLinhaAtual().addCelula(new CelulaHTML());
-                    tabela.getLinhaAtual().getCelulaAtual().setLargura("90%");
-                    tabela.getLinhaAtual().getCelulaAtual().setClasse("pretoBranco");
+                    tabela.getCurrentLine().addCell(new HTMLCell());
+                    tabela.getCurrentLine().getCurrentCell().setWidth("90%");
+                    tabela.getCurrentLine().getCurrentCell().setCellClass("pretoBranco");
                     comment = (Comment) navegador.proximo();
-                    tabela.getLinhaAtual().getCelulaAtual().setConteudo(maintenance
+                    tabela.getCurrentLine().getCurrentCell().setContent(maintenance
                             ? new LinkHTML("javascript:janela_comentario('biComentarioAnalise.jsp', '" + panelIndex + "', '"
                             + indicatorIndex + "', '" + cont + "');", comment.getSummaryMaintenance()) : comment.getComment());
-                    tabela.getLinhaAtual().addCelula(new CelulaHTML());
-                    tabela.getLinhaAtual().getCelulaAtual().setLargura("7%");
-                    tabela.getLinhaAtual().getCelulaAtual().setClasse("pretoBranco");
-                    tabela.getLinhaAtual().getCelulaAtual().setAlinhamento("center");
+                    tabela.getCurrentLine().addCell(new HTMLCell());
+                    tabela.getCurrentLine().getCurrentCell().setWidth("7%");
+                    tabela.getCurrentLine().getCurrentCell().setCellClass("pretoBranco");
+                    tabela.getCurrentLine().getCurrentCell().setAlignment("center");
 
                     if (maintenance) {
-                        ImagemHTML imgExcluir = new ImagemHTML("imagens\\excluir.gif");
-                        imgExcluir.setTextoAlternativo("Excluir Coment�rio");
+                        HTMLImage imgExcluir = new HTMLImage("imagens\\excluir.gif");
+                        imgExcluir.setAlternativeText("Excluir Coment�rio");
                         LinkHTML linkExcluir = new LinkHTML("javascript:excluirComentario(" + cont + ");", imgExcluir);
 
                         if (userId == comment.getUserCode()) {
-                            tabela.getLinhaAtual().getCelulaAtual().setConteudo(linkExcluir);
+                            tabela.getCurrentLine().getCurrentCell().setContent(linkExcluir);
                         } else {
-                            tabela.getLinhaAtual().getCelulaAtual().setConteudo("&nbsp;");
+                            tabela.getCurrentLine().getCurrentCell().setContent("&nbsp;");
                         }
                     }
                 }
@@ -204,85 +203,85 @@ public class AnalysisComments {
         if (this.comments != null) {
             BIComparator.ordenaComentario(this.comments, Comment.DATAHORA);
             Comment comentario;
-            TabelaHTML tabela = new TabelaHTML();
-            tabela.setLargura("100%");
+            HTMLTable tabela = new HTMLTable();
+            tabela.setWidth("100%");
 
-            EstiloHTML estiloCabecalho = new EstiloHTML();
+            HTMLStyle estiloCabecalho = new HTMLStyle();
             estiloCabecalho.setFontFamily("Verdana, Arial, Helvetica, sans-serif");
             estiloCabecalho.setFontSize(12);
             estiloCabecalho.setFontColor("#FFFFFF");
             estiloCabecalho.setBackgroundColor("#7AA7DE");
 
-            EstiloHTML estiloTitulo = new EstiloHTML();
+            HTMLStyle estiloTitulo = new HTMLStyle();
             estiloTitulo.setFontFamily("Verdana, Arial, Helvetica, sans-serif");
             estiloTitulo.setFontSize(10);
             estiloTitulo.setFontColor("#FFFFFF");
             estiloTitulo.setBackgroundColor("#3377CC");
 
-            tabela.addLinha(new LinhaHTML());
-            tabela.getLinhaAtual().addCelula(new CelulaHTML());
-            tabela.getLinhaAtual().getCelulaAtual().setAlinhamento("right");
-            tabela.getLinhaAtual().getCelulaAtual().setCorBorda("#FFFFFF");
-            tabela.getLinhaAtual().getCelulaAtual().setConteudo("Comentários da Análise");
-            tabela.getLinhaAtual().getCelulaAtual().setAlinhamento("center");
-            tabela.getLinhaAtual().getCelulaAtual().setEstilo(estiloCabecalho);
+            tabela.addLine(new HTMLLine());
+            tabela.getCurrentLine().addCell(new HTMLCell());
+            tabela.getCurrentLine().getCurrentCell().setAlignment("right");
+            tabela.getCurrentLine().getCurrentCell().setBorderColor("#FFFFFF");
+            tabela.getCurrentLine().getCurrentCell().setContent("Comentários da Análise");
+            tabela.getCurrentLine().getCurrentCell().setAlignment("center");
+            tabela.getCurrentLine().getCurrentCell().setStyle(estiloCabecalho);
 
-            tabela.getLinhaAtual().getCelulaAtual().setAltura("30");
-            tabela.getLinhaAtual().getCelulaAtual().setColspan(3);
-            tabela.getLinhaAtual().getCelulaAtual().setNowrap(true);
+            tabela.getCurrentLine().getCurrentCell().setHeight("30");
+            tabela.getCurrentLine().getCurrentCell().setColspan(3);
+            tabela.getCurrentLine().getCurrentCell().setNowrap(true);
 
-            tabela.addLinha(new LinhaHTML());
-            tabela.getLinhaAtual().addCelula(new CelulaHTML());
-            tabela.getLinhaAtual().getCelulaAtual().setCorBorda("#FFFFFF");
-            tabela.getLinhaAtual().getCelulaAtual().setConteudo("&nbsp;Data e Hora");
-            tabela.getLinhaAtual().getCelulaAtual().setEstilo(estiloTitulo);
-            tabela.getLinhaAtual().getCelulaAtual().setAltura("30");
-            tabela.getLinhaAtual().getCelulaAtual().setNowrap(true);
+            tabela.addLine(new HTMLLine());
+            tabela.getCurrentLine().addCell(new HTMLCell());
+            tabela.getCurrentLine().getCurrentCell().setBorderColor("#FFFFFF");
+            tabela.getCurrentLine().getCurrentCell().setContent("&nbsp;Data e Hora");
+            tabela.getCurrentLine().getCurrentCell().setStyle(estiloTitulo);
+            tabela.getCurrentLine().getCurrentCell().setHeight("30");
+            tabela.getCurrentLine().getCurrentCell().setNowrap(true);
 
-            tabela.getLinhaAtual().addCelula(new CelulaHTML());
-            tabela.getLinhaAtual().getCelulaAtual().setCorBorda("#FFFFFF");
-            tabela.getLinhaAtual().getCelulaAtual().setConteudo("&nbsp;Postado por");
-            tabela.getLinhaAtual().getCelulaAtual().setEstilo(estiloTitulo);
-            tabela.getLinhaAtual().getCelulaAtual().setAltura("30");
-            tabela.getLinhaAtual().getCelulaAtual().setNowrap(true);
+            tabela.getCurrentLine().addCell(new HTMLCell());
+            tabela.getCurrentLine().getCurrentCell().setBorderColor("#FFFFFF");
+            tabela.getCurrentLine().getCurrentCell().setContent("&nbsp;Postado por");
+            tabela.getCurrentLine().getCurrentCell().setStyle(estiloTitulo);
+            tabela.getCurrentLine().getCurrentCell().setHeight("30");
+            tabela.getCurrentLine().getCurrentCell().setNowrap(true);
 
-            tabela.getLinhaAtual().addCelula(new CelulaHTML());
-            tabela.getLinhaAtual().getCelulaAtual().setCorBorda("#FFFFFF");
-            tabela.getLinhaAtual().getCelulaAtual().setConteudo("&nbsp;Mensagem");
-            tabela.getLinhaAtual().getCelulaAtual().setEstilo(estiloTitulo);
-            tabela.getLinhaAtual().getCelulaAtual().setAltura("30");
-            tabela.getLinhaAtual().getCelulaAtual().setNowrap(true);
+            tabela.getCurrentLine().addCell(new HTMLCell());
+            tabela.getCurrentLine().getCurrentCell().setBorderColor("#FFFFFF");
+            tabela.getCurrentLine().getCurrentCell().setContent("&nbsp;Mensagem");
+            tabela.getCurrentLine().getCurrentCell().setStyle(estiloTitulo);
+            tabela.getCurrentLine().getCurrentCell().setHeight("30");
+            tabela.getCurrentLine().getCurrentCell().setNowrap(true);
 
             for (Comment comment : this.comments) {
                 comentario = comment;
                 if (comentario != null) {
-                    EstiloHTML estilo = new EstiloHTML();
+                    HTMLStyle estilo = new HTMLStyle();
                     estilo.setFontFamily("Verdana, Arial, Helvetica, sans-serif");
                     estilo.setFontSize(9);
                     estilo.setFontColor("#003399");
                     estilo.setBackgroundColor("#E6EEFF");
 
-                    tabela.addLinha(new LinhaHTML());
-                    tabela.getLinhaAtual().addCelula(new CelulaHTML());
-                    tabela.getLinhaAtual().getCelulaAtual().setLargura("18%");
-                    tabela.getLinhaAtual().getCelulaAtual().setClasse("texto");
-                    tabela.getLinhaAtual().getCelulaAtual().setConteudo("&nbsp;" + comentario.getDateHourToString());
-                    tabela.getLinhaAtual().getCelulaAtual().setAltura("20");
-                    tabela.getLinhaAtual().getCelulaAtual().setNowrap(true);
-                    tabela.getLinhaAtual().setEstilo(estilo);
+                    tabela.addLine(new HTMLLine());
+                    tabela.getCurrentLine().addCell(new HTMLCell());
+                    tabela.getCurrentLine().getCurrentCell().setWidth("18%");
+                    tabela.getCurrentLine().getCurrentCell().setCellClass("texto");
+                    tabela.getCurrentLine().getCurrentCell().setContent("&nbsp;" + comentario.getDateHourToString());
+                    tabela.getCurrentLine().getCurrentCell().setHeight("20");
+                    tabela.getCurrentLine().getCurrentCell().setNowrap(true);
+                    tabela.getCurrentLine().setStyle(estilo);
 
-                    tabela.getLinhaAtual().addCelula(new CelulaHTML());
-                    tabela.getLinhaAtual().getCelulaAtual().setClasse("texto");
-                    tabela.getLinhaAtual().getCelulaAtual().setLargura("32%");
-                    tabela.getLinhaAtual().getCelulaAtual().setConteudo("&nbsp;" + comentario.getUserCode());
-                    tabela.getLinhaAtual().getCelulaAtual().setAltura("20");
-                    tabela.getLinhaAtual().addCelula(new CelulaHTML());
-                    tabela.getLinhaAtual().getCelulaAtual().setLargura("50%");
-                    tabela.getLinhaAtual().getCelulaAtual().setClasse("texto");
-                    tabela.getLinhaAtual().getCelulaAtual()
-                            .setConteudo((comentario.getTextoHTML() != null && !comentario.getTextoHTML().trim().isEmpty())
+                    tabela.getCurrentLine().addCell(new HTMLCell());
+                    tabela.getCurrentLine().getCurrentCell().setCellClass("texto");
+                    tabela.getCurrentLine().getCurrentCell().setWidth("32%");
+                    tabela.getCurrentLine().getCurrentCell().setContent("&nbsp;" + comentario.getUserCode());
+                    tabela.getCurrentLine().getCurrentCell().setHeight("20");
+                    tabela.getCurrentLine().addCell(new HTMLCell());
+                    tabela.getCurrentLine().getCurrentCell().setWidth("50%");
+                    tabela.getCurrentLine().getCurrentCell().setCellClass("texto");
+                    tabela.getCurrentLine().getCurrentCell()
+                            .setContent((comentario.getTextoHTML() != null && !comentario.getTextoHTML().trim().isEmpty())
                                     ? comentario.getTextoHTML() : "&nbsp;");
-                    tabela.getLinhaAtual().getCelulaAtual().setAltura("20");
+                    tabela.getCurrentLine().getCurrentCell().setHeight("20");
                 }
             }
             return tabela.toString();

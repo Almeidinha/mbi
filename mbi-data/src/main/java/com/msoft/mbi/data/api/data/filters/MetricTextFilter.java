@@ -7,9 +7,7 @@ import com.msoft.mbi.data.api.data.util.BIUtil;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.text.NumberFormat;
 import java.util.List;
-import java.util.Locale;
 
 @Getter
 @Setter
@@ -68,7 +66,7 @@ public class MetricTextFilter extends MetricFilter {
     }
 
     @Override
-    protected Object clone() {
+    protected Object clone() throws CloneNotSupportedException {
         return new MetricTextFilter(this.getCondition());
     }
 
