@@ -9,7 +9,7 @@ import com.msoft.mbi.cube.multi.column.ColumnMetaData;
 import com.msoft.mbi.cube.multi.column.TipoData;
 import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditions;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
-import com.msoft.mbi.cube.multi.dimension.DimensionColunaNula;
+import com.msoft.mbi.cube.multi.dimension.DimensionNullColumn;
 import com.msoft.mbi.cube.multi.dimension.DimensaoMetaData;
 import com.msoft.mbi.cube.multi.metrics.Metric;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
@@ -26,8 +26,8 @@ public class DefaultTableBuilder extends tableGenerator {
         this.cube = cube;
         this.metricsAmount = 0;
         this.visibleMetrics = new ArrayList<>();
-        this.populaMetricasVisualizadas();
-        this.populaMapPropriedades();
+        this.populateVisibleMetrics();
+        this.populateMaskProperties();
         this.hasSequence = this.cube.getColumnsViewed().get(0).hasSequenceFields();
     }
 
@@ -38,32 +38,32 @@ public class DefaultTableBuilder extends tableGenerator {
 
         this.printer.openHeadLine();
         this.openLine();
-        this.imprimeCabecalho();
+        this.printHeader();
         this.printer.closeLine();
         this.printer.closeHeadLine();
 
         this.printer.openBodyLine();
-        List<Dimension> dimensoes = this.cube.getDimensionsLastLevelLines();
-        if (!dimensoes.isEmpty()) {
-            for (Dimension dimensionLinha : dimensoes) {
-                this.mergulhaNivelLinha(dimensionLinha);
+        List<Dimension> dimensions = this.cube.getDimensionsLastLevelLines();
+        if (!dimensions.isEmpty()) {
+            for (Dimension dimension : dimensions) {
+                this.divesLineLevel(dimension);
             }
-            this.imprimeLinhaTotalGeralLinhas();
+            this.printTotalGeneralLines();
         }
         this.printer.closeBodyLine();
         this.printer.endPrinting();
 
-        this.populaMapPropriedades();
+        this.populateMaskProperties();
     }
 
-    private void imprimeLinhaTotalGeralLinhas() {
+    private void printTotalGeneralLines() {
         this.currentLineValues = new HashMap<>();
-        DimensionColunaNula dimensaoColunaNula = new DimensionColunaNula(this.cube);
+        DimensionNullColumn dimensionNullColumn = new DimensionNullColumn(this.cube);
         for (MetricMetaData metricMetaData : this.visibleMetrics) {
-            String titulo = metricMetaData.getTitle();
+            String title = metricMetaData.getTitle();
             if (metricMetaData.isTotalLines()) {
-                Double valor = metricMetaData.calculaValorTotalParcial(this.cube, dimensaoColunaNula);
-                this.currentLineValues.put(titulo, valor);
+                Double valor = metricMetaData.calculaValorTotalParcial(this.cube, dimensionNullColumn);
+                this.currentLineValues.put(title, valor);
             }
         }
         this.openLine();
@@ -71,9 +71,9 @@ public class DefaultTableBuilder extends tableGenerator {
             printer.printColumn(CellProperty.CELL_PROPERTY_TOTAL_GENERAL, this.printer.getEmptyValue());
         }
 
-        for (ColumnMetaData coluna : this.cube.getColumnsViewed()) {
-            if (this.currentLineValues.containsKey(coluna.getTitle())) {
-                coluna.printFieldTypeValue(this.currentLineValues.get(coluna.getTitle()), CellProperty.CELL_PROPERTY_TOTAL_GENERAL, printer);
+        for (ColumnMetaData column : this.cube.getColumnsViewed()) {
+            if (this.currentLineValues.containsKey(column.getTitle())) {
+                column.printFieldTypeValue(this.currentLineValues.get(column.getTitle()), CellProperty.CELL_PROPERTY_TOTAL_GENERAL, printer);
             } else {
                 this.printer.printColumn(CellProperty.CELL_PROPERTY_TOTAL_GENERAL, this.printer.getEmptyValue());
             }
@@ -81,7 +81,7 @@ public class DefaultTableBuilder extends tableGenerator {
         this.printer.closeLine();
     }
 
-    private void criaEstilosAlertasDeCores() {
+    private void createColorsAlertStyles() {
         for (MetricMetaData metaData : this.cube.getHierarchyMetric()) {
             this.createColorAlertStyles(metaData.getColorAlertCells());
         }
@@ -112,12 +112,12 @@ public class DefaultTableBuilder extends tableGenerator {
 
         createCustomDateMaskProperties();
 
-        this.criaEstilosAlertasDeCores();
+        this.createColorsAlertStyles();
 
         super.createsSpecificStylesColumns();
     }
 
-    private void populaMetricasVisualizadas() {
+    private void populateVisibleMetrics() {
         for (MetricMetaData metaData : this.cube.getHierarchyMetric()) {
             if (metaData.isViewed()) {
                 this.visibleMetrics.add(metaData);
@@ -166,87 +166,87 @@ public class DefaultTableBuilder extends tableGenerator {
         }
     }
 
-    private void populaMapPropriedades() {
-        Map<String, String> propriedades1 = new HashMap<>();
-        Map<String, String> propriedades2 = new HashMap<>();
+    private void populateMaskProperties() {
+        Map<String, String> firstProperties = new HashMap<>();
+        Map<String, String> secondProperties = new HashMap<>();
 
         for (DimensaoMetaData metaData : this.cube.getHierarchyLine()) {
             if (metaData.getTipo() instanceof TipoData) {
-                propriedades1.put(metaData.getTitle(), CellProperty.CELL_PROPERTY_METRIC_DATA_ONE);
-                propriedades2.put(metaData.getTitle(), CellProperty.CELL_PROPERTY_METRIC_DATA_TWO);
+                firstProperties.put(metaData.getTitle(), CellProperty.CELL_PROPERTY_METRIC_DATA_ONE);
+                secondProperties.put(metaData.getTitle(), CellProperty.CELL_PROPERTY_METRIC_DATA_TWO);
             } else {
-                propriedades1.put(metaData.getTitle(), CellProperty.CELL_PROPERTY_METRIC_VALUE_ONE);
-                propriedades2.put(metaData.getTitle(), CellProperty.CELL_PROPERTY_METRIC_VALUE_TWO);
+                firstProperties.put(metaData.getTitle(), CellProperty.CELL_PROPERTY_METRIC_VALUE_ONE);
+                secondProperties.put(metaData.getTitle(), CellProperty.CELL_PROPERTY_METRIC_VALUE_TWO);
             }
         }
-        this.currentLineCellProperties.put(0, propriedades1);
-        this.currentLineCellProperties.put(1, propriedades2);
+        this.currentLineCellProperties.put(0, firstProperties);
+        this.currentLineCellProperties.put(1, secondProperties);
     }
 
-    private String buscaPropriedadeAplicarCelula(String propriedadeAplicar, Object valor, ColumnMetaData metaData) {
+    private String searchPropToApplyOnCell(String propToApply, Object value, ColumnMetaData metaData) {
         String propriedadeAlertaMetrica = null;
-        List<?> alertasCores = metaData.getColorAlertCells();
-        for (Object oAlerta : alertasCores) {
-            ColorAlertConditions condicaoAlertaCor = (ColorAlertConditions) oAlerta;
-            if (condicaoAlertaCor.testCondition(valor)) {
-                propriedadeAlertaMetrica = CellProperty.CELL_PROPERTY_ALERTS_PREFIX + condicaoAlertaCor.getSequence();
+        List<?> colorsAlert = metaData.getColorAlertCells();
+        for (Object alert : colorsAlert) {
+            ColorAlertConditions alertConditions = (ColorAlertConditions) alert;
+            if (alertConditions.testCondition(value)) {
+                propriedadeAlertaMetrica = CellProperty.CELL_PROPERTY_ALERTS_PREFIX + alertConditions.getSequence();
             }
         }
         if (propriedadeAlertaMetrica != null) {
-            propriedadeAplicar = propriedadeAlertaMetrica;
+            propToApply = propriedadeAlertaMetrica;
         }
-        return propriedadeAplicar;
+        return propToApply;
     }
 
-    private void imprimeLinha(Map<String, String> mapPropriedades) {
-        for (ColumnMetaData coluna : this.cube.getColumnsViewed()) {
-            coluna.printFieldTypeValue(this.currentLineValues.get(coluna.getTitle()),
-                    mapPropriedades.get(coluna.getTitle()), printer);
+    private void printLine(Map<String, String> propertiesMap) {
+        for (ColumnMetaData column : this.cube.getColumnsViewed()) {
+            column.printFieldTypeValue(this.currentLineValues.get(column.getTitle()),
+                    propertiesMap.get(column.getTitle()), printer);
         }
     }
 
-    private void imprimeCabecalho() {
+    private void printHeader() {
         if (this.hasSequence) {
             this.printer.printColumnHeader(CellProperty.CELL_PROPERTY_SEQUENCE_HEADER, "Seq");
         }
-        for (ColumnMetaData coluna : this.cube.getColumnsViewed()) {
-            this.printer.printColumnHeader(CellProperty.CELL_PROPERTY_DEFAULT_HEADER, coluna);
+        for (ColumnMetaData column : this.cube.getColumnsViewed()) {
+            this.printer.printColumnHeader(CellProperty.CELL_PROPERTY_DEFAULT_HEADER, column);
         }
     }
 
-    private void mergulhaNivelLinha(Dimension dimensionLinha) {
+    private void divesLineLevel(Dimension dimensionLine) {
         this.openLine();
-        DimensaoMetaData metaData = dimensionLinha.getMetaData();
-        Dimension dimension = dimensionLinha;
+        DimensaoMetaData metaData = dimensionLine.getMetaData();
+        Dimension dimension = dimensionLine;
         while (metaData != null) {
             currentLineValues.put(metaData.getTitle(), dimension.getVisualizationValue());
             metaData = metaData.getParent();
             dimension = dimension.getParent();
         }
-        this.imprimeLinhaAtual(dimensionLinha);
+        this.printCurrentLine(dimensionLine);
         this.printer.closeLine();
     }
 
-    private void imprimeLinhaAtual(Dimension dimensionLinha) {
+    private void printCurrentLine(Dimension dimensionLine) {
         MetricsMap metricsMap = this.cube.getMetricsMap();
-        MetricLine metricLine = metricsMap.getMetricLine(dimensionLinha);
+        MetricLine metricLine = metricsMap.getMetricLine(dimensionLine);
 
-        Map<String, Metric> metricas = metricLine.getMetrics();
-        String propriedadeLinhaAtual = dimensionLinha.getMetricDefaultStyles(this.currentLine);
+        Map<String, Metric> metrics = metricLine.getMetrics();
+        String currentLineProps = dimensionLine.getMetricDefaultStyles(this.currentLine);
 
-        Map<String, String> mapPropriedades = this.currentLineCellProperties.get(this.currentLine % 2);
+        Map<String, String> propsmap = this.currentLineCellProperties.get(this.currentLine % 2);
         for (MetricMetaData metricMetaData : this.visibleMetrics) {
-            String titulo = metricMetaData.getTitle();
-            Double valor = metricas.get(titulo).getValor(metricsMap, metricLine, this.previousMetricLine);
-            this.currentLineValues.put(titulo, valor);
-            String propriedadeAplicarMetrica = this.buscaPropriedadeAplicarCelula(propriedadeLinhaAtual, valor, metricMetaData);
-            mapPropriedades.put(titulo, propriedadeAplicarMetrica);
+            String title = metricMetaData.getTitle();
+            Double valor = metrics.get(title).getValor(metricsMap, metricLine, this.previousMetricLine);
+            this.currentLineValues.put(title, valor);
+            String metricPropToApply = this.searchPropToApplyOnCell(currentLineProps, valor, metricMetaData);
+            propsmap.put(title, metricPropToApply);
         }
-        String sequenciaRanking = Optional.ofNullable(dimensionLinha.getRankingSequence()).map(String::valueOf).orElse(this.printer.getEmptyValue());
+        String rankingSequence = Optional.ofNullable(dimensionLine.getRankingSequence()).map(String::valueOf).orElse(this.printer.getEmptyValue());
         if (hasSequence) {
-            this.printer.printSequenceField(sequenciaRanking);
+            this.printer.printSequenceField(rankingSequence);
         }
-        this.imprimeLinha(mapPropriedades);
+        this.printLine(propsmap);
 
         this.previousMetricLine = metricLine;
 

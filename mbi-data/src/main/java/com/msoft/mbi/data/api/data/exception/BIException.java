@@ -1,5 +1,7 @@
 package com.msoft.mbi.data.api.data.exception;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,7 +9,15 @@ import java.io.PrintWriter;
 
 @Getter
 @Setter
+
 public class BIException extends Exception {
+
+    @Builder
+    public BIException(String message, String local, String action) {
+        super(message);
+        this.local = local;
+        this.action = action;
+    }
 
     private Throwable throwable;
     private String local = "";

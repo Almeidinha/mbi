@@ -4,9 +4,9 @@ import com.msoft.mbi.cube.multi.Cube;
 import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 
 
-public class DimensionColunaNula extends DimensionNula {
+public class DimensionNullColumn extends DimensionNull {
 
-    public DimensionColunaNula(Cube cube) {
+    public DimensionNullColumn(Cube cube) {
         super(cube);
         this.getMetaData().setEixoReferencia(MetaDataField.COLUMN);
     }

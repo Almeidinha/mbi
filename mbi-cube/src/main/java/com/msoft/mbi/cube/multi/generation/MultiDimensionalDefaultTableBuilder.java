@@ -5,7 +5,7 @@ import java.util.*;
 import com.msoft.mbi.cube.multi.Cube;
 import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditions;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
-import com.msoft.mbi.cube.multi.dimension.DimensionColunaNula;
+import com.msoft.mbi.cube.multi.dimension.DimensionNullColumn;
 import com.msoft.mbi.cube.multi.dimension.DimensionLine;
 import com.msoft.mbi.cube.multi.dimension.DimensaoMetaData;
 import com.msoft.mbi.cube.multi.dimension.Dimensions;
@@ -21,7 +21,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
     private final List<MetricMetaData> metricasTotalizaMediaColunas;
     private final List<MetricMetaData> metricasAH;
     private ImpressaoMetricaLinhaAtual impressaoMetricaLinha = null;
-    private DimensionColunaNula dimensaoColunaNula = null;
+    private DimensionNullColumn dimensaoColunaNula = null;
     private String alertaMetricaLinhaAtual;
     private List<Dimension> dimensoesColunaUltimoNivel = null;
 
@@ -29,7 +29,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
 
     public MultiDimensionalDefaultTableBuilder(Cube cube) {
         this.cube = cube;
-        dimensaoColunaNula = new DimensionColunaNula(cube);
+        dimensaoColunaNula = new DimensionNullColumn(cube);
         this.metricsAmount = 0;
         this.visibleMetrics = new ArrayList<>();
         this.metricasTotalizaSomaColunas = new ArrayList<>();

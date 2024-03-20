@@ -6,19 +6,19 @@ import java.sql.SQLException;
 import com.msoft.mbi.cube.multi.Cube;
 import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 
-public abstract class DimensionNula extends Dimension {
+public abstract class DimensionNull extends Dimension {
 
-    protected DimensionNula(Cube cube) {
+    protected DimensionNull(Cube cube) {
         super(new DimensaoMetaData(null, null, null));
         this.cube = cube;
         this.keyValue = BRANCO;
     }
 
-    public static DimensionNula createDimensaoNula(int eixoReferencia, Cube cube) {
-        if (eixoReferencia == MetaDataField.LINE) {
-            return new DimensionLinhaNula(cube);
+    public static DimensionNull createDimensionNull(int referenceAxis, Cube cube) {
+        if (referenceAxis == MetaDataField.LINE) {
+            return new DimensionLinhaNull(cube);
         } else {
-            return new DimensionColunaNula(cube);
+            return new DimensionNullColumn(cube);
         }
     }
 

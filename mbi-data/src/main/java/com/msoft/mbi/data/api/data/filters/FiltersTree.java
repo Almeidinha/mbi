@@ -24,7 +24,7 @@ public class FiltersTree {
     public FiltersTree(Filters f, FiltersFunction filtrosFuncao, String nos, int indicatorIndex, int panelIndex, boolean exibirLinkEditor, int graphCode) throws BIException {
         this.filters = f;
         this.filtersFunction = filtrosFuncao;
-        this.openNodes = BIUtil.stringtoList(nos);
+        this.openNodes = BIUtil.stringToList(nos);
         this.indicatorIndex = indicatorIndex;
         this.panelIndex = panelIndex;
         this.showEditorLink = exibirLinkEditor;

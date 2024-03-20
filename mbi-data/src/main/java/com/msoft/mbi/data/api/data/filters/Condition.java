@@ -7,7 +7,6 @@ import com.msoft.mbi.data.api.data.indicator.Indicator;
 import com.msoft.mbi.data.api.data.indicator.Operator;
 import com.msoft.mbi.data.api.data.indicator.Operators;
 import com.msoft.mbi.data.api.data.util.BIUtil;
-import com.msoft.mbi.data.api.data.util.Constants;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -163,7 +162,7 @@ public abstract class Condition {
         }
 
         String processedSQLValue = sqlValue.contains(",") ? sqlValue.replaceAll(",", ";") : sqlValue;
-        List<String> values = BIUtil.stringtoList(processedSQLValue, ";");
+        List<String> values = BIUtil.stringToList(processedSQLValue, ";");
 
         return String.join(", ", Collections.nCopies(values.size(), "?"));
     }
@@ -173,14 +172,14 @@ public abstract class Condition {
             return "";
         }
 
-        List<String> values = BIUtil.stringtoList(sqlValue, ";");
+        List<String> values = BIUtil.stringToList(sqlValue, ";");
         return String.join(", ", values);
     }
 
     public String formatSQLValue() throws BIException {
         StringBuilder result = new StringBuilder(this.value);
         if (!StringUtils.equalsIgnoreCase(result.toString(), "null") && this.field != null) {
-            List<String> values = BIUtil.stringtoList(result.toString(), ";");
+            List<String> values = BIUtil.stringToList(result.toString(), ";");
             result.setLength(0);
 
             for (String sValue : values) {

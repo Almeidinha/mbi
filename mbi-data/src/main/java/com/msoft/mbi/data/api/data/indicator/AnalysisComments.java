@@ -340,7 +340,7 @@ public class AnalysisComments {
     }
 
     public void excluir(String itens) throws BIException {
-        List<String> comentarios = BIUtil.stringtoList(itens);
+        List<String> comentarios = BIUtil.stringToList(itens);
         Iterator<String> i = comentarios.iterator();
         ConnectionBean conexao = new ConnectionBean();
         try {
@@ -355,7 +355,7 @@ public class AnalysisComments {
     }
 
     public void atualizarEmail(String itens, String valor) throws BIException {
-        List<String> comentarios = BIUtil.stringtoList(itens);
+        List<String> comentarios = BIUtil.stringToList(itens);
         Iterator<String> i = comentarios.iterator();
         ConnectionBean conexao = new ConnectionBean();
         try {

@@ -6,7 +6,7 @@ import java.sql.SQLException;
 public class DimensionColumn extends Dimension {
 
     private Dimension dimensionCuboPai;
-    private Dimension dimensionLinha = new DimensionLinhaNula(cube);
+    private Dimension dimensionLinha = new DimensionLinhaNull(cube);
 
     public DimensionColumn(Dimension dimensionPai, Dimension dimensionCubeParent, DimensaoMetaData metaData) {
         this(dimensionPai, metaData);

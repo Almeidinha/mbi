@@ -392,7 +392,7 @@ public abstract class Dimension implements Comparable<Dimension> {
 
     public String searchMetricsPropertyAlertsRowFunctionsTotalColumns(List<MetricMetaData> metricasMetaData, List<String> functions) {
         String propriedadeAlerta = null;
-        DimensionColunaNula dimensaoColunaNula = new DimensionColunaNula(this.cube);
+        DimensionNullColumn dimensaoColunaNula = new DimensionNullColumn(this.cube);
         for (String funcao : functions) {
             String propriedadeAux = this.searchMetricAlertLineProperty(metricasMetaData, funcao, dimensaoColunaNula);
             if (propriedadeAux != null) {

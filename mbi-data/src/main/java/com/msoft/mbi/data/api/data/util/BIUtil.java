@@ -12,6 +12,8 @@ import java.sql.*;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.Date;
 import java.util.regex.Pattern;
@@ -22,20 +24,25 @@ public class BIUtil {
     public static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
     private static final String NULL_DATE           = "31/12/1899";
 
-    public static List<String> stringtoList(String word) {
-        return BIUtil.stringtoList(word, "#!");
+    public static List<String> stringToList(String word) {
+        return BIUtil.stringToList(word, "#!");
     }
-    public static List<String> stringtoList(String word, String delimiter) {
-
+    public static List<String> stringToList(String word, String delimiter) {
         if (word == null || delimiter == null || word.isEmpty()) {
             return Collections.emptyList();
         }
 
         String escapedDelimiter = Pattern.quote(delimiter);
-        word = word.replaceAll(escapedDelimiter + "$|^" + escapedDelimiter, "");
+        String[] splitWords = word.split(escapedDelimiter);
 
-        List<String> result = Arrays.asList(word.split(escapedDelimiter));
-        return (!result.isEmpty()) ? result : Collections.emptyList();
+        List<String> result = new ArrayList<>();
+        for (String splitWord : splitWords) {
+            if (!splitWord.isEmpty()) {
+                result.add(splitWord);
+            }
+        }
+
+        return result;
     }
 
     public static Object textFormat(Field field, String valor) throws BIFilterException {
@@ -90,19 +97,19 @@ public class BIUtil {
         return String.valueOf(result);
     }
 
-    private static String formatStringToText(String valor) {
-        if (valor == null) {
+    private static String formatStringToText(String value) {
+        if (value == null) {
             return "NULL";
         }
 
-        String trimmedValor = valor.trim();
-        if (!trimmedValor.startsWith("'")) {
-            trimmedValor = "'" + trimmedValor;
+        String trimmedValue = value.trim();
+        if (!trimmedValue.startsWith("'")) {
+            trimmedValue = "'" + trimmedValue;
         }
-        if (!trimmedValor.endsWith("'")) {
-            trimmedValor += "'";
+        if (!trimmedValue.endsWith("'")) {
+            trimmedValue += "'";
         }
-        return trimmedValor;
+        return trimmedValue;
     }
 
     private static Object formatDateToText(String valor, Field field) throws BIException {
@@ -116,72 +123,45 @@ public class BIUtil {
 
     public static String getFormattedDate(String date, String format) throws BIException {
         try {
-            String dia;
-            String mes;
-            String ano;
-            String ano_reduz;
-            String data_total;
             date = date.trim();
-            int num = date.trim().length();
+            LocalDate localDate = LocalDate.parse(date);
 
-            if (num == 10) {
-                if ((date.charAt(4) == '/' || date.charAt(4) == '-')
-                        && (date.charAt(7) == '/' || date.charAt(7) == '-')) {
-                    ano = date.substring(0, 4);
-                    mes = date.substring(5, 7);
-                    dia = date.substring(8, 10);
-                } else if ((date.charAt(2) == '/' || date.charAt(2) == '-')
-                        && (date.charAt(5) == '/' || date.charAt(5) == '-')) {
-                    ano = date.substring(6, 10);
-                    mes = date.substring(3, 5);
-                    dia = date.substring(0, 2);
-                } else {
-                    return date;
-                }
-            } else if (num == 12) {
-                if ((date.charAt(5) == '/' || date.charAt(5) == '-')
-                        && (date.charAt(8) == '/' || date.charAt(8) == '-')) {
-                    ano = date.substring(1, 5);
-                    mes = date.substring(6, 8);
-                    dia = date.substring(9, 11);
-                } else if ((date.charAt(3) == '/' || date.charAt(3) == '-')
-                        && (date.charAt(6) == '/' || date.charAt(6) == '-')) {
-                    ano = date.substring(7, 11);
-                    mes = date.substring(4, 6);
-                    dia = date.substring(1, 3);
-                } else {
-                    return date;
-                }
-            } else {
-                return date;
-            }
-
-            ano_reduz = ano.substring(2, 4);
-
+            DateTimeFormatter formatter;
             switch (format.trim()) {
-                case "dd/MM/yyyy" -> data_total = dia + "/" + mes + "/" + ano;
-                case "dd/MM/yy" -> data_total = dia + "/" + mes + "/" + ano_reduz;
-                case "MM/dd/yyyy" -> data_total = mes + "/" + dia + "/" + ano;
-                case "MM/dd/yy" -> data_total = mes + "/" + dia + "/" + ano_reduz;
-                case "yyyy/MM/dd" -> data_total = ano + "/" + mes + "/" + dia;
-                case "yyyy-MM-dd" -> data_total = ano + "-" + mes + "-" + dia;
-                case "dd-MM-yyyy" -> data_total = dia + "-" + mes + "-" + ano;
-                case "yyyyMMdd" -> data_total = ano + mes + dia;
-                default -> {
+                case "dd/MM/yyyy":
+                    formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    break;
+                case "dd/MM/yy":
+                    formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
+                    break;
+                case "MM/dd/yyyy":
+                    formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+                    break;
+                case "MM/dd/yy":
+                    formatter = DateTimeFormatter.ofPattern("MM/dd/yy");
+                    break;
+                case "yyyy/MM/dd":
+                    formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+                    break;
+                case "yyyy-MM-dd":
+                    formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    break;
+                case "dd-MM-yyyy":
+                    formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                    break;
+                case "yyyyMMdd":
+                    formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+                    break;
+                default:
                     return date;
-                }
             }
-            return data_total;
-        } catch (NullPointerException nullex) {
-            BINullPointerException binullex = new BINullPointerException(nullex);
-            binullex.setAction("formatar a data.");
-            binullex.setLocal("BIUtil", "getFormattedDate(String, String)");
-            throw binullex;
-        } catch (ArrayIndexOutOfBoundsException arrex) {
-            BIArrayIndexOutOfBoundsException biarex = new BIArrayIndexOutOfBoundsException(arrex);
-            biarex.setAction("formatar a data.");
-            biarex.setLocal("BIUtil", "getFormattedDate(String, String)");
-            throw biarex;
+            return localDate.format(formatter);
+        } catch (NullPointerException | ArrayIndexOutOfBoundsException ex) {
+            throw BIException.builder()
+                    .message("Error formatting the date")
+                    .local("BIUtil")
+                    .action("getFormattedDate(String, String)")
+                    .build();
         }
     }
 
@@ -234,7 +214,7 @@ public class BIUtil {
         return date;
     }
 
-    public static void closeStatement(PreparedStatement statement) throws BIException {
+    public static void closeStatement(PreparedStatement statement) {
         if (statement != null) {
             try {
                 statement.close();
@@ -244,7 +224,7 @@ public class BIUtil {
         }
     }
 
-    public static void closeStatement(Statement statement) throws BIException {
+    public static void closeStatement(Statement statement) {
         if (statement != null) {
             try {
                 statement.close();
@@ -254,7 +234,7 @@ public class BIUtil {
         }
     }
 
-    public static void closeResultSet(ResultSet set) throws BIException {
+    public static void closeResultSet(ResultSet set) {
         if (set != null) {
             try {
                 set.close();
@@ -500,7 +480,7 @@ public class BIUtil {
 
     public static String verificanullString(ResultSet results, String campo) throws BIException {
         try {
-            if (results.getString(campo) != null && !results.getString(campo).equals("")) {
+            if (results.getString(campo) != null && !results.getString(campo).isEmpty()) {
                 return results.getString(campo).trim();
             } else {
                 return "";

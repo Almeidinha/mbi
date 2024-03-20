@@ -31,7 +31,7 @@ public class FilterAccumulated implements FilterFunction, Cloneable {
 
     private List<Double> getDoubleValues() {
         List<Double> result = new ArrayList<>();
-        List<String> values = BIUtil.stringtoList(this.value, ";");
+        List<String> values = BIUtil.stringToList(this.value, ";");
         for (String sValor : values) {
             result.add(FilterAccumulated.formatValue(Double.parseDouble(sValor)));
         }
@@ -93,7 +93,7 @@ public class FilterAccumulated implements FilterFunction, Cloneable {
     public String getFormattedValue() {
 
         StringBuilder result = new StringBuilder();
-        List<String> values = BIUtil.stringtoList(this.value, ";");
+        List<String> values = BIUtil.stringToList(this.value, ";");
         for (String value : values) {
             result.append(BIUtil.formatDoubleToText(value, 2));
         }

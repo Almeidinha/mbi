@@ -7,8 +7,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.msoft.mbi.cube.multi.dimension.Dimension;
-import com.msoft.mbi.cube.multi.dimension.DimensionColunaNula;
-import com.msoft.mbi.cube.multi.dimension.DimensionLinhaNula;
+import com.msoft.mbi.cube.multi.dimension.DimensionNullColumn;
+import com.msoft.mbi.cube.multi.dimension.DimensionLinhaNull;
 import com.msoft.mbi.cube.multi.metrics.Metric;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.metrics.additive.MetricAditiva;
@@ -28,8 +28,8 @@ public class MetricsMap {
 
     public MetricsMap(Cube cube) {
         this.cube = cube;
-        dimensionNullLine = new DimensionLinhaNula(cube);
-        dimensionNullColumn = new DimensionColunaNula(cube);
+        dimensionNullLine = new DimensionLinhaNull(cube);
+        dimensionNullColumn = new DimensionNullColumn(cube);
     }
 
     public MetricLine getMetricLine(Dimension dimensionLine, Dimension dimensionColumn) {

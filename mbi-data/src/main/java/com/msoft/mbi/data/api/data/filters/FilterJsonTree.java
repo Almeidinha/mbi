@@ -25,7 +25,7 @@ public class FilterJsonTree {
     public FilterJsonTree(Filters f, FiltersFunction filtrosFuncao, String nos, int indiceIndicador, int indicePainel, boolean exibirLinkEditor, int graphCode) throws BIException {
         this.filters = f;
         this.filtersFunction = filtrosFuncao;
-        this.openNodes = BIUtil.stringtoList(nos);
+        this.openNodes = BIUtil.stringToList(nos);
         this.indicatorIndex = indiceIndicador;
         this.panelIndex = indicePainel;
         this.displayEditorLink = exibirLinkEditor;

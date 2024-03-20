@@ -1,9 +1,7 @@
 package com.msoft.mbi.cube.multi.analytics;
 
 import com.msoft.mbi.cube.multi.dimension.Dimension;
-import com.msoft.mbi.cube.multi.dimension.DimensionNula;
-
-import java.io.Serial;
+import com.msoft.mbi.cube.multi.dimension.DimensionNull;
 
 public class AnaliseParticipacaoTipoGeral implements AnaliseParticipacaoTipo {
 
@@ -22,6 +20,6 @@ public class AnaliseParticipacaoTipoGeral implements AnaliseParticipacaoTipo {
 
     @Override
     public Dimension getDimensaoNivelAcima(Dimension dimensionAtual) {
-        return DimensionNula.createDimensaoNula(dimensionAtual.getMetaData().getEixoReferencia(), dimensionAtual.getCube());
+        return DimensionNull.createDimensionNull(dimensionAtual.getMetaData().getEixoReferencia(), dimensionAtual.getCube());
     }
 }

@@ -35,7 +35,7 @@ public class FilterSequence implements FilterFunction, Cloneable {
 
     private List<Double> getDoubleValues() {
         List<Double> result = new ArrayList<>();
-        List<String> values = BIUtil.stringtoList(this.value, ";");
+        List<String> values = BIUtil.stringToList(this.value, ";");
         for (String sValor : values) {
             result.add(Double.parseDouble(sValor));
         }
@@ -110,7 +110,7 @@ public class FilterSequence implements FilterFunction, Cloneable {
 
     public String getFormattedValue() {
         StringBuilder retorno = new StringBuilder();
-        List<String> valores = BIUtil.stringtoList(this.value, ";");
+        List<String> valores = BIUtil.stringToList(this.value, ";");
         for (String sValor : valores) {
             retorno.append((int) (Double.parseDouble(sValor))).append(";");
             ;

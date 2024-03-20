@@ -30,7 +30,7 @@ public class MetricFilterJDBC extends MetricFilter {
 
         String valor = this.getCondition().getValue();
         valor = valor.replaceAll(";", ",");
-        List<String> valores = BIUtil.stringtoList(valor, ",");
+        List<String> valores = BIUtil.stringToList(valor, ",");
         StringBuilder retorno = new StringBuilder();
         for (String sValor : valores) {
             retorno.append(Double.parseDouble(sValor)).append(";");

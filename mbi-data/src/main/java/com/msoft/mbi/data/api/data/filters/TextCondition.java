@@ -7,10 +7,8 @@ import com.msoft.mbi.data.api.data.indicator.Operator;
 import com.msoft.mbi.data.api.data.util.BIUtil;
 import com.msoft.mbi.data.api.data.util.Constants;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
-import java.util.Map;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
@@ -73,7 +71,7 @@ public class TextCondition extends Condition {
                 final String format = "dd/MM/yy"; // TODO load from database
 
                 String value = getValue().replaceAll(";", ",");
-                List<String> values = BIUtil.stringtoList(value, ",");
+                List<String> values = BIUtil.stringToList(value, ",");
 
                 if (!values.isEmpty()) {
                     return values.stream()

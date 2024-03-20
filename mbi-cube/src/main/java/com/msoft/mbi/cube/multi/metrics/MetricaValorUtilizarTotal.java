@@ -7,7 +7,7 @@ import com.msoft.mbi.cube.multi.Cube;
 import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.MetricsMap;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
-import com.msoft.mbi.cube.multi.dimension.DimensionColunaNula;
+import com.msoft.mbi.cube.multi.dimension.DimensionNullColumn;
 
 public class MetricaValorUtilizarTotal implements MetricaValorUtilizar {
 
@@ -25,7 +25,7 @@ public class MetricaValorUtilizarTotal implements MetricaValorUtilizar {
     public Double getValor(MetricsMap metricsMap, MetricLine metricLine, String tituloCampo) {
         Cube cube = metricLine.getDimensionLine().getCube();
         MetricMetaData metaData = cube.getMetricByTitle(tituloCampo);
-        return metaData.calculaValorTotalParcial(metricLine.getDimensionLine(), new DimensionColunaNula(cube));
+        return metaData.calculaValorTotalParcial(metricLine.getDimensionLine(), new DimensionNullColumn(cube));
     }
 
     @Override

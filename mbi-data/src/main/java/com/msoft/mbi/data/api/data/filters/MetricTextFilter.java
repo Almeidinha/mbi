@@ -44,7 +44,7 @@ public class MetricTextFilter extends MetricFilter {
         Field field = this.getCondition().getField();
 
         String valorSQL = String.valueOf(this.applyValues(this.getCondition().getSQLValue(), 0));
-        List<String> values = BIUtil.stringtoList(valorSQL, ",");
+        List<String> values = BIUtil.stringToList(valorSQL, ",");
         StringBuilder retorno = new StringBuilder();
         for (String sValor : values) {
             retorno.append(BIUtil.textFormat(field, sValor)).append(";");

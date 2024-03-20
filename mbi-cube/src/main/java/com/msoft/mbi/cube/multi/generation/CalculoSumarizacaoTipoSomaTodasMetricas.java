@@ -3,7 +3,7 @@ package com.msoft.mbi.cube.multi.generation;
 import java.util.Iterator;
 
 import com.msoft.mbi.cube.multi.dimension.Dimension;
-import com.msoft.mbi.cube.multi.dimension.DimensionColunaNula;
+import com.msoft.mbi.cube.multi.dimension.DimensionNullColumn;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 
 public class CalculoSumarizacaoTipoSomaTodasMetricas implements CalculoSumarizacaoTipo {
@@ -24,7 +24,7 @@ public class CalculoSumarizacaoTipoSomaTodasMetricas implements CalculoSumarizac
     @Override
     public Double calcula(Dimension dimensionEixoReferencia, Dimension dimensionLinhaAnterior, Dimension dimension, MetricMetaData metaData, String tipoLinha) {
         Double valorImprimir = Double.valueOf(0);
-        DimensionColunaNula dimensaoColunaNula = new DimensionColunaNula(dimension.getCube());
+        DimensionNullColumn dimensaoColunaNula = new DimensionNullColumn(dimension.getCube());
         int qtdDimensoesLin = 0;
 
         for (MetricMetaData metaDataAux : dimension.getCube().getMetricsTotalHorizontal()) {
