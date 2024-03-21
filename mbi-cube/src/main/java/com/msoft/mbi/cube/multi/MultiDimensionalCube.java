@@ -1,7 +1,7 @@
 package com.msoft.mbi.cube.multi;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.List;
 
 import com.msoft.mbi.cube.multi.analytics.AnaliseEvolucaoTipoDinamica;
@@ -246,16 +246,12 @@ public class MultiDimensionalCube extends Cube {
     }
 
     @Override
-    protected void updateSequenceRanking(Iterator<Dimension> dimensionIterator) {
-        int sequencia = 1;
-        while (dimensionIterator.hasNext()) {
-            Dimension dimensionLine = dimensionIterator.next();
-            if (!dimensionLine.getDimensionsLine().isEmpty()) {
-                updateSequenceRanking(dimensionLine.getDimensionsLine().values().iterator());
-            }
-            dimensionLine.setRankingSequence(sequencia++);
+    protected void updateSequenceRanking(Collection<Dimension> dimensions) {
+        int sequence = 1;
+        for (Dimension dimension : dimensions) {
+            updateSequenceRanking(dimension.getDimensionsLine().values());
+            dimension.setRankingSequence(sequence++);
         }
-
     }
 
     private void applyRankings(Dimensions dimensions, Dimension dimensionPai) {

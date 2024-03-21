@@ -468,7 +468,7 @@ public abstract class Cube extends Dimension {
         List<MetricOrdering> metricOrderings = this.buildMetricOrdering();
         this.reorderData(metricOrderings);
         if (!this.dimensionsLine.isEmpty()) {
-            this.updateSequenceRanking(this.dimensionsLine.values().iterator());
+            this.updateSequenceRanking(this.dimensionsLine.values());
             this.verifyRanking();
         }
     }
@@ -503,7 +503,7 @@ public abstract class Cube extends Dimension {
 
     protected abstract void removeDimensionsFiltersFunction(Dimension dimensionPai, List<Dimension> dimensions);
 
-    protected abstract void updateSequenceRanking(Iterator<Dimension> dimensionIterator);
+    protected abstract void updateSequenceRanking(Collection<Dimension> dimensions);
 
     protected abstract void verifyRanking();
 

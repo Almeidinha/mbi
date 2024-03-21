@@ -1,10 +1,6 @@
 package com.msoft.mbi.cube.multi;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.msoft.mbi.cube.multi.analytics.AnaliseParticipacaoTipo;
 import com.msoft.mbi.cube.multi.analytics.AnaliseParticipacaoTipoGeral;
@@ -153,7 +149,7 @@ public class CubeDefaultFormat extends Cube {
     }
 
     @Override
-    public void updateSequenceRanking(Iterator<Dimension> dimensionIterator) {
+    public void updateSequenceRanking(Collection<Dimension> dimensions) {
         List<Dimension> lastLevelDimension = this.getDimensionsLastLevelLines();
         int sequencia = 1;
         for (Dimension lastLine : lastLevelDimension) {
