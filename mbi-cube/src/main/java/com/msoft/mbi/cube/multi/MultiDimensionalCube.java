@@ -14,8 +14,8 @@ import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditionsMetricaO
 import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertProperties;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.dimension.DimensionLineOutros;
-import com.msoft.mbi.cube.multi.dimension.DimensaoMetaData;
-import com.msoft.mbi.cube.multi.dimension.DimensaoOutrosMetaData;
+import com.msoft.mbi.cube.multi.dimension.DimensionMetaData;
+import com.msoft.mbi.cube.multi.dimension.DimensionMetaDataOthers;
 import com.msoft.mbi.cube.multi.dimension.Dimensions;
 import com.msoft.mbi.cube.multi.dimension.comparator.DimensaoMetricaComparator;
 import com.msoft.mbi.cube.multi.resumeFunctions.MetricFilters;
@@ -78,11 +78,11 @@ public class MultiDimensionalCube extends Cube {
         cubeMetaData.orderFields();
         cubeMetaData.orderDimensionFields();
         cubeMetaData.orderMetricFields();
-        DimensaoMetaData dimensao;
+        DimensionMetaData dimensao;
         List<MetaDataField> camposMetrica = new ArrayList<>();
         for (MetaDataField campoDimensao : cubeMetaData.getDimensionFields()) {
             if ("S".equals(campoDimensao.getDefaultField())) {
-                dimensao = DimensaoMetaData.factory(campoDimensao);
+                dimensao = DimensionMetaData.factory(campoDimensao);
                 if (MetaDataField.LINE == campoDimensao.getDisplayLocation()) {
                     this.addHierarchyLine(dimensao);
                 } else {
@@ -246,29 +246,26 @@ public class MultiDimensionalCube extends Cube {
     }
 
     @Override
-    protected void UpdateSequenceRanking(Iterator<Dimension> dimensionIterator) {
+    protected void updateSequenceRanking(Iterator<Dimension> dimensionIterator) {
         int sequencia = 1;
         while (dimensionIterator.hasNext()) {
-            Dimension dimensionLinha = dimensionIterator.next();
-            if (!dimensionLinha.getDimensionsLine().isEmpty()) {
-                UpdateSequenceRanking(dimensionLinha.getDimensionsLine().values().iterator());
+            Dimension dimensionLine = dimensionIterator.next();
+            if (!dimensionLine.getDimensionsLine().isEmpty()) {
+                updateSequenceRanking(dimensionLine.getDimensionsLine().values().iterator());
             }
-            dimensionLinha.setRankingSequence(sequencia++);
+            dimensionLine.setRankingSequence(sequencia++);
         }
 
     }
 
     private void applyRankings(Dimensions dimensions, Dimension dimensionPai) {
         Dimension primeiraDimension = (Dimension) dimensions.firstKey();
-        Iterator<Dimension> iDimensoes = dimensions.values().iterator();
         if (primeiraDimension.getMetaData().hasSequenceFields() && primeiraDimension.getMetaData().getFunctionRanking() != null) {
-            this.applyRanking(iDimensoes, primeiraDimension.getMetaData().getFunctionRanking(), dimensions.size());
+            this.applyRanking((List<Dimension>) dimensions.values(), primeiraDimension.getMetaData().getFunctionRanking(), dimensions.size());
         }
-        iDimensoes = dimensionPai.getDimensionsLine().values().iterator();
-        while (iDimensoes.hasNext()) {
-            primeiraDimension = iDimensoes.next();
-            if (!primeiraDimension.getDimensionsLine().isEmpty()) {
-                this.applyRankings(primeiraDimension.getDimensionsLine(), primeiraDimension);
+        for (Dimension dimension : dimensionPai.getDimensionsLine().values()) {
+            if (!dimension.getDimensionsLine().isEmpty()) {
+                this.applyRankings(dimension.getDimensionsLine(), dimension);
             }
         }
     }
@@ -279,15 +276,15 @@ public class MultiDimensionalCube extends Cube {
     }
 
     @Override
-    protected void removeDimensionsFiltersFunction(Dimension dimensionAdicionarOutros, List<Dimension> dimensions) {
-        List<Dimension> lDimensoesLinhaUltimoNivel = this.getDimensionsLastLevelLines();
-        DimensaoOutrosMetaData metaDataOutros = new DimensaoOutrosMetaData(dimensionAdicionarOutros.getMetaData().getFilho());
-        DimensionLineOutros dimensaoOutros = new DimensionLineOutros(dimensionAdicionarOutros, metaDataOutros);
-        for (Dimension dimensionLinhaRemover : dimensions) {
-            dimensaoOutros.processar(dimensionLinhaRemover);
-            dimensionLinhaRemover.getParent().removeDimensionLine(dimensionLinhaRemover);
-            this.metricsMap.removeMetricLine(dimensionLinhaRemover);
-            lDimensoesLinhaUltimoNivel.remove(dimensionLinhaRemover);
+    protected void removeDimensionsFiltersFunction(Dimension dimensionAddOthers, List<Dimension> dimensions) {
+        List<Dimension> dimensionsLastLevelLines = this.getDimensionsLastLevelLines();
+        DimensionMetaDataOthers metaDataOutros = new DimensionMetaDataOthers(dimensionAddOthers.getMetaData().getChild());
+        DimensionLineOutros dimensionOthers = new DimensionLineOutros(dimensionAddOthers, metaDataOutros);
+        for (Dimension dimensionLineToRemove : dimensions) {
+            dimensionOthers.processar(dimensionLineToRemove);
+            dimensionLineToRemove.getParent().removeDimensionLine(dimensionLineToRemove);
+            this.metricsMap.removeMetricLine(dimensionLineToRemove);
+            dimensionsLastLevelLines.remove(dimensionLineToRemove);
         }
     }
 
@@ -295,43 +292,40 @@ public class MultiDimensionalCube extends Cube {
     protected void reorderData(List<MetricOrdering> metricOrderings) {
         if (!metricOrderings.isEmpty()) {
             this.getLastMetaDataLine().setComparator(new DimensaoMetricaComparator(this.metricsMap, this.getDimensionsLastLevelColumns(), metricOrderings));
-            this.reordenaDimensoesLinhaUltimoNivel(metricOrderings);
+            this.reorderLastLevelDimension(metricOrderings);
         }
     }
 
-    protected void geraListaDimensoesReordenarFilhas(Dimension dimensionPai, List<Dimension> dimensoesPai) {
-        Iterator<Dimension> iDimensoes = dimensionPai.getDimensionsLine().values().iterator();
-        Dimension dimension = null;
-        while (iDimensoes.hasNext()) {
-            dimension = iDimensoes.next();
-            if (dimension.getMetaData().isUltima()) {
-                dimensoesPai.add(dimensionPai);
+    protected void generateDimensionsChildReorderList(Dimension parentDimension, List<Dimension> parentDimensions) {
+        for (Dimension dimension : parentDimension.getDimensionsLine().values()) {
+            if (dimension.getMetaData().isLast()) {
+                parentDimensions.add(parentDimension);
                 break;
             } else {
-                geraListaDimensoesReordenarFilhas(dimension, dimensoesPai);
+                generateDimensionsChildReorderList(dimension, parentDimensions);
             }
         }
     }
 
     protected void addMetricOrdering(List<MetricOrdering> metricOrderings, List<MetricOrdering> orderingList) {
         for (MetricOrdering metricOrdering : metricOrderings) {
-            if (metricOrdering.getOrderingSequence() > this.getLastMetaDataLine().getSequenciaOrdenacao()) {
+            if (metricOrdering.getOrderingSequence() > this.getLastMetaDataLine().getOrderingSequence()) {
                 orderingList.add(metricOrdering);
             }
         }
     }
 
-    protected void reordenaDimensoesLinhaUltimoNivel(List<MetricOrdering> metricasOrdenadas) {
-        List<Dimension> lDimensoesColunaUltimoNivel = this.getDimensionsLastLevelColumns();
-        List<Dimension> lDimensoesPaiReordenar = new ArrayList<>();
-        this.geraListaDimensoesReordenarFilhas(this, lDimensoesPaiReordenar);
-        List<Dimension> dimensoes;
-        for (Dimension dimensionPaiReordenar : lDimensoesPaiReordenar) {
-            dimensoes = new ArrayList<>(dimensionPaiReordenar.getDimensionsLine().values());
-            dimensionPaiReordenar.resetDimensionsLines(new DimensaoMetricaComparator(this.metricsMap, lDimensoesColunaUltimoNivel, metricasOrdenadas));
-            for (Dimension dimension : dimensoes) {
-                dimensionPaiReordenar.addDimensionLine(dimension);
-                Dimension.increaseTotalSize(dimensionPaiReordenar);
+    protected void reorderLastLevelDimension(List<MetricOrdering> orderedMetrics) {
+        List<Dimension> dimensionsLastLevelColumns = this.getDimensionsLastLevelColumns();
+        List<Dimension> parentDimensionsReorder = new ArrayList<>();
+        this.generateDimensionsChildReorderList(this, parentDimensionsReorder);
+        List<Dimension> dimensions;
+        for (Dimension parentDimension : parentDimensionsReorder) {
+            dimensions = new ArrayList<>(parentDimension.getDimensionsLine().values());
+            parentDimension.resetDimensionsLines(new DimensaoMetricaComparator(this.metricsMap, dimensionsLastLevelColumns, orderedMetrics));
+            for (Dimension dimension : dimensions) {
+                parentDimension.addDimensionLine(dimension);
+                Dimension.increaseTotalSize(parentDimension);
             }
         }
     }

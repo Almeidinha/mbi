@@ -8,7 +8,7 @@ public class DimensionNullColumn extends DimensionNull {
 
     public DimensionNullColumn(Cube cube) {
         super(cube);
-        this.getMetaData().setEixoReferencia(MetaDataField.COLUMN);
+        this.getMetaData().setReferenceAxis(MetaDataField.COLUMN);
     }
 
     @Override

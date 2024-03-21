@@ -44,7 +44,7 @@ public class PartialTotalizationApplyTypeMedia implements PartialTotalizationApp
             } else {
                 Dimension dimensionLinha = null;
                 Dimension dimensionColuna = null;
-                if (dimensionReferenceAxis.getMetaData().isLinha()) {
+                if (dimensionReferenceAxis.getMetaData().isLine()) {
                     dimensionLinha = dimensionReferenceAxis;
                     dimensionColuna = dimension;
                 } else {

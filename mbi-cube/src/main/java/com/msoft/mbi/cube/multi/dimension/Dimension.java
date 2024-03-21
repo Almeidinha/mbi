@@ -32,7 +32,7 @@ public abstract class Dimension implements Comparable<Dimension> {
     @Setter(AccessLevel.NONE)
     protected Dimension parent = null;
     @Setter(AccessLevel.NONE)
-    protected DimensaoMetaData metaData;
+    protected DimensionMetaData metaData;
     @Setter(AccessLevel.NONE)
     protected Cube cube = null;
     @Getter
@@ -51,12 +51,12 @@ public abstract class Dimension implements Comparable<Dimension> {
     @Setter(AccessLevel.NONE)
     protected transient String keyValue;
 
-    public Dimension(DimensaoMetaData metaData) {
+    public Dimension(DimensionMetaData metaData) {
         this.metaData = metaData;
-        this.type = this.metaData.getTipo();
+        this.type = this.metaData.getDataType();
     }
 
-    public Dimension(Dimension parent, DimensaoMetaData metaData) {
+    public Dimension(Dimension parent, DimensionMetaData metaData) {
         this(metaData);
         this.parent = parent;
         this.cube = this.parent.getCube();
@@ -77,21 +77,21 @@ public abstract class Dimension implements Comparable<Dimension> {
     public Comparable<Object> getOrderValue() {
         Object obj;
         if (this.value == null) {
-            if (this.metaData.getTipo() instanceof TipoNumero) {
+            if (this.metaData.getDataType() instanceof TipoNumero) {
                 obj = TipoDecimal.BRANCO;
-            } else if (this.metaData.getTipo() instanceof TipoData) {
+            } else if (this.metaData.getDataType() instanceof TipoData) {
                 obj = TipoData.BRANCO;
-            } else if (this.metaData.getTipo() instanceof TipoHora) {
+            } else if (this.metaData.getDataType() instanceof TipoHora) {
                 obj = TipoHora.BRANCO;
             } else {
                 obj = TextType.EMPTY;
             }
         } else {
-            DimensaoMetaData metaData = this.metaData;
-            if (this.metaData.getDimensaoOrdenacao() != null) {
-                metaData = this.metaData.getDimensaoOrdenacao();
+            DimensionMetaData metaData = this.metaData;
+            if (this.metaData.getOrderingDimension() != null) {
+                metaData = this.metaData.getOrderingDimension();
             }
-            if (metaData.getTipo() instanceof TextType) {
+            if (metaData.getDataType() instanceof TextType) {
                 obj = this.getValue().toString().trim();
                 int posIni = obj.toString().indexOf("(*");
                 if (posIni > -1) {
@@ -100,18 +100,18 @@ public abstract class Dimension implements Comparable<Dimension> {
             } else {
                 obj = this.getValue();
 
-                if ((this.metaData.getTipo() instanceof TipoData) || (this.metaData.getTipo() instanceof TipoNumero)) {
+                if ((this.metaData.getDataType() instanceof TipoData) || (this.metaData.getDataType() instanceof TipoNumero)) {
                     int posIni = obj.toString().indexOf("(*");
 
                     if (posIni > -1) {
                         obj = obj.toString().replace(obj.toString().substring(posIni), "");
 
-                        if (this.metaData.getTipo() instanceof TipoData)
+                        if (this.metaData.getDataType() instanceof TipoData)
                             obj = Date.valueOf(obj.toString());
                     }
                 }
 
-                if (this.metaData.getTipo() instanceof TipoNumero)
+                if (this.metaData.getDataType() instanceof TipoNumero)
                     obj = Double.valueOf(obj.toString());
 
             }
@@ -134,7 +134,7 @@ public abstract class Dimension implements Comparable<Dimension> {
     }
 
     public boolean isSameAxis(Dimension dimension) {
-        return this.metaData.getEixoReferencia() == dimension.getMetaData().getEixoReferencia();
+        return this.metaData.getReferenceAxis() == dimension.getMetaData().getReferenceAxis();
     }
 
     public boolean isSameAxis(String titulo) {
@@ -212,7 +212,7 @@ public abstract class Dimension implements Comparable<Dimension> {
     }
 
     public Dimensions getSameLevelDimensions() {
-        if (this.metaData.isLinha()) {
+        if (this.metaData.isLine()) {
             return this.parent.getDimensionsLine();
         } else {
             return this.parent.getDimensionsColumn();
@@ -285,7 +285,7 @@ public abstract class Dimension implements Comparable<Dimension> {
         if (this.getMetaData().getParent() == null) {
             return this;
         }
-        if (!this.getMetaData().getParent().isTotalizacaoParcial()) {
+        if (!this.getMetaData().getParent().isTotalPartial()) {
             return this.getParent().searchDimensionTotalizedLevelUp();
         }
         return this.getParent();
@@ -339,15 +339,15 @@ public abstract class Dimension implements Comparable<Dimension> {
     }
 
     public int countPartialAggregatesInHierarchy() {
-        if (this.metaData.isUltima()) {
+        if (this.metaData.isLast()) {
             return 0;
         }
 
         int result = 0;
 
-        result += (this.metaData.isTotalizacaoParcial() || this.metaData.isPartialTotalExpression()) ? 1 : 0;
-        result += this.metaData.isMediaParcial() ? 1 : 0;
-        result += this.metaData.isExpressaoParcial() ? 1 : 0;
+        result += (this.metaData.isTotalPartial() || this.metaData.isPartialTotalExpression()) ? 1 : 0;
+        result += this.metaData.isMediaPartial() ? 1 : 0;
+        result += this.metaData.isExpressionPartial() ? 1 : 0;
 
         result += this.getDimensionsBelow().values().stream()
                 .mapToInt(Dimension::countPartialAggregatesInHierarchy)
@@ -367,7 +367,7 @@ public abstract class Dimension implements Comparable<Dimension> {
     }
 
     public String searchDimensionAlertLineProperty() {
-        return searchDimensionAlertProperty(this.getMetaData().getAlertasCoresLinha());
+        return searchDimensionAlertProperty(this.getMetaData().getColorAlertLines());
     }
 
     public String searchDimensionAlertCellProperty() {

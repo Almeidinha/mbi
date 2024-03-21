@@ -9,7 +9,7 @@ public class DimensionLinhaNull extends DimensionNull {
 
     public DimensionLinhaNull(Cube cube) {
         super(cube);
-        this.getMetaData().setEixoReferencia(MetaDataField.LINE);
+        this.getMetaData().setReferenceAxis(MetaDataField.LINE);
     }
 
     @Override

@@ -16,7 +16,7 @@ import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLTextoColuna;
 import com.msoft.mbi.cube.multi.renderers.linkHTML.MascaraLinkHTMLTextoRenderer;
 import lombok.Getter;
 
-public class MetricCalculatedEvolucaoAHMetaData extends MetricCalculatedMetaData implements MetricaCalculadaFuncaoMetaData {
+public class MetricCalculatedEvolucaoAHMetaData extends MetricCalculatedMetaData implements MetricCalculatedFunctionMetaData {
 
     public static final String COLUNA_AH_VARIABLE = "colunaAH";
     public static final String COLUNA_VALOR_ANTERIOR_VARIABLE = "valorAnterior";
@@ -59,27 +59,27 @@ public class MetricCalculatedEvolucaoAHMetaData extends MetricCalculatedMetaData
     }
 
     @Override
-    public String getFuncaoCampo() {
+    public String getFieldFunction() {
         return MetricCalculatedEvolucaoAHMetaData.AH;
     }
 
     @Override
-    public String getTituloCampoReferencia() {
+    public String getReferenceFieldTitle() {
         return this.tituloColunaReferencia;
     }
 
     @Override
-    public AnaliseParticipacaoTipo getAnaliseParticipacaoTipo() {
+    public AnaliseParticipacaoTipo getParticipationAnalysisType() {
         return this.tipoComparacaoParticipacao;
     }
 
     @Override
-    public Dimension getDimensaoEixoReferencia(MetricLine metricLine) {
+    public Dimension DimensionReferenceAxis(MetricLine metricLine) {
         return metricLine.getDimensionLine();
     }
 
     @Override
-    public Dimension getDimensaoOutra(MetricLine metricLine) {
+    public Dimension getDimensionOther(MetricLine metricLine) {
         return metricLine.getDimensionColumn();
     }
 

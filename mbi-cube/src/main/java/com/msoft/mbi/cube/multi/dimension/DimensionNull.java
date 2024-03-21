@@ -9,7 +9,7 @@ import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 public abstract class DimensionNull extends Dimension {
 
     protected DimensionNull(Cube cube) {
-        super(new DimensaoMetaData(null, null, null));
+        super(new DimensionMetaData(null, null, null));
         this.cube = cube;
         this.keyValue = BRANCO;
     }

@@ -20,6 +20,6 @@ public class AnaliseParticipacaoTipoGeral implements AnaliseParticipacaoTipo {
 
     @Override
     public Dimension getDimensaoNivelAcima(Dimension dimensionAtual) {
-        return DimensionNull.createDimensionNull(dimensionAtual.getMetaData().getEixoReferencia(), dimensionAtual.getCube());
+        return DimensionNull.createDimensionNull(dimensionAtual.getMetaData().getReferenceAxis(), dimensionAtual.getCube());
     }
 }

@@ -34,8 +34,8 @@ public class MetricCalculatedAcumulado extends MetricCalculated {
 
                     if ((metaData instanceof MetricCalculatedAcumuladoParticipacaoAVMetaData)) {
 
-                        Dimension dimensionAtual = ((MetricCalculatedAcumuladoParticipacaoAVMetaData) metaData).getAnaliseParticipacaoTipo().getDimensaoNivelAcima(metricLine.getDimensionLine());
-                        Dimension dimensionAnterior = ((MetricCalculatedAcumuladoParticipacaoAVMetaData) metaData).getAnaliseParticipacaoTipo().getDimensaoNivelAcima(metricLineAnterior.getDimensionLine());
+                        Dimension dimensionAtual = ((MetricCalculatedAcumuladoParticipacaoAVMetaData) metaData).getParticipationAnalysisType().getDimensaoNivelAcima(metricLine.getDimensionLine());
+                        Dimension dimensionAnterior = ((MetricCalculatedAcumuladoParticipacaoAVMetaData) metaData).getParticipationAnalysisType().getDimensaoNivelAcima(metricLineAnterior.getDimensionLine());
 
                         if (dimensionAtual != dimensionAnterior && !dimensionAtual.getKeyValue().equals(dimensionAnterior.getKeyValue())) {
                             valorAnterior = (double) 0;
@@ -44,8 +44,8 @@ public class MetricCalculatedAcumulado extends MetricCalculated {
 
                     if ((metaData instanceof MetricCalculatedAcumuladoValorAVMetaData)) {
 
-                        Dimension dimensionAtual = ((MetricCalculatedAcumuladoValorAVMetaData) metaData).getAnaliseParticipacaoTipo().getDimensaoNivelAcima(metricLine.getDimensionLine());
-                        Dimension dimensionAnterior = ((MetricCalculatedAcumuladoValorAVMetaData) metaData).getAnaliseParticipacaoTipo().getDimensaoNivelAcima(metricLineAnterior.getDimensionLine());
+                        Dimension dimensionAtual = ((MetricCalculatedAcumuladoValorAVMetaData) metaData).getParticipationAnalysisType().getDimensaoNivelAcima(metricLine.getDimensionLine());
+                        Dimension dimensionAnterior = ((MetricCalculatedAcumuladoValorAVMetaData) metaData).getParticipationAnalysisType().getDimensaoNivelAcima(metricLineAnterior.getDimensionLine());
 
                         if (dimensionAtual != dimensionAnterior && !dimensionAtual.getKeyValue().equals(dimensionAnterior.getKeyValue())) {
                             valorAnterior = (double) 0;
@@ -77,7 +77,7 @@ public class MetricCalculatedAcumulado extends MetricCalculated {
     }
 
     private Dimension getDimensaoAnterior(Dimension dimensionAtual, MetricCalculatedAcumuladoMetaData metaData) {
-        return dimensionAtual.getPreviousDimension(metaData.getAnaliseParticipacaoTipo().getDimensaoNivelAcima(dimensionAtual));
+        return dimensionAtual.getPreviousDimension(metaData.getParticipationAnalysisType().getDimensaoNivelAcima(dimensionAtual));
     }
 
     @Override

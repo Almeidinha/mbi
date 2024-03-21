@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.msoft.mbi.cube.multi.column.ColumnMetaData;
-import com.msoft.mbi.cube.multi.dimension.DimensaoMetaData;
+import com.msoft.mbi.cube.multi.dimension.DimensionMetaData;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.renderers.MascaraRenderer;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
@@ -177,16 +177,16 @@ public class JsonPrinter implements Printer {
     }
 
     @Override
-    public void printDimensionLineHeader(DimensaoMetaData dimensaoMetaData) {
-        if (!dimensaoMetaData.hasSequenceFields()) {
-            this.printColumnHeader(CellProperty.CELL_PROPERTY_DIMENSION_HEADER, dimensaoMetaData);
+    public void printDimensionLineHeader(DimensionMetaData dimensionMetaData) {
+        if (!dimensionMetaData.hasSequenceFields()) {
+            this.printColumnHeader(CellProperty.CELL_PROPERTY_DIMENSION_HEADER, dimensionMetaData);
         } else {
-            this.printColumnHeader(CellProperty.CELL_PROPERTY_DIMENSION_HEADER, dimensaoMetaData, 2, 1);
+            this.printColumnHeader(CellProperty.CELL_PROPERTY_DIMENSION_HEADER, dimensionMetaData, 2, 1);
         }
     }
 
     @Override
-    public void printTotalPartialHeader(String cellProperty, String value, int colspan, int rowspan, DimensaoMetaData dimensaoMetaData) {
+    public void printTotalPartialHeader(String cellProperty, String value, int colspan, int rowspan, DimensionMetaData dimensionMetaData) {
         this.printColumn(cellProperty, value, colspan, rowspan);
     }
 
@@ -204,8 +204,8 @@ public class JsonPrinter implements Printer {
 
 
     @Override
-    public void printDimensionLineValue(String cellProperty, int colspan, int rowspan, Object valor, DimensaoMetaData metaData) {
-        this.printColumnValue(metaData.getEstiloPadrao() + " " + cellProperty, colspan, rowspan, valor, metaData);
+    public void printDimensionLineValue(String cellProperty, int colspan, int rowspan, Object valor, DimensionMetaData metaData) {
+        this.printColumnValue(metaData.getDefaultStyle() + " " + cellProperty, colspan, rowspan, valor, metaData);
     }
 
     @Override
@@ -226,7 +226,7 @@ public class JsonPrinter implements Printer {
     }
 
     @Override
-    public void printSequenceField(DimensaoMetaData dimensaoMetaData, String sequence, int colspan, int rowspan) {
+    public void printSequenceField(DimensionMetaData dimensionMetaData, String sequence, int colspan, int rowspan) {
         this.printColumn(CellProperty.CELL_PROPERTY_SEQUENCE, sequence, colspan, rowspan);
     }
 

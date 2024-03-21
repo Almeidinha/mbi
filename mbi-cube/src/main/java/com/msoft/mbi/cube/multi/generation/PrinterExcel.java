@@ -25,7 +25,7 @@ import org.apache.poi.ss.util.RegionUtil;
 import com.msoft.mbi.cube.exception.CubeMathParserException;
 import com.msoft.mbi.cube.multi.column.ColumnMetaData;
 import com.msoft.mbi.cube.multi.column.TipoData;
-import com.msoft.mbi.cube.multi.dimension.DimensaoMetaData;
+import com.msoft.mbi.cube.multi.dimension.DimensionMetaData;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
 
@@ -216,13 +216,13 @@ public class PrinterExcel implements Printer {
     }
 
     @Override
-    public void printDimensionLineValue(String cellProperty, int colspan, int rowspan, Object valor, DimensaoMetaData metaData) {
+    public void printDimensionLineValue(String cellProperty, int colspan, int rowspan, Object valor, DimensionMetaData metaData) {
 
         String mascara = "";
-        mascara = (metaData.getCampoMetadadata() == null || metaData.getCampoMetadadata().getFieldMask().isEmpty() || metaData.getCampoMetadadata().getFieldMask().get(0)
-                .getMascara().isEmpty() ? "dd/mm/yyyy" : metaData.getCampoMetadadata().getFieldMask().get(0).getMascara()).replace("'", "");
+        mascara = (metaData.getMetadataField() == null || metaData.getMetadataField().getFieldMask().isEmpty() || metaData.getMetadataField().getFieldMask().get(0)
+                .getMascara().isEmpty() ? "dd/mm/yyyy" : metaData.getMetadataField().getFieldMask().get(0).getMascara()).replace("'", "");
 
-        if (metaData.getTipo() instanceof TipoData) {
+        if (metaData.getDataType() instanceof TipoData) {
             String nomeEstiloData = cellProperty + "_Data";
             HSSFCellStyle estilo = this.estilosExcel.get(nomeEstiloData);
             if (estilo == null) {
@@ -267,19 +267,19 @@ public class PrinterExcel implements Printer {
     }
 
     @Override
-    public void printDimensionLineHeader(DimensaoMetaData dimensaoMetaData) {
+    public void printDimensionLineHeader(DimensionMetaData dimensionMetaData) {
         int decremento = 1;
-        if (!dimensaoMetaData.hasSequenceFields()) {
-            this.printColumn(this.estilosExcel.get(CellProperty.CELL_PROPERTY_DIMENSION_HEADER), dimensaoMetaData.getTitle());
+        if (!dimensionMetaData.hasSequenceFields()) {
+            this.printColumn(this.estilosExcel.get(CellProperty.CELL_PROPERTY_DIMENSION_HEADER), dimensionMetaData.getTitle());
         } else {
             decremento++;
-            this.printColumn(this.estilosExcel.get(CellProperty.CELL_PROPERTY_DIMENSION_HEADER), dimensaoMetaData.getTitle(), 2, 1);
+            this.printColumn(this.estilosExcel.get(CellProperty.CELL_PROPERTY_DIMENSION_HEADER), dimensionMetaData.getTitle(), 2, 1);
         }
-        this.indicesCelulaDimensoesLinha.put(dimensaoMetaData.getTitle(), (short) (this.proximoIndiceCelula - decremento));
+        this.indicesCelulaDimensoesLinha.put(dimensionMetaData.getTitle(), (short) (this.proximoIndiceCelula - decremento));
     }
 
-    public void printTotalPartialHeader(String cellProperty, String value, int colspan, int rowspan, DimensaoMetaData dimensaoMetaData) {
-        this.printColumn(this.estilosExcel.get(cellProperty), value, colspan, rowspan, this.indicesCelulaDimensoesLinha.get(dimensaoMetaData.getTitle()));
+    public void printTotalPartialHeader(String cellProperty, String value, int colspan, int rowspan, DimensionMetaData dimensionMetaData) {
+        this.printColumn(this.estilosExcel.get(cellProperty), value, colspan, rowspan, this.indicesCelulaDimensoesLinha.get(dimensionMetaData.getTitle()));
     }
 
     private void imprimeValorDecimalPercentual(String propriedadeCelula, Double valor, int nCasasDecimais) {
@@ -392,8 +392,8 @@ public class PrinterExcel implements Printer {
     }
 
     @Override
-    public void printSequenceField(DimensaoMetaData dimensaoMetaData, String sequence, int colspan, int rowspan) {
-        this.printColumn(this.estilosExcel.get(CellProperty.CELL_PROPERTY_SEQUENCE), sequence, colspan, rowspan, (short) (this.indicesCelulaDimensoesLinha.get(dimensaoMetaData.getTitle())));
+    public void printSequenceField(DimensionMetaData dimensionMetaData, String sequence, int colspan, int rowspan) {
+        this.printColumn(this.estilosExcel.get(CellProperty.CELL_PROPERTY_SEQUENCE), sequence, colspan, rowspan, (short) (this.indicesCelulaDimensoesLinha.get(dimensionMetaData.getTitle())));
         this.auxCampoSequencia++;
     }
 

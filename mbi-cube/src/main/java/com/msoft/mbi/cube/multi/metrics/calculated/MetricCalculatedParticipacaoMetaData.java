@@ -11,7 +11,7 @@ import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLTextoColuna;
 import com.msoft.mbi.cube.multi.renderers.linkHTML.MascaraLinkHTMLTextoRenderer;
 
-public abstract class MetricCalculatedParticipacaoMetaData extends MetricCalculatedMetaData implements MetricaCalculadaFuncaoMetaData {
+public abstract class MetricCalculatedParticipacaoMetaData extends MetricCalculatedMetaData implements MetricCalculatedFunctionMetaData {
 
     public static final String COLUNA_AV_VARIABLE = "colunaAV";
     public static final String VALOR_NIVEL_ACIMA_VARIABLE = "valorAcima";
@@ -49,19 +49,19 @@ public abstract class MetricCalculatedParticipacaoMetaData extends MetricCalcula
         return metricaCalculadaParticipacao;
     }
 
-    public AnaliseParticipacaoTipo getAnaliseParticipacaoTipo() {
+    public AnaliseParticipacaoTipo getParticipationAnalysisType() {
         return analiseVertical;
     }
 
     @Override
-    public String getTituloCampoReferencia() {
+    public String getReferenceFieldTitle() {
         return this.tituloColunaReferencia;
     }
 
     @Override
     public Calculo createCalculo() {
         Calculo calculo = super.createCalculo();
-        calculo.putVariable(COLUNA_AV_VARIABLE, this.getTituloCampoReferencia());
+        calculo.putVariable(COLUNA_AV_VARIABLE, this.getReferenceFieldTitle());
         return calculo;
     }
 

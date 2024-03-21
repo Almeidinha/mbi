@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.msoft.mbi.cube.multi.column.TextTypeRoot;
-import com.msoft.mbi.cube.multi.dimension.DimensaoMetaData;
+import com.msoft.mbi.cube.multi.dimension.DimensionMetaData;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-public class CubeMetaData extends DimensaoMetaData {
+public class CubeMetaData extends DimensionMetaData {
 
     private final List<MetaDataField> dimensionFields;
     private final List<MetaDataField> metricFields;

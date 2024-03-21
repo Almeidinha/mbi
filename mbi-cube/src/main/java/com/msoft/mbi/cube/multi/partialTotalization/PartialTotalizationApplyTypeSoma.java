@@ -37,7 +37,7 @@ public class PartialTotalizationApplyTypeSoma implements PartialTotalizationAppl
             } else {
                 Dimension dimensionLinha;
                 Dimension dimensionColuna;
-                if (dimensionReferenceAxis.getMetaData().isLinha()) {
+                if (dimensionReferenceAxis.getMetaData().isLine()) {
                     dimensionLinha = dimensionReferenceAxis;
                     dimensionColuna = dimension;
                 } else {

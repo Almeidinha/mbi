@@ -5,7 +5,7 @@ import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.metrics.Metric;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 
-public class CalculoSumarizacaoTipoLinhaMetricaAtual implements CalculoSumarizacaoTipo {
+public class CalculoSumarizacaoTipoLinhaMetricaAtual implements CalculationSummaryType {
 
     private static CalculoSumarizacaoTipoLinhaMetricaAtual calculo = new CalculoSumarizacaoTipoLinhaMetricaAtual();
 
@@ -18,15 +18,15 @@ public class CalculoSumarizacaoTipoLinhaMetricaAtual implements CalculoSumarizac
     }
 
     @Override
-    public Double calcula(Dimension dimensionEixoReferencia, Dimension dimensionLinhaAnterior, Dimension dimension, MetricMetaData metaData, String tipoLinha) {
-        MetricLine metricLine = dimensionEixoReferencia.getCube().getMetricsMap().getMetricLine(dimensionEixoReferencia, dimension);
+    public Double calculate(Dimension dimensionReferenceAxis, Dimension previousDimensionLine, Dimension dimension, MetricMetaData metaData, String lineType) {
+        MetricLine metricLine = dimensionReferenceAxis.getCube().getMetricsMap().getMetricLine(dimensionReferenceAxis, dimension);
 
         MetricLine metricLineAnterior = null;
-        if (dimensionLinhaAnterior != null) {
-            metricLineAnterior = dimensionEixoReferencia.getCube().getMetricsMap().getMetricLine(dimensionLinhaAnterior, dimension);
+        if (previousDimensionLine != null) {
+            metricLineAnterior = dimensionReferenceAxis.getCube().getMetricsMap().getMetricLine(previousDimensionLine, dimension);
         }
         Metric expressao = metricLine.getMetrics().get(metaData.getTitle());
-        Double retorno = expressao.getValor(dimensionEixoReferencia.getCube().getMetricsMap(), metricLine, metricLineAnterior);
+        Double retorno = expressao.getValor(dimensionReferenceAxis.getCube().getMetricsMap(), metricLine, metricLineAnterior);
         return retorno == null ? 0d : retorno;
     }
 }

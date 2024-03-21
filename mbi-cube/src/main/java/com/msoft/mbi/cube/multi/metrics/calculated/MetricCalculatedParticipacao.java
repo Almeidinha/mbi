@@ -13,7 +13,7 @@ public class MetricCalculatedParticipacao extends MetricCalculated {
 
 
     private Dimension getDimensaoAcimaParticipacao(Dimension dimensionAtual, MetricCalculatedParticipacaoMetaData metaData) {
-        return metaData.getAnaliseParticipacaoTipo().getDimensaoNivelAcima(dimensionAtual);
+        return metaData.getParticipationAnalysisType().getDimensaoNivelAcima(dimensionAtual);
     }
 
     @Override
@@ -30,9 +30,9 @@ public class MetricCalculatedParticipacao extends MetricCalculated {
             if (valor != null) {
                 calculo.setValorVariable(MetricCalculatedParticipacaoMetaData.COLUNA_AV_VARIABLE, valor);
 
-                Dimension dimensionPai = this.getDimensaoAcimaParticipacao(metaData.getDimensaoEixoReferencia(metricLine), metaData);
+                Dimension dimensionPai = this.getDimensaoAcimaParticipacao(metaData.DimensionReferenceAxis(metricLine), metaData);
 
-                Double valorAcima = expressao.getMetaData().calculaValorTotalParcial(dimensionPai, metaData.getDimensaoOutra(metricLine));
+                Double valorAcima = expressao.getMetaData().calculaValorTotalParcial(dimensionPai, metaData.getDimensionOther(metricLine));
                 if (valorAcima != null && valorAcima != 0) {
 
                     calculo.setValorVariable(MetricCalculatedParticipacaoMetaData.VALOR_NIVEL_ACIMA_VARIABLE, valorAcima);

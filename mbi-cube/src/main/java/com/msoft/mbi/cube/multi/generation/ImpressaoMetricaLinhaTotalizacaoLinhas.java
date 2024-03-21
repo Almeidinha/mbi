@@ -8,7 +8,7 @@ import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditionsMetrica;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 
-public class ImpressaoMetricaLinhaTotalizacaoLinhas extends ImpressaoMetricaLinha {
+public class ImpressaoMetricaLinhaTotalizacaoLinhas extends MetricLinePrinter {
 
     private boolean aplicarAlertasCelulaMetrica = true;
 
@@ -18,21 +18,21 @@ public class ImpressaoMetricaLinhaTotalizacaoLinhas extends ImpressaoMetricaLinh
     }
 
     @Override
-    public void imprimeValoresMetrica(Dimension dimensionLinha, Dimension dimensionLinhaAnterior, Dimension dimensionColuna, String propriedadeCelula, Printer printer, Cube cube, String tipoLinha) {
-        for (MetricMetaData metaData : this.metricas) {
+    public void printMetricValues(Dimension dimensionLine, Dimension previousDimensionLine, Dimension dimensionColumn, String cellProperty, Printer printer, Cube cube, String lineType) {
+        for (MetricMetaData metaData : this.metricMetaData) {
             if (metaData.isTotalLines()) {
-                this.imprimeValorMetrica(metaData, propriedadeCelula, dimensionLinha, dimensionLinhaAnterior, dimensionColuna, printer, cube, tipoLinha);
+                this.printMetricValue(metaData, cellProperty, dimensionLine, previousDimensionLine, dimensionColumn, printer, cube, lineType);
             } else {
-                printer.printColumn(propriedadeCelula, printer.getEmptyValue());
+                printer.printColumn(cellProperty, printer.getEmptyValue());
             }
         }
     }
 
     @Override
-    protected List<ColorAlertConditionsMetrica> getAlertasCoresMetrica(MetricMetaData metaData) {
+    protected List<ColorAlertConditionsMetrica> getMetricColorAlerts(MetricMetaData metaData) {
         List<ColorAlertConditionsMetrica> retorno = new ArrayList<>();
         if (this.aplicarAlertasCelulaMetrica) {
-            retorno = super.getAlertasCoresMetrica(metaData);
+            retorno = super.getMetricColorAlerts(metaData);
         }
         return retorno;
     }

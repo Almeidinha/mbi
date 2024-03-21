@@ -7,16 +7,16 @@ import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 
-public class ImpressaoMetricaLinhaAtual extends ImpressaoMetricaLinha {
+public class ImpressaoMetricaLinhaAtual extends MetricLinePrinter {
 
     public ImpressaoMetricaLinhaAtual(List<MetricMetaData> metricas) {
         super(metricas, CalculoSumarizacaoTipoLinhaMetricaAtual.getInstance(), ColorAlertMetadata.NO_FUNCTION);
     }
 
     @Override
-    public void imprimeValoresMetrica(Dimension dimensionLinha, Dimension dimensionLinhaAnterior, Dimension dimensionColuna, String propriedadeCelula, Printer printer, Cube cube, String tipoLinha) {
-        for (MetricMetaData metaData : this.metricas) {
-            this.imprimeValorMetrica(metaData, propriedadeCelula, dimensionLinha, dimensionLinhaAnterior, dimensionColuna, printer, cube, tipoLinha);
+    public void printMetricValues(Dimension dimensionLine, Dimension previousDimensionLine, Dimension dimensionColumn, String cellProperty, Printer printer, Cube cube, String lineType) {
+        for (MetricMetaData metaData : this.metricMetaData) {
+            this.printMetricValue(metaData, cellProperty, dimensionLine, previousDimensionLine, dimensionColumn, printer, cube, lineType);
         }
     }
 

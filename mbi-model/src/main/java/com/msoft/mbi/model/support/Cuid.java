@@ -13,7 +13,7 @@ public class Cuid {
 
     private static final String FINGERPRINT;
 
-    private static Pattern PATTERN = Pattern.compile("[^A-Za-z0-9]");
+    private static final Pattern PATTERN = Pattern.compile("[^A-Za-z0-9]");
 
     static {
         FINGERPRINT = getFingerprint();

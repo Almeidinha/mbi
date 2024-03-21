@@ -6,7 +6,7 @@ import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.dimension.DimensionNullColumn;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 
-public class CalculoSumarizacaoTipoSomaTodasMetricas implements CalculoSumarizacaoTipo {
+public class CalculoSumarizacaoTipoSomaTodasMetricas implements CalculationSummaryType {
 
     private static CalculoSumarizacaoTipoSomaTodasMetricas calculo;
 
@@ -22,24 +22,24 @@ public class CalculoSumarizacaoTipoSomaTodasMetricas implements CalculoSumarizac
     }
 
     @Override
-    public Double calcula(Dimension dimensionEixoReferencia, Dimension dimensionLinhaAnterior, Dimension dimension, MetricMetaData metaData, String tipoLinha) {
+    public Double calculate(Dimension dimensionReferenceAxis, Dimension previousDimensionLine, Dimension dimension, MetricMetaData metaData, String lineType) {
         Double valorImprimir = Double.valueOf(0);
         DimensionNullColumn dimensaoColunaNula = new DimensionNullColumn(dimension.getCube());
         int qtdDimensoesLin = 0;
 
         for (MetricMetaData metaDataAux : dimension.getCube().getMetricsTotalHorizontal()) {
-            Double valor = metaDataAux.calculaValorTotalParcial(dimensionEixoReferencia, dimensaoColunaNula);
+            Double valor = metaDataAux.calculaValorTotalParcial(dimensionReferenceAxis, dimensaoColunaNula);
             valorImprimir += (valor != null ? valor : 0);
         }
 
-        if (tipoLinha.equals(CalculoSumarizacaoTipo.MEDIA)) {
-            if (dimensionEixoReferencia.toString().lastIndexOf("[") == 6) {
-                Iterator<Dimension> it = dimensionEixoReferencia.getCube().getDimensionsLastLevelLines().iterator();
+        if (lineType.equals(CalculationSummaryType.MEDIA)) {
+            if (dimensionReferenceAxis.toString().lastIndexOf("[") == 6) {
+                Iterator<Dimension> it = dimensionReferenceAxis.getCube().getDimensionsLastLevelLines().iterator();
 
                 while (it.hasNext()) {
                     Dimension dim = it.next();
 
-                    if (dim.toString().contains(dimensionEixoReferencia.toString())) {
+                    if (dim.toString().contains(dimensionReferenceAxis.toString())) {
                         qtdDimensoesLin++;
                     }
                 }

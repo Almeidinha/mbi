@@ -13,7 +13,7 @@ public class DimensionLineOutros extends DimensionLine {
 
     public final static String VALOR_OUTROS = "OUTROS";
 
-    public DimensionLineOutros(Dimension pai, DimensaoMetaData metaData) {
+    public DimensionLineOutros(Dimension pai, DimensionMetaData metaData) {
         super(pai, metaData);
     }
 
@@ -29,7 +29,7 @@ public class DimensionLineOutros extends DimensionLine {
 
         this.cube.getMetricsMap().accumulateMetricLineOthers(dimensionLinhaRemover, dimensionLinhaOutros);
         Iterator<Dimension> iDimensoesColuna = dimensionLinhaRemover.getDimensionsColumn().values().iterator();
-        this.processarColunasOutros(dimensionLinhaRemover, dimensionLinhaOutros, iDimensoesColuna, dimensionLinhaOutros, this.metaData.getCubo());
+        this.processarColunasOutros(dimensionLinhaRemover, dimensionLinhaOutros, iDimensoesColuna, dimensionLinhaOutros, this.metaData.getCube());
     }
 
     private void processarColunasOutros(Dimension dimensionLinhaRemover, Dimension dimensionLinhaOutros, Iterator<Dimension> iDimensoesColuna,
@@ -52,8 +52,8 @@ public class DimensionLineOutros extends DimensionLine {
 
     @Override
     public int getColspanImpressaoLinha() {
-        DimensaoMetaData dimensaoRankeada = ((DimensaoOutrosMetaData) this.getMetaData()).getMetaDataDimensaoRanking();
-        int niveisAbaixo = dimensaoRankeada.getQtdNiveisAbaixoComSequencia();
+        DimensionMetaData dimensaoRankeada = ((DimensionMetaDataOthers) this.getMetaData()).getDimensionMetaDataRanking();
+        int niveisAbaixo = dimensaoRankeada.getLowerLevelSequenceCount();
         int colspan = niveisAbaixo + 1;
         return colspan;
     }

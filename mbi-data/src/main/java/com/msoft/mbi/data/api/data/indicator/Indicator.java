@@ -491,7 +491,7 @@ public class Indicator {
 
         HtmlHelper.buildStringTitleAndDrillUp(out, montaSemLink, tabelaDrillUp, this.name);
 
-        this.cubeTable.processar(new PrinterHTML(out, (!montaSemLink)));
+        this.cubeTable.process(new PrinterHTML(out, (!montaSemLink)));
         return out.toString();
 
     }
@@ -513,7 +513,7 @@ public class Indicator {
 
         long startTime = System.nanoTime();
 
-        this.cubeTable.processar(jsonPrinter);
+        this.cubeTable.process(jsonPrinter);
 
         long elapsedTime = System.nanoTime() - startTime;
         System.out.println("Total execution time to cubeTable.processar in millis: " + elapsedTime/1000000);

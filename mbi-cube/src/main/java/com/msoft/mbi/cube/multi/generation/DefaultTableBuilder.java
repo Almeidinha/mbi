@@ -10,7 +10,7 @@ import com.msoft.mbi.cube.multi.column.TipoData;
 import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditions;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.dimension.DimensionNullColumn;
-import com.msoft.mbi.cube.multi.dimension.DimensaoMetaData;
+import com.msoft.mbi.cube.multi.dimension.DimensionMetaData;
 import com.msoft.mbi.cube.multi.metrics.Metric;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
@@ -31,7 +31,7 @@ public class DefaultTableBuilder extends tableGenerator {
         this.hasSequence = this.cube.getColumnsViewed().get(0).hasSequenceFields();
     }
 
-    public void processar(Printer iPrinter) {
+    public void process(Printer iPrinter) {
         this.printer = iPrinter;
         this.createDefaultStyles();
         this.printer.startPrinting();
@@ -130,34 +130,33 @@ public class DefaultTableBuilder extends tableGenerator {
         String mask;
 
         if (this.printer instanceof PrinterExcel) {
-            for (DimensaoMetaData metaData : this.cube.getHierarchyLine()) {
-                if (metaData.getTipo() instanceof TipoData) {
+            for (DimensionMetaData metaData : this.cube.getHierarchyLine()) {
+                if (metaData.getDataType() instanceof TipoData) {
 
-                    mask = metaData.getCampoMetadadata().getFieldMask().get(0).getMascara().replace("'", "");
+                    mask = metaData.getMetadataField().getFieldMask().get(0).getMascara().replace("'", "");
 
-                    CellProperty cellPropertyDataMetrica1 = new CellProperty();
-                    cellPropertyDataMetrica1.setAlignment(CellProperty.ALIGNMENT_RIGHT);
-                    cellPropertyDataMetrica1.setFontColor("000080");
-                    cellPropertyDataMetrica1.setBackGroundColor("D7E3F7");
-                    cellPropertyDataMetrica1.setFontName("Verdana");
-                    cellPropertyDataMetrica1.setFontSize(10);
-                    //propriedadeCelulaDataMetrica1.addOutroAtributo("white-space", "nowrap");
-                    cellPropertyDataMetrica1.setBorderColor("3377CC");
-                    cellPropertyDataMetrica1.setSpecificBorder(true);
-                    cellPropertyDataMetrica1.setDateMask(mask);
-                    this.printer.addStyle(cellPropertyDataMetrica1, metaData.getTitle() + "1");
+                    this.printer.addStyle(CellProperty.builder()
+                            .alignment(CellProperty.ALIGNMENT_RIGHT)
+                            .fontColor("000080")
+                            .backGroundColor("D7E3F7")
+                            .fontName("Verdana")
+                            .fontSize(10)
+                            .borderColor("3377CC")
+                            .specificBorder(true)
+                            .dateMask(mask)
+                            .build(), metaData.getTitle() + "1");
 
-                    CellProperty cellPropertyDataMetrica2 = new CellProperty();
-                    cellPropertyDataMetrica2.setAlignment(CellProperty.ALIGNMENT_RIGHT);
-                    cellPropertyDataMetrica2.setFontColor("000080");
-                    cellPropertyDataMetrica2.setBackGroundColor("FFFFFF");
-                    cellPropertyDataMetrica2.setFontName("Verdana");
-                    cellPropertyDataMetrica2.setFontSize(10);
-                    //propriedadeCelulaDataMetrica2.addOutroAtributo("white-space", "nowrap");
-                    cellPropertyDataMetrica2.setBorderColor("3377CC");
-                    cellPropertyDataMetrica2.setDateMask(mask);
-                    cellPropertyDataMetrica2.setSpecificBorder(true);
-                    this.printer.addStyle(cellPropertyDataMetrica2, metaData.getTitle() + "2");
+
+                    this.printer.addStyle(CellProperty.builder()
+                            .alignment(CellProperty.ALIGNMENT_RIGHT)
+                            .fontColor("000080")
+                            .backGroundColor("FFFFFF")
+                            .fontName("Verdana")
+                            .fontSize(10)
+                            .borderColor("3377CC")
+                            .specificBorder(true)
+                            .dateMask(mask)
+                            .build(), metaData.getTitle() + "2");
 
                     this.currentLineCellProperties.get(0).put(metaData.getTitle(), metaData.getTitle() + "1");
                     this.currentLineCellProperties.get(1).put(metaData.getTitle(), metaData.getTitle() + "2");
@@ -170,8 +169,8 @@ public class DefaultTableBuilder extends tableGenerator {
         Map<String, String> firstProperties = new HashMap<>();
         Map<String, String> secondProperties = new HashMap<>();
 
-        for (DimensaoMetaData metaData : this.cube.getHierarchyLine()) {
-            if (metaData.getTipo() instanceof TipoData) {
+        for (DimensionMetaData metaData : this.cube.getHierarchyLine()) {
+            if (metaData.getDataType() instanceof TipoData) {
                 firstProperties.put(metaData.getTitle(), CellProperty.CELL_PROPERTY_METRIC_DATA_ONE);
                 secondProperties.put(metaData.getTitle(), CellProperty.CELL_PROPERTY_METRIC_DATA_TWO);
             } else {
@@ -216,7 +215,7 @@ public class DefaultTableBuilder extends tableGenerator {
 
     private void divesLineLevel(Dimension dimensionLine) {
         this.openLine();
-        DimensaoMetaData metaData = dimensionLine.getMetaData();
+        DimensionMetaData metaData = dimensionLine.getMetaData();
         Dimension dimension = dimensionLine;
         while (metaData != null) {
             currentLineValues.put(metaData.getTitle(), dimension.getVisualizationValue());

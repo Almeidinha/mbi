@@ -2,7 +2,7 @@ package com.msoft.mbi.cube.multi.colorAlertCondition;
 
 import com.msoft.mbi.cube.multi.Cube;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
-import com.msoft.mbi.cube.multi.generation.CalculoSumarizacaoTipo;
+import com.msoft.mbi.cube.multi.generation.CalculationSummaryType;
 import com.msoft.mbi.cube.multi.generation.CalculoSumarizacaoTipoLinhaMetricaAtual;
 import com.msoft.mbi.cube.multi.generation.CalculoSumarizacaoTipoMediaColuna;
 import com.msoft.mbi.cube.multi.generation.CalculoSumarizacaoTipoSomaTodasMetricas;
@@ -12,7 +12,7 @@ import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 public abstract class ColorAlertConditionsMetrica extends ColorAlertConditions {
 
     private MetricMetaData metaData;
-    private CalculoSumarizacaoTipo calculoTipo;
+    private CalculationSummaryType calculoTipo;
 
     public ColorAlertConditionsMetrica(int sequencia, ColorAlertProperties propriedadeAlerta, String funcao, int acao, String operador,
                                        MetricMetaData metaData) {
@@ -25,7 +25,7 @@ public abstract class ColorAlertConditionsMetrica extends ColorAlertConditions {
         return metaData;
     }
 
-    protected CalculoSumarizacaoTipo getCalculoTipo(String funcao) {
+    protected CalculationSummaryType getCalculoTipo(String funcao) {
         if (MetricMetaData.TOTAL_AH.equals(funcao) || MetricMetaData.TOTAL_GENERAL.equals(funcao)) {
             return CalculoSumarizacaoTipoSomaTodasMetricas.getInstance();
         } else if (MetricMetaData.MEDIA_AH.equals(funcao)) {
@@ -39,7 +39,7 @@ public abstract class ColorAlertConditionsMetrica extends ColorAlertConditions {
     }
 
     protected Double calculaValor(Dimension dimensionEixoReferencia, Dimension dimension, MetricMetaData metaData) {
-        return this.calculoTipo.calcula(dimensionEixoReferencia, null, dimension, metaData, CalculoSumarizacaoTipo.NORMAL);
+        return this.calculoTipo.calculate(dimensionEixoReferencia, null, dimension, metaData, CalculationSummaryType.NORMAL);
     }
 
     public abstract boolean testaCondicao(Dimension dimensionLinha, Dimension dimensionColuna, Cube cube);

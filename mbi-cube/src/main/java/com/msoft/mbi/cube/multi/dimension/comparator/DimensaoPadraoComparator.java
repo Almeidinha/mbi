@@ -22,6 +22,6 @@ public class DimensaoPadraoComparator extends DimensaoComparator {
     public int compare(Comparable<Dimension> o1, Comparable<Dimension> o2) {
         Dimension dimension1 = (Dimension) o1;
         Dimension dimension2 = (Dimension) o2;
-        return dimension1.getOrderValue().compareTo(dimension2.getOrderValue()) * dimension1.getMetaData().getTipoOrdenacao();
+        return dimension1.getOrderValue().compareTo(dimension2.getOrderValue()) * dimension1.getMetaData().getOrderingType();
     }
 }

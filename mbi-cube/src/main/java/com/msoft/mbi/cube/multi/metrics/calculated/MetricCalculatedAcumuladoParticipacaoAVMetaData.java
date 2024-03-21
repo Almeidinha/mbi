@@ -19,17 +19,17 @@ public class MetricCalculatedAcumuladoParticipacaoAVMetaData extends MetricCalcu
     }
 
     @Override
-    public Dimension getDimensaoEixoReferencia(MetricLine metricLine) {
+    public Dimension DimensionReferenceAxis(MetricLine metricLine) {
         return metricLine.getDimensionLine();
     }
 
     @Override
-    public Dimension getDimensaoOutra(MetricLine metricLine) {
+    public Dimension getDimensionOther(MetricLine metricLine) {
         return metricLine.getDimensionColumn();
     }
 
     @Override
-    public String getFuncaoCampo() {
+    public String getFieldFunction() {
         return MetricCalculatedAcumuladoParticipacaoAVMetaData.PARTICIPACAO_ACUMULADA_AV;
     }
 }

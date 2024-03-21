@@ -8,28 +8,28 @@ import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditionsMetrica;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 
-public class ImpressaoMetricaLinhaTotalizacaoColunas extends ImpressaoMetricaLinha {
+public class ImpressaoMetricaLinhaTotalizacaoColunas extends MetricLinePrinter {
 
     private boolean aplicarAlertasCelulaMetrica = true;
 
-    public ImpressaoMetricaLinhaTotalizacaoColunas(List<MetricMetaData> metricas, CalculoSumarizacaoTipo tipoCalculo, String alertaCorCelulaFuncao, List<String> funcoesAtuaisAplicar) {
+    public ImpressaoMetricaLinhaTotalizacaoColunas(List<MetricMetaData> metricas, CalculationSummaryType tipoCalculo, String alertaCorCelulaFuncao, List<String> funcoesAtuaisAplicar) {
         super(metricas, tipoCalculo, alertaCorCelulaFuncao);
 
         this.aplicarAlertasCelulaMetrica = funcoesAtuaisAplicar.contains(alertaCorCelulaFuncao);
     }
 
     @Override
-    public void imprimeValoresMetrica(Dimension dimensionLinha, Dimension dimensionLinhaAnterior, Dimension dimensionColuna, String propriedadeCelula, Printer printer, Cube cube, String tipoLinha) {
-        for (MetricMetaData metaData : this.metricas) {
-            this.imprimeValorMetrica(metaData, propriedadeCelula, dimensionLinha, dimensionLinhaAnterior, dimensionColuna, printer, cube, tipoLinha);
+    public void printMetricValues(Dimension dimensionLine, Dimension previousDimensionLine, Dimension dimensionColumn, String cellProperty, Printer printer, Cube cube, String lineType) {
+        for (MetricMetaData metaData : this.metricMetaData) {
+            this.printMetricValue(metaData, cellProperty, dimensionLine, previousDimensionLine, dimensionColumn, printer, cube, lineType);
         }
     }
 
     @Override
-    protected List<ColorAlertConditionsMetrica> getAlertasCoresMetrica(MetricMetaData metaData) {
+    protected List<ColorAlertConditionsMetrica> getMetricColorAlerts(MetricMetaData metaData) {
         List<ColorAlertConditionsMetrica> retorno = new ArrayList<>();
         if (this.aplicarAlertasCelulaMetrica) {
-            retorno = super.getAlertasCoresMetrica(metaData);
+            retorno = super.getMetricColorAlerts(metaData);
         }
         return retorno;
     }

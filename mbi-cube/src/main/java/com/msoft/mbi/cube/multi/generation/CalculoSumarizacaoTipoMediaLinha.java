@@ -3,7 +3,7 @@ package com.msoft.mbi.cube.multi.generation;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 
-public class CalculoSumarizacaoTipoMediaLinha implements CalculoSumarizacaoTipo {
+public class CalculoSumarizacaoTipoMediaLinha implements CalculationSummaryType {
 
     private static CalculoSumarizacaoTipoMediaLinha calculo;
 
@@ -19,9 +19,9 @@ public class CalculoSumarizacaoTipoMediaLinha implements CalculoSumarizacaoTipo 
     }
 
     @Override
-    public Double calcula(Dimension dimensionEixoReferencia, Dimension dimensionLinhaAnterior, Dimension dimension, MetricMetaData metaData, String tipoLinha) {
-        Double soma = metaData.calculaValorTotalParcial(dimensionEixoReferencia, dimension);
-        int qtdDimensoes = dimensionEixoReferencia.getTotalSize();
+    public Double calculate(Dimension dimensionReferenceAxis, Dimension previousDimensionLine, Dimension dimension, MetricMetaData metaData, String lineType) {
+        Double soma = metaData.calculaValorTotalParcial(dimensionReferenceAxis, dimension);
+        int qtdDimensoes = dimensionReferenceAxis.getTotalSize();
         return soma / (qtdDimensoes != 0 ? qtdDimensoes : 1);
     }
 

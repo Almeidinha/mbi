@@ -6,21 +6,21 @@ import com.msoft.mbi.cube.multi.Cube;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 
-public class ImpressaoMetricaLinhaTotalizacaoParcialLinhas extends ImpressaoMetricaLinha {
+public class ImpressaoMetricaLinhaTotalizacaoParcialLinhas extends MetricLinePrinter {
 
     public ImpressaoMetricaLinhaTotalizacaoParcialLinhas(List<MetricMetaData> metricas) {
         super(metricas, CalculoSumarizacaoTipoSomatorio.getInstance(), MetricMetaData.TOTAL_PARTIAL);
     }
 
     @Override
-    public void imprimeValoresMetrica(Dimension dimensionLinha, Dimension dimensionLinhaAnterior, Dimension dimensionColuna, String propriedadeCelula, Printer printer, Cube cube, String tipoLinha) {
-        for (MetricMetaData metaData : this.metricas) {
+    public void printMetricValues(Dimension dimensionLine, Dimension previousDimensionLine, Dimension dimensionColumn, String cellProperty, Printer printer, Cube cube, String lineType) {
+        for (MetricMetaData metaData : this.metricMetaData) {
             if (metaData.isTotalPartialLines()) {
-                this.imprimeValorMetrica(metaData, propriedadeCelula, dimensionLinha, null, dimensionColuna, printer, cube, tipoLinha);
+                this.printMetricValue(metaData, cellProperty, dimensionLine, null, dimensionColumn, printer, cube, lineType);
             } else if (metaData.isPartialTotalExpression()) {
-                this.imprimeValorMetrica(metaData, propriedadeCelula, dimensionLinha, null, dimensionColuna, printer, cube, CalculoSumarizacaoTipoExpressao.getInstance(), tipoLinha);
+                this.printMetricValue(metaData, cellProperty, dimensionLine, null, dimensionColumn, printer, cube, CalculoSumarizacaoTipoExpressao.getInstance(), lineType);
             } else {
-                printer.printColumn(propriedadeCelula, printer.getNullValue());
+                printer.printColumn(cellProperty, printer.getNullValue());
             }
         }
     }

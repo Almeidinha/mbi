@@ -27,7 +27,7 @@ public class PartialTotalizationApplyTypeExpressao implements PartialTotalizatio
 
     @Override
     public Double calculateValue(Dimension dimensionReferenceAxis, Dimension dimension, MetricMetaData metricMetaData, MetricsMap metricsMap) {
-        if (!dimensionReferenceAxis.getMetaData().isLinha()) {
+        if (!dimensionReferenceAxis.getMetaData().isLine()) {
             Dimension dimAux = dimensionReferenceAxis;
             dimensionReferenceAxis = dimension;
             dimension = dimAux;

@@ -8,7 +8,7 @@ import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditionsMetrica;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 
-public class ImpressaoMetricaLinhaTotalizacaoColunasGeral extends ImpressaoMetricaLinha {
+public class ImpressaoMetricaLinhaTotalizacaoColunasGeral extends MetricLinePrinter {
 
     private static boolean aplicarAlertasCelulaMetrica = true;
 
@@ -32,18 +32,18 @@ public class ImpressaoMetricaLinhaTotalizacaoColunasGeral extends ImpressaoMetri
 
 
     @Override
-    public void imprimeValoresMetrica(Dimension dimensionLinha, Dimension dimensionLinhaAnterior, Dimension dimensionColuna, String propriedadeCelula, Printer printer, Cube cube, String tipoLinha) {
-        this.imprimeValorMetrica(null, propriedadeCelula, dimensionLinha, dimensionLinhaAnterior, dimensionColuna, printer, cube, tipoLinha);
+    public void printMetricValues(Dimension dimensionLine, Dimension previousDimensionLine, Dimension dimensionColumn, String cellProperty, Printer printer, Cube cube, String lineType) {
+        this.printMetricValue(null, cellProperty, dimensionLine, previousDimensionLine, dimensionColumn, printer, cube, lineType);
     }
 
     @Override
-    protected List<ColorAlertConditionsMetrica> getAlertasCoresMetrica(MetricMetaData metaData) {
+    protected List<ColorAlertConditionsMetrica> getMetricColorAlerts(MetricMetaData metaData) {
         List<ColorAlertConditionsMetrica> alertas = new ArrayList<ColorAlertConditionsMetrica>();
         if (aplicarAlertasCelulaMetrica) {
-            for (MetricMetaData metaDataAux : metricas) {
-                List<ColorAlertConditionsMetrica> alertasMetrica = metaDataAux.getColorAlertCells(this.getFuncaoAlertaCelulaMetrica());
+            for (MetricMetaData metaDataAux : metricMetaData) {
+                List<ColorAlertConditionsMetrica> alertasMetrica = metaDataAux.getColorAlertCells(this.getMetricCellAlertFunction());
                 if (alertasMetrica != null) {
-                    alertas.addAll(metaDataAux.getColorAlertCells(this.getFuncaoAlertaCelulaMetrica()));
+                    alertas.addAll(metaDataAux.getColorAlertCells(this.getMetricCellAlertFunction()));
                 }
             }
         }
@@ -51,14 +51,14 @@ public class ImpressaoMetricaLinhaTotalizacaoColunasGeral extends ImpressaoMetri
     }
 
     @Override
-    protected void imprimeValorMetrica(MetricMetaData metaData, String propriedadeAplicar, Double valor, Printer printer) {
+    protected void printMetricValue(MetricMetaData metaData, String cellProperty, Double valor, Printer printer) {
         int nCasasDecimais = this.getNCasasDecimais();
-        printer.printNumberValue(propriedadeAplicar, valor, nCasasDecimais);
+        printer.printNumberValue(cellProperty, valor, nCasasDecimais);
     }
 
     private int getNCasasDecimais() {
         int nCasasDecimais = 0;
-        for (MetricMetaData metrica : this.metricas) {
+        for (MetricMetaData metrica : this.metricMetaData) {
             if (metrica.getDecimalPlacesNumber() > nCasasDecimais) {
                 nCasasDecimais = metrica.getDecimalPlacesNumber();
             }

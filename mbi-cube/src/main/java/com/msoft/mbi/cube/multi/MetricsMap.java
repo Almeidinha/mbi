@@ -14,7 +14,7 @@ import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.metrics.additive.MetricAditiva;
 import com.msoft.mbi.cube.multi.metrics.additive.MetricAdditiveMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculated;
-import com.msoft.mbi.cube.multi.metrics.calculated.MetricaCalculadaFuncaoMetaData;
+import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedFunctionMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedMetaData;
 import com.msoft.mbi.cube.multi.partialTotalization.PartialTotalizationApplyTypeSoma;
 
@@ -118,7 +118,7 @@ public class MetricsMap {
 
             metricCalculated = (MetricCalculated) mapMetrica.get(titulo);
 
-            if (!(metricaCalculadaMetaData instanceof MetricaCalculadaFuncaoMetaData)) {
+            if (!(metricaCalculadaMetaData instanceof MetricCalculatedFunctionMetaData)) {
                 MetricCalculated metricCalculatedValorAtual = metricaCalculadaMetaData.createMetrica();
                 mapActualMetrics.put(titulo, metricCalculatedValorAtual);
 
@@ -169,7 +169,7 @@ public class MetricsMap {
                 mapMetricaOutros.put(titulo, metricCalculated);
             }
 
-            if (!(metricaCalculadaMetaData instanceof MetricaCalculadaFuncaoMetaData)) {
+            if (!(metricaCalculadaMetaData instanceof MetricCalculatedFunctionMetaData)) {
                 MetricLine linha = new MetricLine(dimensionLinesOthers, this.dimensionNullColumn, mapMetricaOutros);
                 Double valor = metricCalculated.calculate(this, linha, null);
                 metricCalculated.setValue(valor);

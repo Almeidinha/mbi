@@ -9,7 +9,7 @@ import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLTextoColuna;
 import com.msoft.mbi.cube.multi.renderers.linkHTML.MascaraLinkHTMLTextoRenderer;
 
-public abstract class MetricCalculatedAcumuladoMetaData extends MetricCalculatedMetaData implements MetricaCalculadaFuncaoMetaData {
+public abstract class MetricCalculatedAcumuladoMetaData extends MetricCalculatedMetaData implements MetricCalculatedFunctionMetaData {
 
     public static final String COLUNA_AV_VARIABLE = "colunaAV";
     public static final String COLUNA_VALOR_ANTERIOR_VARIABLE = "valorAnterior";
@@ -36,12 +36,12 @@ public abstract class MetricCalculatedAcumuladoMetaData extends MetricCalculated
     }
 
     @Override
-    public String getTituloCampoReferencia() {
+    public String getReferenceFieldTitle() {
         return this.tituloColunaReferencia;
     }
 
     @Override
-    public AnaliseParticipacaoTipo getAnaliseParticipacaoTipo() {
+    public AnaliseParticipacaoTipo getParticipationAnalysisType() {
         return this.analiseParticipacaoTipo;
     }
 

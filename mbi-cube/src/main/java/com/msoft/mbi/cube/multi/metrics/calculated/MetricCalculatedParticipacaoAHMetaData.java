@@ -18,17 +18,17 @@ public class MetricCalculatedParticipacaoAHMetaData extends MetricCalculatedPart
     }
 
     @Override
-    public String getFuncaoCampo() {
+    public String getFieldFunction() {
         return MetricCalculatedParticipacaoAHMetaData.PARTICIPACAO_AH;
     }
 
     @Override
-    public Dimension getDimensaoEixoReferencia(MetricLine metricLine) {
+    public Dimension DimensionReferenceAxis(MetricLine metricLine) {
         return metricLine.getDimensionColumn();
     }
 
     @Override
-    public Dimension getDimensaoOutra(MetricLine metricLine) {
+    public Dimension getDimensionOther(MetricLine metricLine) {
         return metricLine.getDimensionLine();
     }
 

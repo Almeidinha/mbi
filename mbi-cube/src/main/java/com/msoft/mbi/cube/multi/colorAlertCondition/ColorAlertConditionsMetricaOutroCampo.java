@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.msoft.mbi.cube.multi.Cube;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
-import com.msoft.mbi.cube.multi.generation.CalculoSumarizacaoTipo;
+import com.msoft.mbi.cube.multi.generation.CalculationSummaryType;
 import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 
@@ -15,7 +15,7 @@ public class ColorAlertConditionsMetricaOutroCampo extends ColorAlertConditionsM
     private TipoComparacaoOutroCampo tipoComparacao;
     private Double valorReferencia;
     private MetricMetaData outroCampo;
-    private CalculoSumarizacaoTipo calculoOutroCampo;
+    private CalculationSummaryType calculoOutroCampo;
     private String funcaoOutroCampo;
 
     public ColorAlertConditionsMetricaOutroCampo(int sequencia, ColorAlertProperties propriedadeAlerta, String funcao, int acao, String operador,
@@ -57,7 +57,7 @@ public class ColorAlertConditionsMetricaOutroCampo extends ColorAlertConditionsM
             dimensionLinha = dimensionLinha.getParent();
         }
 
-        Double valorOutroCampo = this.calculoOutroCampo.calcula(dimensionLinha, null, dimensionColuna, this.outroCampo, CalculoSumarizacaoTipo.NORMAL);
+        Double valorOutroCampo = this.calculoOutroCampo.calculate(dimensionLinha, null, dimensionColuna, this.outroCampo, CalculationSummaryType.NORMAL);
 
         if (valorOutroCampo != null) {
             valorOutroCampo = this.tipoComparacao.getValorComparar(valorOutroCampo, this.valorReferencia);

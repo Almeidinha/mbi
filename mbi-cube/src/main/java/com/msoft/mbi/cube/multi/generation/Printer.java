@@ -1,7 +1,7 @@
 package com.msoft.mbi.cube.multi.generation;
 
 import com.msoft.mbi.cube.multi.column.ColumnMetaData;
-import com.msoft.mbi.cube.multi.dimension.DimensaoMetaData;
+import com.msoft.mbi.cube.multi.dimension.DimensionMetaData;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
 
@@ -39,10 +39,10 @@ public interface Printer {
 
     public void printColumnHeader(String cellProperty, String title);
 
-    public void printDimensionLineHeader(DimensaoMetaData dimensaoMetaData);
+    public void printDimensionLineHeader(DimensionMetaData dimensionMetaData);
 
     public void printTotalPartialHeader(String cellProperty, String value, int colspan, int rowspan,
-                                        DimensaoMetaData dimensaoMetaData);
+                                        DimensionMetaData dimensionMetaData);
 
     public void printColumnValue(String cellProperty, int colspan, int rowspan, Object valor,
                                  ColumnMetaData metaData);
@@ -50,7 +50,7 @@ public interface Printer {
     public void printColumnValue(String cellProperty, Object value, ColumnMetaData metaData);
 
     public void printDimensionLineValue(String cellProperty, int colspan, int rowspan, Object valor,
-                                        DimensaoMetaData metaData);
+                                        DimensionMetaData metaData);
 
     public void printMetricValue(String cellProperty, Double valor, MetricMetaData metaData);
 
@@ -58,7 +58,7 @@ public interface Printer {
 
     public void printSequenceField(String sequence);
 
-    public void printSequenceField(DimensaoMetaData dimensaoMetaData, String sequence, int colspan, int rowspan);
+    public void printSequenceField(DimensionMetaData dimensionMetaData, String sequence, int colspan, int rowspan);
 
     public void printPercentNumberValue(String name, Double value, int decimalNumber);
 

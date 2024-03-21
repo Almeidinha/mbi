@@ -17,7 +17,7 @@ public abstract class tableGenerator {
     protected int currentLine = 0;
     private boolean scheduled = false;
 
-    public abstract void processar(Printer iPrinter);
+    public abstract void process(Printer iPrinter);
 
     protected void createsSpecificStylesColumns() {
         List<ColumnMetaData> columns = this.cube.getColumnsViewed();

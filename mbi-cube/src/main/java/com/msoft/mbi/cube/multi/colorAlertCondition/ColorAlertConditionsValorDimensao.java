@@ -2,7 +2,7 @@ package com.msoft.mbi.cube.multi.colorAlertCondition;
 
 import java.util.List;
 
-import com.msoft.mbi.cube.multi.dimension.DimensaoMetaData;
+import com.msoft.mbi.cube.multi.dimension.DimensionMetaData;
 
 public class ColorAlertConditionsValorDimensao extends ColorAlertConditionsDimensao {
 
@@ -10,7 +10,7 @@ public class ColorAlertConditionsValorDimensao extends ColorAlertConditionsDimen
     protected List<Object> valores;
 
     public ColorAlertConditionsValorDimensao(int sequencia, ColorAlertProperties propriedadeAlerta, String funcao, int acao, String operador,
-                                             DimensaoMetaData metaData, List<Object> valores) {
+                                             DimensionMetaData metaData, List<Object> valores) {
         super(sequencia, propriedadeAlerta, funcao, acao, operador, metaData);
         this.valores = valores;
     }
