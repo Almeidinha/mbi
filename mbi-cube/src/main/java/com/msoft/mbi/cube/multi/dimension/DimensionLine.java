@@ -12,8 +12,8 @@ public class DimensionLine extends Dimension {
         this.dimensionsColumn = new Dimensions();
     }
 
-    public int getColspanImpressaoLinha() {
-        return 1;// default
+    public int getColspanLinePrint() {
+        return 1;
     }
 
     @Override
@@ -37,27 +37,33 @@ public class DimensionLine extends Dimension {
 
     @SuppressWarnings("unchecked")
     private void processValue(ResultSet resultSet) throws SQLException {
-        Comparable<String> valor = (Comparable<String>) type.getValue(resultSet, metaData.getColumn());
-        valor = (Comparable<String>) type.format(valor);
-        setVisualizationValue(valor);
-        DimensionMetaData dimensaoOrdenacao = metaData.getOrderingDimension();
-        setValue(dimensaoOrdenacao != null ? (Comparable<String>) dimensaoOrdenacao.getDataType().getValue(resultSet, dimensaoOrdenacao.getColumn()) : valor);
+        Comparable<String> rawValue = (Comparable<String>) type.getValue(resultSet, metaData.getColumn());
+        Comparable<String> formattedValue = (Comparable<String>) type.format(rawValue);
+        setVisualizationValue(formattedValue);
+
+        if (metaData.getOrderingDimension() != null) {
+            DimensionMetaData dimensionOrdering = metaData.getOrderingDimension();
+            Comparable<String> orderingValue = (Comparable<String>) dimensionOrdering.getDataType().getValue(resultSet, dimensionOrdering.getColumn());
+            setValue(orderingValue);
+        } else {
+            setValue(formattedValue);
+        }
     }
 
     @SuppressWarnings("unchecked")
     private void processDimensionOrdering(ResultSet resultSet) throws SQLException {
-        DimensionMetaData dimensaoOrdenacao = metaData.getOrderingDimension();
-        if (dimensaoOrdenacao == null) return;
-        Comparable<String> valorOrdenacao = (Comparable<String>) dimensaoOrdenacao.getDataType().getValue(resultSet, dimensaoOrdenacao.getColumn());
-        setValue(valorOrdenacao);
+        DimensionMetaData dimensionOrdering = metaData.getOrderingDimension();
+        if (dimensionOrdering == null) return;
+        Comparable<String> orderingValue = (Comparable<String>) dimensionOrdering.getDataType().getValue(resultSet, dimensionOrdering.getColumn());
+        setValue(orderingValue);
     }
 
     private void processDimensionLine() {
-        Dimension dimensionLinha = parent.getDimensionsLine().computeIfAbsent(this, k -> {
-            int indiceDimensao = cube.getDimensionsPool().indexOf(this);
-            return (indiceDimensao != -1) ? cube.getDimensionsPool().get(indiceDimensao) : this;
+        Dimension dimensionLine = parent.getDimensionsLine().computeIfAbsent(this, k -> {
+            int dimensionIndex = cube.getDimensionsPool().indexOf(this);
+            return (dimensionIndex != -1) ? cube.getDimensionsPool().get(dimensionIndex) : this;
         });
-        parent.addDimensionLine(dimensionLinha);
+        parent.addDimensionLine(dimensionLine);
     }
 
     private void processDimensionChildren(ResultSet resultSet) throws SQLException {

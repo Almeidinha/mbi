@@ -26,16 +26,15 @@ import lombok.Setter;
 @Setter
 public abstract class Dimension implements Comparable<Dimension> {
 
-    public static final String FECHA = "]";
-    public static final String ABRE = "[";
-    public static final String BRANCO = "";
+    public static final String CLOSE = "]";
+    public static final String OPEN = "[";
+    public static final String EMPTY = "";
     @Setter(AccessLevel.NONE)
     protected Dimension parent = null;
     @Setter(AccessLevel.NONE)
     protected DimensionMetaData metaData;
     @Setter(AccessLevel.NONE)
     protected Cube cube = null;
-    @Getter
     private Comparable<String> value = null;
     private Comparable<String> visualizationValue = null;
     @Setter(AccessLevel.NONE)
@@ -45,7 +44,7 @@ public abstract class Dimension implements Comparable<Dimension> {
     @Setter(AccessLevel.NONE)
     private int totalSize = 0;
     @Setter(AccessLevel.NONE)
-    private transient Dimension dimensionTotalizedLevelUp = null;
+    private transient Dimension dimensionTotalLevelUp = null;
     protected transient DataType<Object> type;
     private Integer rankingSequence = -1;
     @Setter(AccessLevel.NONE)
@@ -129,19 +128,19 @@ public abstract class Dimension implements Comparable<Dimension> {
         return this.metaData.getFormattedValue(this.value);
     }
 
-    protected void setDimensionTotalizedLevelUp() {
-        this.dimensionTotalizedLevelUp = this.searchDimensionTotalizedLevelUp();
+    protected void setDimensionTotalLevelUp() {
+        this.dimensionTotalLevelUp = this.searchDimensionTotalLevelUp();
     }
 
     public boolean isSameAxis(Dimension dimension) {
         return this.metaData.getReferenceAxis() == dimension.getMetaData().getReferenceAxis();
     }
 
-    public boolean isSameAxis(String titulo) {
-        if ((this.metaData.getTitle()).equals(titulo)) {
+    public boolean isSameAxis(String title) {
+        if ((this.metaData.getTitle()).equals(title)) {
             return true;
         } else if (this.parent != null && this.parent.isSameAxis(this)) {
-            return this.parent.isSameAxis(titulo);
+            return this.parent.isSameAxis(title);
         }
         return false;
     }
@@ -167,13 +166,21 @@ public abstract class Dimension implements Comparable<Dimension> {
         return this.metaData.getComparator().compare(this, o);
     }
 
+
     @Override
     public boolean equals(Object obj) {
+        if (obj == null || obj.getClass() != obj.getClass()) return false;
+
         if (Objects.equals(this.getKeyValue(), ((Dimension) obj).getKeyValue())) {
             return true;
         }
         Dimension outraDimension = (Dimension) obj;
         return this.isSameAxis(outraDimension) && this.getKeyValue().equals(outraDimension.getKeyValue());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(parent);
     }
 
     public boolean equals(Dimension dimension) {
@@ -184,26 +191,26 @@ public abstract class Dimension implements Comparable<Dimension> {
     }
 
     protected StringBuilder buildCompleteKeyValue() {
-        StringBuilder key = new StringBuilder(BRANCO);
+        StringBuilder key = new StringBuilder(EMPTY);
         if (this.parent != null && this.parent.isSameAxis(this)) {
             key = this.parent.buildCompleteKeyValue();
         }
-        key.append(ABRE);
+        key.append(OPEN);
         key.append(this.value);
-        key.append(FECHA);
+        key.append(CLOSE);
         return key;
     }
 
     protected StringBuilder buildKeyValue() {
-        StringBuilder key = new StringBuilder(BRANCO);
+        StringBuilder key = new StringBuilder(EMPTY);
         if (this.isSameAxis(this.parent)) {
             if (this.parent != null) {
                 key = this.parent.buildKeyValue();
             }
         }
-        key.append(ABRE);
+        key.append(OPEN);
         key.append(this.value);
-        key.append(FECHA);
+        key.append(CLOSE);
         return key;
     }
 
@@ -226,7 +233,7 @@ public abstract class Dimension implements Comparable<Dimension> {
             if (previous != null) {
                 return (Dimension) previous;
             }
-            if (!Objects.equals(dimensionPai.getMetaData(), this.getDimensionTotalizedLevelUp())) {
+            if (!Objects.equals(dimensionPai.getMetaData(), this.getDimensionTotalLevelUp())) {
                 Dimension dimensionAnteriorPai = dimensionPai.getPreviousDimension(parentDimensionLimit);
                 if (dimensionAnteriorPai != null) {
                     return (Dimension) dimensionAnteriorPai.getDimensionsBelow().lastKey();
@@ -281,12 +288,12 @@ public abstract class Dimension implements Comparable<Dimension> {
         }
     }
 
-    private Dimension searchDimensionTotalizedLevelUp() {
+    private Dimension searchDimensionTotalLevelUp() {
         if (this.getMetaData().getParent() == null) {
             return this;
         }
         if (!this.getMetaData().getParent().isTotalPartial()) {
-            return this.getParent().searchDimensionTotalizedLevelUp();
+            return this.getParent().searchDimensionTotalLevelUp();
         }
         return this.getParent();
     }
@@ -390,24 +397,24 @@ public abstract class Dimension implements Comparable<Dimension> {
                 .orElse(null);
     }
 
-    public String searchMetricsPropertyAlertsRowFunctionsTotalColumns(List<MetricMetaData> metricasMetaData, List<String> functions) {
+    public String searchMetricsPropertyAlertsRowFunctionsTotalColumns(List<MetricMetaData> metricMetaData, List<String> functions) {
         String propriedadeAlerta = null;
-        DimensionNullColumn dimensaoColunaNula = new DimensionNullColumn(this.cube);
-        for (String funcao : functions) {
-            String propriedadeAux = this.searchMetricAlertLineProperty(metricasMetaData, funcao, dimensaoColunaNula);
-            if (propriedadeAux != null) {
-                propriedadeAlerta = propriedadeAux;
+        DimensionNullColumn dimensionNullColumn = new DimensionNullColumn(this.cube);
+        for (String function : functions) {
+            String property = this.searchMetricAlertLineProperty(metricMetaData, function, dimensionNullColumn);
+            if (property != null) {
+                propriedadeAlerta = property;
             }
         }
         return propriedadeAlerta;
     }
 
-    public String searchMetricAlertLineProperty(List<MetricMetaData> metricasMetaData, String funcao, List<Dimension> dimensoesColuna) {
+    public String searchMetricAlertLineProperty(List<MetricMetaData> metricsMetaData, String function, List<Dimension> dimensionColumns) {
         String propriedadeAlerta = null;
-        for (Dimension dimensionColuna : dimensoesColuna) {
-            String propriedadeDimensaoColuna = searchMetricAlertLineProperty(metricasMetaData, funcao, dimensionColuna);
-            if (propriedadeDimensaoColuna != null) {
-                propriedadeAlerta = propriedadeDimensaoColuna;
+        for (Dimension dimensionColumn : dimensionColumns) {
+            String metricAlertLineProperty = searchMetricAlertLineProperty(metricsMetaData, function, dimensionColumn);
+            if (metricAlertLineProperty != null) {
+                propriedadeAlerta = metricAlertLineProperty;
             }
         }
         return propriedadeAlerta;

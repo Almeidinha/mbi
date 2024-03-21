@@ -5,17 +5,17 @@ import java.sql.SQLException;
 
 public class DimensionColumn extends Dimension {
 
-    private Dimension dimensionCuboPai;
-    private Dimension dimensionLinha = new DimensionLinhaNull(cube);
+    private Dimension dimensionParentCube;
+    private Dimension dimensionLine = new DimensionLinhaNull(cube);
 
     public DimensionColumn(Dimension dimensionPai, Dimension dimensionCubeParent, DimensionMetaData metaData) {
         this(dimensionPai, metaData);
-        this.dimensionCuboPai = dimensionCubeParent;
+        this.dimensionParentCube = dimensionCubeParent;
     }
 
-    public DimensionColumn(Dimension dimensionLine, Dimension dimensionPai, Dimension dimensionCuboPai, DimensionMetaData metaData) {
-        this(dimensionPai, dimensionCuboPai, metaData);
-        this.dimensionLinha = dimensionLine;
+    public DimensionColumn(Dimension dimensionLine, Dimension dimensionPai, Dimension dimensionParentCube, DimensionMetaData metaData) {
+        this(dimensionPai, dimensionParentCube, metaData);
+        this.dimensionLine = dimensionLine;
     }
 
     public DimensionColumn(Dimension dimensionPai, DimensionMetaData metaData) {
@@ -56,29 +56,29 @@ public class DimensionColumn extends Dimension {
                 this.cube.addDimensionPool(dimensionColumn);
             }
             this.parent.addDimensionsColumn(dimensionColumn);
-            dimensionColumn.parent = this.dimensionCuboPai;
+            dimensionColumn.parent = this.dimensionParentCube;
         }
-        this.cube.getMetricsMap().accumulateMetric(this.dimensionLinha, this, set);
+        this.cube.getMetricsMap().accumulateMetric(this.dimensionLine, this, set);
 
-        if (this.dimensionLinha.getMetaData().isLast()) {
+        if (this.dimensionLine.getMetaData().isLast()) {
             this.cube.getMetricsMap().accumulateMetricColumn(this, set);
         }
 
-        Dimension dimensionCube = this.dimensionCuboPai.getDimensionsColumn().get(this);
+        Dimension dimensionCube = this.dimensionParentCube.getDimensionsColumn().get(this);
         if (dimensionCube == null) {
             int dimensionIndex = this.cube.getDimensionsPool().indexOf(this);
             if (dimensionIndex != -1) {
                 dimensionCube = this.cube.getDimensionsPool().get(dimensionIndex);
             } else {
-                dimensionCube = new DimensionColumn(this.dimensionCuboPai, this.metaData);
+                dimensionCube = new DimensionColumn(this.dimensionParentCube, this.metaData);
                 dimensionCube.setValue(this.getValue());
                 this.cube.addDimensionPool(dimensionCube);
             }
-            this.dimensionCuboPai.addDimensionsColumn(dimensionCube);
+            this.dimensionParentCube.addDimensionsColumn(dimensionCube);
         }
 
         if (!this.metaData.isLast()) {
-            DimensionColumn dimension = new DimensionColumn(this.dimensionLinha, dimensionColumn, dimensionCube, this.metaData.getChild());
+            DimensionColumn dimension = new DimensionColumn(this.dimensionLine, dimensionColumn, dimensionCube, this.metaData.getChild());
             dimension.process(set);
         }
     }
@@ -90,11 +90,11 @@ public class DimensionColumn extends Dimension {
             this.parent.addDimensionsColumn(this);
         }
         this.cube.getMetricsMap().accumulateMetricOthers(dimensionLineRemove, dimensionLineOthers, dimensionLineOld);
-        Dimension dimensionCubo = this.dimensionCuboPai.getDimensionsColumn().get(this);
+        Dimension dimensionCubo = this.dimensionParentCube.getDimensionsColumn().get(this);
         if (dimensionCubo == null) {
-            dimensionCubo = new DimensionColumn(this.dimensionCuboPai, this.metaData);
+            dimensionCubo = new DimensionColumn(this.dimensionParentCube, this.metaData);
             dimensionCubo.setValue(this.getValue());
-            this.dimensionCuboPai.addDimensionsColumn(dimensionCubo);
+            this.dimensionParentCube.addDimensionsColumn(dimensionCubo);
         }
 
     }

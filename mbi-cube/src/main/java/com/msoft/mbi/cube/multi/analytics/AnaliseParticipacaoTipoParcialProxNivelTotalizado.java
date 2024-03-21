@@ -2,8 +2,6 @@ package com.msoft.mbi.cube.multi.analytics;
 
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 
-import java.io.Serial;
-
 public class AnaliseParticipacaoTipoParcialProxNivelTotalizado implements AnaliseParticipacaoTipo {
 
     private static AnaliseParticipacaoTipoParcialProxNivelTotalizado analiseParticipacaoTipoParcialProxNivelTotalizado;
@@ -21,6 +19,6 @@ public class AnaliseParticipacaoTipoParcialProxNivelTotalizado implements Analis
 
     @Override
     public Dimension getDimensaoNivelAcima(Dimension dimensionAtual) {
-        return dimensionAtual.getDimensionTotalizedLevelUp();
+        return dimensionAtual.getDimensionTotalLevelUp();
     }
 }

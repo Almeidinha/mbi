@@ -663,7 +663,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
     public void printDimensionLine(Dimension dim, String previousLevelCellProperty, int sequence) {
         DimensionLine dimensionLine = (DimensionLine) dim;
         int rowspan = calculateRowspan(dimensionLine);
-        int colspan = dimensionLine.getColspanImpressaoLinha();
+        int colspan = dimensionLine.getColspanLinePrint();
         String rankingSequence = getRankingSequence(dimensionLine);
 
         if (dim.getMetaData().hasSequenceFields()) {

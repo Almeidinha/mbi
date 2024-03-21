@@ -51,7 +51,7 @@ public class DimensionLineOutros extends DimensionLine {
     }
 
     @Override
-    public int getColspanImpressaoLinha() {
+    public int getColspanLinePrint() {
         DimensionMetaData dimensaoRankeada = ((DimensionMetaDataOthers) this.getMetaData()).getDimensionMetaDataRanking();
         int niveisAbaixo = dimensaoRankeada.getLowerLevelSequenceCount();
         int colspan = niveisAbaixo + 1;

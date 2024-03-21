@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -108,7 +107,7 @@ public abstract class Cube extends Dimension {
 
     @Override
     public void setKeyValue() {
-        this.keyValue = BRANCO;
+        this.keyValue = EMPTY;
     }
 
     public List<Dimension> getDimensionsLastLevelColumns() {

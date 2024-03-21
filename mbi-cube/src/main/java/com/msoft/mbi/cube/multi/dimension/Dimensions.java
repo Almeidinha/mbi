@@ -11,7 +11,7 @@ public class Dimensions extends TreeMap<Comparable<Dimension>, Dimension> {
 
     public void addDimension(Dimension dimension) {
         put(dimension, dimension);
-        dimension.setDimensionTotalizedLevelUp();
+        dimension.setDimensionTotalLevelUp();
     }
 
     public synchronized void removeDimension(Dimension dimension) {

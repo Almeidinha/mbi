@@ -11,7 +11,7 @@ public abstract class DimensionNull extends Dimension {
     protected DimensionNull(Cube cube) {
         super(new DimensionMetaData(null, null, null));
         this.cube = cube;
-        this.keyValue = BRANCO;
+        this.keyValue = EMPTY;
     }
 
     public static DimensionNull createDimensionNull(int referenceAxis, Cube cube) {
@@ -28,7 +28,7 @@ public abstract class DimensionNull extends Dimension {
 
     @Override
     public void setKeyValue() {
-        this.keyValue = BRANCO;
+        this.keyValue = EMPTY;
     }
 
 }
