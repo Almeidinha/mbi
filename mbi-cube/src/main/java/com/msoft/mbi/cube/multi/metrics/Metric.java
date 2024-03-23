@@ -24,25 +24,25 @@ public abstract class Metric {
     protected Aggregator aggregator;
 
     public String searchMetricLineAlert(String function, Dimension dimensionLine, Dimension dimensionColumn) {
-        String nomeEstilo = null;
+        String styleName = null;
         List<ColorAlertConditionsMetrica> alerts = this.metaData.getColorsAlertLines(function);
         if (alerts != null) {
             for (ColorAlertConditionsMetrica colorsAlert : alerts) {
                 if (colorsAlert.testaCondicao(dimensionLine, dimensionColumn, this.metaData.getCube())) {
-                    nomeEstilo = CellProperty.CELL_PROPERTY_ALERTS_PREFIX + colorsAlert.getSequence();
+                    styleName = CellProperty.CELL_PROPERTY_ALERTS_PREFIX + colorsAlert.getSequence();
                 }
             }
         }
-        return nomeEstilo;
+        return styleName;
     }
 
     public void somaValor(Double valor) {
-        Double valorAtual = this.aggregator.getAggregatorValue();
-        if (valorAtual == null) {
-            valorAtual = (double) 0;
+        Double currentValue = this.aggregator.getAggregatorValue();
+        if (currentValue == null) {
+            currentValue = (double) 0;
         }
-        valorAtual += valor != null ? valor : 0;
-        this.aggregator.setValue(valorAtual);
+        currentValue += valor != null ? valor : 0;
+        this.aggregator.setValue(currentValue);
     }
 
     public void setAggregator(String aggregationType) {
@@ -64,7 +64,7 @@ public abstract class Metric {
     public abstract Double calculate(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior);
 
     public abstract Double calculate(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior,
-                                     MetricaValorUtilizar calculateLevel);
+                                     MetricValueUse calculateLevel);
 
     public abstract Double getValor(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior);
 

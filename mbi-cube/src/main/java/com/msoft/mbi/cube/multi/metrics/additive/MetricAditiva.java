@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.MetricsMap;
 import com.msoft.mbi.cube.multi.metrics.Metric;
-import com.msoft.mbi.cube.multi.metrics.MetricaValorUtilizar;
+import com.msoft.mbi.cube.multi.metrics.MetricValueUse;
 
 public class MetricAditiva extends Metric {
 
@@ -37,7 +37,7 @@ public class MetricAditiva extends Metric {
   }
 
   @Override
-  public Double calculate(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior, MetricaValorUtilizar calculateLevel) {
+  public Double calculate(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior, MetricValueUse calculateLevel) {
     return null;
   }
 

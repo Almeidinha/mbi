@@ -16,7 +16,7 @@ import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 import com.msoft.mbi.cube.multi.metaData.CubeMetaData;
 import com.msoft.mbi.cube.multi.metaData.OrdenacaoCampoComparator;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
-import com.msoft.mbi.cube.multi.metrics.MetricaValorUtilizarLinhaMetrica;
+import com.msoft.mbi.cube.multi.metrics.MetricValueUseLine;
 import com.msoft.mbi.cube.multi.metrics.MetricOrdering;
 import com.msoft.mbi.cube.multi.metrics.additive.MetricAdditiveMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.CalculoHierarquiaOrdenacao;
@@ -140,7 +140,7 @@ public class CubeDefaultFormat extends Cube {
 
         if (cubeMetaData.getMetricFieldsExpression() != null && !cubeMetaData.getMetricFieldsExpression().trim().isEmpty()) {
             String filterExpression = this.convertMetricFilterToFieldTitle(cubeMetaData.getMetricFieldsExpression());
-            this.metricFilters = new MetricFilters(filterExpression, MetricaValorUtilizarLinhaMetrica.getInstance());
+            this.metricFilters = new MetricFilters(filterExpression, MetricValueUseLine.getInstance());
         }
         if (cubeMetaData.getAccumulatedFieldExpression() != null && !cubeMetaData.getAccumulatedFieldExpression().trim().isEmpty()) {
             String filterExpression = this.convertMetricFilterToFieldTitle(cubeMetaData.getAccumulatedFieldExpression());

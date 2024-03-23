@@ -2,8 +2,8 @@ package com.msoft.mbi.data.api.data.htmlbuilder;
 
 import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 import com.msoft.mbi.cube.multi.metaData.HTMLLineMask;
-import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLSVGColumn;
-import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLTextoDinamico;
+import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLColumnSVG;
+import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLDynamicText;
 import com.msoft.mbi.data.api.data.exception.BIException;
 import com.msoft.mbi.data.api.data.indicator.Field;
 import com.msoft.mbi.data.api.data.indicator.BIDriller;
@@ -18,12 +18,12 @@ public class HtmlHelper {
         tab_drillup.setId("opcao_drill_up");
         tab_drillup.addLine(new HTMLLine());
         tab_drillup.getCurrentLine().addCell(new HTMLCell());
-        LinkHTMLSVGColumn imagem;
+        LinkHTMLColumnSVG imagem;
         if (isDrillUp) {
-            imagem = new LinkHTMLSVGColumn("vect-arrow-square-up-left", "Drill Up", 18, 18);
-            imagem.addParametro("onclick", "addDrillUp(0)");
+            imagem = new LinkHTMLColumnSVG("vect-arrow-square-up-left", "Drill Up", 18, 18);
+            imagem.addParameter("onclick", "addDrillUp(0)");
         } else {
-            imagem = new LinkHTMLSVGColumn();
+            imagem = new LinkHTMLColumnSVG();
         }
         tab_drillup.getCurrentLine().getCurrentCell().setContent(imagem);
         return tab_drillup;
@@ -125,27 +125,27 @@ public class HtmlHelper {
             return;
         }
 
-        LinkHTMLTextoDinamico linkTextoDinamico = new LinkHTMLTextoDinamico("data-dimension-value");
-        linkTextoDinamico.addParametro("data-code-col", String.valueOf(dimensionField.getFieldId()));
-        linkTextoDinamico.addParametro("data-code-indicador", String.valueOf(indicatorCode));
+        LinkHTMLDynamicText linkTextoDinamico = new LinkHTMLDynamicText("data-dimension-value");
+        linkTextoDinamico.addParameter("data-code-col", String.valueOf(dimensionField.getFieldId()));
+        linkTextoDinamico.addParameter("data-code-indicador", String.valueOf(indicatorCode));
 
         HTMLLineMask mascaraLinkHTML = new HTMLLineMask("drilldownFiltro", HTMLLineMask.DYNAMIC_TYPE, linkTextoDinamico);
         dimensionCube.addHTMLLineMask(mascaraLinkHTML);
     }
 
     private static void addSVGLinkToDimensionCube(MetaDataField dimensionCube, Field dimensionField, String id, String svgClass, String svgTitle, int width, int height) {
-        LinkHTMLSVGColumn svgHTML = new LinkHTMLSVGColumn(id, svgClass, svgTitle, height, width);
-        svgHTML.addParametro("data-code-col", String.valueOf(dimensionField.getFieldId()));
+        LinkHTMLColumnSVG svgHTML = new LinkHTMLColumnSVG(id, svgClass, svgTitle, height, width);
+        svgHTML.addParameter("data-code-col", String.valueOf(dimensionField.getFieldId()));
         HTMLLineMask mascaraLinkHTML = new HTMLLineMask("drilldown", HTMLLineMask.VALUE_TYPE_AFTER, svgHTML);
         dimensionCube.addHTMLLineMask(mascaraLinkHTML);
     }
 
     public static void configureSorting(Field field, MetaDataField campo) {
-        LinkHTMLSVGColumn svgHTML = new LinkHTMLSVGColumn("desc", "btOrdena vect-sort-down", "Ordenar de forma decrescente", 14, 14);
+        LinkHTMLColumnSVG svgHTML = new LinkHTMLColumnSVG("desc", "btOrdena vect-sort-down", "Ordenar de forma decrescente", 14, 14);
         // configure svgHTML
         campo.addHTMLLineMask(new HTMLLineMask("ordenacao", HTMLLineMask.VALUE_TYPE_AFTER, svgHTML));
 
-        svgHTML = new LinkHTMLSVGColumn("asc", "btOrdena vect-sort-up", "Ordenar de forma crescente", 14, 14);
+        svgHTML = new LinkHTMLColumnSVG("asc", "btOrdena vect-sort-up", "Ordenar de forma crescente", 14, 14);
         // configure svgHTML
         campo.addHTMLLineMask(new HTMLLineMask("ordenacao", HTMLLineMask.VALUE_TYPE_AFTER, svgHTML));
     }

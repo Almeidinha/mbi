@@ -9,21 +9,21 @@ import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.MetricsMap;
 import com.msoft.mbi.cube.multi.calculation.Calculo;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
-import com.msoft.mbi.cube.multi.metrics.MetricaValorUtilizar;
+import com.msoft.mbi.cube.multi.metrics.MetricValueUse;
 
 public class MetricFilters {
 
     protected Calculo filterExpression;
-    private final MetricaValorUtilizar metricValueUse;
+    private final MetricValueUse metricValueUse;
 
-    public MetricFilters(String expressao, MetricaValorUtilizar metricValueUse) {
+    public MetricFilters(String expressao, MetricValueUse metricValueUse) {
         this.metricValueUse = metricValueUse;
         expressao = "IF((" + expressao + "), 1, 0)";
         this.filterExpression = new Calculo(expressao);
     }
 
     public List<Dimension> getColumnDimensionsUse(Cube cube) {
-        return this.metricValueUse.getDimensoesColunaUtilizar(cube);
+        return this.metricValueUse.getDimensionColumnsUse(cube);
     }
 
     public boolean testCondition(MetricsMap metricsMap, MetricLine metricLine) {

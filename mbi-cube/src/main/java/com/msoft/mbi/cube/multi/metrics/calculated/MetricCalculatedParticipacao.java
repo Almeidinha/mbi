@@ -6,7 +6,7 @@ import com.msoft.mbi.cube.multi.MetricsMap;
 import com.msoft.mbi.cube.multi.calculation.Calculo;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.metrics.Metric;
-import com.msoft.mbi.cube.multi.metrics.MetricaValorUtilizar;
+import com.msoft.mbi.cube.multi.metrics.MetricValueUse;
 
 
 public class MetricCalculatedParticipacao extends MetricCalculated {
@@ -61,7 +61,7 @@ public class MetricCalculatedParticipacao extends MetricCalculated {
     }
 
     @Override
-    public Double calculate(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior, MetricaValorUtilizar calculateLevel) {
+    public Double calculate(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior, MetricValueUse calculateLevel) {
         return calculate(metricsMap, metricLine, metricLineAnterior);
     }
 }

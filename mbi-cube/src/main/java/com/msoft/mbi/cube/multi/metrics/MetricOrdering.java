@@ -16,13 +16,13 @@ public class MetricOrdering implements Comparable<MetricOrdering> {
     private final Integer orderingSequence;
     @Getter
     private final String metricTitle;
-    private final MetricaValorUtilizar metricValue;
+    private final MetricValueUse metricValue;
 
-    public MetricOrdering(String orderDirection, int orderingSequence, String metricTitle, MetricaValorUtilizar metricaValorUtilizar) {
+    public MetricOrdering(String orderDirection, int orderingSequence, String metricTitle, MetricValueUse metricValueUse) {
         this.orderingType = "ASC".equals(orderDirection) ? 1 : -1;
         this.orderingSequence = orderingSequence;
         this.metricTitle = metricTitle;
-        this.metricValue = metricaValorUtilizar;
+        this.metricValue = metricValueUse;
     }
 
     @Override
@@ -35,6 +35,6 @@ public class MetricOrdering implements Comparable<MetricOrdering> {
     }
 
     public List<Dimension> getDimensionColumnUse(Cube cube) {
-        return this.metricValue.getDimensoesColunaUtilizar(cube);
+        return this.metricValue.getDimensionColumnsUse(cube);
     }
 }
