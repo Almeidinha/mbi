@@ -17,23 +17,23 @@ public class MetricAditiva extends Metric {
   }
 
   public void add(Double valor) {
-    this.aggregator.agregaValor(valor);
+    this.aggregator.aggregatorValue(valor);
   }
 
   @Override
   public String toString() {
-    Object o = this.getMetaData().getType().format(this.aggregator.getValorAgregado());
+    Object o = this.getMetaData().getType().format(this.aggregator.getAggregatorValue());
     return o==null ? "" : o.toString();
   }
 
   @Override
   public Double getValor(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior) {
-    return this.aggregator.getValorAgregado();
+    return this.aggregator.getAggregatorValue();
   }
 
   @Override
   public Double calculate(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior) {
-    return this.aggregator.getValorAgregado();
+    return this.aggregator.getAggregatorValue();
   }
 
   @Override

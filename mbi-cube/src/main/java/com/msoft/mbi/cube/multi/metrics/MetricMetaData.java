@@ -80,7 +80,7 @@ public abstract class MetricMetaData extends ColumnMetaData {
     public static final String MEDIA_AGGREGATION = "AVG";
     public static final String MINIMUM_AGGREGATION = "MIN";
     public static final String MAX_AGGREGATION = "MAX";
-    public static final String EMPTY_AGGREGATION = "VAZIO";
+    public static final String EMPTY = "EMPTY";
     @Getter
     private final List<MetricOrdering> metricOrderings;
     @Setter

@@ -63,7 +63,7 @@ public class StringHelper {
             String replacement = "(" + recExpression + ")";
             expression = BIUtil.replaceString(expression, fieldCode, replacement);
         } else {
-            String sqlExpression = noAggregationFields || field.getAggregationType().equals(Constants.VAZIO) ?
+            String sqlExpression = noAggregationFields || field.getAggregationType().equals(Constants.EMPTY) ?
                     field.getSqlExpressionWithoutNickName() :
                     getSqlExpressionWithAggregation(field);
 

@@ -66,7 +66,7 @@ public class ConsultRegister {
             campoAux = fieldList.get(i);
             if (campoAux != null) {
                 if (campoAux.getFieldType().equalsIgnoreCase("D") || (campoAux.getDataType().equalsIgnoreCase("V")
-                        && campoAux.getDefaultField().equalsIgnoreCase("S") && (campoAux.getAggregationType().equalsIgnoreCase("VAZIO")
+                        && campoAux.getDefaultField().equalsIgnoreCase("S") && (campoAux.getAggregationType().equalsIgnoreCase("EMPTY")
                         || campoAux.getAggregationType().trim().isEmpty()) && (!campoAux.getName().toUpperCase().contains("SE(") && !campoAux.getName().toUpperCase().contains("IF(")))) {
                     chave.put(campoAux, valueList.get(i));
                 }

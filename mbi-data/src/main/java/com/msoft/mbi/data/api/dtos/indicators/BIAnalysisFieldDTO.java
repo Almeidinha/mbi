@@ -2,16 +2,12 @@ package com.msoft.mbi.data.api.dtos.indicators;
 
 import lombok.*;
 
-@Data
 @Getter
 @Setter
-@EqualsAndHashCode
-@AllArgsConstructor
-@NoArgsConstructor
 public class BIAnalysisFieldDTO {
 
-    private int fieldId;
-    private int indicatorId;
+    private Integer fieldId;
+    private Integer indicatorId;
     private String name;
     private String title;
     private String fieldType;

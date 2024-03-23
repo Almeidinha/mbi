@@ -163,7 +163,7 @@ public class Field implements Cloneable {
     
     public String getAggregationType() {
         if (Optional.ofNullable(this.aggregationType).isEmpty() || this.aggregationType.isEmpty()) {
-            this.aggregationType = "VAZIO";
+            this.aggregationType = "EMPTY";
 
             if ((this.fieldType != null) && this.fieldType.equals(METRIC)) {
                 this.aggregationType = "SUM";

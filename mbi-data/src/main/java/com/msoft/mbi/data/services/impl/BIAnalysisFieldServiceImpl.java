@@ -56,8 +56,20 @@ public class BIAnalysisFieldServiceImpl implements BIAnalysisFieldService {
 
     @Override
     public BIAnalysisFieldEntity update(Integer id, BIAnalysisFieldEntity field) {
-        field.setFieldId(id);
-        return this.analysisFieldRepository.save(field);
+        Optional<BIAnalysisFieldEntity> entity = this.analysisFieldRepository.findById(id);
+        if (entity.isPresent()) {
+            entity.get().setTitle(field.getTitle());
+            entity.get().setFieldType(field.getFieldType());
+            entity.get().setDataType(field.getDataType());
+            entity.get().setDefaultField(field.getDefaultField());
+            entity.get().setColumnWidth(field.getColumnWidth());
+            entity.get().setColumnAlignment(field.getColumnAlignment());
+            entity.get().setDateMask(field.getDateMask());
+
+            return this.analysisFieldRepository.save(entity.get());
+        }
+        return null;
+
     }
 
     public BIAnalysisFieldDTO updateDto(Integer id, BIAnalysisFieldDTO dto) {

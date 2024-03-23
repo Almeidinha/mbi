@@ -3,23 +3,25 @@ package com.msoft.mbi.model;
 import lombok.*;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.DynamicUpdate;
+
 import java.util.Collection;
 
 @Getter
 @Setter
 @Entity
 @Builder
+@DynamicUpdate
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(
         name = "bi_analysis_field", schema = "dbo", catalog = "BISERVER",
         indexes = @Index(name = "ix2_bi_analysis_field", columnList = "title")
 )
-@IdClass(BIAnalysisFieldPK.class)
 public class BIAnalysisFieldEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "field_id", nullable = false)
     private Integer fieldId;
 
@@ -227,7 +229,6 @@ public class BIAnalysisFieldEntity {
     @Column(name = "delegate_order")
     private Integer delegateOrder;
 
-    @Id
     @Getter(AccessLevel.NONE)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "indicator_id", nullable = false)

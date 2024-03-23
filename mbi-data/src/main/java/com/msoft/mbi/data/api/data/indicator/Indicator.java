@@ -287,14 +287,14 @@ public class Indicator {
                 select.append(field.getName()).append(" ").append(field.getNickname().trim()).append(",");
             } else {
                 select.append(field.getSqlExpressionWithNickName());
-                if (!field.isExpression() || "VAZIO".equalsIgnoreCase(aggregationType) && !field.getTableNickname().isEmpty()) {
+                if (!field.isExpression() || "EMPTY".equalsIgnoreCase(aggregationType) && !field.getTableNickname().isEmpty()) {
                     groupBy.append(field.getSqlExpressionWithoutNickName()).append(",");
                 }
             }
         } else if (!field.isFixedValue()) {
             if (field.isExpression()) {
                 if (!isConditionalExpression(field.getName())) {
-                    String exp = convertExpressionFromCodeToNickName(field.getName(), !aggregationType.equals("VAZIO"));
+                    String exp = convertExpressionFromCodeToNickName(field.getName(), !aggregationType.equals("EMPTY"));
                     if (!exp.toUpperCase().trim().contains("SE(") && !exp.toUpperCase().trim().contains("IF(")) {
                         if (aggregationType.equalsIgnoreCase("COUNT_DIST")) {
                             select.append("COUNT(DISTINCT ").append(exp).append(") ");
@@ -305,7 +305,7 @@ public class Indicator {
                     }
                 }
             } else {
-                if ("VAZIO".equalsIgnoreCase(aggregationType)) {
+                if ("EMPTY".equalsIgnoreCase(aggregationType)) {
                     select.append(field.getSqlExpressionWithNickName());
                     groupBy.append(field.getSqlExpressionWithoutNickName()).append(",");
                 } else {
@@ -348,10 +348,10 @@ public class Indicator {
                 Field tempField = optionalField.get();
                 String replacement;
                 if (tempField.isExpression()) {
-                    boolean includeAggregation = allFieldsWithNoAggregation || "VAZIO".equals(tempField.getAggregationType());
+                    boolean includeAggregation = allFieldsWithNoAggregation || "EMPTY".equals(tempField.getAggregationType());
                     replacement = "(" + convertExpressionFromCodeToNickName(tempField.getName(), includeAggregation) + ")";
                 } else {
-                    if (allFieldsWithNoAggregation || "VAZIO".equals(tempField.getAggregationType())) {
+                    if (allFieldsWithNoAggregation || "EMPTY".equals(tempField.getAggregationType())) {
                         replacement = tempField.getSqlExpressionWithoutNickName();
                     } else {
                         if ("COUNT_DIST".equalsIgnoreCase(tempField.getAggregationType())) {

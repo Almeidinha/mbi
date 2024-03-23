@@ -396,7 +396,7 @@ public class BIUtil {
         List<Hashtable<String, String>> list_agregacao = new ArrayList<>();
         Hashtable<String, String> hash_agregacao = new Hashtable<>();
 
-        hash_agregacao.put("agregacao", "VAZIO");
+        hash_agregacao.put("agregacao", "EMPTY");
         hash_agregacao.put("descricao", "Sem Agregação");
         list_agregacao.add(hash_agregacao);
 

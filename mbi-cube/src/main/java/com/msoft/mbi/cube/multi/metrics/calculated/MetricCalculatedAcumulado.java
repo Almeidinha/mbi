@@ -82,10 +82,10 @@ public class MetricCalculatedAcumulado extends MetricCalculated {
 
     @Override
     public Double getValor(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior) {
-        if (this.aggregator.getValorAgregado() == null) {
-            this.aggregator.setValor(this.calculate(metricsMap, metricLine, metricLineAnterior));
+        if (this.aggregator.getAggregatorValue() == null) {
+            this.aggregator.setValue(this.calculate(metricsMap, metricLine, metricLineAnterior));
         }
-        return this.aggregator.getValorAgregado();
+        return this.aggregator.getAggregatorValue();
     }
 
 }

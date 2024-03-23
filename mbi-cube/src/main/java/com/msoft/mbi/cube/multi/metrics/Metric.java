@@ -6,12 +6,12 @@ import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.MetricsMap;
 import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditionsMetrica;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
-import com.msoft.mbi.cube.multi.metrics.aggregation.AgregadorMaximo;
-import com.msoft.mbi.cube.multi.metrics.aggregation.AgregadorMedia;
-import com.msoft.mbi.cube.multi.metrics.aggregation.AgregadorMinimo;
-import com.msoft.mbi.cube.multi.metrics.aggregation.AgregadorSoma;
-import com.msoft.mbi.cube.multi.metrics.aggregation.AgregadorTipo;
-import com.msoft.mbi.cube.multi.metrics.aggregation.AgregadorVazio;
+import com.msoft.mbi.cube.multi.metrics.aggregation.AggregatorMax;
+import com.msoft.mbi.cube.multi.metrics.aggregation.AggregatorMedia;
+import com.msoft.mbi.cube.multi.metrics.aggregation.AggregatorMinimum;
+import com.msoft.mbi.cube.multi.metrics.aggregation.AggregatorSum;
+import com.msoft.mbi.cube.multi.metrics.aggregation.Aggregator;
+import com.msoft.mbi.cube.multi.metrics.aggregation.AggregatorEmpty;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +21,7 @@ public abstract class Metric {
     @Setter
     @Getter
     private MetricMetaData metaData = null;
-    protected AgregadorTipo aggregator;
+    protected Aggregator aggregator;
 
     public String searchMetricLineAlert(String function, Dimension dimensionLine, Dimension dimensionColumn) {
         String nomeEstilo = null;
@@ -37,27 +37,27 @@ public abstract class Metric {
     }
 
     public void somaValor(Double valor) {
-        Double valorAtual = this.aggregator.getValorAgregado();
+        Double valorAtual = this.aggregator.getAggregatorValue();
         if (valorAtual == null) {
             valorAtual = (double) 0;
         }
         valorAtual += valor != null ? valor : 0;
-        this.aggregator.setValor(valorAtual);
+        this.aggregator.setValue(valorAtual);
     }
 
     public void setAggregator(String aggregationType) {
         if (MetricMetaData.SUM_AGGREGATION.equalsIgnoreCase(aggregationType)) {
-            this.aggregator = new AgregadorSoma();
-        } else if (MetricMetaData.EMPTY_AGGREGATION.equalsIgnoreCase(aggregationType) || aggregationType == null || "".equals(aggregationType)) {
-            this.aggregator = new AgregadorVazio();
+            this.aggregator = new AggregatorSum();
+        } else if (MetricMetaData.EMPTY.equalsIgnoreCase(aggregationType) || aggregationType == null || aggregationType.isEmpty()) {
+            this.aggregator = new AggregatorEmpty();
         } else if (MetricMetaData.MEDIA_AGGREGATION.equalsIgnoreCase(aggregationType)) {
-            this.aggregator = new AgregadorMedia();
+            this.aggregator = new AggregatorMedia();
         } else if (MetricMetaData.COUNT_AGGREGATION.equalsIgnoreCase(aggregationType)) {
-            this.aggregator = new AgregadorSoma();
+            this.aggregator = new AggregatorSum();
         } else if (MetricMetaData.MINIMUM_AGGREGATION.equalsIgnoreCase(aggregationType)) {
-            this.aggregator = new AgregadorMinimo();
+            this.aggregator = new AggregatorMinimum();
         } else {
-            this.aggregator = new AgregadorMaximo();
+            this.aggregator = new AggregatorMax();
         }
     }
 

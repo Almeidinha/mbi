@@ -134,7 +134,7 @@ public class BIIndEntity extends BaseEntity {
     @JoinColumn(name = "having_clause")
     private BIHavingClauseEntity havingClause;
 
-    @OneToMany(mappedBy = "biIndByInd", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "biIndByInd", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     private List<BIAnalysisFieldEntity> biAnalysisFields;
 
     @OneToMany(mappedBy = "biIndByInd", fetch = FetchType.LAZY)

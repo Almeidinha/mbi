@@ -11,7 +11,7 @@ public final class Constants {
     public static final String START_EXPRESSION = "#$";
     public static final String END_EXPRESSION = "$!";
 
-    public static final String VAZIO = "VAZIO";
+    public static final String EMPTY = "EMPTY";
 
     public static final String DATE = "D";
     public static final String NUMBER = "N";
@@ -27,15 +27,14 @@ public final class Constants {
     public static final String VERTICAL_ANALYSIS_TOTAL_TYPE = "T";
     public static final String VERTICAL_ANALYSIS_PARTIAL_TYPE = "P";
     public static final String SUM = "SUM";
-    public static final String EMPTY = "EMPTY";
-    public static final String CODE = "CODIGO";
+    public static final String CODE = "CODE";
     public static final String NAME = "NOME";
-    public static final String TITLE = "TITULO";
-    public static final String FIELD_TYPE = "TIPO_CAMPO";
-    public static final String DATA_TYPE = "TIPO_DADO";
-    public static final String NICK_NAME = "APELIDO";
-    public static final String IS_EXPRESSION = "EH_EXPRESSAO";
-    public static final String VISUALIZATION_SEQUENCE = "SEQUENCIA_VISUALIZACAO";
+    public static final String TITLE = "TITLE";
+    public static final String FIELD_TYPE = "FIELD_TYPE";
+    public static final String DATA_TYPE = "DATA_TYPE";
+    public static final String NICK_NAME = "NICK_NAME";
+    public static final String IS_EXPRESSION = "IS_EXPRESSION";
+    public static final String VISUALIZATION_SEQUENCE = "VISUALIZATION_SEQUENCE";
     public static final String CONSTANT_ACUTE = "_1";
     public static final String CONSTANT_CIRCUMFLEX = "_2";
     public static final String CONSTANT_TILDE = "_3";

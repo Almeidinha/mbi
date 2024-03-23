@@ -19,7 +19,7 @@ public class MetricCalculated extends Metric {
 
     @Override
     public Double getValor(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior) {
-        return this.aggregator.getValorAgregado();
+        return this.aggregator.getAggregatorValue();
     }
 
     public Double calculate(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior, MetricaValorUtilizar calculateLevel) {
@@ -57,11 +57,11 @@ public class MetricCalculated extends Metric {
     }
 
     public void aggregateValue(Double valor) {
-        this.aggregator.agregaValor(valor);
+        this.aggregator.aggregatorValue(valor);
     }
 
     public void setValue(Double valor) {
-        this.aggregator.setValor(valor);
+        this.aggregator.setValue(valor);
     }
 
 }
