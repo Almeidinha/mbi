@@ -4,8 +4,8 @@ import com.msoft.mbi.cube.multi.calculation.Calculo;
 import com.msoft.mbi.cube.multi.column.TipoDecimal;
 import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
-import com.msoft.mbi.cube.multi.metrics.calculated.applyAggregationOrder.AgregacaoAplicarAntes;
-import com.msoft.mbi.cube.multi.metrics.calculated.applyAggregationOrder.AgregacaoAplicarDepois;
+import com.msoft.mbi.cube.multi.metrics.calculated.applyAggregationOrder.AggregationApplyBefore;
+import com.msoft.mbi.cube.multi.metrics.calculated.applyAggregationOrder.AggregationApplyAfter;
 import com.msoft.mbi.cube.multi.metrics.calculated.applyAggregationOrder.AggregationApplyOrder;
 import lombok.Getter;
 
@@ -18,7 +18,7 @@ public class MetricCalculatedMetaData extends MetricMetaData {
 
     protected MetricCalculatedMetaData(String title) {
         super(title, new TipoDecimal());
-        this.aggregationApplyOrder = AgregacaoAplicarAntes.getInstance();
+        this.aggregationApplyOrder = AggregationApplyBefore.getInstance();
     }
 
     public MetricCalculatedMetaData(String title, String expression) {
@@ -42,9 +42,9 @@ public class MetricCalculatedMetaData extends MetricMetaData {
 
     public void setAggregationApplyOrder(String aggregationOrder) {
         if (MetaDataField.AGGREGATION_APPLY_BEFORE.equals(aggregationOrder)) {
-            this.aggregationApplyOrder = AgregacaoAplicarAntes.getInstance();
+            this.aggregationApplyOrder = AggregationApplyBefore.getInstance();
         } else {
-            this.aggregationApplyOrder = AgregacaoAplicarDepois.getInstance();
+            this.aggregationApplyOrder = AggregationApplyAfter.getInstance();
         }
     }
 

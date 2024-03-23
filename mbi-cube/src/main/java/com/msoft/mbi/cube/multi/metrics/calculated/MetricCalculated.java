@@ -5,8 +5,8 @@ import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.MetricsMap;
 import com.msoft.mbi.cube.multi.calculation.Calculo;
 import com.msoft.mbi.cube.multi.metrics.Metric;
-import com.msoft.mbi.cube.multi.metrics.MetricaValorUtilizar;
-import com.msoft.mbi.cube.multi.metrics.MetricaValorUtilizarLinhaMetrica;
+import com.msoft.mbi.cube.multi.metrics.MetricValueUse;
+import com.msoft.mbi.cube.multi.metrics.MetricValueUseLine;
 
 
 public class MetricCalculated extends Metric {
@@ -22,7 +22,7 @@ public class MetricCalculated extends Metric {
         return this.aggregator.getAggregatorValue();
     }
 
-    public Double calculate(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior, MetricaValorUtilizar calculateLevel) {
+    public Double calculate(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior, MetricValueUse calculateLevel) {
         MetricCalculatedMetaData metaData = this.getMetaData();
         Calculo calculo = metaData.createCalculo();
         Double result;
@@ -33,7 +33,7 @@ public class MetricCalculated extends Metric {
                     expression = metricLine.getMetrics().get(this.removeBarraVariable(calculo.getVariables().get(variable)));
                 }
 
-                Double valor = calculateLevel.calculaValor(expression, metricLine, metricsMap);
+                Double valor = calculateLevel.calculateValue(expression, metricLine, metricsMap);
                 calculo.setValorVariable(variable, (valor != null ? valor : 0));
             }
             result = calculo.calculaValor();
@@ -49,7 +49,7 @@ public class MetricCalculated extends Metric {
 
     @Override
     public Double calculate(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior) {
-        return this.calculate(metricsMap, metricLine, metricLineAnterior, MetricaValorUtilizarLinhaMetrica.getInstance());
+        return this.calculate(metricsMap, metricLine, metricLineAnterior, MetricValueUseLine.getInstance());
     }
 
     public void populateNewValue(Double valor) {

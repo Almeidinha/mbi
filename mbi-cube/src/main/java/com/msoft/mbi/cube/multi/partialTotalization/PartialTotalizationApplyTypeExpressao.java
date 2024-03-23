@@ -7,7 +7,7 @@ import com.msoft.mbi.cube.multi.MetricsMap;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.metrics.Metric;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
-import com.msoft.mbi.cube.multi.metrics.MetricaValorUtilizarTotal;
+import com.msoft.mbi.cube.multi.metrics.MetricValueUseTotal;
 
 public class PartialTotalizationApplyTypeExpressao implements PartialTotalizationApplyType {
 
@@ -35,7 +35,7 @@ public class PartialTotalizationApplyTypeExpressao implements PartialTotalizatio
         MetricLine metricLine = metricsMap.getMetricLine(dimensionReferenceAxis, dimension);
         Map<String, Metric> metricas = metricLine.getMetrics();
         Metric expressao = metricas.get(metricMetaData.getTitle());
-        Double valor = expressao.calculate(metricsMap, metricLine, (MetricLine) null, MetricaValorUtilizarTotal.getInstance());
+        Double valor = expressao.calculate(metricsMap, metricLine, (MetricLine) null, MetricValueUseTotal.getInstance());
         return valor;
     }
 

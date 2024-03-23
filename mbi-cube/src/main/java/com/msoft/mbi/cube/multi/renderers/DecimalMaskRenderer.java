@@ -3,29 +3,29 @@ package com.msoft.mbi.cube.multi.renderers;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class DecimalMaskRender {
+public class DecimalMaskRenderer {
 
     private final int decimalPlaces;
 
-    public DecimalMaskRender(int decimalPlaces) {
+    public DecimalMaskRenderer(int decimalPlaces) {
         this.decimalPlaces = decimalPlaces;
     }
 
-    public DecimalMaskRender() {
+    public DecimalMaskRenderer() {
         this.decimalPlaces = 0;
     }
 
-    public int getNCasasDecimais() {
+    public int getDecimalPlacesCount() {
         return decimalPlaces;
     }
 
-    public Object apply(Object valor) {
-        Double valorD = Double.parseDouble(String.valueOf(valor));
+    public Object apply(Object value) {
+        Double valorD = Double.parseDouble(String.valueOf(value));
         NumberFormat numberInstance = NumberFormat.getInstance(Locale.GERMANY);
         numberInstance.setMinimumFractionDigits(this.decimalPlaces);
         numberInstance.setMaximumFractionDigits(this.decimalPlaces);
-        valor = numberInstance.format(valorD);
-        return valor;
+        value = numberInstance.format(valorD);
+        return value;
     }
 
 }

@@ -12,9 +12,9 @@ import com.msoft.mbi.cube.exception.CubeMathParserException;
 import com.msoft.mbi.cube.multi.column.ColumnMetaData;
 import com.msoft.mbi.cube.multi.dimension.DimensionMetaData;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
-import com.msoft.mbi.cube.multi.renderers.MascaraRenderer;
+import com.msoft.mbi.cube.multi.renderers.MaskRenderer;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
-import com.msoft.mbi.cube.multi.renderers.linkHTML.MascaraLinkHTMLValorDinamicoRenderer;
+import com.msoft.mbi.cube.multi.renderers.linkHTML.MaskLinkHTMLDynamicValueRenderer;
 
 public class PrinterHTML implements Printer {
 
@@ -157,11 +157,11 @@ public class PrinterHTML implements Printer {
         this.imprime("</tr>");
     }
 
-    private String applyHTMLEffect(Object valor, MascaraRenderer effectDecorator) {
+    private String applyHTMLEffect(Object valor, MaskRenderer effectDecorator) {
         return this.aplicadorEfeitoHTML.aplicaEfeitoHTML(valor, effectDecorator);
     }
 
-    private String applyDynamicHTMLEffect(Object printValue, String parameterValue, MascaraLinkHTMLValorDinamicoRenderer effectDecorator) {
+    private String applyDynamicHTMLEffect(Object printValue, String parameterValue, MaskLinkHTMLDynamicValueRenderer effectDecorator) {
         return this.aplicadorEfeitoHTML.aplicaEfeitoHTMLDinamico(printValue, parameterValue, effectDecorator);
     }
 

@@ -6,9 +6,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.msoft.mbi.cube.multi.column.ColumnMetaData;
 import com.msoft.mbi.cube.multi.dimension.DimensionMetaData;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
-import com.msoft.mbi.cube.multi.renderers.MascaraRenderer;
+import com.msoft.mbi.cube.multi.renderers.MaskRenderer;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
-import com.msoft.mbi.cube.multi.renderers.linkHTML.MascaraLinkHTMLValorDinamicoRenderer;
+import com.msoft.mbi.cube.multi.renderers.linkHTML.MaskLinkHTMLDynamicValueRenderer;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -324,11 +324,11 @@ public class JsonPrinter implements Printer {
         return this.applyHtmlEffect(metaData.getTitle(), metaData.getHTMLEffectRenderer());
     }
 
-    private String applyHtmlEffect(Object value, MascaraRenderer htmlDecoratorEffect) {
+    private String applyHtmlEffect(Object value, MaskRenderer htmlDecoratorEffect) {
         return this.aplicadorEfeitoHTML.aplicaEfeitoHTML(value, htmlDecoratorEffect);
     }
 
-    private String applyDynamicHtmlEffect(Object printValue, String parameterValue, MascaraLinkHTMLValorDinamicoRenderer htmlDecoratorEffect) {
+    private String applyDynamicHtmlEffect(Object printValue, String parameterValue, MaskLinkHTMLDynamicValueRenderer htmlDecoratorEffect) {
         return this.aplicadorEfeitoHTML.aplicaEfeitoHTMLDinamico(printValue, parameterValue, htmlDecoratorEffect);
     }
 }

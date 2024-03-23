@@ -6,22 +6,21 @@ import com.msoft.mbi.cube.multi.resumeFunctions.FunctionRanking;
 import com.msoft.mbi.cube.multi.generation.Printer;
 import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 import com.msoft.mbi.cube.multi.metaData.HTMLLineMask;
-import com.msoft.mbi.cube.multi.renderers.MascaraAntesRenderer;
+import com.msoft.mbi.cube.multi.renderers.MaskBeforeRenderer;
 import com.msoft.mbi.cube.multi.renderers.MascaraDataRenderer;
-import com.msoft.mbi.cube.multi.renderers.MascaraDepoisRenderer;
-import com.msoft.mbi.cube.multi.renderers.MascaraMes;
-import com.msoft.mbi.cube.multi.renderers.MascaraMesAno;
-import com.msoft.mbi.cube.multi.renderers.MascaraPadraoRenderer;
-import com.msoft.mbi.cube.multi.renderers.MascaraPeriodo;
-import com.msoft.mbi.cube.multi.renderers.MascaraRenderer;
-import com.msoft.mbi.cube.multi.renderers.MascaraSemana;
+import com.msoft.mbi.cube.multi.renderers.MaskAfterRenderer;
+import com.msoft.mbi.cube.multi.renderers.MaskMonth;
+import com.msoft.mbi.cube.multi.renderers.MaskMonthYear;
+import com.msoft.mbi.cube.multi.renderers.MaskDefaultRenderer;
+import com.msoft.mbi.cube.multi.renderers.MaskPeriod;
+import com.msoft.mbi.cube.multi.renderers.MaskRenderer;
+import com.msoft.mbi.cube.multi.renderers.MaskWeek;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
-import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLTexto;
-import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLTextoDinamico;
-import com.msoft.mbi.cube.multi.renderers.linkHTML.MascaraLinkHTMLDepoisRenderer;
-import com.msoft.mbi.cube.multi.renderers.linkHTML.MascaraLinkHTMLTextoRenderer;
-import com.msoft.mbi.cube.multi.renderers.linkHTML.MascaraLinkHTMLValorDinamicoPadraoRenderer;
-import com.msoft.mbi.cube.multi.renderers.linkHTML.MascaraLinkHTMLValorDinamicoRenderer;
+import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLText;
+import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLDynamicText;
+import com.msoft.mbi.cube.multi.renderers.linkHTML.MascLinkHTMLTextRenderer;
+import com.msoft.mbi.cube.multi.renderers.linkHTML.MaskLinkHTMLDefaultDynamicValueRenderer;
+import com.msoft.mbi.cube.multi.renderers.linkHTML.MaskLinkHTMLDynamicValueRenderer;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,9 +29,9 @@ public abstract class ColumnMetaData {
     @Getter
     @Setter
     private String title;
-    private MascaraRenderer mascaraRenderer;
-    private MascaraRenderer hTMLEffectRenderer;
-    private MascaraLinkHTMLValorDinamicoRenderer hTMLDynamicEffectRenderer;
+    private MaskRenderer maskRenderer;
+    private MaskRenderer hTMLEffectRenderer;
+    private MaskLinkHTMLDynamicValueRenderer hTMLDynamicEffectRenderer;
     @Getter
     @Setter
     private CellProperty cellProperty;
@@ -46,22 +45,22 @@ public abstract class ColumnMetaData {
 
     public ColumnMetaData(String title, String fieldType) {
         this.title = title;
-        this.mascaraRenderer = new MascaraPadraoRenderer();
-        this.hTMLEffectRenderer = new MascaraPadraoRenderer();
-        this.hTMLDynamicEffectRenderer = new MascaraLinkHTMLValorDinamicoPadraoRenderer();
+        this.maskRenderer = new MaskDefaultRenderer();
+        this.hTMLEffectRenderer = new MaskDefaultRenderer();
+        this.hTMLDynamicEffectRenderer = new MaskLinkHTMLDefaultDynamicValueRenderer();
         this.cellProperty = new CellProperty();
     }
 
-    public void setDecorator(MascaraRenderer decorator) {
-        this.mascaraRenderer = decorator;
+    public void setDecorator(MaskRenderer decorator) {
+        this.maskRenderer = decorator;
     }
 
-    public void setHTMLEffectRenderer(MascaraRenderer decorator) {
+    public void setHTMLEffectRenderer(MaskRenderer decorator) {
         this.hTMLEffectRenderer = decorator;
     }
 
     public void addDecorator(MascaraColunaMetaData mascara) {
-        this.mascaraRenderer = montaDecorator(mascara, this.mascaraRenderer);
+        this.maskRenderer = montaDecorator(mascara, this.maskRenderer);
     }
 
     public void addHTMLEffectRenderer(MascaraColunaMetaData mascara) {
@@ -83,51 +82,51 @@ public abstract class ColumnMetaData {
         this.sequenceField = sequenceField;
     }
 
-    public MascaraRenderer getHTMLEffectRenderer() {
+    public MaskRenderer getHTMLEffectRenderer() {
         return hTMLEffectRenderer;
     }
 
-    public MascaraLinkHTMLValorDinamicoRenderer getHTMLDynamicEffectRenderer() {
+    public MaskLinkHTMLDynamicValueRenderer getHTMLDynamicEffectRenderer() {
         return this.hTMLDynamicEffectRenderer;
     }
 
-    public void setHTMLDynamicEffectRenderer(MascaraLinkHTMLValorDinamicoRenderer hTMLDynamicEffectRenderer) {
+    public void setHTMLDynamicEffectRenderer(MaskLinkHTMLDynamicValueRenderer hTMLDynamicEffectRenderer) {
         this.hTMLDynamicEffectRenderer = hTMLDynamicEffectRenderer;
     }
 
     public String getFormattedValue(Object valor) {
         if (valor != null) {
-            return this.mascaraRenderer.aplica(valor).toString();
+            return this.maskRenderer.apply(valor).toString();
         } else {
             return this.getTextNullValue();
         }
     }
 
-    protected static MascaraRenderer montaDecorator(MascaraColunaMetaData mascara, MascaraRenderer decorator) {
+    protected static MaskRenderer montaDecorator(MascaraColunaMetaData mascara, MaskRenderer decorator) {
         int maskType = mascara.getTipo();
         String mascaraValue = mascara.getMascara();
 
         switch (maskType) {
             case MascaraColunaMetaData.TIPO_ANTES:
-                decorator = new MascaraAntesRenderer(decorator, mascaraValue);
+                decorator = new MaskBeforeRenderer(decorator, mascaraValue);
                 break;
             case MascaraColunaMetaData.TIPO_DEPOIS:
-                decorator = new MascaraDepoisRenderer(decorator, mascaraValue);
+                decorator = new MaskAfterRenderer(decorator, mascaraValue);
                 break;
             case MascaraColunaMetaData.TIPO_DATA:
                 decorator = new MascaraDataRenderer(decorator, mascaraValue);
                 break;
             case MascaraColunaMetaData.TIPO_EIS_DIMENSAO_DAT_MES:
-                decorator = new MascaraMes(mascaraValue);
+                decorator = new MaskMonth(mascaraValue);
                 break;
             case MascaraColunaMetaData.TIPO_EIS_DIMENSAO_DAT_ANO_MES:
-                decorator = new MascaraMesAno(mascaraValue);
+                decorator = new MaskMonthYear(mascaraValue);
                 break;
             case MascaraColunaMetaData.TIPO_EIS_DIMENSAO_DAT_SEMANA:
-                decorator = new MascaraSemana(mascaraValue);
+                decorator = new MaskWeek(mascaraValue);
                 break;
             case MascaraColunaMetaData.TIPO_EIS_DIMENSAO_DAT_PERIODO:
-                decorator = new MascaraPeriodo(mascaraValue);
+                decorator = new MaskPeriod(mascaraValue);
                 break;
             default:
                 throw new IllegalArgumentException("Invalid mascara type: " + maskType);
@@ -140,14 +139,14 @@ public abstract class ColumnMetaData {
         for (HTMLLineMask mascara : mascarasHTML) {
             switch (mascara.getType()) {
                 case HTMLLineMask.VALUE_TYPE_AFTER:
-                    columnMetaData.setHTMLEffectRenderer(new MascaraLinkHTMLDepoisRenderer(columnMetaData.getHTMLEffectRenderer(), mascara.getLinkHTML()));
+                    columnMetaData.setHTMLEffectRenderer(new com.msoft.mbi.cube.multi.renderers.linkHTML.MaskAfterRenderer(columnMetaData.getHTMLEffectRenderer(), mascara.getLinkHTML()));
                     break;
                 case HTMLLineMask.VALUE_TYPE:
-                    MascaraLinkHTMLTextoRenderer mascaraHTML = new MascaraLinkHTMLTextoRenderer((LinkHTMLTexto) mascara.getLinkHTML());
+                    MascLinkHTMLTextRenderer mascaraHTML = new MascLinkHTMLTextRenderer((LinkHTMLText) mascara.getLinkHTML());
                     columnMetaData.setHTMLEffectRenderer(mascaraHTML);
                     break;
                 case HTMLLineMask.DYNAMIC_TYPE:
-                    MascaraLinkHTMLValorDinamicoRenderer mascaraHTMLValor = new MascaraLinkHTMLValorDinamicoRenderer((LinkHTMLTextoDinamico) mascara.getLinkHTML());
+                    MaskLinkHTMLDynamicValueRenderer mascaraHTMLValor = new MaskLinkHTMLDynamicValueRenderer((LinkHTMLDynamicText) mascara.getLinkHTML());
                     columnMetaData.setHTMLDynamicEffectRenderer(mascaraHTMLValor);
                     break;
             }
@@ -156,7 +155,7 @@ public abstract class ColumnMetaData {
 
     protected static void factory(ColumnMetaData columnMetaData, MetaDataField metaDataField) {
         List<MascaraColunaMetaData> mascarasCampo = metaDataField.getFieldMask();
-        MascaraRenderer decorator = new MascaraPadraoRenderer();
+        MaskRenderer decorator = new MaskDefaultRenderer();
         for (MascaraColunaMetaData mascara : mascarasCampo) {
             decorator = montaDecorator(mascara, decorator);
         }

@@ -2,22 +2,22 @@ package com.msoft.mbi.cube.multi.renderers;
 
 import java.text.SimpleDateFormat;
 
-public class MascaraDataRenderer implements MascaraRenderer {
+public class MascaraDataRenderer implements MaskRenderer {
 
-    private MascaraRenderer renderer;
+    private MaskRenderer renderer;
     private SimpleDateFormat formatador;
 
-    public MascaraDataRenderer(MascaraRenderer decorator) {
+    public MascaraDataRenderer(MaskRenderer decorator) {
         this(decorator, "dd/MM/yyyy");
     }
 
-    public MascaraDataRenderer(MascaraRenderer decorator, String formato) {
+    public MascaraDataRenderer(MaskRenderer decorator, String formato) {
         this.renderer = decorator;
         this.formatador = new SimpleDateFormat(formato);
     }
 
     @Override
-    public Object aplica(Object valor) {
-        return this.renderer.aplica(this.formatador.format(valor));
+    public Object apply(Object valor) {
+        return this.renderer.apply(this.formatador.format(valor));
     }
 }

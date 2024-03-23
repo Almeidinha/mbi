@@ -6,8 +6,8 @@ import com.msoft.mbi.cube.multi.analytics.AnaliseParticipacaoTipo;
 import com.msoft.mbi.cube.multi.calculation.Calculo;
 import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
-import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLTextoColuna;
-import com.msoft.mbi.cube.multi.renderers.linkHTML.MascaraLinkHTMLTextoRenderer;
+import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLColumnText;
+import com.msoft.mbi.cube.multi.renderers.linkHTML.MascLinkHTMLTextRenderer;
 
 public abstract class MetricCalculatedAcumuladoMetaData extends MetricCalculatedMetaData implements MetricCalculatedFunctionMetaData {
 
@@ -30,9 +30,9 @@ public abstract class MetricCalculatedAcumuladoMetaData extends MetricCalculated
             factoryColorsAlert(this, alertasCores);
         }
 
-        LinkHTMLTextoColuna linkHTMLTextoColuna = new LinkHTMLTextoColuna("", colunaReferencia.getCellProperty().getWidth());
-        MascaraLinkHTMLTextoRenderer mascaraLinkHTMLTextoRenderer = new MascaraLinkHTMLTextoRenderer(linkHTMLTextoColuna);
-        this.setHTMLEffectRenderer(mascaraLinkHTMLTextoRenderer);
+        LinkHTMLColumnText linkHTMLTextoColuna = new LinkHTMLColumnText("", colunaReferencia.getCellProperty().getWidth());
+        MascLinkHTMLTextRenderer mascLinkHTMLTextRenderer = new MascLinkHTMLTextRenderer(linkHTMLTextoColuna);
+        this.setHTMLEffectRenderer(mascLinkHTMLTextRenderer);
     }
 
     @Override

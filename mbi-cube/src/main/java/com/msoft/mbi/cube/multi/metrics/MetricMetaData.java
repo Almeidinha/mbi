@@ -15,7 +15,7 @@ import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.generation.Printer;
 import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
 import com.msoft.mbi.cube.multi.metaData.MetaDataField;
-import com.msoft.mbi.cube.multi.renderers.DecimalMaskRender;
+import com.msoft.mbi.cube.multi.renderers.DecimalMaskRenderer;
 import com.msoft.mbi.cube.multi.renderers.NullValueMask;
 import com.msoft.mbi.cube.multi.partialTotalization.PartialTotalizationApplyType;
 import com.msoft.mbi.cube.multi.partialTotalization.PartialTotalizationApplyTypeExpressao;
@@ -67,7 +67,7 @@ public abstract class MetricMetaData extends ColumnMetaData {
     @Getter
     @Setter
     private boolean usePercent = false;
-    private DecimalMaskRender decimalMaskRender;
+    private DecimalMaskRenderer decimalMaskRenderer;
     @Setter
     private NullValueMask nullValueMask;
     private final Map<String, List<ColorAlertConditionsMetrica>> lineColorAlertConditions;
@@ -100,7 +100,7 @@ public abstract class MetricMetaData extends ColumnMetaData {
         this.cellColorAlertConditions = new HashMap<>();
         this.lineColorAlertConditions = new HashMap<>();
         this.nullValueMask = new NullValueMask();
-        this.decimalMaskRender = new DecimalMaskRender();
+        this.decimalMaskRenderer = new DecimalMaskRenderer();
         this.partialTotalizationApplyType = PartialTotalizationApplyTypeSoma.getInstance();
         this.metricOrderings = new ArrayList<>();
         this.aggregationType = SUM_AGGREGATION;
@@ -110,12 +110,12 @@ public abstract class MetricMetaData extends ColumnMetaData {
         ColumnMetaData.factory(metricMetaData, metaDataField);
         if (metaDataField.getOrder() > 0) {
             MetricOrdering metricOrdering = new MetricOrdering(metaDataField.getOrderDirection(), metaDataField.getOrder(),
-                    metricMetaData.getTitle(), MetricaValorUtilizarLinhaMetrica.getInstance());
+                    metricMetaData.getTitle(), MetricValueUseLine.getInstance());
             metricMetaData.addMetricOrdering(metricOrdering);
         }
         if (metaDataField.getAccumulatedOrder() > 0) {
             MetricOrdering metricOrdering = new MetricOrdering(metaDataField.getAccumulatedOrderDirection(), metaDataField.getAccumulatedOrder(),
-                    metricMetaData.getTitle(), MetricaValorUtilizarTotal.getInstance());
+                    metricMetaData.getTitle(), MetricValueUseTotal.getInstance());
             metricMetaData.addMetricOrdering(metricOrdering);
         }
         if (metaDataField.getNullValueMask() != null) {
@@ -177,12 +177,12 @@ public abstract class MetricMetaData extends ColumnMetaData {
     }
 
     public int getDecimalPlacesNumber() {
-        return this.decimalMaskRender.getNCasasDecimais();
+        return this.decimalMaskRenderer.getDecimalPlacesCount();
     }
 
     public void setDecimalPlaces(int decimalPlaces) {
         this.decimalPlaces = decimalPlaces;
-        this.decimalMaskRender = new DecimalMaskRender(this.decimalPlaces);
+        this.decimalMaskRenderer = new DecimalMaskRenderer(this.decimalPlaces);
     }
 
     @Override
@@ -196,7 +196,7 @@ public abstract class MetricMetaData extends ColumnMetaData {
 
     public String getFormattedValue(Object valor) {
         if (valor != null) {
-            return super.getFormattedValue(this.decimalMaskRender.apply(valor));
+            return super.getFormattedValue(this.decimalMaskRenderer.apply(valor));
         } else {
             return this.getTextNullValue();
         }

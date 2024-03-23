@@ -10,12 +10,12 @@ import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
 import com.msoft.mbi.cube.multi.metaData.HTMLLineMask;
 import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 import com.msoft.mbi.cube.multi.metaData.CubeMetaData;
-import com.msoft.mbi.cube.multi.renderers.MascaraMes;
-import com.msoft.mbi.cube.multi.renderers.MascaraMesAno;
-import com.msoft.mbi.cube.multi.renderers.MascaraPeriodo;
-import com.msoft.mbi.cube.multi.renderers.MascaraSemana;
-import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLTexto;
-import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLTextoColuna;
+import com.msoft.mbi.cube.multi.renderers.MaskMonth;
+import com.msoft.mbi.cube.multi.renderers.MaskMonthYear;
+import com.msoft.mbi.cube.multi.renderers.MaskPeriod;
+import com.msoft.mbi.cube.multi.renderers.MaskWeek;
+import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLText;
+import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLColumnText;
 import com.msoft.mbi.cube.util.CubeListener;
 import com.msoft.mbi.cube.util.DefaultCubeListener;
 import com.msoft.mbi.cube.util.logicOperators.LogicalOperators;
@@ -856,8 +856,8 @@ public class Indicator {
         setMetaDataFieldFlags(metaDataField, field);
         setMetaDataFieldDataType(metaDataField, field);
 
-        LinkHTMLTexto testLink = new LinkHTMLTextoColuna(metaDataField.getTitle(), metaDataField.getColumnWidth());
-        testLink.addParametro("data-code-col", String.valueOf(field.getFieldId()));
+        LinkHTMLText testLink = new LinkHTMLColumnText(metaDataField.getTitle(), metaDataField.getColumnWidth());
+        testLink.addParameter("data-code-col", String.valueOf(field.getFieldId()));
         HTMLLineMask  mascaraLinkHTML = new HTMLLineMask("field_maintenance",HTMLLineMask.VALUE_TYPE, testLink);
         metaDataField.addHTMLLineMask(mascaraLinkHTML);
 
@@ -882,25 +882,25 @@ public class Indicator {
             } else if (Constants.DIMENSION.equals(field.getFieldType())) {
                 if (Constants.NUMBER.equals(field.getDataType()) || Constants.STRING.equals(field.getDataType())) {
                     if (field.getName().equalsIgnoreCase("num_mes")) {
-                        if (fieldDateMask.equalsIgnoreCase(MascaraMes.ABREVIADO)
-                                || fieldDateMask.equalsIgnoreCase(MascaraMes.NAO_ABREVIADO)) {
+                        if (fieldDateMask.equalsIgnoreCase(MaskMonth.ABBREVIATED)
+                                || fieldDateMask.equalsIgnoreCase(MaskMonth.NOT_ABBREVIATED)) {
                             metaDataField.addMask(new MascaraColunaMetaData(fieldDateMask, MascaraColunaMetaData.TIPO_EIS_DIMENSAO_DAT_MES));
                         }
                     }
                     if (field.getName().equalsIgnoreCase("num_dia_semana")) {
-                        if (fieldDateMask.equalsIgnoreCase(MascaraSemana.ABREVIADO)
-                                || fieldDateMask.equalsIgnoreCase(MascaraSemana.NAO_ABREVIADO)) {
+                        if (fieldDateMask.equalsIgnoreCase(MaskWeek.ABBREVIATED)
+                                || fieldDateMask.equalsIgnoreCase(MaskWeek.NOT_ABBREVIATED)) {
                             metaDataField.addMask(new MascaraColunaMetaData(fieldDateMask, MascaraColunaMetaData.TIPO_EIS_DIMENSAO_DAT_SEMANA));
                         }
                     }
                     if (field.getName().equalsIgnoreCase("num_bimestre") || field.getName().equalsIgnoreCase("num_trimestre")
                             || field.getName().equalsIgnoreCase("num_semestre")) {
-                        if (Constants.NUMBER.equals(field.getDataType()) && (MascaraPeriodo.validaMascara(fieldDateMask))) {
+                        if (Constants.NUMBER.equals(field.getDataType()) && (MaskPeriod.validaMascara(fieldDateMask))) {
                             metaDataField.addMask(new MascaraColunaMetaData(fieldDateMask, MascaraColunaMetaData.TIPO_EIS_DIMENSAO_DAT_PERIODO));
                         }
                     }
                     if (field.getName().equalsIgnoreCase("ano_mes_dat")) {
-                        if (Constants.STRING.equals(field.getDataType()) && (MascaraMesAno.validaMascara(fieldDateMask))) {
+                        if (Constants.STRING.equals(field.getDataType()) && (MaskMonthYear.validaMascara(fieldDateMask))) {
                             metaDataField.addMask(new MascaraColunaMetaData(fieldDateMask, MascaraColunaMetaData.TIPO_EIS_DIMENSAO_DAT_ANO_MES));
                         }
                     }

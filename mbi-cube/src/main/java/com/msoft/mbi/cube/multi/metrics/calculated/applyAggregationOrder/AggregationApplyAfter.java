@@ -4,19 +4,19 @@ import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.MetricsMap;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculated;
 
-public class AgregacaoAplicarDepois implements AggregationApplyOrder {
+public class AggregationApplyAfter implements AggregationApplyOrder {
 
-    private AgregacaoAplicarDepois() {
+    private AggregationApplyAfter() {
         super();
     }
 
-    public static AgregacaoAplicarDepois agregacaoAplicarDepois;
+    public static AggregationApplyAfter aggregationApplyAfter;
 
-    public static AgregacaoAplicarDepois getInstance() {
-        if (agregacaoAplicarDepois == null) {
-            agregacaoAplicarDepois = new AgregacaoAplicarDepois();
+    public static AggregationApplyAfter getInstance() {
+        if (aggregationApplyAfter == null) {
+            aggregationApplyAfter = new AggregationApplyAfter();
         }
-        return agregacaoAplicarDepois;
+        return aggregationApplyAfter;
     }
 
     @Override

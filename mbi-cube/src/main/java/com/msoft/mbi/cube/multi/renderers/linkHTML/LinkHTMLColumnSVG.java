@@ -1,6 +1,6 @@
 package com.msoft.mbi.cube.multi.renderers.linkHTML;
 
-public class LinkHTMLSVGColumn extends LinkHTML {
+public class LinkHTMLColumnSVG extends LinkHTML {
 
     private String id;
     private Integer width;
@@ -8,24 +8,24 @@ public class LinkHTMLSVGColumn extends LinkHTML {
     private String hint = "";
     private String cssClass;
 
-    public LinkHTMLSVGColumn() {
+    public LinkHTMLColumnSVG() {
         super();
     }
 
-    public LinkHTMLSVGColumn(String id, String cssClass) {
+    public LinkHTMLColumnSVG(String id, String cssClass) {
         super();
         this.id = id;
         this.cssClass = cssClass;
     }
 
-    public LinkHTMLSVGColumn(String id, String cssClass, String hint, Integer height, Integer width) {
+    public LinkHTMLColumnSVG(String id, String cssClass, String hint, Integer height, Integer width) {
         this(id, cssClass);
         this.height = height;
         this.width = width;
         this.hint = hint;
     }
 
-    public LinkHTMLSVGColumn(String cssClass, String hint, Integer height, Integer width) {
+    public LinkHTMLColumnSVG(String cssClass, String hint, Integer height, Integer width) {
         this.cssClass = cssClass;
         this.hint = hint;
         this.height = height;
@@ -43,8 +43,8 @@ public class LinkHTMLSVGColumn extends LinkHTML {
 				.append("' style='cursor: pointer;").append(height).append(width).append("'")
 				.append(" title='").append(this.hint).append("'");
 
-        for (String param : this.getParametros().keySet()) {
-            image.append(" ").append(param).append("='").append(this.getParametros().get(param)).append("'");
+        for (String param : this.getParameters().keySet()) {
+            image.append(" ").append(param).append("='").append(this.getParameters().get(param)).append("'");
         }
 
         image.append("></div>");
