@@ -60,20 +60,20 @@ public class DimensionFilterJDBC extends DimensionFilter implements Filter, Clon
         return dimensionFilter;
     }
 
-    public Object applyValues(Object stmt, Integer posicao) throws BISQLException {
+    public Object applyValues(Object stmt, Integer position) throws BISQLException {
         Condition condition = this.getCondition();
         try {
             if (condition != null) {
-                posicao = (Integer) condition.applyValues(stmt, posicao);
+                position = (Integer) condition.applyValues(stmt, position);
             }
             if (this.getFilters() != null) {
-                for (DimensionFilter fil : this.getFilters()) {
-                    posicao = (Integer) fil.applyValues(stmt, posicao);
+                for (DimensionFilter filter : this.getFilters()) {
+                    position = (Integer) filter.applyValues(stmt, position);
                 }
             }
-            return posicao;
+            return position;
         } catch (Exception e) {
-            throw new BISQLException(e, "Erro ao setar o valor na SQL.");
+            throw new BISQLException(e, "Error applying value at position: " + position);
         }
     }
 

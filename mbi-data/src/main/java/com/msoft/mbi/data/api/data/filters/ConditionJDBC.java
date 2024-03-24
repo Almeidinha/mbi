@@ -7,11 +7,13 @@ import com.msoft.mbi.data.api.data.indicator.Operator;
 import com.msoft.mbi.data.api.data.util.BIPreparedStatementAction;
 import com.msoft.mbi.data.api.data.util.BIUtil;
 import com.msoft.mbi.data.api.data.util.Constants;
+import lombok.extern.log4j.Log4j2;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+@Log4j2
 public class ConditionJDBC extends Condition implements Cloneable {
 
     public ConditionJDBC() {
@@ -30,31 +32,31 @@ public class ConditionJDBC extends Condition implements Cloneable {
         this(field, new Operator(operator), value);
     }
 
-    protected Object applyValues(Object stmt, int posicao) throws BIException {
+    protected Object applyValues(Object stmt, int position) throws BIException {
         try {
             PreparedStatement statement = (PreparedStatement) stmt;
             int count = this.getValuesMap().size();
             for (int index = 1; index <= count; index++) {
-                String valor = String.valueOf(this.getValuesMap().get(index));
-                Object oValor = this.format(valor);
-                this.apply(statement, posicao, oValor);
-                posicao++;
+                String valueAsString = String.valueOf(this.getValuesMap().get(index));
+                Object formattedValue = this.format(valueAsString);
+                this.apply(statement, position, formattedValue);
+                position++;
             }
-            return posicao;
+            return position;
         } catch (SQLException e) {
-            throw new BISQLException(e, "Erro ao aplicar valor na posicao: " + posicao);
+            throw new BISQLException(e, "Error applying value at position: " + position);
         }
     }
 
-    private void apply(PreparedStatement stmt, int posicao, Object valor) throws SQLException {
+    private void apply(PreparedStatement stmt, int position, Object valor) throws SQLException {
         BIPreparedStatementAction action = new BIPreparedStatementAction(stmt);
-        String tipo = this.getField().getDataType();
-        if (Constants.NUMBER.equals(tipo)) {
-            action.setDouble(posicao, (Double) valor);
-        } else if (Constants.STRING.equals(tipo)) {
-            action.setString(posicao, String.valueOf(valor));
+        String type = this.getField().getDataType();
+        if (Constants.NUMBER.equals(type)) {
+            action.setDouble(position, (Double) valor);
+        } else if (Constants.STRING.equals(type)) {
+            action.setString(position, String.valueOf(valor));
         } else {
-            action.setDate(posicao, (Date) valor);
+            action.setDate(position, (Date) valor);
         }
     }
 
@@ -64,7 +66,7 @@ public class ConditionJDBC extends Condition implements Cloneable {
         try {
             conditionJDBC = new ConditionJDBC(this);
         } catch (BIException e) {
-            e.printStackTrace();
+            log.error("Error in ConditionJDBC.clone() : " + e.getMessage());
             return null;
         }
         return conditionJDBC;
@@ -79,7 +81,7 @@ public class ConditionJDBC extends Condition implements Cloneable {
         try {
             return this.formatSQLValue();
         } catch (BIException e) {
-            e.printStackTrace();
+            log.error("Error in ConditionJDBC.getFormattedValue() : " + e.getMessage());
             return null;
         }
     }

@@ -5,6 +5,9 @@ import com.msoft.mbi.data.api.data.indicator.ExpressionCondition;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Setter
 @Getter
 public class ConditionalExpression {
@@ -12,7 +15,7 @@ public class ConditionalExpression {
     private ExpressionCondition expConditionalPart;
     private Expression expPartTrue;
     private Expression expPartFalse;
-
+    private static final int NOT_FOUND = -1;
 
     public ConditionalExpression() {
     }
@@ -23,78 +26,66 @@ public class ConditionalExpression {
         this.expPartFalse = expPartFalse;
     }
 
-
     public static int getConditionalOperatorInitialIndex(String condition) {
-        if (condition.indexOf("=") > 0) {
-            if (condition.charAt(condition.indexOf("=") - 1) == '!' && condition.charAt(condition.indexOf("=") - 2) != '$') {
-                return condition.indexOf("!=");
-            } else if (condition.charAt(condition.indexOf("=") - 1) == '>') {
-                return condition.indexOf(">=");
-            } else if (condition.charAt(condition.indexOf("=") - 1) == '<') {
-                return condition.indexOf("<=");
-            } else if (condition.charAt(condition.indexOf("=") - 1) == '=') {
-                return condition.indexOf("==");
-            } else if (condition.charAt(condition.indexOf("=") + 1) == '=') {
-                return condition.indexOf("==");
-            } else {
-                return condition.indexOf("=");
-            }
-        } else if (condition.indexOf("<") > 0) {
-            if (condition.charAt(condition.indexOf("<") + 1) == '>') {
-                return condition.indexOf("<>");
-            } else {
-                return condition.indexOf("<");
-            }
-        } else if (condition.indexOf(">") > 0) {
-            if (condition.charAt(condition.indexOf(">") - 1) == '<') {
-                return condition.indexOf("<>");
-            } else {
-                return condition.indexOf(">");
-            }
+        int equalIndex = condition.indexOf("=");
+        if (equalIndex > 0) {
+            return getOperatorIndexBasedOnEqual(condition, equalIndex);
         }
-        return -1;
+        int lessThanIndex = condition.indexOf("<");
+        if (lessThanIndex > 0) {
+            return condition.charAt(lessThanIndex + 1) == '>' ? condition.indexOf("<>") : lessThanIndex;
+        }
+        int greaterThanIndex = condition.indexOf(">");
+        if (greaterThanIndex > 0) {
+            return condition.charAt(greaterThanIndex - 1) == '<' ? condition.indexOf("<>") : greaterThanIndex;
+        }
+        return NOT_FOUND;
     }
 
-    public static int getConditionalOperatorFinalIndex(String condicao) {
-        if (condicao.indexOf("=") > 0) {
-            if (condicao.charAt(condicao.indexOf("=") - 1) == '!' && condicao.charAt(condicao.indexOf("=") - 2) == '$') {
-                return condicao.indexOf("!=") + 2;
-            } else if (condicao.charAt(condicao.indexOf("=") - 1) == '>') {
-                return condicao.indexOf(">=") + 2;
-            } else if (condicao.charAt(condicao.indexOf("=") - 1) == '<') {
-                return condicao.indexOf("<=") + 2;
-            } else if (condicao.charAt(condicao.indexOf("=") - 1) == '=') {
-                return condicao.indexOf("==") + 2;
-            } else if (condicao.charAt(condicao.indexOf("=") + 1) == '=') {
-                return condicao.indexOf("==") + 2;
-            } else {
-                return condicao.indexOf("=") + 1;
-            }
-        } else if (condicao.indexOf("<") > 0) {
-            if (condicao.charAt(condicao.indexOf("<") + 1) == '>') {
-                return condicao.indexOf("<>") + 2;
-            } else {
-                return condicao.indexOf("<") + 1;
-            }
-        } else if (condicao.indexOf(">") > 0) {
-            if (condicao.charAt(condicao.indexOf(">") - 1) == '<') {
-                return condicao.indexOf("<>") + 2;
-            } else {
-                return condicao.indexOf(">") + 1;
+    private static int getOperatorIndexBasedOnEqual(String condition, int equalIndex) {
+        if (condition.charAt(equalIndex - 1) == '!' && condition.charAt(equalIndex - 2) != '$') {
+            return condition.indexOf("!=");
+        } else if (condition.charAt(equalIndex - 1) == '>') {
+            return condition.indexOf(">=");
+        } else if (condition.charAt(equalIndex - 1) == '<') {
+            return condition.indexOf("<=");
+        } else if (condition.charAt(equalIndex - 1) == '=' || condition.charAt(equalIndex + 1) == '=') {
+            return condition.indexOf("==");
+        } else {
+            return equalIndex;
+        }
+    }
+
+    public static int getConditionalOperatorFinalIndex(String condition) {
+        Map<String, Integer> operatorLengths = new HashMap<>();
+        operatorLengths.put("!=", 2);
+        operatorLengths.put(">=", 2);
+        operatorLengths.put("<=", 2);
+        operatorLengths.put("==", 2);
+        operatorLengths.put("<>", 2);
+        operatorLengths.put("=", 1);
+        operatorLengths.put("<", 1);
+        operatorLengths.put(">", 1);
+
+        for (Map.Entry<String, Integer> entry : operatorLengths.entrySet()) {
+            String operator = entry.getKey();
+            int index = condition.indexOf(operator);
+            if (index > 0) {
+                return index + entry.getValue();
             }
         }
 
         return -1;
     }
 
-    public int getQuantidadeCamposExpressao() {
-        int retorno = 0;
+    public int getExpressionFieldsCount() {
+        int count = 0;
         if (this.expPartFalse != null) {
-            retorno += this.expPartFalse.getFieldsExpressionAmount();
+            count += this.expPartFalse.getFieldsExpressionAmount();
         }
         if (this.expPartTrue != null) {
-            retorno += this.expPartTrue.getFieldsExpressionAmount();
+            count += this.expPartTrue.getFieldsExpressionAmount();
         }
-        return retorno;
+        return count;
     }
 }

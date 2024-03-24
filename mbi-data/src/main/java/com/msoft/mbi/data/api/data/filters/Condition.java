@@ -52,14 +52,8 @@ public abstract class Condition {
     }
 
     private void init() throws BIException {
-        StringBuilder newValue = new StringBuilder();
         if (!this.value.isEmpty()) {
-            if (this.value.contains("'")) {
-                newValue.append(this.value.replace("'", "").replace(",", "; "));
-            } else {
-                newValue.append(this.value.replace(",", "; "));
-            }
-            this.value = newValue.toString();
+            this.value = this.value.replace("'", "").replace(",", "; ");
         }
         this.SQLValue = this.formatSQLValue();
     }

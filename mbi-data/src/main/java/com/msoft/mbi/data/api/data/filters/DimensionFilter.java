@@ -12,6 +12,7 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 @Data
 @Getter
@@ -211,35 +212,44 @@ public abstract class DimensionFilter implements Filter, Cloneable {
     public String toString(boolean save) {
         StringBuilder result = new StringBuilder();
 
-        if (Optional.ofNullable(this.condition).isEmpty()) {
-            if (this.isMacro() && save) {
-                if (Optional.ofNullable(this.macroField.getTableNickname()).isPresent() && !this.macroField.getTableNickname().trim().isEmpty()) {
-                    result.append(this.macroField.getTableNickname()).append(".");
-                }
-                result.append(this.macroField.getName()).append(" = '").append(this.macro.getId()).append("'");
-            } else if (Optional.ofNullable(this.filters).isPresent() && !this.filters.isEmpty()) {
+        if (condition == null) {
+            if (isMacro() && save) {
+                appendMacroField(result);
+                result.append(" = `").append(macro.getId()).append("`");
+            } else if (filters != null && !filters.isEmpty()) {
                 result.append("(");
-                for (int i = 0; i < filters.size(); i++) {
-                    result.append(filters.get(i).toString(save));
-                    if (i < filters.size() - 1) {
-                        result.append(" ").append(this.connector).append(" ");
-                    }
-                }
+                appendFilters(result, save);
                 result.append(")");
             } else {
                 result.append("1 = 1");
             }
         } else {
             if (save || isMacro()) {
-                if (Optional.ofNullable(this.macroField.getTableNickname()).isPresent() && !this.macroField.getTableNickname().trim().isEmpty()) {
-                    result.append(this.macroField.getTableNickname()).append(".");
-                }
-                result.append(this.macroField.getName()).append(" ").append(this.condition.getOperator().getSymbol()).append(" '").append(this.macro.getId()).append("'");
+                appendMacroField(result);
+                result.append(" ").append(condition.getOperator().getSymbol()).append(" `").append(macro.getId()).append("`");
             } else {
-                result.append(this.condition.toString());
+                result.append(condition.toString());
             }
         }
         return result.toString();
+    }
+
+    private void appendMacroField(StringBuilder result) {
+        String tableNickname = Optional.ofNullable(macroField.getTableNickname()).orElse("");
+        if (!tableNickname.trim().isEmpty()) {
+            result.append(tableNickname).append(".");
+        }
+        result.append(macroField.getName());
+    }
+
+    private void appendFilters(StringBuilder result, boolean save) {
+        IntStream.range(0, filters.size())
+                .forEach(i -> {
+                    result.append(filters.get(i).toString(save));
+                    if (i < filters.size() - 1) {
+                        result.append(" ").append(connector).append(" ");
+                    }
+                });
     }
 
     @Override
