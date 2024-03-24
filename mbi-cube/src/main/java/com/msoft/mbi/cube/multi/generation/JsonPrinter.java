@@ -32,7 +32,7 @@ public class JsonPrinter implements Printer {
 
     private final Map<CellProperty, String> columnSpecificProperties;
 
-    private final AplicadorEfeitoHTML aplicadorEfeitoHTML;
+    private final HtmlEffectApplier aplicadorEfeitoHTML;
 
     private static final String BACKGROUND_COLOR = "backgroundColor";
     private static final String FONT_SIZE = "fontSize";
@@ -51,7 +51,7 @@ public class JsonPrinter implements Printer {
         this.styles = mapper.createObjectNode();
         this.resultNode = mapper.createObjectNode();
         this.columnSpecificProperties = new HashMap<>();
-        this.aplicadorEfeitoHTML = new AplicadorEfeitoHTMLAplica();
+        this.aplicadorEfeitoHTML = new HtmlEffectApplierApply();
     }
 
     public JsonPrinter(ObjectNode jsonNode) {
@@ -325,10 +325,10 @@ public class JsonPrinter implements Printer {
     }
 
     private String applyHtmlEffect(Object value, MaskRenderer htmlDecoratorEffect) {
-        return this.aplicadorEfeitoHTML.aplicaEfeitoHTML(value, htmlDecoratorEffect);
+        return this.aplicadorEfeitoHTML.applyHtmlEffect(value, htmlDecoratorEffect);
     }
 
     private String applyDynamicHtmlEffect(Object printValue, String parameterValue, MaskLinkHTMLDynamicValueRenderer htmlDecoratorEffect) {
-        return this.aplicadorEfeitoHTML.aplicaEfeitoHTMLDinamico(printValue, parameterValue, htmlDecoratorEffect);
+        return this.aplicadorEfeitoHTML.applyDynamicHtmlEffect(printValue, parameterValue, htmlDecoratorEffect);
     }
 }

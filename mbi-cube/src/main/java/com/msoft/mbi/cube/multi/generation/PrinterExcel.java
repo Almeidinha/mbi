@@ -107,17 +107,17 @@ public class PrinterExcel implements Printer {
         HSSFCellStyle estilo = this.livroPlanilhas.createCellStyle();
         estilo.setAlignment(HorizontalAlignment.forInt(this.getAlinhamentoExcel(cellProperty.getAlignment())));
         HSSFFont fonte = this.livroPlanilhas.createFont();
-        fonte.setColor(CorUtil.getCorExcel(cellProperty.getFontColor()));
+        fonte.setColor(ColorUtil.getCorExcel(cellProperty.getFontColor()));
         fonte.setFontName(cellProperty.getFontName());
         fonte.setFontHeightInPoints((short) cellProperty.getFontSize());
         if (cellProperty.isBold())
             fonte.setBold(true);
         estilo.setFont(fonte);
         estilo.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        estilo.setFillForegroundColor(CorUtil.getCorExcel(cellProperty.getBackGroundColor()));
+        estilo.setFillForegroundColor(ColorUtil.getCorExcel(cellProperty.getBackGroundColor()));
         short corBorda = this.corBordasPadrao;
         if (cellProperty.isSpecificBorder()) {
-            corBorda = CorUtil.getCorExcel(cellProperty.getBorderColor());
+            corBorda = ColorUtil.getCorExcel(cellProperty.getBorderColor());
         }
         this.setBorda(estilo, corBorda);
         estilo.setWrapText(false);
@@ -370,7 +370,7 @@ public class PrinterExcel implements Printer {
 
     @Override
     public void setDefaultBorderColor(String corBorda) {
-        this.corBordasPadrao = CorUtil.getCorExcel(corBorda);
+        this.corBordasPadrao = ColorUtil.getCorExcel(corBorda);
     }
 
     @Override

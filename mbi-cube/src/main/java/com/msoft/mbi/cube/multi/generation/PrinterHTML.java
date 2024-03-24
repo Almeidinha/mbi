@@ -25,14 +25,14 @@ public class PrinterHTML implements Printer {
     @SuppressWarnings("unused")
     private String corBordasPadrao = "FFFFFF";
     private final Map<CellProperty, String> propriedadesEspecificasColuna;
-    private final AplicadorEfeitoHTML aplicadorEfeitoHTML;
+    private final HtmlEffectApplier aplicadorEfeitoHTML;
 
     public PrinterHTML(String arquivoHTML) {
         try {
             fos = new FileOutputStream("c:\\" + arquivoHTML);
             this.output = new OutputStreamWriter(fos);
             this.propriedadesEspecificasColuna = new HashMap<>();
-            this.aplicadorEfeitoHTML = new AplicadorEfeitoHTMLAplica();
+            this.aplicadorEfeitoHTML = new HtmlEffectApplierApply();
         } catch (FileNotFoundException e) {
             throw new CubeMathParserException("Não foi possível criar o arquivo.", e);
         }
@@ -42,9 +42,9 @@ public class PrinterHTML implements Printer {
         this.output = output;
         this.propriedadesEspecificasColuna = new HashMap<>();
         if (imprimeLinks) {
-            this.aplicadorEfeitoHTML = new AplicadorEfeitoHTMLAplica();
+            this.aplicadorEfeitoHTML = new HtmlEffectApplierApply();
         } else {
-            this.aplicadorEfeitoHTML = new AplicadorEfeitoHTMLNaoAplica();
+            this.aplicadorEfeitoHTML = new HtmlEffectApplierNotApply();
         }
     }
 
@@ -158,11 +158,11 @@ public class PrinterHTML implements Printer {
     }
 
     private String applyHTMLEffect(Object valor, MaskRenderer effectDecorator) {
-        return this.aplicadorEfeitoHTML.aplicaEfeitoHTML(valor, effectDecorator);
+        return this.aplicadorEfeitoHTML.applyHtmlEffect(valor, effectDecorator);
     }
 
     private String applyDynamicHTMLEffect(Object printValue, String parameterValue, MaskLinkHTMLDynamicValueRenderer effectDecorator) {
-        return this.aplicadorEfeitoHTML.aplicaEfeitoHTMLDinamico(printValue, parameterValue, effectDecorator);
+        return this.aplicadorEfeitoHTML.applyDynamicHtmlEffect(printValue, parameterValue, effectDecorator);
     }
 
     private String getColumnHeaderContent(ColumnMetaData metaData, int colspan, int rowspan, String headerStyle) {

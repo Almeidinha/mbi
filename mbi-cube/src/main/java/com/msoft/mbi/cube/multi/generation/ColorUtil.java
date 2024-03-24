@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import org.apache.poi.hssf.util.HSSFColor;
 
-public class CorUtil {
+public class ColorUtil {
 
     private static final HashMap<String, Short> coresExcelHTML;
 
