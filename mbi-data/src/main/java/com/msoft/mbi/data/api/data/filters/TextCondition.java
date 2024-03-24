@@ -7,7 +7,9 @@ import com.msoft.mbi.data.api.data.indicator.Operator;
 import com.msoft.mbi.data.api.data.util.BIUtil;
 import com.msoft.mbi.data.api.data.util.Constants;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.NotImplementedException;
 
+import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
@@ -31,23 +33,19 @@ public class TextCondition extends Condition {
     }
 
     @Override
-    protected String applyValues(Object query, int position) throws BIException {
-        String queryString = String.valueOf(query);
+    protected int applyValues(PreparedStatement stmt, int position) throws BIException {
+        throw new NotImplementedException("TextCondition.applyValues(PreparedStatement stmt, int position) not available");
+    }
 
-        /*int placeholderCount = StringUtils.countMatches(queryString, "?");
-
-        if (placeholderCount != this.valuesMap.size()) {
-            String message = "parameter count doesnt match sql placeholders count";
-            log.error("Error: " + message);
-            throw new BIException(message);
-        }*/
+    @Override
+    protected String applyValues(String query, int position) throws BIException {
 
         for (Object mapValue : this.valuesMap.values()) {
             String value = String.valueOf(mapValue);
-            queryString = queryString.replaceFirst("\\?", this.format(value));
+            query = query.replaceFirst("\\?", this.format(value));
         }
 
-        return queryString;
+        return query;
     }
 
     protected Object clone() throws CloneNotSupportedException {

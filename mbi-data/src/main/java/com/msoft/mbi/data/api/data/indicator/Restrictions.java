@@ -246,7 +246,7 @@ public class Restrictions  {
         int size = filtro.size();
         for (int key = 1; key <= size; key++) {
             DimensionFilter f = filtro.get(key);
-            posicao = (Integer) f.applyValues(stmt, posicao);
+            posicao = f.applyValues(stmt, posicao);
         }
         return posicao;
     }
@@ -265,7 +265,7 @@ public class Restrictions  {
         int size = filtro.size();
         for (int key = 1; key <= size; key++) {
             DimensionFilter f = new DimensionTextFilter(filtro.get(key));
-            sql = String.valueOf(f.applyValues(sql, 0));
+            sql = f.applyValues(sql, 0);
         }
         return sql;
     }

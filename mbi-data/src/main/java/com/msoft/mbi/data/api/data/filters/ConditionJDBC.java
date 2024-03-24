@@ -8,6 +8,7 @@ import com.msoft.mbi.data.api.data.util.BIPreparedStatementAction;
 import com.msoft.mbi.data.api.data.util.BIUtil;
 import com.msoft.mbi.data.api.data.util.Constants;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -32,14 +33,19 @@ public class ConditionJDBC extends Condition implements Cloneable {
         this(field, new Operator(operator), value);
     }
 
-    protected Object applyValues(Object stmt, int position) throws BIException {
+    @Override
+    protected String applyValues(String query, int position) throws BIException {
+        throw new NotImplementedException("ConditionJDBC.applyValues(String query, int position) not available");
+    }
+
+    @Override
+    protected int applyValues(PreparedStatement stmt, int position) throws BIException {
         try {
-            PreparedStatement statement = (PreparedStatement) stmt;
             int count = this.getValuesMap().size();
             for (int index = 1; index <= count; index++) {
                 String valueAsString = String.valueOf(this.getValuesMap().get(index));
                 Object formattedValue = this.format(valueAsString);
-                this.apply(statement, position, formattedValue);
+                this.apply(stmt, position, formattedValue);
                 position++;
             }
             return position;

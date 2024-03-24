@@ -43,7 +43,7 @@ public class Filters {
 
     public int applyValuesInDimension(PreparedStatement stmt, int position) throws BIException {
         if (this.dimensionFilter != null) {
-            position = (Integer) this.dimensionFilter.applyValues(stmt, position);
+            position = this.dimensionFilter.applyValues(stmt, position);
         }
         return position;
     }

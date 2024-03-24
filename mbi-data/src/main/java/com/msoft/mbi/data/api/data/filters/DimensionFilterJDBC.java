@@ -8,7 +8,9 @@ import com.msoft.mbi.data.api.data.util.BIMacro;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.NotImplementedException;
 
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 
 @Getter
@@ -60,15 +62,21 @@ public class DimensionFilterJDBC extends DimensionFilter implements Filter, Clon
         return dimensionFilter;
     }
 
-    public Object applyValues(Object stmt, Integer position) throws BISQLException {
+    @Override
+    public String applyValues(String query, Integer position) throws BIException {
+        throw new NotImplementedException("DimensionFilterJDBC.applyValues(String query, Integer position) not available");
+    }
+
+    @Override
+    public int applyValues(PreparedStatement stmt, Integer position) throws BISQLException {
         Condition condition = this.getCondition();
         try {
             if (condition != null) {
-                position = (Integer) condition.applyValues(stmt, position);
+                position = condition.applyValues(stmt, position);
             }
             if (this.getFilters() != null) {
                 for (DimensionFilter filter : this.getFilters()) {
-                    position = (Integer) filter.applyValues(stmt, position);
+                    position = filter.applyValues(stmt, position);
                 }
             }
             return position;

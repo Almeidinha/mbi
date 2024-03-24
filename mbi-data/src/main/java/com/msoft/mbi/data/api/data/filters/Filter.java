@@ -4,35 +4,39 @@ import com.msoft.mbi.data.api.data.exception.BIException;
 import com.msoft.mbi.data.api.data.indicator.Field;
 import com.msoft.mbi.data.api.data.indicator.Operator;
 
+import java.sql.PreparedStatement;
+
 
 public interface Filter {
 
-    public void setCondition(Condition condition);
+    void setCondition(Condition condition);
 
-    public void setCondition(Field field, Operator operator, String value) throws BIException;
+    void setCondition(Field field, Operator operator, String value) throws BIException;
 
-    public void setCondition(Field field, String operator, String valor) throws BIException;
+    void setCondition(Field field, String operator, String valor) throws BIException;
 
-    public Condition getCondition();
+    Condition getCondition();
 
-    public String getFormattedValue() throws BIException;
+    String getFormattedValue() throws BIException;
 
-    public Object applyValues(Object stmt, Integer position) throws BIException;
+    int applyValues(PreparedStatement stmt, Integer position) throws BIException;
 
-    public void setStartParentheses(boolean bool);
+    String applyValues(String query, Integer position) throws BIException;
 
-    public void setEndParentheses(boolean bool);
+    void setStartParentheses(boolean bool);
 
-    public boolean haveStartParentheses();
+    void setEndParentheses(boolean bool);
 
-    public boolean haveEndParentheses();
+    boolean haveStartParentheses();
 
-    public int getStartParentCount();
+    boolean haveEndParentheses();
 
-    public void setStartParentCount(int count);
+    int getStartParentCount();
 
-    public int getEndParentCount();
+    void setStartParentCount(int count);
 
-    public void setEndParentCount(int count);
+    int getEndParentCount();
+
+    void setEndParentCount(int count);
 
 }

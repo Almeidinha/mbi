@@ -114,7 +114,7 @@ public class MetricSqlFilter extends ArrayList<MetricFilter> {
             if (!field.isExpression() || !(field.getName().toUpperCase().trim().startsWith("SE(") || field.getName().toUpperCase().trim().startsWith("IF("))) {
                 Condition condition = metricFilter.getCondition();
                 if (condition != null) {
-                    position = (Integer) metricFilter.applyValues(stmt, position);
+                    position = metricFilter.applyValues(stmt, position);
                 }
             }
         }

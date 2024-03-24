@@ -180,7 +180,7 @@ public class Indicator {
     public String applyValues(String query) throws BIException {
 
         if (query != null) {
-            query = (String) (new DimensionTextFilter(this.filters.getDimensionFilter())).applyValues(query, 0);
+            query = (new DimensionTextFilter(this.filters.getDimensionFilter())).applyValues(query, 0);
             query = this.applyMetricSqlValues(query);
 
             if (this.restrictions != null) {
@@ -195,7 +195,7 @@ public class Indicator {
         if (this.filters != null && this.filters.getMetricFilters() != null) {
             for (MetricFilter metricFilter : this.filters.getMetricFilters()) {
                 MetricTextFilter metricTextFilter = new MetricTextFilter(metricFilter);
-                query = (String) metricTextFilter.applyValues(query, 0);
+                query = metricTextFilter.applyValues(query, 0);
             }
         }
         return query;
@@ -205,7 +205,7 @@ public class Indicator {
         if (this.filters != null && this.filters.getMetricSqlFilter() != null) {
             for (MetricFilter metricFilter : this.filters.getMetricSqlFilter()) {
                 MetricTextFilter metricTextFilter = new MetricTextFilter(metricFilter);
-                query = (String) metricTextFilter.applyValues(query, 0);
+                query = metricTextFilter.applyValues(query, 0);
             }
         }
         return query;

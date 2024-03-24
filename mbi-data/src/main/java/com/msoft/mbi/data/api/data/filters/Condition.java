@@ -13,6 +13,7 @@ import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 
+import java.sql.PreparedStatement;
 import java.util.*;
 
 @Getter
@@ -208,7 +209,9 @@ public abstract class Condition {
 
     protected abstract Object format(String value) throws BIException;
 
-    protected abstract Object applyValues(Object stmt, int position) throws BIException;
+    protected abstract String applyValues(String query, int position) throws BIException;
+
+    protected abstract int applyValues(PreparedStatement stmt, int position) throws BIException;
 
     public abstract String getFormattedValue();
 }

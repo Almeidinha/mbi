@@ -101,7 +101,7 @@ public class MetricFilters extends ArrayList<MetricFilter> {
             if (!field.isExpression() || !(fieldName.startsWith("SE(") || fieldName.startsWith("IF("))) {
                 if (metricFilter.getCondition() != null) {
                     try {
-                        position = (Integer) metricFilter.applyValues(stmt, position);
+                        position = metricFilter.applyValues(stmt, position);
                     } catch (BIException e) {
                         log.error("Error applying values", e);
                     }

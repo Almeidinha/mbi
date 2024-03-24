@@ -43,7 +43,7 @@ public class MetricTextFilter extends MetricFilter {
     public String getFormattedValue() throws BIException {
         Field field = this.getCondition().getField();
 
-        String valorSQL = String.valueOf(this.applyValues(this.getCondition().getSQLValue(), 0));
+        String valorSQL = this.applyValues(this.getCondition().getSQLValue(), 0);
         List<String> values = BIUtil.stringToList(valorSQL, ",");
         StringBuilder retorno = new StringBuilder();
         for (String sValor : values) {
@@ -53,6 +53,11 @@ public class MetricTextFilter extends MetricFilter {
             retorno = new StringBuilder(retorno.substring(0, retorno.length() - 1));
         }
         return retorno.toString();
+    }
+
+    @Override
+    public String applyValues(String query, Integer position) throws BIException {
+        return null;
     }
 
     public void setCondition(Field field, Operator operator, String value) throws BIException {

@@ -7,6 +7,7 @@ import com.msoft.mbi.data.api.data.util.Constants;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.PreparedStatement;
 import java.util.Optional;
 
 @Getter
@@ -58,10 +59,16 @@ public abstract class MetricFilter implements Filter {
 
     public String toStringWithCode() throws BIException {
         String result = this.condition.toStringWithCode(true);
-        return String.valueOf(this.condition.applyValues(result, 0));
+        return this.condition.applyValues(result, 0);
     }
 
-    public Object applyValues(Object stmt, Integer position) throws BIException {
+    @Override
+    public int applyValues(PreparedStatement stmt, Integer position) throws BIException {
         return this.getCondition().applyValues(stmt, position);
+    }
+
+    @Override
+    public String applyValues(String query, Integer position) throws BIException {
+        return this.getCondition().applyValues(query, position);
     }
 }

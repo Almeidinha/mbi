@@ -8,7 +8,9 @@ import com.msoft.mbi.data.api.data.util.BIMacro;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.NotImplementedException;
 
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 
 @Getter
@@ -31,18 +33,18 @@ public class DimensionTextFilter extends DimensionFilter implements Cloneable {
                 this.setCondition(new TextCondition(fd.getCondition()));
             }
             this.setMacro(fd.getMacro(), fd.getMacroField());
-            ArrayList<DimensionFilter> lista = new ArrayList<>();
+            ArrayList<DimensionFilter> list = new ArrayList<>();
             if (fd.getFilters() != null) {
-                for (DimensionFilter filtro : fd.getFilters()) {
-                    lista.add(new DimensionTextFilter(filtro));
+                for (DimensionFilter filter : fd.getFilters()) {
+                    list.add(new DimensionTextFilter(filter));
                 }
             }
-            this.setFilters(lista);
+            this.setFilters(list);
         }
     }
 
-    public DimensionTextFilter(Condition condicao) {
-        super.setCondition(condicao);
+    public DimensionTextFilter(Condition condition) {
+        super.setCondition(condition);
     }
 
     @SneakyThrows
@@ -71,7 +73,13 @@ public class DimensionTextFilter extends DimensionFilter implements Cloneable {
         return f;
     }
 
-    public Object applyValues(Object query, Integer position) throws BISQLException {
+    @Override
+    public int applyValues(PreparedStatement stmt, Integer position) throws BIException {
+        throw new NotImplementedException("DimensionTextFilter.applyValuesapplyValues(PreparedStatement stmt, Integer position) not available");
+    }
+
+    @Override
+    public String applyValues(String query, Integer position) throws BISQLException {
         Condition condition = this.getCondition();
         try {
             if (condition != null) {
@@ -96,15 +104,15 @@ public class DimensionTextFilter extends DimensionFilter implements Cloneable {
         return this.endParentheses;
     }
 
-    public void setCondition(Field campo, Operator operador, String valor) throws BIException {
-        TextCondition condicao = new TextCondition(campo, operador, valor);
-        super.setCondition(condicao);
+    public void setCondition(Field campo, Operator operator, String valor) throws BIException {
+        TextCondition condition = new TextCondition(campo, operator, valor);
+        super.setCondition(condition);
 
     }
 
-    public void setCondition(Field campo, String operador, String valor) throws BIException {
-        TextCondition condicao = new TextCondition(campo, operador, valor);
-        super.setCondition(condicao);
+    public void setCondition(Field campo, String operator, String valor) throws BIException {
+        TextCondition condition = new TextCondition(campo, operator, valor);
+        super.setCondition(condition);
     }
 
 
