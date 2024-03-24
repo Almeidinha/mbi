@@ -15,12 +15,12 @@ import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedEvolucaoAHMet
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedFunctionMetaData;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
 
-public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
+public class MultiDimensionalDefaultTableBuilder extends TableGenerator {
     private final List<MetricMetaData> metricTotalColumnSum;
     private List<MetricMetaData> metricTotalColumnGeneralSum;
     private final List<MetricMetaData> metricTotalColumnMedia;
     private final List<MetricMetaData> metricsAH;
-    private ImpressaoMetricaLinhaAtual metricLinePrinter = null;
+    private PrintCurrentMetricLine metricLinePrinter = null;
     private final DimensionNullColumn dimensionNullColumn;
     private String currentLineMetricAlert;
     private final List<Dimension> lestLevelDimensionColumns;
@@ -38,7 +38,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
         this.metricsAH = new ArrayList<>();
         this.lestLevelDimensionColumns = this.cube.getDimensionsLastLevelColumns();
         this.populateVisualizedMetrics();
-        this.metricLinePrinter = new ImpressaoMetricaLinhaAtual(this.visibleMetrics);
+        this.metricLinePrinter = new PrintCurrentMetricLine(this.visibleMetrics);
     }
 
     private void processEmptyTable() {
@@ -314,7 +314,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
             this.currentLineMetricAlert = metricsPropertyAlertsRowFunctionsTotalColumns;
         }
         alertFunctions.add(MetricMetaData.TOTAL_AV);
-        this.printMetrics(this.cube, totalGeneralProp, new ImpressaoMetricaLinhaTotalizacaoLinhas(this.visibleMetrics, alertFunctions), alertFunctions, MetricMetaData.TOTAL_AV);
+        this.printMetrics(this.cube, totalGeneralProp, new PrintMetricLineTotalLines(this.visibleMetrics, alertFunctions), alertFunctions, MetricMetaData.TOTAL_AV);
         this.printer.closeLine();
     }
 
@@ -387,7 +387,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
         List<String> alertFunctions = new ArrayList<String>();
         alertFunctions.add(MetricMetaData.TOTAL_PARTIAL);
         this.printMetrics(dimensionLine, CellProperty.CELL_PROPERTY_TOTAL_PARTIAL_LINES,
-                new ImpressaoMetricaLinhaTotalizacaoParcialLinhas(this.visibleMetrics), alertFunctions, MetricMetaData.TOTAL_PARTIAL);
+                new PrintMetricLineTotalPartialLines(this.visibleMetrics), alertFunctions, MetricMetaData.TOTAL_PARTIAL);
         this.printer.closeLine();
     }
 
@@ -398,7 +398,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
         List<String> alertFunctions = new ArrayList<>();
         alertFunctions.add(MetricMetaData.MEDIA_PARTIAL);
         this.printMetrics(dimensionLine, CellProperty.CELL_PROPERTY_TOTAL_PARTIAL_LINES,
-                new ImpressaoMetricaLinhaMediaParcialLinhas(this.visibleMetrics), alertFunctions, MetricMetaData.MEDIA_PARTIAL);
+                new PrintMetricLineMediaPartialLines(this.visibleMetrics), alertFunctions, MetricMetaData.MEDIA_PARTIAL);
         this.printer.closeLine();
     }
 
@@ -409,7 +409,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
         List<String> alertFunctions = new ArrayList<>();
         alertFunctions.add(MetricMetaData.EXPRESSION_PARTIAL);
         this.printMetrics(dimensionLine, CellProperty.CELL_PROPERTY_TOTAL_PARTIAL_LINES,
-                new ImpressaoMetricaLinhaExpressaoParcialLinhas(this.visibleMetrics), alertFunctions, MetricMetaData.EXPRESSION_PARTIAL); // cria o objeto ImpressaoMetricaLinhaTotalizacaoParcialLinhas que vai fazer o calculo
+                new PrintMetricLinePartialExpressionLines(this.visibleMetrics), alertFunctions, MetricMetaData.EXPRESSION_PARTIAL); // cria o objeto ImpressaoMetricaLinhaTotalizacaoParcialLinhas que vai fazer o calculo
         this.printer.closeLine();
     }
 
@@ -571,7 +571,7 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
                 metricLinePrinter.setMetricMetaData(metricasImprimir);
                 currentParentDimension = checkPrintTotalPartialColumn(dimensionLines, currentParentDimension, lastDimensionColumn, metricLinePrinter);
                 metricLinePrinter.printMetricValues(dimensionLines, this.previousLineDimension, lastDimensionColumn,
-                        propriedadeAplicar, this.printer, cube, metricLinePrinter instanceof ImpressaoMetricaLinhaMediaParcialLinhas ? CalculationSummaryType.MEDIA : CalculationSummaryType.NORMAL);
+                        propriedadeAplicar, this.printer, cube, metricLinePrinter instanceof PrintMetricLineMediaPartialLines ? CalculationSummaryType.MEDIA : CalculationSummaryType.NORMAL);
                 metricLinePrinter.setMetricMetaData(oldMetrics);
             }
             currentParentDimension = this.lestLevelDimensionColumns.get(this.lestLevelDimensionColumns.size() - 1).getParent();
@@ -589,13 +589,13 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
 
             metricLinePrinter.printMetricValues(dimensionLines, this.previousLineDimension, dimensionNullColumn,
                     propriedadeAplicar, this.printer, cube,
-                    metricLinePrinter instanceof ImpressaoMetricaLinhaMediaParcialLinhas ? CalculationSummaryType.MEDIA : CalculationSummaryType.NORMAL);
+                    metricLinePrinter instanceof PrintMetricLineMediaPartialLines ? CalculationSummaryType.MEDIA : CalculationSummaryType.NORMAL);
         }
         printMetricColumnTotalValues(dimensionLines, metricCellAlerts,
-                metricLinePrinter instanceof ImpressaoMetricaLinhaMediaParcialLinhas ? CalculationSummaryType.MEDIA : CalculationSummaryType.NORMAL);
+                metricLinePrinter instanceof PrintMetricLineMediaPartialLines ? CalculationSummaryType.MEDIA : CalculationSummaryType.NORMAL);
         if (!this.metricTotalColumnGeneralSum.isEmpty()) {
             this.printMetricColumnTotalGeneralValues(dimensionLines, metricCellAlerts,
-                    metricLinePrinter instanceof ImpressaoMetricaLinhaMediaParcialLinhas ? CalculationSummaryType.MEDIA : CalculationSummaryType.NORMAL);
+                    metricLinePrinter instanceof PrintMetricLineMediaPartialLines ? CalculationSummaryType.MEDIA : CalculationSummaryType.NORMAL);
         }
         if ("semFuncao".equalsIgnoreCase(metricLineSearchFunction)) {
             this.previousLineDimension = dimensionLines;
@@ -608,17 +608,17 @@ public class MultiDimensionalDefaultTableBuilder extends tableGenerator {
             propriedadeCelula = this.currentLineMetricAlert;
         }
 
-        ImpressaoMetricaLinhaTotalizacaoColunas sumPrinter = new ImpressaoMetricaLinhaTotalizacaoColunas(
+        PrintMetricLineTotalColumnLines sumPrinter = new PrintMetricLineTotalColumnLines(
                 this.metricTotalColumnSum, CalculoSumarizacaoTipoSomatorio.getInstance(), MetricMetaData.ACCUMULATED_VALUE_AH, currentAlertFunctions);
         sumPrinter.printMetricValues(dimensionLine, null, dimensionNullColumn, propriedadeCelula, this.printer, cube, lineType);
 
-        ImpressaoMetricaLinhaTotalizacaoColunas mediaPrinter = new ImpressaoMetricaLinhaTotalizacaoColunas(
+        PrintMetricLineTotalColumnLines mediaPrinter = new PrintMetricLineTotalColumnLines(
                 this.metricTotalColumnMedia, CalculoSumarizacaoTipoMediaColuna.getInstance(), MetricMetaData.MEDIA_AH, currentAlertFunctions);
         mediaPrinter.printMetricValues(dimensionLine, null, dimensionNullColumn, propriedadeCelula, this.printer, cube, lineType);
     }
 
     private void printMetricColumnTotalGeneralValues(Dimension dimensionLine, List<String> currentAlertFunctions, String lineType) {
-        ImpressaoMetricaLinhaTotalizacaoColunasGeral printer = new ImpressaoMetricaLinhaTotalizacaoColunasGeral(this.metricTotalColumnGeneralSum, currentAlertFunctions);
+        PrintMetricLineTotalGeneralColumnLines printer = new PrintMetricLineTotalGeneralColumnLines(this.metricTotalColumnGeneralSum, currentAlertFunctions);
         String propriedadeCelula = CellProperty.CELL_PROPERTY_TOTAL_GENERAL;
         if (this.currentLineMetricAlert != null) {
             propriedadeCelula = this.currentLineMetricAlert;

@@ -6,21 +6,22 @@ import com.msoft.mbi.cube.multi.Cube;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 
-public class ImpressaoMetricaLinhaMediaParcialLinhas extends MetricLinePrinter {
+public class PrintMetricLinePartialExpressionLines extends MetricLinePrinter {
 
-    public ImpressaoMetricaLinhaMediaParcialLinhas(List<MetricMetaData> metricas) {
-        super(metricas, CalculoSumarizacaoTipoMediaLinha.getInstance(), MetricMetaData.MEDIA_PARTIAL);
+    public PrintMetricLinePartialExpressionLines(List<MetricMetaData> metrics) {
+        super(metrics, CalculoSumarizacaoTipoExpressao.getInstance(), MetricMetaData.EXPRESSION_PARTIAL);
     }
 
     @Override
     public void printMetricValues(Dimension dimensionLine, Dimension previousDimensionLine, Dimension dimensionColumn, String cellProperty, Printer printer, Cube cube, String lineType) {
         for (MetricMetaData metaData : this.metricMetaData) {
-            if (metaData.isMediaPartialLines()) {
+            if (metaData.isExpressionPartialLines()) {
                 this.printMetricValue(metaData, cellProperty, dimensionLine, previousDimensionLine, dimensionColumn, printer, cube, lineType);
             } else {
                 printer.printColumn(cellProperty, printer.getNullValue());
             }
         }
     }
+
 
 }

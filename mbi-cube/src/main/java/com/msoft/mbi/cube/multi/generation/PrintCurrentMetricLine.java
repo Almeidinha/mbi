@@ -7,10 +7,10 @@ import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 
-public class ImpressaoMetricaLinhaAtual extends MetricLinePrinter {
+public class PrintCurrentMetricLine extends MetricLinePrinter {
 
-    public ImpressaoMetricaLinhaAtual(List<MetricMetaData> metricas) {
-        super(metricas, CalculoSumarizacaoTipoLinhaMetricaAtual.getInstance(), ColorAlertMetadata.NO_FUNCTION);
+    public PrintCurrentMetricLine(List<MetricMetaData> metrics) {
+        super(metrics, CalculoSumarizacaoTipoLinhaMetricaAtual.getInstance(), ColorAlertMetadata.NO_FUNCTION);
     }
 
     @Override

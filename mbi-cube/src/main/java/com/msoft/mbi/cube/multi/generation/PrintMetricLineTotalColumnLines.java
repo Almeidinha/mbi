@@ -8,14 +8,14 @@ import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditionsMetrica;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 
-public class ImpressaoMetricaLinhaTotalizacaoColunas extends MetricLinePrinter {
+public class PrintMetricLineTotalColumnLines extends MetricLinePrinter {
 
-    private boolean aplicarAlertasCelulaMetrica = true;
+    private boolean applyMetricCellAlerts;
 
-    public ImpressaoMetricaLinhaTotalizacaoColunas(List<MetricMetaData> metricas, CalculationSummaryType tipoCalculo, String alertaCorCelulaFuncao, List<String> funcoesAtuaisAplicar) {
-        super(metricas, tipoCalculo, alertaCorCelulaFuncao);
+    public PrintMetricLineTotalColumnLines(List<MetricMetaData> metrics, CalculationSummaryType calcType, String colorAlertFunction, List<String> currentFunctions) {
+        super(metrics, calcType, colorAlertFunction);
 
-        this.aplicarAlertasCelulaMetrica = funcoesAtuaisAplicar.contains(alertaCorCelulaFuncao);
+        this.applyMetricCellAlerts = currentFunctions.contains(colorAlertFunction);
     }
 
     @Override
@@ -27,11 +27,11 @@ public class ImpressaoMetricaLinhaTotalizacaoColunas extends MetricLinePrinter {
 
     @Override
     protected List<ColorAlertConditionsMetrica> getMetricColorAlerts(MetricMetaData metaData) {
-        List<ColorAlertConditionsMetrica> retorno = new ArrayList<>();
-        if (this.aplicarAlertasCelulaMetrica) {
-            retorno = super.getMetricColorAlerts(metaData);
+        List<ColorAlertConditionsMetrica> result = new ArrayList<>();
+        if (this.applyMetricCellAlerts) {
+            result = super.getMetricColorAlerts(metaData);
         }
-        return retorno;
+        return result;
     }
 
 }

@@ -8,7 +8,7 @@ import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditions;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
 
-public abstract class tableGenerator {
+public abstract class TableGenerator {
 
     protected Printer printer = null;
     protected Cube cube = null;

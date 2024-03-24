@@ -15,7 +15,7 @@ import com.msoft.mbi.cube.multi.metrics.Metric;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
 
-public class DefaultTableBuilder extends tableGenerator {
+public class DefaultTableBuilder extends TableGenerator {
 
     private Map<String, Object> currentLineValues = new HashMap<>();
     private final Map<Integer, Map<String, String>> currentLineCellProperties = new HashMap<>();

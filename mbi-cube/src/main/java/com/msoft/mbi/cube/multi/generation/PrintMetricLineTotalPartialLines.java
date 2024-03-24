@@ -6,10 +6,10 @@ import com.msoft.mbi.cube.multi.Cube;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 
-public class ImpressaoMetricaLinhaTotalizacaoParcialLinhas extends MetricLinePrinter {
+public class PrintMetricLineTotalPartialLines extends MetricLinePrinter {
 
-    public ImpressaoMetricaLinhaTotalizacaoParcialLinhas(List<MetricMetaData> metricas) {
-        super(metricas, CalculoSumarizacaoTipoSomatorio.getInstance(), MetricMetaData.TOTAL_PARTIAL);
+    public PrintMetricLineTotalPartialLines(List<MetricMetaData> metrics) {
+        super(metrics, CalculoSumarizacaoTipoSomatorio.getInstance(), MetricMetaData.TOTAL_PARTIAL);
     }
 
     @Override

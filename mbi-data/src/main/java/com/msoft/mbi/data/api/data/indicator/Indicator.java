@@ -132,7 +132,7 @@ public class Indicator {
     transient private AnalysisParameters analysisParameters;
 
     transient private Cube cube;
-    transient private tableGenerator cubeTable;
+    transient private TableGenerator cubeTable;
 
     private List<Field> dimensionColumn;
 
