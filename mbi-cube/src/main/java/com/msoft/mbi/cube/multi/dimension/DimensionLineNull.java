@@ -4,10 +4,10 @@ import com.msoft.mbi.cube.multi.Cube;
 import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 
 
-public class DimensionLinhaNull extends DimensionNull {
+public class DimensionLineNull extends DimensionNull {
 
 
-    public DimensionLinhaNull(Cube cube) {
+    public DimensionLineNull(Cube cube) {
         super(cube);
         this.getMetaData().setReferenceAxis(MetaDataField.LINE);
     }

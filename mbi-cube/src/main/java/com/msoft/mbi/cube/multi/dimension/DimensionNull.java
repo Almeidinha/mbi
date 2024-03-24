@@ -16,7 +16,7 @@ public abstract class DimensionNull extends Dimension {
 
     public static DimensionNull createDimensionNull(int referenceAxis, Cube cube) {
         if (referenceAxis == MetaDataField.LINE) {
-            return new DimensionLinhaNull(cube);
+            return new DimensionLineNull(cube);
         } else {
             return new DimensionNullColumn(cube);
         }

@@ -35,26 +35,24 @@ public class DimensionLine extends Dimension {
         processColumnHierarchy(resultSet);
     }
 
-    @SuppressWarnings("unchecked")
     private void processValue(ResultSet resultSet) throws SQLException {
-        Comparable<String> rawValue = (Comparable<String>) type.getValue(resultSet, metaData.getColumn());
-        Comparable<String> formattedValue = (Comparable<String>) type.format(rawValue);
-        setVisualizationValue(formattedValue);
+        Object rawValue = type.getValue(resultSet, metaData.getColumn());
+        Object formattedValue = type.format(rawValue);
+        setVisualizationValue(castToComparable(formattedValue));
 
         if (metaData.getOrderingDimension() != null) {
             DimensionMetaData dimensionOrdering = metaData.getOrderingDimension();
-            Comparable<String> orderingValue = (Comparable<String>) dimensionOrdering.getDataType().getValue(resultSet, dimensionOrdering.getColumn());
-            setValue(orderingValue);
+            Object orderingValue = dimensionOrdering.getDataType().getValue(resultSet, dimensionOrdering.getColumn());
+            setValue(castToComparable(orderingValue));
         } else {
-            setValue(formattedValue);
+            setValue(castToComparable(formattedValue));
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void processDimensionOrdering(ResultSet resultSet) throws SQLException {
         DimensionMetaData dimensionOrdering = metaData.getOrderingDimension();
         if (dimensionOrdering == null) return;
-        Comparable<String> orderingValue = (Comparable<String>) dimensionOrdering.getDataType().getValue(resultSet, dimensionOrdering.getColumn());
+        Comparable<String> orderingValue = castToComparable(dimensionOrdering.getDataType().getValue(resultSet, dimensionOrdering.getColumn()));
         setValue(orderingValue);
     }
 
@@ -79,5 +77,10 @@ public class DimensionLine extends Dimension {
                     metaData.getCube().getHierarchyColumn().get(0));
             dimensionColumn.process(resultSet);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends Comparable<T>> T castToComparable(Object obj) {
+        return (T) obj;
     }
 }

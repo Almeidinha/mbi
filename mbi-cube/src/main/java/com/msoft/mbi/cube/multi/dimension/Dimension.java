@@ -155,11 +155,11 @@ public abstract class Dimension implements Comparable<Dimension> {
             return 0;
         }
 
-        if (DimensionLineOutros.VALOR_OUTROS.equals(o.getValue())) {
+        if (DimensionLineOutros.VALUE_OTHERS.equals(o.getValue())) {
             return -1;
         }
 
-        if (DimensionLineOutros.VALOR_OUTROS.equals(this.value)) {
+        if (DimensionLineOutros.VALUE_OTHERS.equals(this.value)) {
             return 1;
         }
 

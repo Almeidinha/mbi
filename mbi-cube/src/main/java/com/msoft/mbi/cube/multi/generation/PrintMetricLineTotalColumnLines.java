@@ -10,7 +10,7 @@ import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 
 public class PrintMetricLineTotalColumnLines extends MetricLinePrinter {
 
-    private boolean applyMetricCellAlerts;
+    private final boolean applyMetricCellAlerts;
 
     public PrintMetricLineTotalColumnLines(List<MetricMetaData> metrics, CalculationSummaryType calcType, String colorAlertFunction, List<String> currentFunctions) {
         super(metrics, calcType, colorAlertFunction);

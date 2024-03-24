@@ -2,45 +2,44 @@ package com.msoft.mbi.cube.multi.dimension;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.List;
 
 import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditionsMetrica;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
+import lombok.NonNull;
 
 public class DimensionLineOutros extends DimensionLine {
 
-    public final static String VALOR_OUTROS = "OUTROS";
+    public final static String VALUE_OTHERS = "OUTROS";
 
     public DimensionLineOutros(Dimension pai, DimensionMetaData metaData) {
         super(pai, metaData);
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public void processar(Dimension dimensionLinhaRemover) {
-        this.setValue((Comparable) VALOR_OUTROS);
-        this.setVisualizationValue((Comparable) VALOR_OUTROS);
+    public void process(Dimension dimensionLine) {
+        this.setValue(VALUE_OTHERS);
+        this.setVisualizationValue(VALUE_OTHERS);
         Dimension dimensionLinhaOutros = this.parent.getDimensionsLine().get(this);
         if (dimensionLinhaOutros == null) {
             this.parent.addDimensionLine(this);
             dimensionLinhaOutros = this;
         }
 
-        this.cube.getMetricsMap().accumulateMetricLineOthers(dimensionLinhaRemover, dimensionLinhaOutros);
-        Iterator<Dimension> iDimensoesColuna = dimensionLinhaRemover.getDimensionsColumn().values().iterator();
-        this.processarColunasOutros(dimensionLinhaRemover, dimensionLinhaOutros, iDimensoesColuna, dimensionLinhaOutros, this.metaData.getCube());
+        this.cube.getMetricsMap().accumulateMetricLineOthers(dimensionLine, dimensionLinhaOutros);
+
+        this.processColumnOthers(dimensionLine, dimensionLinhaOutros, dimensionLine.getDimensionsColumn().values(), dimensionLinhaOutros, this.metaData.getCube());
     }
 
-    private void processarColunasOutros(Dimension dimensionLinhaRemover, Dimension dimensionLinhaOutros, Iterator<Dimension> iDimensoesColuna,
-                                        Dimension dimensionPai, Dimension dimensionCuboPai) {
-        while (iDimensoesColuna.hasNext()) {
-            DimensionColumn dimensaoColunaOld = (DimensionColumn) iDimensoesColuna.next();
-            DimensionColumn dimensaoColunaOutros = new DimensionColumn(this, dimensionPai, dimensionCuboPai, dimensaoColunaOld.getMetaData());
-            dimensaoColunaOutros.processOthers(dimensionLinhaRemover, dimensionLinhaOutros, dimensaoColunaOld);
-            if (!dimensaoColunaOld.getDimensionsColumn().isEmpty()) {
-                this.processarColunasOutros(dimensionLinhaRemover, dimensionLinhaOutros, dimensaoColunaOld.getDimensionsColumn().values().iterator(),
-                        dimensaoColunaOld, dimensionCuboPai.getDimensionsColumn().get(dimensaoColunaOutros));
+    private void processColumnOthers(Dimension dimensionLines, Dimension dimensionLineOthers, Collection<Dimension> dimensionColumns,
+                                     Dimension dimensionParent, Dimension dimensionCubeParent) {
+        for (Dimension oldDimensionColumn : dimensionColumns) {
+            DimensionColumn dimensionColumnOthers = new DimensionColumn(this, dimensionParent, dimensionCubeParent, oldDimensionColumn.getMetaData());
+            dimensionColumnOthers.processOthers(dimensionLines, dimensionLineOthers, (DimensionColumn) oldDimensionColumn);
+            if (!oldDimensionColumn.getDimensionsColumn().isEmpty()) {
+                this.processColumnOthers(dimensionLines, dimensionLineOthers, oldDimensionColumn.getDimensionsColumn().values(),
+                        oldDimensionColumn, dimensionCubeParent.getDimensionsColumn().get(dimensionColumnOthers));
             }
         }
     }
@@ -52,10 +51,9 @@ public class DimensionLineOutros extends DimensionLine {
 
     @Override
     public int getColspanLinePrint() {
-        DimensionMetaData dimensaoRankeada = ((DimensionMetaDataOthers) this.getMetaData()).getDimensionMetaDataRanking();
-        int niveisAbaixo = dimensaoRankeada.getLowerLevelSequenceCount();
-        int colspan = niveisAbaixo + 1;
-        return colspan;
+        DimensionMetaData rankedDimension = ((DimensionMetaDataOthers) this.getMetaData()).getDimensionMetaDataRanking();
+        int lowerLevels = rankedDimension.getLowerLevelSequenceCount();
+        return lowerLevels + 1;
     }
 
     @Override
@@ -78,7 +76,7 @@ public class DimensionLineOutros extends DimensionLine {
         return null;
     }
 
-    public String buscaPropriedadeAlertasMetricasLinha(List<MetricMetaData> metricasMetaData, List<String> funcoes) {
+    public String searchMetricLineAlertProps(List<MetricMetaData> metricsMetaData, List<String> functions) {
         return null;
     }
 
@@ -92,10 +90,10 @@ public class DimensionLineOutros extends DimensionLine {
         return CellProperty.CELL_PROPERTY_OTHERS;
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+
     @Override
     public Comparable<Object> getOrderValue() {
-        return (Comparable) (" " + VALOR_OUTROS);
+        return o -> (" " + VALUE_OTHERS).compareTo(o.toString());
     }
 
     @Override

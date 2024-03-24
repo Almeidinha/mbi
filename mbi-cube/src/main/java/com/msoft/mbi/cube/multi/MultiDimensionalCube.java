@@ -277,7 +277,7 @@ public class MultiDimensionalCube extends Cube {
         DimensionMetaDataOthers metaDataOutros = new DimensionMetaDataOthers(dimensionAddOthers.getMetaData().getChild());
         DimensionLineOutros dimensionOthers = new DimensionLineOutros(dimensionAddOthers, metaDataOutros);
         for (Dimension dimensionLineToRemove : dimensions) {
-            dimensionOthers.processar(dimensionLineToRemove);
+            dimensionOthers.process(dimensionLineToRemove);
             dimensionLineToRemove.getParent().removeDimensionLine(dimensionLineToRemove);
             this.metricsMap.removeMetricLine(dimensionLineToRemove);
             dimensionsLastLevelLines.remove(dimensionLineToRemove);
