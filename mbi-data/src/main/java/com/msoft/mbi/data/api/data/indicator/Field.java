@@ -75,7 +75,6 @@ public class Field implements Cloneable {
     private boolean fixedValue = false;
     private FieldColorValues fieldColorValues;
     private boolean calculatorPerRestriction = false;
-    private int originalFieldId;
     private boolean replicateChanges;
     private List<Field> dependentCalculatedFields;
     private boolean isNavigableUpwards;
@@ -84,7 +83,6 @@ public class Field implements Cloneable {
     private boolean drillUp;
     private boolean navigable;
     private boolean deleted;
-
 
     private int numberOfSteps;
 

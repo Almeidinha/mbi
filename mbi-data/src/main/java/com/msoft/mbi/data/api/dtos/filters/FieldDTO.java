@@ -13,7 +13,7 @@ public class FieldDTO {
     private int fieldId;
     private String name;
     private String title;
-    private String nickName;
+    private String nickname;
     private boolean expression = false;
     private int drillDownSequence;
     private int visualizationSequence;
@@ -58,7 +58,6 @@ public class FieldDTO {
     private boolean fixedValue = false;
     // private FieldColorValues fieldColorValues; TODO Do I need this?
     private boolean calculatorPerRestriction = false;
-    private int originalFieldCode;
     private boolean replicateChanges;
     private List<FieldDTO> dependentCalculatedFields;
     private boolean isNavigableUpwards;
@@ -67,5 +66,7 @@ public class FieldDTO {
     private boolean drillUp;
     private boolean navigable;
     private boolean deleted;
+
+    private int numberOfSteps;
 
 }

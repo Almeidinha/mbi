@@ -15,6 +15,9 @@ public interface BIIndLogicToIndMapper {
 
 
     @Mappings({
+            @Mapping(target = "id", source = "code"),
+            @Mapping(target = "areaId", source = "areaCode"),
+            @Mapping(target = "numberOfSteps", source = "areaCode"),
             @Mapping(target = "connectionId", source = "tenantId"),
             @Mapping(target = "biSearchClause.sqlText", source = "searchClause"),
             @Mapping(target = "biFromClause.sqlText", source = "fromClause"),
@@ -27,6 +30,9 @@ public interface BIIndLogicToIndMapper {
     BIIndLogicDTO indicatorToDto(Indicator indicator) throws BIException;
 
     @Mappings({
+            @Mapping(target = "code", source = "id"),
+            @Mapping(target = "areaCode", source = "areaId"),
+            @Mapping(target = "areaCode", source = "numberOfSteps"),
             @Mapping(target = "tenantId", source = "connectionId"),
             @Mapping(target = "searchClause", source = "biSearchClause.sqlText"),
             @Mapping(target = "fromClause", source = "biFromClause.sqlText"),

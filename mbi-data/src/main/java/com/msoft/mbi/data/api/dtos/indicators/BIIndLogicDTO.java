@@ -39,11 +39,7 @@ public class BIIndLogicDTO extends BaseDTO {
 
     private boolean isFrozen;
 
-    private String defaultDisplay;
-
     private UUID connectionId;
-
-    private Integer numberOfSteps;
 
     private boolean usesSequence;
 
