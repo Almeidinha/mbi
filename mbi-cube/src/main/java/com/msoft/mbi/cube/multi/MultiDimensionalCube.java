@@ -27,7 +27,7 @@ import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.metrics.MetricValueUseLine;
 import com.msoft.mbi.cube.multi.metrics.MetricOrdering;
 import com.msoft.mbi.cube.multi.metrics.additive.MetricAdditiveMetaData;
-import com.msoft.mbi.cube.multi.metrics.calculated.CalculoHierarquiaOrdenacao;
+import com.msoft.mbi.cube.multi.metrics.calculated.CalculationHierarchyOrdering;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedAcumuladoParticipacaoAHMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedAcumuladoParticipacaoAVMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedAcumuladoValorAVMetaData;
@@ -110,7 +110,7 @@ public class MultiDimensionalCube extends Cube {
                     Double resultExpr = null;
 
                     try {
-                        resultExpr = ((MetricCalculatedMetaData) metaDataCampoOriginal).createCalculo().calculaValor();
+                        resultExpr = ((MetricCalculatedMetaData) metaDataCampoOriginal).createCalculo().calculateValue();
                         valorExpr = Double.valueOf(campo.getName());
                     } catch (Exception e) {
                     }
@@ -212,8 +212,8 @@ public class MultiDimensionalCube extends Cube {
         }
 
         List<MetricCalculatedMetaData> metricasCalculadas = this.getHierarchyMetricCalculated();
-        CalculoHierarquiaOrdenacao hierarquiaCalculo = new CalculoHierarquiaOrdenacao(metricasCalculadas);
-        metricasCalculadas = hierarquiaCalculo.getMetricasCalculadasOrdenadas();
+        CalculationHierarchyOrdering hierarquiaCalculo = new CalculationHierarchyOrdering(metricasCalculadas);
+        metricasCalculadas = hierarquiaCalculo.getCalculatedMetricsOrdered();
         this.setHierarchyMetricCalculated(metricasCalculadas);
 
         for (MetaDataField campo : camposMetrica) {

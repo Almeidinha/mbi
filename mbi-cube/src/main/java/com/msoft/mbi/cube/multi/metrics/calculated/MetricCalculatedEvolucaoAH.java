@@ -3,7 +3,7 @@ package com.msoft.mbi.cube.multi.metrics.calculated;
 import com.msoft.mbi.cube.exception.CubeMathParserException;
 import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.MetricsMap;
-import com.msoft.mbi.cube.multi.calculation.Calculo;
+import com.msoft.mbi.cube.multi.calculation.Calculation;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.metrics.Metric;
 import com.msoft.mbi.cube.multi.metrics.MetricValueUse;
@@ -20,10 +20,10 @@ public class MetricCalculatedEvolucaoAH extends MetricCalculated {
     public Double calculate(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior) {
 
         MetricCalculatedEvolucaoAHMetaData metaData = (MetricCalculatedEvolucaoAHMetaData) this.getMetaData();
-        Calculo calculo = metaData.createCalculo();
+        Calculation calculation = metaData.createCalculo();
         Double retorno = null;
         try {
-            String tituloColunaAH = calculo.getVariables().get(MetricCalculatedEvolucaoAHMetaData.COLUNA_AH_VARIABLE);
+            String tituloColunaAH = calculation.getVariables().get(MetricCalculatedEvolucaoAHMetaData.COLUNA_AH_VARIABLE);
 
             Metric metricReferencia = metricLine.getMetrics().get(tituloColunaAH);
             Double oValor = metricReferencia.getMetaData().calculaValorTotalParcial(metricLine.getDimensionLine(), metricLine.getDimensionColumn());
@@ -40,9 +40,9 @@ public class MetricCalculatedEvolucaoAH extends MetricCalculated {
             if (valorAtual != valorAnterior) {
                 if (valorAnterior != 0) {
 
-                    calculo.setValorVariable(MetricCalculatedEvolucaoAHMetaData.COLUNA_AH_VARIABLE, valorAtual);
-                    calculo.setValorVariable(MetricCalculatedEvolucaoAHMetaData.COLUNA_VALOR_ANTERIOR_VARIABLE, valorAnterior);
-                    double valorCalculado = calculo.calculaValor();
+                    calculation.setVariableValue(MetricCalculatedEvolucaoAHMetaData.COLUNA_AH_VARIABLE, valorAtual);
+                    calculation.setVariableValue(MetricCalculatedEvolucaoAHMetaData.COLUNA_VALOR_ANTERIOR_VARIABLE, valorAnterior);
+                    double valorCalculado = calculation.calculateValue();
                     if (valorAnterior < 0) {
                         valorCalculado = valorCalculado * (-1);
                     }
@@ -65,7 +65,7 @@ public class MetricCalculatedEvolucaoAH extends MetricCalculated {
     }
 
     @Override
-    public Double getValor(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior) {
+    public Double getValue(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior) {
         return this.calculate(metricsMap, metricLine, metricLineAnterior);
     }
 

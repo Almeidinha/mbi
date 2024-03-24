@@ -13,6 +13,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.msoft.mbi.data.api.data.util.Constants.*;
 
@@ -276,14 +278,14 @@ public class Field implements Cloneable {
 
         replacements.put("[^\\p{ASCII}]", "");
         replacements.put("[\\s-_]", "");
-        replacements.put("`", CONSTANT_APOSTROPHE);
-        replacements.put("'", CONSTANT_QUOTATION);
+        replacements.put("'", CONSTANT_APOSTROPHE);
         replacements.put("!", CONSTANT_EXCLAMATION);
         replacements.put("@", CONSTANT_AT_SIGN);
         replacements.put("#", CONSTANT_HASH);
         replacements.put("\\$", CONSTANT_DOLLAR_SIGN);
         replacements.put("%", CONSTANT_PERCENT);
-        replacements.put("´", CONSTANT_GRAVE_ACCENT);
+        replacements.put("´", CONSTANT_ACUTE);
+        replacements.put("`", CONSTANT_GRAVE_ACCENT);
         replacements.put("&", CONSTANT_AMPERSAND);
         replacements.put("\\*", CONSTANT_ASTERISK);
         replacements.put("=", CONSTANT_EQUAL);
@@ -317,11 +319,14 @@ public class Field implements Cloneable {
         for (Map.Entry<String, String> entry : replacements.entrySet()) {
             String regex = entry.getKey();
             String replacement = entry.getValue();
-            int start = 0;
-            while (result.indexOf(regex, start) != -1) {
-                int index = result.indexOf(regex, start);
-                result.replace(index, index + regex.length(), replacement);
-                start = index + replacement.length();
+            Pattern pattern = Pattern.compile(Pattern.quote(regex));
+            Matcher matcher = pattern.matcher(result);
+            int offset = 0;
+            while (matcher.find()) {
+                int start = matcher.start() + offset;
+                int end = matcher.end() + offset;
+                result.replace(start, end, replacement);
+                offset += replacement.length() - (end - start);
             }
         }
         return result;

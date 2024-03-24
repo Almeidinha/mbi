@@ -8,48 +8,42 @@ import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 
 public class PartialTotalizationApplyTypeSoma implements PartialTotalizationApplyType {
 
-    private static PartialTotalizationApplyTypeSoma acumuladoParcialTipo;
+    private static PartialTotalizationApplyTypeSoma totalizationApplyTypeSoma;
 
     private PartialTotalizationApplyTypeSoma() {
         super();
     }
 
     public static PartialTotalizationApplyTypeSoma getInstance() {
-        if (acumuladoParcialTipo == null) {
-            acumuladoParcialTipo = new PartialTotalizationApplyTypeSoma();
+        if (totalizationApplyTypeSoma == null) {
+            totalizationApplyTypeSoma = new PartialTotalizationApplyTypeSoma();
         }
-        return acumuladoParcialTipo;
+        return totalizationApplyTypeSoma;
     }
 
     public Double calculateValue(Dimension dimensionReferenceAxis, Dimension dimension, MetricMetaData metricMetaData, MetricsMap metricsMap) {
-        Double retorno = (double) 0;
+        if (dimensionReferenceAxis == null || dimension == null || metricMetaData == null || metricsMap == null) {
+            throw new IllegalArgumentException("Null parameter(s) detected.");
+        }
+
         if (!dimensionReferenceAxis.getDimensionsBelow().isEmpty()) {
-            Dimension dimensionAbaixo;
-            Double valorDimensao;
-            for (Dimension value : dimensionReferenceAxis.getDimensionsBelow().values()) {
-                dimensionAbaixo = value;
-                valorDimensao = calculateValue(dimensionAbaixo, dimension, metricMetaData, metricsMap);
-                retorno += (valorDimensao != null ? valorDimensao : 0);
+            Double result = 0.0;
+            for (Dimension dimensionBelow : dimensionReferenceAxis.getDimensionsBelow().values()) {
+                result += calculateValue(dimensionBelow, dimension, metricMetaData, metricsMap);
             }
+            return result;
         } else {
             if (!dimension.getDimensionsBelow().isEmpty()) {
-                retorno = metricMetaData.calculaValorTotalParcial(dimension, dimensionReferenceAxis);
+                return metricMetaData.calculaValorTotalParcial(dimension, dimensionReferenceAxis);
             } else {
-                Dimension dimensionLinha;
-                Dimension dimensionColuna;
-                if (dimensionReferenceAxis.getMetaData().isLine()) {
-                    dimensionLinha = dimensionReferenceAxis;
-                    dimensionColuna = dimension;
-                } else {
-                    dimensionLinha = dimension;
-                    dimensionColuna = dimensionReferenceAxis;
-                }
+                Dimension dimensionLine = dimensionReferenceAxis.getMetaData().isLine() ? dimensionReferenceAxis : dimension;
+                Dimension dimensionColumn = dimensionReferenceAxis.getMetaData().isLine() ? dimension : dimensionReferenceAxis;
 
-                MetricLine metricLine = metricsMap.getMetricLine(dimensionLinha, dimensionColuna);
-                Metric metricCalculada = metricLine.getMetrics().get(metricMetaData.getTitle());
-                retorno = metricCalculada.getValor(metricsMap, metricLine, null);
+                MetricLine metricLine = metricsMap.getMetricLine(dimensionLine, dimensionColumn);
+                Metric calculatedMetric = metricLine.getMetrics().get(metricMetaData.getTitle());
+                return calculatedMetric.getValue(metricsMap, metricLine, null);
             }
         }
-        return retorno;
     }
+
 }

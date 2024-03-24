@@ -1,8 +1,8 @@
 package com.msoft.mbi.cube.multi.metrics.additive;
 
 import com.msoft.mbi.cube.multi.column.DataType;
-import com.msoft.mbi.cube.multi.column.TipoDecimal;
-import com.msoft.mbi.cube.multi.column.TipoMetricaInteiro;
+import com.msoft.mbi.cube.multi.column.TypeDecimal;
+import com.msoft.mbi.cube.multi.column.TypeMetricInt;
 import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import lombok.Getter;
@@ -31,9 +31,9 @@ public class MetricAdditiveMetaData extends MetricMetaData {
         MetricAdditiveMetaData additiveMetaData;
         DataType<Double> dataType = null;
         if (MetaDataField.INT_TYPE.equals(metaDataField.getDataType())) {
-            dataType = new TipoMetricaInteiro();
+            dataType = new TypeMetricInt();
         } else if (MetaDataField.DECIMAL_TYPE.equals(metaDataField.getDataType()) || MetaDataField.TEST_TYPE.equals(metaDataField.getDataType())) {
-            dataType = new TipoDecimal();
+            dataType = new TypeDecimal();
         }
         additiveMetaData = new MetricAdditiveMetaData(title, column, dataType);
         if (additiveMetaData.isExpressionPartialLines()) {

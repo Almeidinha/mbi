@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.msoft.mbi.cube.multi.column.MascaraColunaMetaData;
+import com.msoft.mbi.cube.multi.column.MaskColumnMetaData;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -52,7 +52,7 @@ public class MetaDataField implements Serializable {
     private String aggregationType;
     private boolean showSequence;
     private String rankingExpression;
-    private List<MascaraColunaMetaData> fieldMask;
+    private List<MaskColumnMetaData> fieldMask;
     private List<HTMLLineMask> htmlLineMasks;
     private String totalLinesType;
     private Integer sequence;
@@ -60,7 +60,7 @@ public class MetaDataField implements Serializable {
     private List<ColorAlertMetadata> colorAlertMetadata;
     private List<ColorAlertMetadata> colorAlertMetadataSecondField;
     private Map<String, List<ColorAlertMetadata>> colorAlertMetadataRelatedFieldFunction;
-    private Map<String, List<ColorAlertMetadata>> colorAlertMetadataRelatedSecontFieldFunction;
+    private Map<String, List<ColorAlertMetadata>> colorAlertMetadataRelatedSecondFieldFunction;
     private String aggregationApplyOrder;
     public static final int LINE = 1;
     public static final int COLUMN = 2;
@@ -91,7 +91,7 @@ public class MetaDataField implements Serializable {
         this.fieldMask = new ArrayList<>();
         this.htmlLineMasks = new ArrayList<>();
         this.colorAlertMetadataRelatedFieldFunction = new HashMap<>();
-        this.colorAlertMetadataRelatedSecontFieldFunction = new HashMap<>();
+        this.colorAlertMetadataRelatedSecondFieldFunction = new HashMap<>();
         this.colorAlertMetadata = new ArrayList<>();
         this.colorAlertMetadataSecondField = new ArrayList<>();
         this.order = 0;
@@ -122,7 +122,7 @@ public class MetaDataField implements Serializable {
     }
 
 
-    public void addMask(MascaraColunaMetaData mask) {
+    public void addMask(MaskColumnMetaData mask) {
         this.fieldMask.add(mask);
     }
 
@@ -146,7 +146,7 @@ public class MetaDataField implements Serializable {
             colorAlertRelativeField = this.colorAlertMetadataRelatedFieldFunction;
         } else {
             alertasCores = this.colorAlertMetadataSecondField;
-            colorAlertRelativeField = this.colorAlertMetadataRelatedSecontFieldFunction;
+            colorAlertRelativeField = this.colorAlertMetadataRelatedSecondFieldFunction;
         }
         if (!colorAlert.isRelativeFieldFunction()) {
             alertasCores.add(colorAlert);
@@ -167,7 +167,7 @@ public class MetaDataField implements Serializable {
     }
 
     public List<ColorAlertMetadata> getRelativeSecondFieldFunctionValueAlert(String relativeFieldFunction) {
-        return this.colorAlertMetadataRelatedSecontFieldFunction.get(relativeFieldFunction);
+        return this.colorAlertMetadataRelatedSecondFieldFunction.get(relativeFieldFunction);
     }
 
     @Override

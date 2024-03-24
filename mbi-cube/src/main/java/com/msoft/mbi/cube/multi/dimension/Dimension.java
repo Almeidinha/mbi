@@ -8,10 +8,10 @@ import java.util.*;
 import com.msoft.mbi.cube.multi.Cube;
 import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.column.DataType;
-import com.msoft.mbi.cube.multi.column.TipoData;
-import com.msoft.mbi.cube.multi.column.TipoDecimal;
-import com.msoft.mbi.cube.multi.column.TipoHora;
-import com.msoft.mbi.cube.multi.column.TipoNumero;
+import com.msoft.mbi.cube.multi.column.TypeDate;
+import com.msoft.mbi.cube.multi.column.TypeDecimal;
+import com.msoft.mbi.cube.multi.column.TypeHour;
+import com.msoft.mbi.cube.multi.column.TypeNumber;
 import com.msoft.mbi.cube.multi.column.TextType;
 import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditionsDimensao;
 import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditionsMetrica;
@@ -76,12 +76,12 @@ public abstract class Dimension implements Comparable<Dimension> {
     public Comparable<Object> getOrderValue() {
         Object obj;
         if (this.value == null) {
-            if (this.metaData.getDataType() instanceof TipoNumero) {
-                obj = TipoDecimal.BRANCO;
-            } else if (this.metaData.getDataType() instanceof TipoData) {
-                obj = TipoData.BRANCO;
-            } else if (this.metaData.getDataType() instanceof TipoHora) {
-                obj = TipoHora.BRANCO;
+            if (this.metaData.getDataType() instanceof TypeNumber) {
+                obj = TypeDecimal.BRANCO;
+            } else if (this.metaData.getDataType() instanceof TypeDate) {
+                obj = TypeDate.BRANCO;
+            } else if (this.metaData.getDataType() instanceof TypeHour) {
+                obj = TypeHour.BRANCO;
             } else {
                 obj = TextType.EMPTY;
             }
@@ -99,18 +99,18 @@ public abstract class Dimension implements Comparable<Dimension> {
             } else {
                 obj = this.getValue();
 
-                if ((this.metaData.getDataType() instanceof TipoData) || (this.metaData.getDataType() instanceof TipoNumero)) {
+                if ((this.metaData.getDataType() instanceof TypeDate) || (this.metaData.getDataType() instanceof TypeNumber)) {
                     int posIni = obj.toString().indexOf("(*");
 
                     if (posIni > -1) {
                         obj = obj.toString().replace(obj.toString().substring(posIni), "");
 
-                        if (this.metaData.getDataType() instanceof TipoData)
+                        if (this.metaData.getDataType() instanceof TypeDate)
                             obj = Date.valueOf(obj.toString());
                     }
                 }
 
-                if (this.metaData.getDataType() instanceof TipoNumero)
+                if (this.metaData.getDataType() instanceof TypeNumber)
                     obj = Double.valueOf(obj.toString());
 
             }

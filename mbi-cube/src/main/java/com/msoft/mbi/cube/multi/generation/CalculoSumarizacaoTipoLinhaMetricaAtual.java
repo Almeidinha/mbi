@@ -26,7 +26,7 @@ public class CalculoSumarizacaoTipoLinhaMetricaAtual implements CalculationSumma
             metricLineAnterior = dimensionReferenceAxis.getCube().getMetricsMap().getMetricLine(previousDimensionLine, dimension);
         }
         Metric expressao = metricLine.getMetrics().get(metaData.getTitle());
-        Double retorno = expressao.getValor(dimensionReferenceAxis.getCube().getMetricsMap(), metricLine, metricLineAnterior);
+        Double retorno = expressao.getValue(dimensionReferenceAxis.getCube().getMetricsMap(), metricLine, metricLineAnterior);
         return retorno == null ? 0d : retorno;
     }
 }

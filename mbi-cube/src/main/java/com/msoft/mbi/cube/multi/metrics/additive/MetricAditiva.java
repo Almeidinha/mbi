@@ -27,7 +27,7 @@ public class MetricAditiva extends Metric {
   }
 
   @Override
-  public Double getValor(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior) {
+  public Double getValue(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior) {
     return this.aggregator.getAggregatorValue();
   }
 

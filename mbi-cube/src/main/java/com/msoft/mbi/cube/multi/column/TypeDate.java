@@ -7,22 +7,20 @@ import java.sql.SQLException;
 import com.msoft.mbi.cube.util.logicOperators.OperaTor;
 import com.msoft.mbi.cube.util.logicOperators.LogicalOperators;
 
-public class TipoData implements DataType<Date> {
+public class TypeDate implements DataType<Date> {
 
 
-    private Date data = null;
-    public static final Date BRANCO = new Date(Integer.MIN_VALUE - 1);
+    public static final Date BRANCO = new Date(0);
 
     public Date getValue(ResultSet set, String campo) throws SQLException {
-        this.data = set.getDate(campo);
-        return this.data;
+        return set.getDate(campo);
     }
 
-    public Date format(Date t) {
-        if (t == BRANCO || t == null) {
+    public Date format(Date date) {
+        if (date == BRANCO || date == null) {
             return null;
         }
-        return t;
+        return date;
     }
 
     @Override

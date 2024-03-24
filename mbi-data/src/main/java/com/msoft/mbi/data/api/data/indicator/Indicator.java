@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.msoft.mbi.cube.multi.Cube;
-import com.msoft.mbi.cube.multi.column.MascaraColunaMetaData;
+import com.msoft.mbi.cube.multi.column.MaskColumnMetaData;
 import com.msoft.mbi.cube.multi.generation.*;
 import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
 import com.msoft.mbi.cube.multi.metaData.HTMLLineMask;
@@ -878,36 +878,36 @@ public class Indicator {
 
         if (!"".equalsIgnoreCase(field.getDateMask()) && fieldDateMask != null && !"".equalsIgnoreCase(field.getDataType())) {
             if (Constants.DATE.equalsIgnoreCase(field.getDataType())) {
-                metaDataField.addMask(new MascaraColunaMetaData(fieldDateMask, MascaraColunaMetaData.TIPO_DATA));
+                metaDataField.addMask(new MaskColumnMetaData(fieldDateMask, MaskColumnMetaData.DATA_TYPE));
             } else if (Constants.DIMENSION.equals(field.getFieldType())) {
                 if (Constants.NUMBER.equals(field.getDataType()) || Constants.STRING.equals(field.getDataType())) {
                     if (field.getName().equalsIgnoreCase("num_mes")) {
                         if (fieldDateMask.equalsIgnoreCase(MaskMonth.ABBREVIATED)
                                 || fieldDateMask.equalsIgnoreCase(MaskMonth.NOT_ABBREVIATED)) {
-                            metaDataField.addMask(new MascaraColunaMetaData(fieldDateMask, MascaraColunaMetaData.TIPO_EIS_DIMENSAO_DAT_MES));
+                            metaDataField.addMask(new MaskColumnMetaData(fieldDateMask, MaskColumnMetaData.TYPE_EIS_DIMENSION_MONTH));
                         }
                     }
                     if (field.getName().equalsIgnoreCase("num_dia_semana")) {
                         if (fieldDateMask.equalsIgnoreCase(MaskWeek.ABBREVIATED)
                                 || fieldDateMask.equalsIgnoreCase(MaskWeek.NOT_ABBREVIATED)) {
-                            metaDataField.addMask(new MascaraColunaMetaData(fieldDateMask, MascaraColunaMetaData.TIPO_EIS_DIMENSAO_DAT_SEMANA));
+                            metaDataField.addMask(new MaskColumnMetaData(fieldDateMask, MaskColumnMetaData.TYPE_EIS_DIMENSION_WEEK));
                         }
                     }
                     if (field.getName().equalsIgnoreCase("num_bimestre") || field.getName().equalsIgnoreCase("num_trimestre")
                             || field.getName().equalsIgnoreCase("num_semestre")) {
                         if (Constants.NUMBER.equals(field.getDataType()) && (MaskPeriod.validaMascara(fieldDateMask))) {
-                            metaDataField.addMask(new MascaraColunaMetaData(fieldDateMask, MascaraColunaMetaData.TIPO_EIS_DIMENSAO_DAT_PERIODO));
+                            metaDataField.addMask(new MaskColumnMetaData(fieldDateMask, MaskColumnMetaData.TYPE_EIS_DIMENSION_PERIOD));
                         }
                     }
                     if (field.getName().equalsIgnoreCase("ano_mes_dat")) {
                         if (Constants.STRING.equals(field.getDataType()) && (MaskMonthYear.validaMascara(fieldDateMask))) {
-                            metaDataField.addMask(new MascaraColunaMetaData(fieldDateMask, MascaraColunaMetaData.TIPO_EIS_DIMENSAO_DAT_ANO_MES));
+                            metaDataField.addMask(new MaskColumnMetaData(fieldDateMask, MaskColumnMetaData.TYPE_EIS_DIMENSION_MONTH_YEAR));
                         }
                     }
                 }
             }
         } else if (Constants.DATE.equals(field.getDataType())) {
-            metaDataField.addMask(new MascaraColunaMetaData(BIUtil.DEFAULT_DATE_FORMAT, MascaraColunaMetaData.TIPO_DATA));
+            metaDataField.addMask(new MaskColumnMetaData(BIUtil.DEFAULT_DATE_FORMAT, MaskColumnMetaData.DATA_TYPE));
         }
     }
 

@@ -18,7 +18,7 @@ import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 import com.msoft.mbi.cube.multi.renderers.DecimalMaskRenderer;
 import com.msoft.mbi.cube.multi.renderers.NullValueMask;
 import com.msoft.mbi.cube.multi.partialTotalization.PartialTotalizationApplyType;
-import com.msoft.mbi.cube.multi.partialTotalization.PartialTotalizationApplyTypeExpressao;
+import com.msoft.mbi.cube.multi.partialTotalization.PartialTotalizationApplyTypeExpression;
 import com.msoft.mbi.cube.multi.partialTotalization.PartialTotalizationApplyTypeSoma;
 import lombok.Getter;
 import lombok.Setter;
@@ -172,7 +172,7 @@ public abstract class MetricMetaData extends ColumnMetaData {
         if (MetaDataField.TOTAL_APPLY_SUM.equals(total)) {
             this.partialTotalizationApplyType = PartialTotalizationApplyTypeSoma.getInstance();
         } else {
-            this.partialTotalizationApplyType = PartialTotalizationApplyTypeExpressao.getInstance();
+            this.partialTotalizationApplyType = PartialTotalizationApplyTypeExpression.getInstance();
         }
     }
 

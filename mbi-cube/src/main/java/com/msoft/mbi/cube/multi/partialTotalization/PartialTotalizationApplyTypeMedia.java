@@ -25,39 +25,33 @@ public class PartialTotalizationApplyTypeMedia implements PartialTotalizationApp
     }
 
     public Double calculateValue(Dimension dimensionReferenceAxis, Dimension dimension, MetricMetaData metricMetaData, MetricsMap metricsMap) {
-        Double retorno = (double) 0;
+        if (dimensionReferenceAxis == null || dimension == null || metricMetaData == null || metricsMap == null) {
+            throw new IllegalArgumentException("One or more parameters are null.");
+        }
+
         if (!dimensionReferenceAxis.getDimensionsBelow().isEmpty()) {
-            Dimension dimensionAbaixo;
-            Double valorDimensao;
-            Iterator<Dimension> iDimensoesAbaixo = dimensionReferenceAxis.getDimensionsBelow().values().iterator();
             int count = 0;
-            while (iDimensoesAbaixo.hasNext()) {
-                dimensionAbaixo = iDimensoesAbaixo.next();
-                valorDimensao = calculateValue(dimensionAbaixo, dimension, metricMetaData, metricsMap);
-                retorno += (valorDimensao != null ? valorDimensao : 0);
-                count++;
+            double sum = 0.0;
+            for (Dimension dimensionBelow : dimensionReferenceAxis.getDimensionsBelow().values()) {
+                Double dimensionValue = calculateValue(dimensionBelow, dimension, metricMetaData, metricsMap);
+                if (dimensionValue != null) {
+                    sum += dimensionValue;
+                    count++;
+                }
             }
-            retorno = retorno / count;
+            return (count != 0) ? sum / count : 0.0;
         } else {
             if (!dimension.getDimensionsBelow().isEmpty()) {
-                retorno = metricMetaData.calculaValorTotalParcial(dimension, dimensionReferenceAxis);
+                return metricMetaData.calculaValorTotalParcial(dimension, dimensionReferenceAxis);
             } else {
-                Dimension dimensionLinha = null;
-                Dimension dimensionColuna = null;
-                if (dimensionReferenceAxis.getMetaData().isLine()) {
-                    dimensionLinha = dimensionReferenceAxis;
-                    dimensionColuna = dimension;
-                } else {
-                    dimensionLinha = dimension;
-                    dimensionColuna = dimensionReferenceAxis;
-                }
+                Dimension dimensionLine = dimensionReferenceAxis.getMetaData().isLine() ? dimensionReferenceAxis : dimension;
+                Dimension dimensionColumn = dimensionReferenceAxis.getMetaData().isLine() ? dimension : dimensionReferenceAxis;
 
-                MetricLine metricLine = metricsMap.getMetricLine(dimensionLinha, dimensionColuna);
-                Metric metricCalculada = metricLine.getMetrics().get(metricMetaData.getTitle());
-                retorno = metricCalculada.getValor(metricsMap, metricLine, null);
+                MetricLine metricLine = metricsMap.getMetricLine(dimensionLine, dimensionColumn);
+                Metric metricCalculated = metricLine.getMetrics().get(metricMetaData.getTitle());
+                return metricCalculated.getValue(metricsMap, metricLine, null);
             }
         }
-        return retorno;
     }
 
 }

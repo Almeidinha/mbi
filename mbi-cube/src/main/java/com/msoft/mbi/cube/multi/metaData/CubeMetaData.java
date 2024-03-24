@@ -37,17 +37,17 @@ public class CubeMetaData extends DimensionMetaData {
     }
 
     public void orderFields() {
-        SequenciaCampoComparator comparator = new SequenciaCampoComparator();
+        FiedldSequenceComparator comparator = new FiedldSequenceComparator();
         this.fields.sort(comparator);
     }
 
     public void orderDimensionFields() {
-        SequenciaCampoComparator comparator = new SequenciaCampoComparator();
+        FiedldSequenceComparator comparator = new FiedldSequenceComparator();
         this.dimensionFields.sort(comparator);
     }
 
     public void orderMetricFields() {
-        SequenciaCampoComparator comparator = new SequenciaCampoComparator();
+        FiedldSequenceComparator comparator = new FiedldSequenceComparator();
         this.metricFields.sort(comparator);
     }
 

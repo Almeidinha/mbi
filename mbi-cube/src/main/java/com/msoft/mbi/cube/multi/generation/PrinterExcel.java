@@ -24,7 +24,7 @@ import org.apache.poi.ss.util.RegionUtil;
 
 import com.msoft.mbi.cube.exception.CubeMathParserException;
 import com.msoft.mbi.cube.multi.column.ColumnMetaData;
-import com.msoft.mbi.cube.multi.column.TipoData;
+import com.msoft.mbi.cube.multi.column.TypeDate;
 import com.msoft.mbi.cube.multi.dimension.DimensionMetaData;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
@@ -222,7 +222,7 @@ public class PrinterExcel implements Printer {
         mascara = (metaData.getMetadataField() == null || metaData.getMetadataField().getFieldMask().isEmpty() || metaData.getMetadataField().getFieldMask().get(0)
                 .getMascara().isEmpty() ? "dd/mm/yyyy" : metaData.getMetadataField().getFieldMask().get(0).getMascara()).replace("'", "");
 
-        if (metaData.getDataType() instanceof TipoData) {
+        if (metaData.getDataType() instanceof TypeDate) {
             String nomeEstiloData = cellProperty + "_Data";
             HSSFCellStyle estilo = this.estilosExcel.get(nomeEstiloData);
             if (estilo == null) {

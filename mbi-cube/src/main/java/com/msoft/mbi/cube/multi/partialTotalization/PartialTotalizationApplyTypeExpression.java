@@ -9,20 +9,20 @@ import com.msoft.mbi.cube.multi.metrics.Metric;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.metrics.MetricValueUseTotal;
 
-public class PartialTotalizationApplyTypeExpressao implements PartialTotalizationApplyType {
+public class PartialTotalizationApplyTypeExpression implements PartialTotalizationApplyType {
 
 
-    private static PartialTotalizationApplyTypeExpressao acumuladoParcialTipo;
+    private static PartialTotalizationApplyTypeExpression accumulatedPartialType;
 
-    private PartialTotalizationApplyTypeExpressao() {
+    private PartialTotalizationApplyTypeExpression() {
         super();
     }
 
-    public static PartialTotalizationApplyTypeExpressao getInstance() {
-        if (acumuladoParcialTipo == null) {
-            acumuladoParcialTipo = new PartialTotalizationApplyTypeExpressao();
+    public static PartialTotalizationApplyTypeExpression getInstance() {
+        if (accumulatedPartialType == null) {
+            accumulatedPartialType = new PartialTotalizationApplyTypeExpression();
         }
-        return acumuladoParcialTipo;
+        return accumulatedPartialType;
     }
 
     @Override
@@ -33,10 +33,9 @@ public class PartialTotalizationApplyTypeExpressao implements PartialTotalizatio
             dimension = dimAux;
         }
         MetricLine metricLine = metricsMap.getMetricLine(dimensionReferenceAxis, dimension);
-        Map<String, Metric> metricas = metricLine.getMetrics();
-        Metric expressao = metricas.get(metricMetaData.getTitle());
-        Double valor = expressao.calculate(metricsMap, metricLine, (MetricLine) null, MetricValueUseTotal.getInstance());
-        return valor;
+        Map<String, Metric> metrics = metricLine.getMetrics();
+        Metric expression = metrics.get(metricMetaData.getTitle());
+        return expression.calculate(metricsMap, metricLine, null, MetricValueUseTotal.getInstance());
     }
 
 }

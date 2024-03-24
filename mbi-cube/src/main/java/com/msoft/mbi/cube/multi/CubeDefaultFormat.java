@@ -14,12 +14,12 @@ import com.msoft.mbi.cube.multi.resumeFunctions.MetricFiltersAccumulatedValue;
 import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
 import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 import com.msoft.mbi.cube.multi.metaData.CubeMetaData;
-import com.msoft.mbi.cube.multi.metaData.OrdenacaoCampoComparator;
+import com.msoft.mbi.cube.multi.metaData.FieldOrderingComparator;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.metrics.MetricValueUseLine;
 import com.msoft.mbi.cube.multi.metrics.MetricOrdering;
 import com.msoft.mbi.cube.multi.metrics.additive.MetricAdditiveMetaData;
-import com.msoft.mbi.cube.multi.metrics.calculated.CalculoHierarquiaOrdenacao;
+import com.msoft.mbi.cube.multi.metrics.calculated.CalculationHierarchyOrdering;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedAcumuladoParticipacaoAVMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedAcumuladoValorAVMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedMetaData;
@@ -45,7 +45,7 @@ public class CubeDefaultFormat extends Cube {
         Map<MetaDataField, DimensionMetaData> dimensions = new HashMap<>();
 
         List<MetaDataField> dimensionsByOrder = new ArrayList<>(cubeMetaData.getDimensionFields());
-        OrdenacaoCampoComparator comparator = new OrdenacaoCampoComparator();
+        FieldOrderingComparator comparator = new FieldOrderingComparator();
         dimensionsByOrder.sort(comparator);
         DimensionMetaDataAuxiliary metaDataAuxiliary = new DimensionMetaDataAuxiliary();
         this.addHierarchyLine(metaDataAuxiliary);
@@ -82,7 +82,7 @@ public class CubeDefaultFormat extends Cube {
                         Double resultExpr = null;
 
                         try {
-                            resultExpr = ((MetricCalculatedMetaData) metaDataCampoOriginal).createCalculo().calculaValor();
+                            resultExpr = ((MetricCalculatedMetaData) metaDataCampoOriginal).createCalculo().calculateValue();
                             valorExpr = Double.valueOf(campo.getName());
                         } catch (Exception e) {
                             log.error("Error: " + e.getMessage());
@@ -134,8 +134,8 @@ public class CubeDefaultFormat extends Cube {
         }
 
         List<MetricCalculatedMetaData> metricasCalculadas = this.getHierarchyMetricCalculated();
-        CalculoHierarquiaOrdenacao hierarchyCalculate = new CalculoHierarquiaOrdenacao(metricasCalculadas);
-        metricasCalculadas = hierarchyCalculate.getMetricasCalculadasOrdenadas();
+        CalculationHierarchyOrdering hierarchyCalculate = new CalculationHierarchyOrdering(metricasCalculadas);
+        metricasCalculadas = hierarchyCalculate.getCalculatedMetricsOrdered();
         this.setHierarchyMetricCalculated(metricasCalculadas);
 
         if (cubeMetaData.getMetricFieldsExpression() != null && !cubeMetaData.getMetricFieldsExpression().trim().isEmpty()) {

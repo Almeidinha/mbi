@@ -7,7 +7,7 @@ public class FunctionRankingLast extends FunctionRanking {
     public FunctionRankingLast(Integer posicoes) {
         super("IF([sequencia] > ([qtdRegistros]-[posicoes]), 1, 0)");
         try {
-            this.calculo.setValorVariable("posicoes", Double.valueOf(posicoes));
+            this.calculation.setVariableValue("posicoes", Double.valueOf(posicoes));
         } catch (Exception e) {
             throw new CubeMathParserException("Não foi possível criar o ranking do tipo últimos(n).", e);
         }
@@ -17,7 +17,7 @@ public class FunctionRankingLast extends FunctionRanking {
     public boolean testCondicao(double currentValue, int amount) {
         boolean result;
         try {
-            this.calculo.setValorVariable("qtdRegistros", (double) amount);
+            this.calculation.setVariableValue("qtdRegistros", (double) amount);
             result = super.testCondicao(currentValue, (amount - (int) currentValue));
         } catch (Exception e) {
             throw new CubeMathParserException("Não foi possível aplicar o ranking do tipo últimos(n).", e);

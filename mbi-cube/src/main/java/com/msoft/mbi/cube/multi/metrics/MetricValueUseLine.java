@@ -21,7 +21,7 @@ public class MetricValueUseLine implements MetricValueUse {
     @Override
     public Double getValor(MetricsMap metricsMap, MetricLine metricLine, String title) {
         Metric expression = metricLine.getMetrics().get(title);
-        return expression.getValor(metricsMap, metricLine, null);
+        return expression.getValue(metricsMap, metricLine, null);
     }
 
     @Override

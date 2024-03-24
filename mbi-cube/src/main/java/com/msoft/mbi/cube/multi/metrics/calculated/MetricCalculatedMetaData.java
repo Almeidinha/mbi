@@ -1,7 +1,7 @@
 package com.msoft.mbi.cube.multi.metrics.calculated;
 
-import com.msoft.mbi.cube.multi.calculation.Calculo;
-import com.msoft.mbi.cube.multi.column.TipoDecimal;
+import com.msoft.mbi.cube.multi.calculation.Calculation;
+import com.msoft.mbi.cube.multi.column.TypeDecimal;
 import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.applyAggregationOrder.AggregationApplyBefore;
@@ -17,7 +17,7 @@ public class MetricCalculatedMetaData extends MetricMetaData {
     private AggregationApplyOrder aggregationApplyOrder;
 
     protected MetricCalculatedMetaData(String title) {
-        super(title, new TipoDecimal());
+        super(title, new TypeDecimal());
         this.aggregationApplyOrder = AggregationApplyBefore.getInstance();
     }
 
@@ -36,8 +36,8 @@ public class MetricCalculatedMetaData extends MetricMetaData {
         return metricMetadata;
     }
 
-    public Calculo createCalculo() {
-        return new Calculo(this.expression);
+    public Calculation createCalculo() {
+        return new Calculation(this.expression);
     }
 
     public void setAggregationApplyOrder(String aggregationOrder) {

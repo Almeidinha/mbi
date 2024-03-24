@@ -6,8 +6,8 @@ import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.analytics.AnaliseEvolucaoTipo;
 import com.msoft.mbi.cube.multi.analytics.AnaliseParticipacaoTipo;
 import com.msoft.mbi.cube.multi.analytics.AnaliseParticipacaoTipoGeral;
-import com.msoft.mbi.cube.multi.calculation.Calculo;
-import com.msoft.mbi.cube.multi.column.MascaraColunaMetaData;
+import com.msoft.mbi.cube.multi.calculation.Calculation;
+import com.msoft.mbi.cube.multi.column.MaskColumnMetaData;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
 import com.msoft.mbi.cube.multi.metaData.MetaDataField;
@@ -34,7 +34,7 @@ public class MetricCalculatedEvolucaoAHMetaData extends MetricCalculatedMetaData
         this.setTotalLinesType(MetaDataField.TOTAL_APPLY_EXPRESSION);
         this.setDecimalPlaces(2);
         this.setCellProperty(colunaReferencia.getCellProperty());
-        MascaraColunaMetaData mascaraAH = new MascaraColunaMetaData("%", MascaraColunaMetaData.TIPO_DEPOIS);
+        MaskColumnMetaData mascaraAH = new MaskColumnMetaData("%", MaskColumnMetaData.TYPE_AFTER);
         this.addDecorator(mascaraAH);
         this.tituloColunaReferencia = colunaReferencia.getTitle();
 
@@ -84,10 +84,10 @@ public class MetricCalculatedEvolucaoAHMetaData extends MetricCalculatedMetaData
     }
 
     @Override
-    public Calculo createCalculo() {
-        Calculo calculo = super.createCalculo();
-        calculo.putVariable(COLUNA_AH_VARIABLE, this.tituloColunaReferencia);
-        return calculo;
+    public Calculation createCalculo() {
+        Calculation calculation = super.createCalculo();
+        calculation.putVariable(COLUNA_AH_VARIABLE, this.tituloColunaReferencia);
+        return calculation;
     }
 
 }

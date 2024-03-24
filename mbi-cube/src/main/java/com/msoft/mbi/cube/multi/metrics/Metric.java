@@ -66,6 +66,6 @@ public abstract class Metric {
     public abstract Double calculate(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior,
                                      MetricValueUse calculateLevel);
 
-    public abstract Double getValor(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior);
+    public abstract Double getValue(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior);
 
 }

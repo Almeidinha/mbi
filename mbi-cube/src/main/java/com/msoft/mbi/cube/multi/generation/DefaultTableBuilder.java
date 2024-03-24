@@ -6,7 +6,7 @@ import com.msoft.mbi.cube.multi.Cube;
 import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.MetricsMap;
 import com.msoft.mbi.cube.multi.column.ColumnMetaData;
-import com.msoft.mbi.cube.multi.column.TipoData;
+import com.msoft.mbi.cube.multi.column.TypeDate;
 import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditions;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.dimension.DimensionNullColumn;
@@ -131,7 +131,7 @@ public class DefaultTableBuilder extends tableGenerator {
 
         if (this.printer instanceof PrinterExcel) {
             for (DimensionMetaData metaData : this.cube.getHierarchyLine()) {
-                if (metaData.getDataType() instanceof TipoData) {
+                if (metaData.getDataType() instanceof TypeDate) {
 
                     mask = metaData.getMetadataField().getFieldMask().get(0).getMascara().replace("'", "");
 
@@ -170,7 +170,7 @@ public class DefaultTableBuilder extends tableGenerator {
         Map<String, String> secondProperties = new HashMap<>();
 
         for (DimensionMetaData metaData : this.cube.getHierarchyLine()) {
-            if (metaData.getDataType() instanceof TipoData) {
+            if (metaData.getDataType() instanceof TypeDate) {
                 firstProperties.put(metaData.getTitle(), CellProperty.CELL_PROPERTY_METRIC_DATA_ONE);
                 secondProperties.put(metaData.getTitle(), CellProperty.CELL_PROPERTY_METRIC_DATA_TWO);
             } else {
@@ -236,7 +236,7 @@ public class DefaultTableBuilder extends tableGenerator {
         Map<String, String> propsmap = this.currentLineCellProperties.get(this.currentLine % 2);
         for (MetricMetaData metricMetaData : this.visibleMetrics) {
             String title = metricMetaData.getTitle();
-            Double valor = metrics.get(title).getValor(metricsMap, metricLine, this.previousMetricLine);
+            Double valor = metrics.get(title).getValue(metricsMap, metricLine, this.previousMetricLine);
             this.currentLineValues.put(title, valor);
             String metricPropToApply = this.searchPropToApplyOnCell(currentLineProps, valor, metricMetaData);
             propsmap.put(title, metricPropToApply);

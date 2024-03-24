@@ -4,16 +4,16 @@ import java.io.Serializable;
 import java.util.StringTokenizer;
 
 import com.msoft.mbi.cube.exception.CubeMathParserException;
-import com.msoft.mbi.cube.multi.calculation.Calculo;
+import com.msoft.mbi.cube.multi.calculation.Calculation;
 
 public class FunctionRanking implements Serializable {
 
     private String rankingCondition;
-    protected transient Calculo calculo;
+    protected transient Calculation calculation;
 
     protected FunctionRanking(String rankingCondition) {
         this.rankingCondition = rankingCondition;
-        this.calculo = new Calculo(this.rankingCondition);
+        this.calculation = new Calculation(this.rankingCondition);
     }
 
     public FunctionRanking(String operador, Integer posicoes) {
@@ -54,8 +54,8 @@ public class FunctionRanking implements Serializable {
     public boolean testCondicao(double valor, int qtdRegistros) {
         boolean retorno;
         try {
-            this.calculo.setValorVariable("sequencia", valor);
-            retorno = (valor == -1 || this.calculo.calculaValor() == 1);
+            this.calculation.setVariableValue("sequencia", valor);
+            retorno = (valor == -1 || this.calculation.calculateValue() == 1);
         } catch (Exception e) {
             throw new CubeMathParserException("Não foi possível aplicar o ranking.", e);
         }

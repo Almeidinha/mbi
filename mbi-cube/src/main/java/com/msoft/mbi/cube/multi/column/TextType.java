@@ -10,11 +10,10 @@ public class TextType implements DataType<String> {
 
 
     public static final String EMPTY = "";
-    private String text = null;
 
     public String getValue(ResultSet set, String campo) throws SQLException {
-        this.text = set.getString(campo);
-        return ((set.wasNull()) ? EMPTY : this.text.trim());
+        String text = set.getString(campo);
+        return ((set.wasNull()) ? EMPTY : text.trim());
     }
 
     public String format(String t) {

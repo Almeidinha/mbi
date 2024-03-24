@@ -6,10 +6,10 @@ import java.util.List;
 import com.msoft.mbi.cube.multi.Cube;
 import com.msoft.mbi.cube.multi.column.ColumnMetaData;
 import com.msoft.mbi.cube.multi.column.DataType;
-import com.msoft.mbi.cube.multi.column.TipoData;
-import com.msoft.mbi.cube.multi.column.TipoDecimal;
-import com.msoft.mbi.cube.multi.column.TipoDimensaoInteiro;
-import com.msoft.mbi.cube.multi.column.TipoHora;
+import com.msoft.mbi.cube.multi.column.TypeDate;
+import com.msoft.mbi.cube.multi.column.TypeDecimal;
+import com.msoft.mbi.cube.multi.column.TypoDimensionInt;
+import com.msoft.mbi.cube.multi.column.TypeHour;
 import com.msoft.mbi.cube.multi.column.TextType;
 import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditionsDimensao;
 import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditionsValorDimensao;
@@ -157,10 +157,10 @@ public class DimensionMetaData extends ColumnMetaData {
     private static DataType<?> getDataType(String dataType) {
         return switch (dataType) {
             case MetaDataField.TEST_TYPE -> new TextType();
-            case MetaDataField.DATA_TYPE -> new TipoData();
-            case MetaDataField.HOUR_TYPE -> new TipoHora();
-            case MetaDataField.INT_TYPE -> new TipoDimensaoInteiro();
-            case MetaDataField.DECIMAL_TYPE -> new TipoDecimal();
+            case MetaDataField.DATA_TYPE -> new TypeDate();
+            case MetaDataField.HOUR_TYPE -> new TypeHour();
+            case MetaDataField.INT_TYPE -> new TypoDimensionInt();
+            case MetaDataField.DECIMAL_TYPE -> new TypeDecimal();
             default -> null;
         };
     }

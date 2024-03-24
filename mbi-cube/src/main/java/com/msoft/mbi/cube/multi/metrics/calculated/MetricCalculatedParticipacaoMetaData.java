@@ -3,8 +3,8 @@ package com.msoft.mbi.cube.multi.metrics.calculated;
 import java.util.List;
 
 import com.msoft.mbi.cube.multi.analytics.AnaliseParticipacaoTipo;
-import com.msoft.mbi.cube.multi.calculation.Calculo;
-import com.msoft.mbi.cube.multi.column.MascaraColunaMetaData;
+import com.msoft.mbi.cube.multi.calculation.Calculation;
+import com.msoft.mbi.cube.multi.column.MaskColumnMetaData;
 import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
 import com.msoft.mbi.cube.multi.metaData.MetaDataField;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
@@ -27,7 +27,7 @@ public abstract class MetricCalculatedParticipacaoMetaData extends MetricCalcula
         this.setTotalLinesType(MetaDataField.TOTAL_APPLY_EXPRESSION);
         this.setDecimalPlaces(2);
         this.setCellProperty(colunaParticipacao.getCellProperty());
-        MascaraColunaMetaData mascaraAV = new MascaraColunaMetaData("%", MascaraColunaMetaData.TIPO_DEPOIS);
+        MaskColumnMetaData mascaraAV = new MaskColumnMetaData("%", MaskColumnMetaData.TYPE_AFTER);
         this.addDecorator(mascaraAV);
         this.tituloColunaReferencia = colunaParticipacao.getTitle();
         this.expression = "([" + COLUNA_AV_VARIABLE + "]/[" + VALOR_NIVEL_ACIMA_VARIABLE + "])*100";
@@ -59,10 +59,10 @@ public abstract class MetricCalculatedParticipacaoMetaData extends MetricCalcula
     }
 
     @Override
-    public Calculo createCalculo() {
-        Calculo calculo = super.createCalculo();
-        calculo.putVariable(COLUNA_AV_VARIABLE, this.getReferenceFieldTitle());
-        return calculo;
+    public Calculation createCalculo() {
+        Calculation calculation = super.createCalculo();
+        calculation.putVariable(COLUNA_AV_VARIABLE, this.getReferenceFieldTitle());
+        return calculation;
     }
 
 }

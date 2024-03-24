@@ -3,7 +3,7 @@ package com.msoft.mbi.cube.multi.metrics.calculated;
 import java.util.List;
 
 import com.msoft.mbi.cube.multi.analytics.AnaliseParticipacaoTipo;
-import com.msoft.mbi.cube.multi.calculation.Calculo;
+import com.msoft.mbi.cube.multi.calculation.Calculation;
 import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLColumnText;
@@ -46,17 +46,17 @@ public abstract class MetricCalculatedAcumuladoMetaData extends MetricCalculated
     }
 
     @Override
-    public MetricCalculatedAcumulado createMetrica() {
-        MetricCalculatedAcumulado metricaCalculadaValorAcumulado = new MetricCalculatedAcumulado();
+    public MetricCalculatedAccumulated createMetrica() {
+        MetricCalculatedAccumulated metricaCalculadaValorAcumulado = new MetricCalculatedAccumulated();
         metricaCalculadaValorAcumulado.setMetaData(this);
         metricaCalculadaValorAcumulado.setAggregator(this.aggregationType);
         return metricaCalculadaValorAcumulado;
     }
 
     @Override
-    public Calculo createCalculo() {
-        Calculo calculo = super.createCalculo();
-        calculo.putVariable(COLUNA_AV_VARIABLE, this.tituloColunaReferencia);
-        return calculo;
+    public Calculation createCalculo() {
+        Calculation calculation = super.createCalculo();
+        calculation.putVariable(COLUNA_AV_VARIABLE, this.tituloColunaReferencia);
+        return calculation;
     }
 }

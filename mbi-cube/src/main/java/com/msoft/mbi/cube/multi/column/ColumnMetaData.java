@@ -59,11 +59,11 @@ public abstract class ColumnMetaData {
         this.hTMLEffectRenderer = decorator;
     }
 
-    public void addDecorator(MascaraColunaMetaData mascara) {
+    public void addDecorator(MaskColumnMetaData mascara) {
         this.maskRenderer = montaDecorator(mascara, this.maskRenderer);
     }
 
-    public void addHTMLEffectRenderer(MascaraColunaMetaData mascara) {
+    public void addHTMLEffectRenderer(MaskColumnMetaData mascara) {
         this.hTMLEffectRenderer = montaDecorator(mascara, this.hTMLEffectRenderer);
     }
 
@@ -102,30 +102,30 @@ public abstract class ColumnMetaData {
         }
     }
 
-    protected static MaskRenderer montaDecorator(MascaraColunaMetaData mascara, MaskRenderer decorator) {
-        int maskType = mascara.getTipo();
+    protected static MaskRenderer montaDecorator(MaskColumnMetaData mascara, MaskRenderer decorator) {
+        int maskType = mascara.getType();
         String mascaraValue = mascara.getMascara();
 
         switch (maskType) {
-            case MascaraColunaMetaData.TIPO_ANTES:
+            case MaskColumnMetaData.TYPE_BEFORE:
                 decorator = new MaskBeforeRenderer(decorator, mascaraValue);
                 break;
-            case MascaraColunaMetaData.TIPO_DEPOIS:
+            case MaskColumnMetaData.TYPE_AFTER:
                 decorator = new MaskAfterRenderer(decorator, mascaraValue);
                 break;
-            case MascaraColunaMetaData.TIPO_DATA:
+            case MaskColumnMetaData.DATA_TYPE:
                 decorator = new MascaraDataRenderer(decorator, mascaraValue);
                 break;
-            case MascaraColunaMetaData.TIPO_EIS_DIMENSAO_DAT_MES:
+            case MaskColumnMetaData.TYPE_EIS_DIMENSION_MONTH:
                 decorator = new MaskMonth(mascaraValue);
                 break;
-            case MascaraColunaMetaData.TIPO_EIS_DIMENSAO_DAT_ANO_MES:
+            case MaskColumnMetaData.TYPE_EIS_DIMENSION_MONTH_YEAR:
                 decorator = new MaskMonthYear(mascaraValue);
                 break;
-            case MascaraColunaMetaData.TIPO_EIS_DIMENSAO_DAT_SEMANA:
+            case MaskColumnMetaData.TYPE_EIS_DIMENSION_WEEK:
                 decorator = new MaskWeek(mascaraValue);
                 break;
-            case MascaraColunaMetaData.TIPO_EIS_DIMENSAO_DAT_PERIODO:
+            case MaskColumnMetaData.TYPE_EIS_DIMENSION_PERIOD:
                 decorator = new MaskPeriod(mascaraValue);
                 break;
             default:
@@ -154,9 +154,9 @@ public abstract class ColumnMetaData {
     }
 
     protected static void factory(ColumnMetaData columnMetaData, MetaDataField metaDataField) {
-        List<MascaraColunaMetaData> mascarasCampo = metaDataField.getFieldMask();
+        List<MaskColumnMetaData> mascarasCampo = metaDataField.getFieldMask();
         MaskRenderer decorator = new MaskDefaultRenderer();
-        for (MascaraColunaMetaData mascara : mascarasCampo) {
+        for (MaskColumnMetaData mascara : mascarasCampo) {
             decorator = montaDecorator(mascara, decorator);
         }
         columnMetaData.setDecorator(decorator);
