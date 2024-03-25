@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -27,18 +28,19 @@ public class MetricFilterJDBC extends MetricFilter {
     }
 
     public String getFormattedValue() throws BIException {
+        String inputValues = this.getCondition().getValue().replaceAll(";", ",");
+        List<String> values = BIUtil.stringToList(inputValues, ",");
 
-        String valor = this.getCondition().getValue();
-        valor = valor.replaceAll(";", ",");
-        List<String> valores = BIUtil.stringToList(valor, ",");
-        StringBuilder retorno = new StringBuilder();
-        for (String sValor : valores) {
-            retorno.append(Double.parseDouble(sValor)).append(";");
-        }
-        if (!valores.isEmpty()) {
-            retorno = new StringBuilder(retorno.substring(0, retorno.length() - 1));
-        }
-        return retorno.toString();
+        return values.stream()
+                .mapToDouble(value -> {
+                    try {
+                        return Double.parseDouble(value);
+                    } catch (NumberFormatException e) {
+                        throw new RuntimeException("Invalid number format in condition value: " + value);
+                    }
+                })
+                .mapToObj(String::valueOf)
+                .collect(Collectors.joining(";"));
     }
 
     public void setCondition(Field field, Operator operator, String value) throws BIException {
@@ -54,7 +56,7 @@ public class MetricFilterJDBC extends MetricFilter {
     }
 
     @Override
-    protected Object clone() {
+    protected Object clone() throws CloneNotSupportedException {
         return new MetricFilterJDBC(this.getCondition());
     }
 

@@ -1,5 +1,6 @@
 package com.msoft.mbi.data.api.dtos.filters;
 
+import com.msoft.mbi.data.api.dtos.indicators.FieldDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

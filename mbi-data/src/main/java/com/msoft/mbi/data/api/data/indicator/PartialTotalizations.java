@@ -5,52 +5,49 @@ import java.util.Arrays;
 
 public class PartialTotalizations {
 
-    private ArrayList<PartialTotalization> listaTotalizacoes;
+    private final ArrayList<PartialTotalization> totalizationList;
 
     public PartialTotalizations() {
-        this.listaTotalizacoes = new ArrayList<>();
+        this.totalizationList = new ArrayList<>();
     }
 
-    public void addTotalizacao(PartialTotalization totalizacaoParcial) {
-        listaTotalizacoes.add(totalizacaoParcial);
+    public void addToTotalPartial(PartialTotalization totalPartial) {
+        totalizationList.add(totalPartial);
     }
 
-    public void removeTotalizacao(int indice) {
-        listaTotalizacoes.remove(indice);
+    public void removeFromTotalPartial(int index) {
+        totalizationList.remove(index);
     }
 
-    public void removeTotalizacao(PartialTotalization totalizacaoParcial) {
-        listaTotalizacoes.remove(totalizacaoParcial);
+    public void removeFromTotalPartial(PartialTotalization totalPartial) {
+        totalizationList.remove(totalPartial);
     }
 
-    public PartialTotalization getTotalizacaoParcial(Object[][] valores, Field field) {
-        PartialTotalization totalizParcial;
-        for (PartialTotalization listaTotalizacoe : this.listaTotalizacoes) {
-            int tamanho = 0;
-            totalizParcial = listaTotalizacoe;
-            int valoresTotalizacao = totalizParcial.getValues().length;
-            if (valoresTotalizacao == valores.length) {
-                for (int x = 0; x < valoresTotalizacao; x++) {
-                    if (Arrays.deepEquals(valores[x], totalizParcial.getValues()[x]) && field.equals(totalizParcial.getField())) {
-                        tamanho++;
+    public PartialTotalization getTotalPartial(Object[][] values, Field field) {
+        for (PartialTotalization totalization : totalizationList) {
+            Object[][] totalValues = totalization.getValues();
+            if (totalValues.length == values.length && field.equals(totalization.getField())) {
+                int matchCount = 0;
+                for (int x = 0; x < totalValues.length; x++) {
+                    if (Arrays.deepEquals(values[x], totalValues[x])) {
+                        matchCount++;
+                    } else {
+                        break;
                     }
                 }
-                if (tamanho == totalizParcial.getValues().length)
-                    return totalizParcial;
+                if (matchCount == totalValues.length) {
+                    return totalization;
+                }
             }
         }
         return null;
     }
 
-    public double getAcumuladoTotalizParcial(Field field, int sequencia) {
-        double soma = 0;
-        PartialTotalization totalizParcial;
-        for (PartialTotalization listaTotalizacoe : this.listaTotalizacoes) {
-            totalizParcial = listaTotalizacoe;
-            if (totalizParcial.getField().equals(field) && totalizParcial.getSequence() == sequencia) {
-                soma += totalizParcial.getPartialTotalization();
-            }
-        }
-        return soma;
+    public double getTotalPartialAccumulated(Field field, int sequence) {
+        return totalizationList.stream()
+                .filter(totalization -> totalization.getField().equals(field) &&
+                        totalization.getSequence() == sequence)
+                .mapToDouble(PartialTotalization::getPartialTotalization)
+                .sum();
     }
 }

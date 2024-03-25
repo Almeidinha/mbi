@@ -2,9 +2,7 @@ package com.msoft.mbi.cube.multi.analytics;
 
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 
-import java.io.Serial;
-
-public class AnaliseEvolucaoTipoDinamica implements AnaliseEvolucaoTipo {
+public class AnaliseEvolucaoTipoDinamica implements EvolutionAnalysisType {
 
     private static AnaliseEvolucaoTipoDinamica analiseEvolucaoTipoDinamica;
 
@@ -20,8 +18,8 @@ public class AnaliseEvolucaoTipoDinamica implements AnaliseEvolucaoTipo {
     }
 
     @Override
-    public Dimension getDimensaoAnterior(Dimension dimensionAtual) {
-        return dimensionAtual.getPreviousDimension(dimensionAtual.getCube());
+    public Dimension getPreviousDimension(Dimension currentDimension) {
+        return currentDimension.getPreviousDimension(currentDimension.getCube());
     }
 
 }

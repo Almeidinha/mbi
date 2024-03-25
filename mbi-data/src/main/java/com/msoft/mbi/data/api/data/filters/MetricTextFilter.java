@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -42,22 +43,23 @@ public class MetricTextFilter extends MetricFilter {
 
     public String getFormattedValue() throws BIException {
         Field field = this.getCondition().getField();
+        String sqlValue = this.applyValues(this.getCondition().getSQLValue(), 0);
+        List<String> values = BIUtil.stringToList(sqlValue, ",");
 
-        String valorSQL = this.applyValues(this.getCondition().getSQLValue(), 0);
-        List<String> values = BIUtil.stringToList(valorSQL, ",");
-        StringBuilder retorno = new StringBuilder();
-        for (String sValor : values) {
-            retorno.append(BIUtil.textFormat(field, sValor)).append(";");
-        }
-        if (!values.isEmpty()) {
-            retorno = new StringBuilder(retorno.substring(0, retorno.length() - 1));
-        }
-        return retorno.toString();
+        return values.stream()
+                .map(sValue -> {
+                    try {
+                        return String.valueOf(BIUtil.textFormat(field, sValue));
+                    } catch (Exception e) {
+                        throw new RuntimeException("Error formatting value: " + sValue, e);
+                    }
+                })
+                .collect(Collectors.joining(";"));
     }
 
     @Override
     public String applyValues(String query, Integer position) throws BIException {
-        return null;
+        return super.applyValues(query, position);
     }
 
     public void setCondition(Field field, Operator operator, String value) throws BIException {

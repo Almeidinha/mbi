@@ -2,7 +2,7 @@ package com.msoft.mbi.cube.multi.analytics;
 
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 
-public class AnaliseEvolucaoTipoFixa implements AnaliseEvolucaoTipo {
+public class AnaliseEvolucaoTipoFixa implements EvolutionAnalysisType {
 
     private static AnaliseEvolucaoTipoFixa analiseEvolucaoTipoFixa;
 
@@ -18,8 +18,8 @@ public class AnaliseEvolucaoTipoFixa implements AnaliseEvolucaoTipo {
     }
 
     @Override
-    public Dimension getDimensaoAnterior(Dimension dimensionAtual) {
-        return dimensionAtual.getSameLevelFirstDimensionColumn();
+    public Dimension getPreviousDimension(Dimension currentDimension) {
+        return currentDimension.getSameLevelFirstDimensionColumn();
     }
 
 }

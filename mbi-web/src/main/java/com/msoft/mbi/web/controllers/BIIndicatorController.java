@@ -1,7 +1,7 @@
 package com.msoft.mbi.web.controllers;
 
 import com.msoft.mbi.data.api.dtos.indicators.BIIndInfoDTO;
-import com.msoft.mbi.data.api.dtos.indicators.BIIndLogicDTO;
+import com.msoft.mbi.data.api.dtos.indicators.IndicatorDTO;
 import com.msoft.mbi.data.services.BIIndService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ public class BIIndicatorController {
 
     @GetMapping("/dto/list")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<BIIndLogicDTO>> getIndLogicDTOList() {
+    public ResponseEntity<List<IndicatorDTO>> getIndLogicDTOList() {
         return ResponseEntity.ok(this.indService.findAllBIIndLogicDTOs());
     }
 
@@ -41,7 +41,7 @@ public class BIIndicatorController {
 
     @GetMapping("/dto/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<BIIndLogicDTO> getIndLogicDto(@PathVariable Integer id) {
+    public ResponseEntity<IndicatorDTO> getIndLogicDto(@PathVariable Integer id) {
         return ResponseEntity.ok(this.indService.getBIIndLogicDTO(id));
     }
 

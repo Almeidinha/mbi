@@ -1128,7 +1128,7 @@ public class Dimension {
                     if (campo.isApplyTotalizationExpression()) {
                         this.partialTotalizations = this.indicator.getPartialTotalizations();
                         if (this.accumulatedLine != null && this.partialTotalizations != null) {
-                            this.accumulatedLine[ii] = this.partialTotalizations.getAcumuladoTotalizParcial(campo, sequencia);
+                            this.accumulatedLine[ii] = this.partialTotalizations.getTotalPartialAccumulated(campo, sequencia);
                         }
                     }
                     if (!campo.getAccumulatedLine().equals("N")) {
@@ -1238,7 +1238,7 @@ public class Dimension {
                     if (campo.isHorizontalAnalysis() && campo.getTitle().contains("AH%") && indiceDimensaoLinha == 0 && indiceDimensaoRaizLinha == 0) {
                         Field pai = this.getFieldPai(campo, valores);
                         if (pai.isPartialTotalization()) {
-                            PartialTotalization totalizParcial = this.partialTotalizations.getTotalizacaoParcial(valores, pai);
+                            PartialTotalization totalizParcial = this.partialTotalizations.getTotalPartial(valores, pai);
                             if (totalizParcial != null) {
                                 double fin = totalizParcial.getPartialTotalization();
 
@@ -1262,7 +1262,7 @@ public class Dimension {
                             celula.setAlignment(campo.getColumnAlignment());
                             if (campo.isPartialTotalization()) {
                                 if (!("".equals(campo.getName()))) {
-                                    PartialTotalization totalizParcial = this.partialTotalizations.getTotalizacaoParcial(valores, campo);
+                                    PartialTotalization totalizParcial = this.partialTotalizations.getTotalPartial(valores, campo);
                                     soma = totalizParcial.getPartialTotalization();
 
                                     if (campo.isApplyTotalizationExpression()) {
@@ -1283,7 +1283,7 @@ public class Dimension {
                                     if (pai != null && this.partialTotalizations != null) {
                                         int indice = this.getIndiceFieldPai(campo, valores);
 
-                                        PartialTotalization totalizParcial = this.partialTotalizations.getTotalizacaoParcial(valores, pai);
+                                        PartialTotalization totalizParcial = this.partialTotalizations.getTotalPartial(valores, pai);
                                         if (totalizParcial != null) {
                                             soma = totalizParcial.getPartialTotalization();
 
@@ -1314,7 +1314,7 @@ public class Dimension {
                                 } else if (campo.isHorizontalAnalysis() && campo.getTitle().contains("AH%")) {
                                     Field pai = this.getFieldPai(campo, valores);
                                     if (pai.isPartialTotalization()) {
-                                        PartialTotalization totalizParcial = this.partialTotalizations.getTotalizacaoParcial(valores, pai);
+                                        PartialTotalization totalizParcial = this.partialTotalizations.getTotalPartial(valores, pai);
                                         if (totalizParcial != null) {
                                             double fin = totalizParcial.getPartialTotalization();
 
@@ -1357,7 +1357,7 @@ public class Dimension {
                                 } else {
                                     if (campo.isChildField() && (campo.getTitle().startsWith("%"))) {
                                         if (this.partialTotalizations != null) {
-                                            PartialTotalization totalizParcial = this.partialTotalizations.getTotalizacaoParcial(valores, campo);
+                                            PartialTotalization totalizParcial = this.partialTotalizations.getTotalPartial(valores, campo);
                                             if (totalizParcial != null) {
                                                 soma = totalizParcial.getPartialTotalization();
                                                 
@@ -1507,7 +1507,7 @@ public class Dimension {
         if (this.partialTotalizations == null) {
             this.partialTotalizations = new PartialTotalizations();
         }
-        this.partialTotalizations.addTotalizacao(totalizParcial);
+        this.partialTotalizations.addToTotalPartial(totalizParcial);
         registroTotalizado.setDouble(totalizacao, campo.getFieldId());
         this.indicator.setPartialTotalizations(this.partialTotalizations);
     }

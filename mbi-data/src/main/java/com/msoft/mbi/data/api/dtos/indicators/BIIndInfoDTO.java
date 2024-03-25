@@ -1,6 +1,8 @@
 package com.msoft.mbi.data.api.dtos.indicators;
 
 import com.msoft.mbi.data.api.dtos.BaseDTO;
+import com.msoft.mbi.data.api.dtos.indicators.entities.BIUserGroupIndDTO;
+import com.msoft.mbi.data.api.dtos.indicators.entities.BIUserIndDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

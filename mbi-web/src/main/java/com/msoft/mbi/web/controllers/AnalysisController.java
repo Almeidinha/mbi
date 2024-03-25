@@ -2,7 +2,7 @@ package com.msoft.mbi.web.controllers;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.msoft.mbi.data.api.data.inputs.AnalysisInput;
-import com.msoft.mbi.data.api.dtos.indicators.BIIndLogicDTO;
+import com.msoft.mbi.data.api.dtos.indicators.IndicatorDTO;
 import com.msoft.mbi.data.services.AnalysisService;
 import com.msoft.mbi.data.services.BIIndService;
 import lombok.RequiredArgsConstructor;
@@ -23,15 +23,15 @@ public class AnalysisController {
 
     @PostMapping("/new")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<BIIndLogicDTO> createAnalysis(@RequestBody AnalysisInput analysisInput) {
-        BIIndLogicDTO result = analysisService.createAnalysis(analysisInput, analysisInput.getConnectionId());
+    public ResponseEntity<IndicatorDTO> createAnalysis(@RequestBody AnalysisInput analysisInput) {
+        IndicatorDTO result = analysisService.createAnalysis(analysisInput, analysisInput.getConnectionId());
         return ResponseEntity.ok(result);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<BIIndLogicDTO> editAnalysis(@PathVariable Integer id, @RequestBody AnalysisInput analysisInput) {
-        BIIndLogicDTO biIndEntity = this.analysisService.updateAnalysis(analysisInput, id);
+    public ResponseEntity<IndicatorDTO> editAnalysis(@PathVariable Integer id, @RequestBody AnalysisInput analysisInput) {
+        IndicatorDTO biIndEntity = this.analysisService.updateAnalysis(analysisInput, id);
 
         if (biIndEntity != null) {
             return ResponseEntity.ok(biIndEntity);
@@ -41,8 +41,8 @@ public class AnalysisController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<BIIndLogicDTO> getAnalysis(@PathVariable Integer id) {
-        BIIndLogicDTO biIndEntity = this.indService.getBIIndLogicDTO(id);
+    public ResponseEntity<IndicatorDTO> getAnalysis(@PathVariable Integer id) {
+        IndicatorDTO biIndEntity = this.indService.getBIIndLogicDTO(id);
 
         if (biIndEntity != null) {
             return ResponseEntity.ok(biIndEntity);
@@ -52,7 +52,7 @@ public class AnalysisController {
 
     @GetMapping("/{id}/table")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<ObjectNode> getJsonTable(@PathVariable Integer id, @RequestBody(required = false) BIIndLogicDTO dto) {
+    public ResponseEntity<ObjectNode> getJsonTable(@PathVariable Integer id, @RequestBody(required = false) IndicatorDTO dto) {
         dto = Optional.ofNullable(dto).orElse(this.indService.getBIIndLogicDTO(id));
 
         ObjectNode table = this.analysisService.getTableAsJson(dto);
@@ -65,7 +65,7 @@ public class AnalysisController {
 
     @PostMapping("/{id}/table")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<ObjectNode> getJsonTableFromInd(@PathVariable Integer id, @RequestBody(required = false) BIIndLogicDTO dto) {
+    public ResponseEntity<ObjectNode> getJsonTableFromInd(@PathVariable Integer id, @RequestBody(required = false) IndicatorDTO dto) {
         dto = Optional.ofNullable(dto).orElse(this.indService.getBIIndLogicDTO(id));
 
         ObjectNode table = this.analysisService.getTableAsJson(dto);

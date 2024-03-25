@@ -1,7 +1,6 @@
 package com.msoft.mbi.data.services;
 
-
-import com.msoft.mbi.data.api.dtos.indicators.BIAnalysisFieldDTO;
+import com.msoft.mbi.data.api.dtos.indicators.entities.BIAnalysisFieldDTO;
 import com.msoft.mbi.model.BIAnalysisFieldEntity;
 
 import java.util.List;

@@ -77,7 +77,7 @@ public class Field implements Cloneable {
     private boolean calculatorPerRestriction = false;
     private boolean replicateChanges;
     private List<Field> dependentCalculatedFields;
-    private boolean isNavigableUpwards;
+    private boolean navigableUpwards;
 
     private boolean drillDown;
     private boolean drillUp;

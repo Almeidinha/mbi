@@ -2,7 +2,7 @@ package com.msoft.mbi.cube.multi.metrics.calculated;
 
 import java.util.List;
 
-import com.msoft.mbi.cube.multi.analytics.AnaliseParticipacaoTipo;
+import com.msoft.mbi.cube.multi.analytics.AnalysisParticipationType;
 import com.msoft.mbi.cube.multi.calculation.Calculation;
 import com.msoft.mbi.cube.multi.column.MaskColumnMetaData;
 import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
@@ -16,9 +16,9 @@ public abstract class MetricCalculatedParticipacaoMetaData extends MetricCalcula
     public static final String COLUNA_AV_VARIABLE = "colunaAV";
     public static final String VALOR_NIVEL_ACIMA_VARIABLE = "valorAcima";
     private final String tituloColunaReferencia;
-    private final AnaliseParticipacaoTipo analiseVertical;
+    private final AnalysisParticipationType analiseVertical;
 
-    public MetricCalculatedParticipacaoMetaData(String prefixoTitulo, MetricMetaData colunaParticipacao, AnaliseParticipacaoTipo analiseVerticalTipo,
+    public MetricCalculatedParticipacaoMetaData(String prefixoTitulo, MetricMetaData colunaParticipacao, AnalysisParticipationType analiseVerticalTipo,
                                                 List<ColorAlertMetadata> alertasCores) {
         super(prefixoTitulo + " " + colunaParticipacao.getTitle());
         this.setUsePercent(true);
@@ -42,14 +42,14 @@ public abstract class MetricCalculatedParticipacaoMetaData extends MetricCalcula
     }
 
     @Override
-    public MetricCalculatedParticipacao createMetrica() {
-        MetricCalculatedParticipacao metricaCalculadaParticipacao = new MetricCalculatedParticipacao();
+    public MetricCalculatedParticipation createMetrica() {
+        MetricCalculatedParticipation metricaCalculadaParticipacao = new MetricCalculatedParticipation();
         metricaCalculadaParticipacao.setMetaData(this);
         metricaCalculadaParticipacao.setAggregator(this.aggregationType);
         return metricaCalculadaParticipacao;
     }
 
-    public AnaliseParticipacaoTipo getParticipationAnalysisType() {
+    public AnalysisParticipationType getParticipationAnalysisType() {
         return analiseVertical;
     }
 

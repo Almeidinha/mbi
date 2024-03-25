@@ -58,7 +58,7 @@ public class Indicator {
         temporaryFrozenStatus = false;
         frozenStatus = false;
         this.analysisGroupPermissions = new ArrayList<>();
-        this.analysisUserPermissions = new ArrayList<>();
+        this.AnalysisUserPermissions = new ArrayList<>();
         this.analysisComments = new AnalysisComments();
         this.fields = new ArrayList<>();
         this.filters = new Filters();
@@ -73,12 +73,12 @@ public class Indicator {
     private int code;
     private String name;
     private int areaCode;
+    private int companyId;
+    private List<Field> fields;
     private Filters filters;
     private FiltersFunction filtersFunction;
-    private List<Field> fields;
-    public ArrayList<Field> deletedFields;
     private AnalysisComments analysisComments;
-    private List<analysisUserPermission> analysisUserPermissions;
+    private List<AnalysisUserPermission> AnalysisUserPermissions;
     private List<AnalysisGroupPermissions> analysisGroupPermissions;
     private String fileName;
     private String searchClause;
@@ -115,30 +115,28 @@ public class Indicator {
     private boolean isOpen = true;
     private Restrictions restrictions;
     private PartialTotalizations partialTotalizations;
-    private int originalCode;
     private boolean usesSequence = false;
     private int tableType;
     private ValuesRepository sequeceValuesRepository;
-    private ArrayList<ValuesRepository> accumulatedValuesRepository;
-    private MetricDimensionRestrictions metricDimensionRestrictions;
+    // private ArrayList<ValuesRepository> accumulatedValuesRepository; // TODO: CODE THIS WHEN IMPLEMENTIND ANALYSIS PERMISSIONS
+    // private MetricDimensionRestrictions metricDimensionRestrictions; // TODO: CODE THIS WHEN IMPLEMENTIND ANALYSIS PERMISSIONS
     private ColorsAlert colorAlerts;
+    private List<Field> dimensionColumn;
+    private int panelIndex;
+    private boolean hasData;
+
+    private int originalCode;
     private Integer originalIndicator;
     private boolean inheritsRestrictions = false;
     private boolean inheritsFields = false;
     private boolean replicateChanges;
 
-    private Indicator childAnalysis;
-    private List<String> childrenIndicatorsDoNotReplicateFields;
     transient private AnalysisParameters analysisParameters;
+    transient private Map<Field, MetaDataField> BICubeMappedFields;
 
     transient private Cube cube;
     transient private TableGenerator cubeTable;
 
-    private List<Field> dimensionColumn;
-
-    transient private Map<Field, MetaDataField> BICubeMappedFields;
-    private int panelIndex;
-    private boolean hasData;
     private final ObjectMapper mapper;
 
     public static final int DEFAULT_TABLE = 1;
@@ -1121,10 +1119,10 @@ public class Indicator {
         }
     }
 
-    private Object parseDateAlertValue(Field field, String value, String operator) throws BIException, DateException {
+    private Object parseDateAlertValue(Field field, String value, String operator) throws BIException {
         if (value.trim().startsWith("@|") && value.trim().endsWith("|")) {
-            DimensionFilter filtroDimensao = FilterFactory.createDimensionFilter(field, operator, value);
-            if (filtroDimensao.getFilters() != null && !filtroDimensao.getFilters().isEmpty()) {
+            DimensionFilter dimensionFilter = FilterFactory.createDimensionFilter(field, operator, value);
+            if (dimensionFilter.getFilters() != null && !dimensionFilter.getFilters().isEmpty()) {
                 // Process and return date range values
             } else {
                 // Process and return single date value

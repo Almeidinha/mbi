@@ -22,7 +22,7 @@ public class DimensionTotalized extends Dimension {
 
     public PartialTotalization getTotalizacaoParcial(Field campo, Dimension dimensaoConsulta) {
         Object[][] valores = dimensaoConsulta.consulta(this.results);
-        return this.getPartialTotalizations().getTotalizacaoParcial(valores, campo);
+        return this.getPartialTotalizations().getTotalPartial(valores, campo);
 
     }
 
@@ -40,7 +40,7 @@ public class DimensionTotalized extends Dimension {
         totalizacaoParcial.setField(campo);
         totalizacaoParcial.setPartialTotalization(valor);
         totalizacaoParcial.setValues(valores);
-        this.getPartialTotalizations().addTotalizacao(totalizacaoParcial);
+        this.getPartialTotalizations().addToTotalPartial(totalizacaoParcial);
     }
 
     public double geraTotalizacaoPai(Field campo, Dimension dimensaoConsulta) {
@@ -54,7 +54,7 @@ public class DimensionTotalized extends Dimension {
         totalizacaoParcial.setField(campo);
         totalizacaoParcial.setPartialTotalization(valorTotal);
         totalizacaoParcial.setValues(valores);
-        this.getPartialTotalizations().addTotalizacao(totalizacaoParcial);
+        this.getPartialTotalizations().addToTotalPartial(totalizacaoParcial);
         return valorTotal;
     }
 

@@ -3,7 +3,7 @@ package com.msoft.mbi.cube.multi.analytics;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.dimension.DimensionNull;
 
-public class AnaliseParticipacaoTipoGeral implements AnaliseParticipacaoTipo {
+public class AnaliseParticipacaoTipoGeral implements AnalysisParticipationType {
 
     private static AnaliseParticipacaoTipoGeral analiseParticipacaoTipoGeral;
 
@@ -19,7 +19,7 @@ public class AnaliseParticipacaoTipoGeral implements AnaliseParticipacaoTipo {
     }
 
     @Override
-    public Dimension getDimensaoNivelAcima(Dimension dimensionAtual) {
-        return DimensionNull.createDimensionNull(dimensionAtual.getMetaData().getReferenceAxis(), dimensionAtual.getCube());
+    public Dimension getUpperLevelDimension(Dimension currentDimension) {
+        return DimensionNull.createDimensionNull(currentDimension.getMetaData().getReferenceAxis(), currentDimension.getCube());
     }
 }

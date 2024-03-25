@@ -6,15 +6,14 @@ import com.msoft.mbi.data.api.data.*;
 import com.msoft.mbi.data.api.data.inputs.AnalysisInput;
 import com.msoft.mbi.data.api.data.exception.BIException;
 import com.msoft.mbi.data.api.data.indicator.Indicator;
-import com.msoft.mbi.data.api.dtos.indicators.BIAnalysisFieldDTO;
-import com.msoft.mbi.data.api.dtos.indicators.BIIndLogicDTO;
-import com.msoft.mbi.data.api.mapper.indicators.BIAnalysisFieldMapper;
-import com.msoft.mbi.data.api.mapper.indicators.BIIndLogicToEntityMapper;
-import com.msoft.mbi.data.api.mapper.indicators.BIIndLogicToIndMapper;
+import com.msoft.mbi.data.api.dtos.indicators.IndicatorDTO;
+import com.msoft.mbi.data.api.dtos.indicators.entities.BIAnalysisFieldDTO;
+import com.msoft.mbi.data.api.mapper.indicators.IndicatorMapper;
+import com.msoft.mbi.data.api.mapper.indicators.entities.BIAnalysisFieldMapper;
+import com.msoft.mbi.data.api.mapper.indicators.entities.BIIndToIndicatorDTOMapper;
 import com.msoft.mbi.data.connection.ConnectionManager;
 import com.msoft.mbi.data.services.*;
 import com.msoft.mbi.model.*;
-import com.msoft.mbi.model.support.DatabaseType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -28,17 +27,17 @@ public class AnalysisServiceImpl implements AnalysisService {
     private final BIUserIndService userIndService;
     private final BIUserGroupIndService userGroupIndService;
     private final BIIndService indService;
-    private final BIIndLogicToEntityMapper indLogicMapper;
 
     private final ConnectionManager connectionManager;
-    private final BIIndLogicToIndMapper biIndLogicToIndMapper;
     private final BITenantService tenantService;
-    private final BIAnalysisFieldMapper analysisFieldMapper;
     private final BICompanyService companyService;
     private final BIUserService userService;
+    private final BIIndToIndicatorDTOMapper biIndToIndicatorDTOMapper;
+    private final IndicatorMapper indicatorMapper;
+    private final BIAnalysisFieldMapper analysisFieldMapper;
 
     @Override
-    public BIIndLogicDTO createAnalysis(AnalysisInput analysisInput, String tenantId) {
+    public IndicatorDTO createAnalysis(AnalysisInput analysisInput, String tenantId) {
 
         BIIndEntity biIndEntity = this.buildBIInd(analysisInput);
 
@@ -51,11 +50,11 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         this.savePermissions(savedEntity, analysisInput);
 
-        return this.indLogicMapper.biEntityToDTO(savedEntity);
+        return this.biIndToIndicatorDTOMapper.biEntityToDTO(savedEntity);
     }
 
     @Override
-    public BIIndLogicDTO updateAnalysis(AnalysisInput analysisInput, int id) {
+    public IndicatorDTO updateAnalysis(AnalysisInput analysisInput, int id) {
         BIIndEntity biIndEntity = this.buildBIInd(analysisInput);
 
         int currentUserId = this.userService.getCurrentUserId();
@@ -71,18 +70,18 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         this.savePermissions(biIndEntity, analysisInput);
 
-        return this.indLogicMapper.biEntityToDTO(biIndEntity);
+        return this.biIndToIndicatorDTOMapper.biEntityToDTO(biIndEntity);
     }
 
     @Override
-    public ObjectNode getTableAsJson(BIIndLogicDTO dto) {
+    public ObjectNode getTableAsJson(IndicatorDTO dto) {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
         try {
 
-            BITenantEntity biTenant = tenantService.findById(dto.getConnectionId());
-            Indicator ind = biIndLogicToIndMapper.dtoToIndicator(dto);
+            BITenantEntity biTenant = tenantService.findById(dto.getTenantId());
+            Indicator ind = indicatorMapper.dtoToIndicator(dto);
 
             String sql = ind.getSqlExpression(biTenant.getDatabaseType(), false);
             JdbcTemplate jdbcTemplate = connectionManager.getNewConnection(biTenant);
@@ -198,7 +197,7 @@ public class AnalysisServiceImpl implements AnalysisService {
             return null;
         }
 
-        return analysisFieldMapper.setDTOToEntity(analysisFieldDTOS);
+        return analysisFieldMapper.listDTOToEntityList(analysisFieldDTOS);
     }
 
 }

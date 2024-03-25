@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
-import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedAcumuladoParticipacaoAHMetaData;
-import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedAcumuladoParticipacaoAVMetaData;
-import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedAcumuladoValorAVMetaData;
-import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedEvolucaoAHMetaData;
+import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedAccParticipationAHMetaData;
+import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedAccParticipationAVMetaData;
+import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedAccValorAVMetaData;
+import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedAHEvolutionMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedParticipacaoAHMetaData;
-import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedParticipacaoAVMetaData;
+import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedAVParticipationMetaData;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -106,12 +106,12 @@ public class ColorAlertMetadata implements Serializable {
     }
 
     public boolean isRelativeFieldFunction() {
-        return this.function.equals(MetricCalculatedParticipacaoAVMetaData.AV)
-                || this.function.equals(MetricCalculatedAcumuladoParticipacaoAVMetaData.PARTICIPACAO_ACUMULADA_AV)
-                || this.function.equals(MetricCalculatedAcumuladoValorAVMetaData.VALOR_ACUMULADO_AV)
-                || this.function.equals(MetricCalculatedAcumuladoParticipacaoAHMetaData.PARTICIPACAO_ACUMULADA_AH)
+        return this.function.equals(MetricCalculatedAVParticipationMetaData.AV)
+                || this.function.equals(MetricCalculatedAccParticipationAVMetaData.ACC_PARTICIPATION_AV)
+                || this.function.equals(MetricCalculatedAccValorAVMetaData.ACCUMULATED_VALUE_AV)
+                || this.function.equals(MetricCalculatedAccParticipationAHMetaData.ACC_PARTICIPATION_AH)
                 || this.function.equals(MetricCalculatedParticipacaoAHMetaData.PARTICIPACAO_AH)
-                || this.function.equals(MetricCalculatedEvolucaoAHMetaData.AH);
+                || this.function.equals(MetricCalculatedAHEvolutionMetaData.AH);
     }
 
     public static List<String> getHorizaontalToalFunctionList() {

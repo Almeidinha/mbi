@@ -1,7 +1,7 @@
 package com.msoft.mbi.data.services;
 
 import com.msoft.mbi.data.api.dtos.indicators.BIIndInfoDTO;
-import com.msoft.mbi.data.api.dtos.indicators.BIIndLogicDTO;
+import com.msoft.mbi.data.api.dtos.indicators.IndicatorDTO;
 import com.msoft.mbi.model.BIIndEntity;
 
 import java.util.List;
@@ -13,9 +13,9 @@ public interface BIIndService extends CrudService<BIIndEntity, Integer> {
     List<BIIndInfoDTO> findAllDTOs();
 
 
-    BIIndLogicDTO getBIIndLogicDTO(int biIndId);
+    IndicatorDTO getBIIndLogicDTO(int biIndId);
 
-    List<BIIndLogicDTO> findAllBIIndLogicDTOs();
+    List<IndicatorDTO> findAllBIIndLogicDTOs();
 
     void changeSequence(int id, boolean hasSequence);
 

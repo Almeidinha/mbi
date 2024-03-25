@@ -6,10 +6,10 @@ import com.msoft.mbi.data.api.data.indicator.Field;
 import com.msoft.mbi.data.api.data.indicator.Indicator;
 import com.msoft.mbi.data.api.data.inputs.FilterBuilderInput;
 import com.msoft.mbi.data.api.dtos.filters.FiltersDTO;
-import com.msoft.mbi.data.api.dtos.indicators.BIIndLogicDTO;
+import com.msoft.mbi.data.api.dtos.indicators.IndicatorDTO;
 import com.msoft.mbi.data.api.mapper.filters.FiltersMapper;
-import com.msoft.mbi.data.api.mapper.indicators.BIFieldDtoToFieldMapper;
-import com.msoft.mbi.data.api.mapper.indicators.BIIndLogicToIndMapper;
+import com.msoft.mbi.data.api.mapper.indicators.FieldMapper;
+import com.msoft.mbi.data.api.mapper.indicators.IndicatorMapper;
 import com.msoft.mbi.data.services.BIIndService;
 import com.msoft.mbi.data.services.FiltersService;
 import com.msoft.mbi.model.BIDimensionFilterEntity;
@@ -28,23 +28,23 @@ import java.util.Optional;
 public class FiltersServiceImpl implements FiltersService {
 
     private final BIIndService indService;
-    private final BIIndLogicToIndMapper biIndLogicToIndMapper;
+    private final IndicatorMapper indicatorMapper;
     private final FiltersMapper filtersMapper;
-    private final BIFieldDtoToFieldMapper fieldDtoToFieldMapper;
+    private final FieldMapper fieldMapper;
 
     @Override
     public FiltersDTO getFiltersDTO(Integer id) throws BIException {
 
-        BIIndLogicDTO dto = this.indService.getBIIndLogicDTO(id);
-        Indicator ind = this.biIndLogicToIndMapper.dtoToIndicator(dto);
+        IndicatorDTO dto = this.indService.getBIIndLogicDTO(id);
+        Indicator ind = this.indicatorMapper.dtoToIndicator(dto);
 
         return this.filtersMapper.filterToDTO(ind.getFilters());
     }
 
-    public FiltersDTO getFiltersDTOFromDTO(Integer id, BIIndLogicDTO dto) throws BIException {
+    public FiltersDTO getFiltersDTOFromDTO(Integer id, IndicatorDTO dto) throws BIException {
 
         dto = Optional.ofNullable(dto).orElse(this.indService.getBIIndLogicDTO(id));
-        Indicator ind = this.biIndLogicToIndMapper.dtoToIndicator(dto);
+        Indicator ind = this.indicatorMapper.dtoToIndicator(dto);
 
         return this.filtersMapper.filterToDTO(ind.getFilters());
     }
@@ -111,7 +111,7 @@ public class FiltersServiceImpl implements FiltersService {
 
         builder.addFilter(
                 filters,
-                this.fieldDtoToFieldMapper.dtoToField(filterBuilderInput.getField()),
+                this.fieldMapper.dtoToField(filterBuilderInput.getField()),
                 filterBuilderInput.getOperator(),
                 filterBuilderInput.getValue(),
                 filterBuilderInput.getLink(),
@@ -128,7 +128,7 @@ public class FiltersServiceImpl implements FiltersService {
         try {
             // TODO Criar mapper pra esse cara e passar pra função
             //FiltersFunction filtersFunction = input.getFiltersFunction();
-            Field field = fieldDtoToFieldMapper.dtoToField(input.getField());
+            Field field = fieldMapper.dtoToField(input.getField());
 
             builder.removeFilterByLink(filters, null, field, input);
             return this.filtersMapper.filterToDTO(filters);
@@ -142,7 +142,6 @@ public class FiltersServiceImpl implements FiltersService {
     @Override
     public FiltersDTO editFilter(FilterBuilderInput input) {
         FilterBuilder builder = new FilterBuilder();
-
         Filters filters = this.filtersMapper.dtoToFilter(input.getFilters());
 
         return this.filtersMapper.filterToDTO(filters);

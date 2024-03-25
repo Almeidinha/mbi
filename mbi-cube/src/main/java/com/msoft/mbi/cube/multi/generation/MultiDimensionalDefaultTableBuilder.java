@@ -11,7 +11,7 @@ import com.msoft.mbi.cube.multi.dimension.DimensionMetaData;
 import com.msoft.mbi.cube.multi.dimension.Dimensions;
 import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
-import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedEvolucaoAHMetaData;
+import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedAHEvolutionMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedFunctionMetaData;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
 
@@ -270,7 +270,7 @@ public class MultiDimensionalDefaultTableBuilder extends TableGenerator {
                 }
 
                 if (metaData instanceof MetricCalculatedFunctionMetaData metrics) {
-                    if (metrics.getFieldFunction().equals(MetricCalculatedEvolucaoAHMetaData.AH)) {
+                    if (metrics.getFieldFunction().equals(MetricCalculatedAHEvolutionMetaData.AH)) {
                         if (hasDimensionColumn) {
                             this.metricsAH.add(metaData);
                             this.visibleMetrics.add(metaData);

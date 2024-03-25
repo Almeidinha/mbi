@@ -3,7 +3,7 @@ package com.msoft.mbi.web.controllers;
 import com.msoft.mbi.data.api.data.exception.BIException;
 import com.msoft.mbi.data.api.data.inputs.FilterBuilderInput;
 import com.msoft.mbi.data.api.dtos.filters.FiltersDTO;
-import com.msoft.mbi.data.api.dtos.indicators.BIIndLogicDTO;
+import com.msoft.mbi.data.api.dtos.indicators.IndicatorDTO;
 import com.msoft.mbi.data.services.FiltersService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -28,7 +28,7 @@ public class FiltersController {
 
     @PostMapping("/{indicatorId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<FiltersDTO> getFiltersFromInd(@PathVariable Integer indicatorId, @RequestBody(required = false) BIIndLogicDTO dto) throws BIException {
+    public ResponseEntity<FiltersDTO> getFiltersFromInd(@PathVariable Integer indicatorId, @RequestBody(required = false) IndicatorDTO dto) throws BIException {
         FiltersDTO filtersDTO =  this.filtersService.getFiltersDTOFromDTO(indicatorId, dto);
         return ResponseEntity.ok(filtersDTO);
     }

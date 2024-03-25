@@ -1,14 +1,11 @@
 package com.msoft.mbi.data.api.data.inputs;
 
-import com.msoft.mbi.data.api.data.filters.FiltersFunction;
-import com.msoft.mbi.data.api.dtos.filters.FieldDTO;
 import com.msoft.mbi.data.api.dtos.filters.FilterFunctionDTO;
 import com.msoft.mbi.data.api.dtos.filters.FiltersDTO;
+import com.msoft.mbi.data.api.dtos.indicators.FieldDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.List;
 
 @Getter
 @Setter

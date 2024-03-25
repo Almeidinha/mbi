@@ -1,9 +1,9 @@
 package com.msoft.mbi.data.services.impl;
 
 import com.msoft.mbi.data.api.dtos.indicators.BIIndInfoDTO;
-import com.msoft.mbi.data.api.dtos.indicators.BIIndLogicDTO;
+import com.msoft.mbi.data.api.dtos.indicators.IndicatorDTO;
 import com.msoft.mbi.data.api.mapper.indicators.BIIndInfoMapper;
-import com.msoft.mbi.data.api.mapper.indicators.BIIndLogicToEntityMapper;
+import com.msoft.mbi.data.api.mapper.indicators.entities.BIIndToIndicatorDTOMapper;
 import com.msoft.mbi.data.repositories.BIIndRepository;
 import com.msoft.mbi.data.services.BIIndService;
 import com.msoft.mbi.model.BIIndEntity;
@@ -22,7 +22,7 @@ public class BIIndServiceImpl implements BIIndService {
 
     private final BIIndInfoMapper indMapper;
 
-    private final BIIndLogicToEntityMapper indLogicMapper;
+    private final BIIndToIndicatorDTOMapper biIndToIndicatorDTOMapper;
 
     @Override
     public List<BIIndEntity> findAll() {
@@ -74,17 +74,17 @@ public class BIIndServiceImpl implements BIIndService {
     }
 
     @Override
-    public BIIndLogicDTO getBIIndLogicDTO(int biIndId) {
+    public IndicatorDTO getBIIndLogicDTO(int biIndId) {
         Optional<BIIndEntity> biIndEntity = this
                 .indRepository.findById((biIndId));
 
-        return this.indLogicMapper.biEntityToDTO(biIndEntity.orElse(null));
+        return this.biIndToIndicatorDTOMapper.biEntityToDTO(biIndEntity.orElse(null));
     }
 
     @Override
-    public List<BIIndLogicDTO> findAllBIIndLogicDTOs() {
+    public List<IndicatorDTO> findAllBIIndLogicDTOs() {
         return  this.indRepository.findAll().stream()
-                .map(this.indLogicMapper::biEntityToDTO)
+                .map(this.biIndToIndicatorDTOMapper::biEntityToDTO)
                 .collect(Collectors.toList());
     }
 

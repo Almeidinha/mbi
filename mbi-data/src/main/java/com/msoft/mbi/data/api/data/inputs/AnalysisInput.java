@@ -2,10 +2,10 @@ package com.msoft.mbi.data.api.data.inputs;
 
 import com.msoft.mbi.data.api.data.AnalysisPermission;
 import com.msoft.mbi.data.api.dtos.BIAreaDTO;
-import com.msoft.mbi.data.api.dtos.indicators.BIAnalysisFieldDTO;
-import com.msoft.mbi.data.api.dtos.indicators.BIFromClauseDTO;
-import com.msoft.mbi.data.api.dtos.indicators.BISearchClauseDTO;
-import com.msoft.mbi.data.api.dtos.indicators.BIWhereClauseDTO;
+import com.msoft.mbi.data.api.dtos.indicators.entities.BIAnalysisFieldDTO;
+import com.msoft.mbi.data.api.dtos.indicators.entities.BIFromClauseDTO;
+import com.msoft.mbi.data.api.dtos.indicators.entities.BISearchClauseDTO;
+import com.msoft.mbi.data.api.dtos.indicators.entities.BIWhereClauseDTO;
 import lombok.Getter;
 import lombok.Setter;
 

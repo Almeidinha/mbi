@@ -1,13 +1,10 @@
 package com.msoft.mbi.data.services.impl;
 
-import com.msoft.mbi.data.api.dtos.indicators.BIAnalysisFieldDTO;
-import com.msoft.mbi.data.api.mapper.indicators.BIAnalysisFieldMapper;
-import com.msoft.mbi.data.api.mapper.indicators.BIAnalysisFieldToFieldMapper;
+import com.msoft.mbi.data.api.dtos.indicators.entities.BIAnalysisFieldDTO;
+import com.msoft.mbi.data.api.mapper.indicators.entities.BIAnalysisFieldMapper;
 import com.msoft.mbi.data.repositories.BIAnalysisFieldRepository;
 import com.msoft.mbi.data.services.BIAnalysisFieldService;
 import com.msoft.mbi.model.BIAnalysisFieldEntity;
-import com.msoft.mbi.model.BIIndEntity;
-import com.msoft.mbi.model.BIUserEntity;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.stereotype.Service;

@@ -2,7 +2,7 @@ package com.msoft.mbi.cube.multi.analytics;
 
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 
-public class AnaliseParticipacaoTipoParcialProxNivelTotalizado implements AnaliseParticipacaoTipo {
+public class AnaliseParticipacaoTipoParcialProxNivelTotalizado implements AnalysisParticipationType {
 
     private static AnaliseParticipacaoTipoParcialProxNivelTotalizado analiseParticipacaoTipoParcialProxNivelTotalizado;
 
@@ -18,7 +18,7 @@ public class AnaliseParticipacaoTipoParcialProxNivelTotalizado implements Analis
     }
 
     @Override
-    public Dimension getDimensaoNivelAcima(Dimension dimensionAtual) {
-        return dimensionAtual.getDimensionTotalLevelUp();
+    public Dimension getUpperLevelDimension(Dimension currentDimension) {
+        return currentDimension.getDimensionTotalLevelUp();
     }
 }

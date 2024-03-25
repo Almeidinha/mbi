@@ -14,24 +14,24 @@ public class MetricCalculatedAccumulated extends MetricCalculated {
 
     @Override
     public Double calculate(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior) {
-        MetricCalculatedAcumuladoMetaData metaData = (MetricCalculatedAcumuladoMetaData) this.getMetaData();
+        MetricCalculatedAccMetaData metaData = (MetricCalculatedAccMetaData) this.getMetaData();
         Calculation calculation = metaData.createCalculo();
 
         try {
-            String title = calculation.getVariables().get(MetricCalculatedAcumuladoMetaData.COLUNA_AV_VARIABLE);
+            String title = calculation.getVariables().get(MetricCalculatedAccMetaData.AV_COLUMN_VARIABLE);
             Metric referenceMetric = metricLine.getMetrics().get(title);
             Double currentValue = referenceMetric.getValue(metricsMap, metricLine, metricLineAnterior);
-            calculation.setVariableValue(MetricCalculatedAcumuladoMetaData.COLUNA_AV_VARIABLE, (currentValue != null ? currentValue : 0.0));
+            calculation.setVariableValue(MetricCalculatedAccMetaData.AV_COLUMN_VARIABLE, (currentValue != null ? currentValue : 0.0));
 
             Double previousValue = 0.0;
 
-            if (metaData instanceof MetricCalculatedAcumuladoParticipacaoAVMetaData || metaData instanceof MetricCalculatedAcumuladoValorAVMetaData) {
+            if (metaData instanceof MetricCalculatedAccParticipationAVMetaData || metaData instanceof MetricCalculatedAccValorAVMetaData) {
                 if (metricLineAnterior != null) {
                     Metric accumulatedValue = metricLineAnterior.getMetrics().get(metaData.getTitle());
                     previousValue = accumulatedValue.getValue(metricsMap, metricLineAnterior, null);
 
-                    Dimension currentDimension = metaData.getParticipationAnalysisType().getDimensaoNivelAcima(metricLine.getDimensionLine());
-                    Dimension previousDimension = metaData.getParticipationAnalysisType().getDimensaoNivelAcima(metricLineAnterior.getDimensionLine());
+                    Dimension currentDimension = metaData.getParticipationAnalysisType().getUpperLevelDimension(metricLine.getDimensionLine());
+                    Dimension previousDimension = metaData.getParticipationAnalysisType().getUpperLevelDimension(metricLineAnterior.getDimensionLine());
 
                     if (currentDimension != previousDimension && !currentDimension.getKeyValue().equals(previousDimension.getKeyValue())) {
                         previousValue = 0.0;
@@ -39,7 +39,7 @@ public class MetricCalculatedAccumulated extends MetricCalculated {
                 }
             }
 
-            if (metaData instanceof MetricCalculatedAcumuladoParticipacaoAHMetaData) {
+            if (metaData instanceof MetricCalculatedAccParticipationAHMetaData) {
                 Dimension dimensionAnterior = this.getPreviousDimension(metricLine.getDimensionColumn(), metaData);
 
                 if (dimensionAnterior != null) {
@@ -48,7 +48,7 @@ public class MetricCalculatedAccumulated extends MetricCalculated {
                 }
             }
 
-            calculation.setVariableValue(MetricCalculatedAcumuladoMetaData.COLUNA_VALOR_ANTERIOR_VARIABLE, previousValue);
+            calculation.setVariableValue(MetricCalculatedAccMetaData.PREVIOUS_VALUE_COLUMN_VARIABLE, previousValue);
             return calculation.calculateValue();
         } catch (Exception ex) {
             throw new CubeMathParserException("Não foi possível realizar o cálculo da coluna " + metaData.getTitle() + ".", ex);
@@ -60,8 +60,8 @@ public class MetricCalculatedAccumulated extends MetricCalculated {
         return calculate(metricsMap, metricLine, metricLineAnterior);
     }
 
-    private Dimension getPreviousDimension(Dimension currentDimension, MetricCalculatedAcumuladoMetaData metaData) {
-        return currentDimension.getPreviousDimension(metaData.getParticipationAnalysisType().getDimensaoNivelAcima(currentDimension));
+    private Dimension getPreviousDimension(Dimension currentDimension, MetricCalculatedAccMetaData metaData) {
+        return currentDimension.getPreviousDimension(metaData.getParticipationAnalysisType().getUpperLevelDimension(currentDimension));
     }
 
     @Override

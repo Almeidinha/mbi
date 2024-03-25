@@ -1,8 +1,7 @@
 package com.msoft.mbi.web.controllers;
 
-import com.msoft.mbi.data.api.dtos.indicators.BIAnalysisFieldDTO;
+import com.msoft.mbi.data.api.dtos.indicators.entities.BIAnalysisFieldDTO;
 import com.msoft.mbi.data.services.BIAnalysisFieldService;
-import com.msoft.mbi.model.BIAreaEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

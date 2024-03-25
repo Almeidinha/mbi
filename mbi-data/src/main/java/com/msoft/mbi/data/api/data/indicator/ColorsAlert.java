@@ -371,7 +371,7 @@ public class ColorsAlert {
                     if (mesmoField) {
                         valores = dimColuna.consulta(valores);
                     }
-                    PartialTotalization totalizacaoParcial = indicador.getPartialTotalizations().getTotalizacaoParcial(valores, campo);
+                    PartialTotalization totalizacaoParcial = indicador.getPartialTotalizations().getTotalPartial(valores, campo);
                     if (totalizacaoParcial != null) {
                         soma = totalizacaoParcial.getPartialTotalization();
                         if (campo.isApplyTotalizationExpression()) {

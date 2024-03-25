@@ -11,7 +11,7 @@ public enum DatabaseType {
     INFORMIX(5),
     OPENEDGE(6);
 
-    private int databaseType;
+    private final int databaseType;
 
     private DatabaseType(int databaseType) {
         this.databaseType = databaseType;
