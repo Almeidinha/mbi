@@ -31,7 +31,7 @@ public class AnalysisComments {
     @Setter
     private String message = null;
 
-    public void consul() throws BIException {
+    public void consult() throws BIException {
         String clausula = "";
         BIDate data = new BIDate();
         boolean filtraPorData = false;
@@ -152,7 +152,7 @@ public class AnalysisComments {
 
     public String getCommentComponent(String panelIndex, String indicatorIndex, boolean maintenance, int userId) throws BIException {
         if (this.comments != null) {
-            BIComparator.ordenaComentario(this.comments, Comment.DATAHORA);
+            BIComparator.orderByComment(this.comments, Comment.DATAHORA);
             BINavegador navegador = new BINavegador(this.comments);
             Comment comment;
             HTMLTable tabela = new HTMLTable();
@@ -201,7 +201,7 @@ public class AnalysisComments {
 
     public String getComponenteComentarioCompleto() throws BIException {
         if (this.comments != null) {
-            BIComparator.ordenaComentario(this.comments, Comment.DATAHORA);
+            BIComparator.orderByComment(this.comments, Comment.DATAHORA);
             Comment comentario;
             HTMLTable tabela = new HTMLTable();
             tabela.setWidth("100%");
@@ -383,7 +383,7 @@ public class AnalysisComments {
     public void setSearchType(String searchType) throws BIException {
         this.searchType = searchType;
         this.inicializaComentarios();
-        this.consul();
+        this.consult();
     }
 
     public String getMessage() {

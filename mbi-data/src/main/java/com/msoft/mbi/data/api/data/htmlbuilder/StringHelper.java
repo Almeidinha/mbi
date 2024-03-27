@@ -88,18 +88,26 @@ public class StringHelper {
         for (int i = 0; i < expression.length(); i++) {
             char ch = expression.charAt(i);
 
-            if (ch == '(') {
-                processOpeningParenthesis(expressionSlice, ++openCount);
-            } else if (ch == ')') {
-                processClosingParenthesis(expressionSlice, constantString, --openCount);
-            } else if (isArithmeticOperator(ch)) {
-                processArithmeticOperator(expressionSlice, constantString, ch);
-            } else if (ch == '#') {
-                i = processFieldCode(expression, i, expressionSlice, indicator);
-            } else if (Character.isDigit(ch) || ch == ',' || ch == '.') {
-                processDigitOrDecimal(expressionSlice, constantString, ch, i, expression.length());
-            } else if (ch == ' ') {
-                processSpace(expressionSlice, constantString);
+            switch (ch) {
+                case '(':
+                    processOpeningParenthesis(expressionSlice, openCount++);
+                    break;
+                case ')':
+                    processClosingParenthesis(expressionSlice, constantString, openCount--);
+                    break;
+                case '#':
+                    i = processFieldCode(expression, i, expressionSlice, indicator);
+                    break;
+                case ' ':
+                    processSpace(expressionSlice, constantString);
+                    break;
+                default:
+                    if (isArithmeticOperator(ch)) {
+                        processArithmeticOperator(expressionSlice, constantString, ch);
+                    } else if (Character.isDigit(ch) || ch == ',' || ch == '.') {
+                        processDigitOrDecimal(expressionSlice, constantString, ch, i, expression.length());
+                    }
+                    break;
             }
         }
         return expressionSlice;

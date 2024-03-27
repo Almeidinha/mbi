@@ -13,17 +13,23 @@ public class Operator implements Cloneable {
     private String description;
 
     public Operator(String symbol) {
-        if (symbol.equalsIgnoreCase("IS") || symbol.equalsIgnoreCase("IN(")) {
-            symbol = "=";
-        } else if (symbol.equalsIgnoreCase("IS symbol") || symbol.equalsIgnoreCase("!=")
-                || symbol.equalsIgnoreCase("NOT IN(")) {
-            symbol = "<>";
-        } else if (symbol.equalsIgnoreCase("==")) {
-            symbol = "=";
+        switch (symbol.toLowerCase()) {
+            case "is":
+            case "in(":
+            case "==":
+                symbol = "=";
+                break;
+            case "is symbol":
+            case "!=":
+            case "not in(":
+                symbol = "<>";
+                break;
+            default:
+                break;
         }
         this.symbol = symbol;
-        Operators op = new Operators();
-        this.description = op.get(symbol);
+
+        this.description = (new Operators()).get(symbol);
     }
 
     @Override

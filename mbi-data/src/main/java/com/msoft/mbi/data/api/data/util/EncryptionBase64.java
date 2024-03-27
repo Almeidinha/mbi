@@ -52,8 +52,8 @@ public class EncryptionBase64 {
     public static String decryptionRSA(String string_codificada) {
         char[] data = string_codificada.toCharArray();
         int tempLen = data.length;
-        for (int ix = 0; ix < data.length; ix++) {
-            if ((data[ix] > 255) || codes[data[ix]] < 0)
+        for (char c : data) {
+            if ((c > 255) || codes[c] < 0)
                 --tempLen;
         }
         int len = (tempLen / 4) * 3;
@@ -68,8 +68,8 @@ public class EncryptionBase64 {
         int accum = 0;
         int index = 0;
 
-        for (int ix = 0; ix < data.length; ix++) {
-            int value = (data[ix] > 255) ? -1 : codes[data[ix]];
+        for (char datum : data) {
+            int value = (datum > 255) ? -1 : codes[datum];
 
             if (value >= 0) {
                 accum <<= 6;

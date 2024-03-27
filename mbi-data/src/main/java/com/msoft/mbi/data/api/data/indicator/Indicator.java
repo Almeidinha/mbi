@@ -716,7 +716,7 @@ public class Indicator {
     private void configureCampoMetaData(Field field, MetaDataField metaDataField, int lastDrillDownSequence) {
         HtmlHelper.configureSorting(field, metaDataField);
         if (field.isDrillDown() && field.getDrillDownSequence() != lastDrillDownSequence) {
-            HtmlHelper.createMascaraHTMLDrillDownDimensao(field, metaDataField, this.code);
+            HtmlHelper.createHTMLDrillDownMask(field, metaDataField, this.code);
         }
         configureAlertColor(field, metaDataField);
     }
@@ -1006,7 +1006,7 @@ public class Indicator {
                     if (field.getVisualizationSequence() < sequence) {
                         sequence = field.getVisualizationSequence();
                     }
-                    HtmlHelper.createMascarasHTMLDimensaoLinha(field, metadataField, this);
+                    HtmlHelper.createDimensionLineMask(field, metadataField, this);
                 }
             } else {
                 metadataField.setSequence(field.getVisualizationSequence());

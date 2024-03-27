@@ -1,6 +1,5 @@
-package com.msoft.mbi.data.api.data.util;
+package com.msoft.mbi.data.api.data.exception;
 
-import com.msoft.mbi.data.api.data.exception.BIException;
 import lombok.Getter;
 
 @Getter
@@ -9,15 +8,15 @@ public class BIIOException extends BIException {
     private static final String defaultError = "10021 - Erro de leitura ou escrita em dispositivo de Entrada/Saida";
     private String message;
 
-    public static final int ERRO_LEITURA_ARQUIVO = 1;
-    public static final int ERRO_COMUNICACAO_SOCKET = 2;
-    public static final int ERRO_ENVIO_DE_ARQUIVO = 3;
-    public static final int ERRO_GRAVANDO_LOG = 4;
-    public static final int ERRO_LEITURA_BUFFER = 5;
-    public static final int ERRO_SUBIR_SERVIDOR = 6;
-    public static final int ERRO_CONECTAR_CLIENTE = 7;
-    public static final int ERRO_CONECTAR_SERVIDOR = 8;
-    public static final int ERRO_AO_ESCREVER_NO_BUFFER = 9;
+    public static final int FILE_READING_ERROR = 1;
+    public static final int COMMUNICATION_SOCKET_ERROR = 2;
+    public static final int FILE_SENDING_ERROR = 3;
+    public static final int LOG_RECORD_ERROR = 4;
+    public static final int BUFFER_READ_ERROR = 5;
+    public static final int SERVER_START_ERROR = 6;
+    public static final int CLIENT_CONNECT_ERROR = 7;
+    public static final int SERVER_CONNECT_ERROR = 8;
+    public static final int BUFFER_WRITE_ERROR = 9;
 
     public BIIOException() {
         super();

@@ -1,16 +1,17 @@
 package com.msoft.mbi.data.api.data.htmlbuilder;
 
-import com.msoft.mbi.data.api.data.util.BIIOException;
-import lombok.Getter;
-import lombok.Setter;
+import com.msoft.mbi.data.api.data.exception.BIIOException;
+import lombok.*;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+@Builder
 @Getter
 @Setter
+@AllArgsConstructor
 public class HTMLTable extends HTMLTableComponent {
 
     private int borderWidth;
@@ -117,7 +118,7 @@ public class HTMLTable extends HTMLTableComponent {
             out.write("</table>\n");
         } catch (IOException e) {
             BIIOException bi = new BIIOException("Erro ao montar célula da tabela.", e);
-            bi.setErrorCode(BIIOException.ERRO_AO_ESCREVER_NO_BUFFER);
+            bi.setErrorCode(BIIOException.BUFFER_WRITE_ERROR);
             bi.setLocal(this.getClass(), "buildComponent(Writer)");
             throw bi;
         }

@@ -1,5 +1,5 @@
 package com.msoft.mbi.data.api.data.htmlbuilder;
-import com.msoft.mbi.data.api.data.util.BIIOException;
+import com.msoft.mbi.data.api.data.exception.BIIOException;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -56,7 +56,7 @@ public class HTMLLine extends HTMLTableComponent implements Line {
             out.write("</tr>\n");
         } catch (IOException e) {
             BIIOException bi = new BIIOException("Erro ao montar célula da tabela.", e);
-            bi.setErrorCode(BIIOException.ERRO_AO_ESCREVER_NO_BUFFER);
+            bi.setErrorCode(BIIOException.BUFFER_WRITE_ERROR);
             bi.setLocal(this.getClass(), "montaComponente(Writer)");
             throw bi;
         }

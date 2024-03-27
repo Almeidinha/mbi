@@ -33,9 +33,9 @@ public class Action {
     public static final int USER_VIEW = 2;
     public static final int USER_DELETE = 4;
     public static final int USER_ADD = 8;
-    public static final int CLIENT_EDIR = 1;
+    public static final int CLIENT_EDIT = 1;
     public static final int CLIENT_VIEW = 2;
-    public static final int CLIENTE_EXCLUIR = 4;
+    public static final int CLIENT_REMOVE = 4;
     public static final int CLIENT_DELETE = 8;
     public static final int EMAIL_CONFIG_EDIT = 1;
     public static final int EMAIL_CONFIG_VIEW = 2;

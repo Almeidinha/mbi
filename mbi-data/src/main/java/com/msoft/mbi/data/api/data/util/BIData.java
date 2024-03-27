@@ -3,6 +3,7 @@ package com.msoft.mbi.data.api.data.util;
 import com.msoft.mbi.data.api.data.exception.DateException;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -11,18 +12,19 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
+@Log4j2
 public final class BIData implements Comparable<Object> {
 
     private GregorianCalendar calendar = new GregorianCalendar();
-    public static final String FORMATO_DIA_MES_ANO_TELA = "dd/MM/yyyy";
-    public static final String FORMATO_MES_ANO_TELA = "MM/yyyy";
-    public static final String FORMATO_MES_ANO_BANCO = "yyyyMM";
+    public static final String MONTH_DAY_YEAR_FORMAT = "dd/MM/yyyy";
+    public static final String MONTH_YEAR_FORMAT = "MM/yyyy";
+    public static final String MONTH_YEAR_EMPTY_FORMAT = "yyyyMM";
     @Getter
     @Setter
-    private String formatoEntrada = FORMATO_DIA_MES_ANO_TELA;
+    private String entryFormat = MONTH_DAY_YEAR_FORMAT;
     @Getter
     @Setter
-    private String formatoSaida = FORMATO_DIA_MES_ANO_TELA;
+    private String outputFormat = MONTH_DAY_YEAR_FORMAT;
     public static final int ONE_SECOND = 1000;
     public static final int ONE_MINUTE = 60 * ONE_SECOND;
     public static final int ONE_HOUR = 60 * ONE_MINUTE;
@@ -31,13 +33,13 @@ public final class BIData implements Comparable<Object> {
 
     public BIData() {
         this.calendar.setTimeInMillis(System.currentTimeMillis());
-        zerarHora();
+        resetHour();
     }
 
     public BIData(long date) {
         super();
         this.calendar.setTimeInMillis(date);
-        zerarHora();
+        resetHour();
     }
 
     public BIData(Date date) {
@@ -47,7 +49,7 @@ public final class BIData implements Comparable<Object> {
             throw new NullPointerException();
 
         this.calendar.setTimeInMillis(date.getTime());
-        zerarHora();
+        resetHour();
     }
     
     public BIData(Calendar date) {
@@ -57,25 +59,25 @@ public final class BIData implements Comparable<Object> {
             throw new NullPointerException();
 
         this.calendar.setTimeInMillis(date.getTimeInMillis());
-        zerarHora();
+        resetHour();
     }
 
     public BIData(String date) throws DateException {
         super();
         Date data = validate(date);
         this.calendar.setTimeInMillis(data.getTime());
-        zerarHora();
+        resetHour();
     }
 
-    public BIData(String date, String formatoEntrada) throws DateException {
+    public BIData(String date, String entryFormat) throws DateException {
         super();
-        this.formatoEntrada = formatoEntrada;
+        this.entryFormat = entryFormat;
         Date data = validate(date);
         this.calendar.setTimeInMillis(data.getTime());
-        zerarHora();
+        resetHour();
     }
 
-    private void zerarHora() {
+    private void resetHour() {
 
         this.calendar.set(Calendar.HOUR, 0);
         this.calendar.set(Calendar.AM_PM, Calendar.AM);
@@ -89,31 +91,31 @@ public final class BIData implements Comparable<Object> {
     }
 
     private String format(Date data) {
-        SimpleDateFormat formatador = new SimpleDateFormat(this.formatoSaida);
-        formatador.setTimeZone(this.calendar.getTimeZone());
-        return formatador.format(data);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(this.outputFormat);
+        dateFormat.setTimeZone(this.calendar.getTimeZone());
+        return dateFormat.format(data);
     }
 
-    public Date validate(String dataEntrada) throws DateException {
+    public Date validate(String entryDate) throws DateException {
 
         Date d = null;
         try {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(this.formatoEntrada);
-            d = simpleDateFormat.parse(dataEntrada);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(this.entryFormat);
+            d = simpleDateFormat.parse(entryDate);
 
-            if (!dataEntrada.equals(simpleDateFormat.format(d))) {
-                throw new DateException("Data inválida: " + dataEntrada);
+            if (!entryDate.equals(simpleDateFormat.format(d))) {
+                throw new DateException("Data inválida: " + entryDate);
             }
 
             return d;
 
         } catch (ParseException _e) {
-            throw new DateException("Não foi possível converter a data de String '" + dataEntrada + "' para o tipo Data", _e);
+            throw new DateException("Não foi possível converter a data de String '" + entryDate + "' para o tipo Data", _e);
         }
     }
 
     public java.sql.Date getSqlDate() {
-        this.zerarHora();
+        this.resetHour();
         return new java.sql.Date(this.calendar.getTimeInMillis());
     }
 
@@ -163,7 +165,7 @@ public final class BIData implements Comparable<Object> {
         return new BIData(gc);
     }
 
-    public BIData adiciona(int field, int qtd) {
+    public BIData add(int field, int qtd) {
 
         switch (field) {
             case Calendar.DAY_OF_YEAR:
@@ -190,43 +192,43 @@ public final class BIData implements Comparable<Object> {
         return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
     }
 
-    public int diferencaDias(BIData data) {
+    public int daysDifference(BIData data) {
 
-        long diferenca = data.getSqlDate().getTime() - this.getSqlDate().getTime();
-        int qtdDias = (int) (diferenca / (BIData.ONE_DAY));
-        qtdDias = Math.abs(qtdDias);
+        long difference = data.getSqlDate().getTime() - this.getSqlDate().getTime();
+        int amount = (int) (difference / (BIData.ONE_DAY));
+        amount = Math.abs(amount);
 
-        return qtdDias;
+        return amount;
     }
 
-    public int diferencaMeses(BIData data, boolean considerarDia) {
-        int qtdMeses1 = this.get(Calendar.MONTH) + 12 * this.get(Calendar.YEAR);
-        int qtdMeses2 = data.get(Calendar.MONTH) + 12 * data.get(Calendar.YEAR);
-        int diferenca = qtdMeses2 - qtdMeses1;
-        diferenca = Math.abs(diferenca);
+    public int monthDifference(BIData data, boolean includeDay) {
+        int amountOne = this.get(Calendar.MONTH) + 12 * this.get(Calendar.YEAR);
+        int amountTwo = data.get(Calendar.MONTH) + 12 * data.get(Calendar.YEAR);
+        int difference = amountTwo - amountOne;
+        difference = Math.abs(difference);
 
-        if (considerarDia) {
-            BIData dataMenor = getMenor(this, data);
-            BIData dataMaior = getMaior(data, this);
-            if (dataMenor.get(Calendar.DAY_OF_MONTH) >= dataMaior.get(Calendar.DAY_OF_MONTH))
-                diferenca--;
+        if (includeDay) {
+            BIData smallerDate = getSmaller(this, data);
+            BIData largerDate = getLarger(data, this);
+            if (smallerDate.get(Calendar.DAY_OF_MONTH) >= largerDate.get(Calendar.DAY_OF_MONTH))
+                difference--;
         }
 
-        return diferenca;
+        return difference;
     }
 
-    public static BIData getMenor(BIData data1, BIData data2) {
-        return (data1.isAntes(data2)) ? data1 : data2;
+    public static BIData getSmaller(BIData data1, BIData data2) {
+        return (data1.isBefore(data2)) ? data1 : data2;
     }
 
-    public static BIData getMaior(BIData data1, BIData data2) {
-        return (data1.isDepois(data2)) ? data1 : data2;
+    public static BIData getLarger(BIData data1, BIData data2) {
+        return (data1.isAfter(data2)) ? data1 : data2;
     }
 
-    public boolean isDepois(BIData data) {
+    public boolean isAfter(BIData data) {
         return (this.compareTo(data) > 0);
     }
-    public boolean isAntes(BIData data) {
+    public boolean isBefore(BIData data) {
         return (this.compareTo(data) < 0);
     }
 
@@ -234,7 +236,7 @@ public final class BIData implements Comparable<Object> {
         return calendar.get(field);
     }
 
-    public boolean isAnoBisexto() {
+    public boolean isLeapYear() {
         return calendar.isLeapYear(Calendar.YEAR);
     }
 
@@ -248,8 +250,8 @@ public final class BIData implements Comparable<Object> {
     }
 
     public boolean equals(Object obj) {
-        if (obj instanceof BIData parametro) {
-            return this.getSqlDate().getTime() == parametro.getSqlDate().getTime();
+        if (obj instanceof BIData parameter) {
+            return this.getSqlDate().getTime() == parameter.getSqlDate().getTime();
         } else {
             return false;
         }
@@ -261,21 +263,21 @@ public final class BIData implements Comparable<Object> {
 
     public static void main(String[] args) throws DateException {
 
-        BIData hoje = new BIData("15/02/2006");
-        System.out.println(hoje.getMaxDiasMes());
+        BIData today = new BIData("15/02/2006");
+        System.out.println(today.getMaxDiasMes());
 
         SimpleDateFormat format = new SimpleDateFormat("MMyyyy");
         try {
             Date date = format.parse("021982");
             System.out.println(date);
         } catch (ParseException e) {
-            e.printStackTrace();
+            log.error("Error in BIData.main", e);
         }
     }
 
     protected Object clone() throws CloneNotSupportedException {
-        BIData clonado = (BIData) super.clone();
-        clonado.calendar = (GregorianCalendar) this.calendar.clone();
-        return clonado;
+        BIData cloned = (BIData) super.clone();
+        cloned.calendar = (GregorianCalendar) this.calendar.clone();
+        return cloned;
     }
 }

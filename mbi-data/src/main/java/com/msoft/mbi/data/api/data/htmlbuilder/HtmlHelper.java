@@ -18,14 +18,14 @@ public class HtmlHelper {
         tab_drillup.setId("opcao_drill_up");
         tab_drillup.addLine(new HTMLLine());
         tab_drillup.getCurrentLine().addCell(new HTMLCell());
-        LinkHTMLColumnSVG imagem;
+        LinkHTMLColumnSVG image;
         if (isDrillUp) {
-            imagem = new LinkHTMLColumnSVG("vect-arrow-square-up-left", "Drill Up", 18, 18);
-            imagem.addParameter("onclick", "addDrillUp(0)");
+            image = new LinkHTMLColumnSVG("vect-arrow-square-up-left", "Drill Up", 18, 18);
+            image.addParameter("onclick", "addDrillUp(0)");
         } else {
-            imagem = new LinkHTMLColumnSVG();
+            image = new LinkHTMLColumnSVG();
         }
-        tab_drillup.getCurrentLine().getCurrentCell().setContent(imagem);
+        tab_drillup.getCurrentLine().getCurrentCell().setContent(image);
         return tab_drillup;
     }
 
@@ -84,22 +84,26 @@ public class HtmlHelper {
         titleTab.getCurrentLine().getCurrentCell().setAlignment("center");
         titleTab.getCurrentLine().getCurrentCell().setId("nome_titulo");
         titleTab.getCurrentLine().getCurrentCell().setNowrap(true);
-        HTMLStyle titleStile = new HTMLStyle();
-        titleStile.setBackgroundColor("#FFFFFF");
-        titleStile.setFontSize(14);
-        titleStile.setFontFamily("verdana");
-        titleStile.setFontColor("#000080");
-        titleStile.setFontWeight("bold");
-        titleStile.setFontStyle("normal");
-        titleStile.setTextDecoration("none");
-        titleStile.setAdditionalParameters("cursor: pointer;");
+
+        HTMLStyle titleStile = HTMLStyle
+                .builder()
+                .backgroundColor("#FFFFFF")
+                .fontSize(14)
+                .fontFamily("verdana")
+                .fontColor("#000080")
+                .fontWeight("bold")
+                .fontStyle("normal")
+                .textDecoration("none")
+                .additionalParameters("cursor: pointer;")
+                .build();
+
         titleTab.getCurrentLine().getCurrentCell().setStyle(titleStile);
         titleTab.getCurrentLine().getCurrentCell().setEditable("yes");
         titleTab.getCurrentLine().getCurrentCell().setContent(name);
         return titleTab;
     }
 
-    public static void createMascarasHTMLDimensaoLinha(Field dimensionField, MetaDataField dimensionCube, Indicator indicator) {
+    public static void createDimensionLineMask(Field dimensionField, MetaDataField dimensionCube, Indicator indicator) {
         if (dimensionField == null || dimensionCube == null) {
             return;
         }
@@ -110,26 +114,26 @@ public class HtmlHelper {
             addSVGLinkToDimensionCube(dimensionCube, dimensionField, "menos", "btMenos vect-minus-sign", "Drill Up", 14, 14);
         }
 
-        String idImagem = dimensionField.getNickname() + dimensionField.getFieldId();
+        String image = dimensionField.getNickname() + dimensionField.getFieldId();
         String svgClass = (indicator.getFilters().getDimensionFilter() != null && indicator.checkFilters(indicator.getFilters().getDimensionFilter(), dimensionField)) ?
                 "btFiltro vect-filter-yellow" : "btFiltro vect-filter-silver";
-        addSVGLinkToDimensionCube(dimensionCube, dimensionField, idImagem, svgClass, "Filtrar Dimensão", 18, 18);
+        addSVGLinkToDimensionCube(dimensionCube, dimensionField, image, svgClass, "Filtrar Dimensão", 18, 18);
 
         if (dimensionField.isNavigableUpwards()) {
-            createMascaraHTMLDrillDownDimensao(dimensionField, dimensionCube, indicator.getCode());
+            createHTMLDrillDownMask(dimensionField, dimensionCube, indicator.getCode());
         }
     }
 
-    public static void createMascaraHTMLDrillDownDimensao(Field dimensionField, MetaDataField dimensionCube, Integer indicatorCode) {
+    public static void createHTMLDrillDownMask(Field dimensionField, MetaDataField dimensionCube, Integer indicatorCode) {
         if (dimensionField == null || dimensionCube == null) {
             return;
         }
 
-        LinkHTMLDynamicText linkTextoDinamico = new LinkHTMLDynamicText("data-dimension-value");
-        linkTextoDinamico.addParameter("data-code-col", String.valueOf(dimensionField.getFieldId()));
-        linkTextoDinamico.addParameter("data-code-indicador", String.valueOf(indicatorCode));
+        LinkHTMLDynamicText htmlDynamicText = new LinkHTMLDynamicText("data-dimension-value");
+        htmlDynamicText.addParameter("data-code-col", String.valueOf(dimensionField.getFieldId()));
+        htmlDynamicText.addParameter("data-code-indicator", String.valueOf(indicatorCode));
 
-        HTMLLineMask mascaraLinkHTML = new HTMLLineMask("drilldownFiltro", HTMLLineMask.DYNAMIC_TYPE, linkTextoDinamico);
+        HTMLLineMask mascaraLinkHTML = new HTMLLineMask("drilldownFiltro", HTMLLineMask.DYNAMIC_TYPE, htmlDynamicText);
         dimensionCube.addHTMLLineMask(mascaraLinkHTML);
     }
 

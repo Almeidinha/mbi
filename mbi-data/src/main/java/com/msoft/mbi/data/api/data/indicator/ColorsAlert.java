@@ -120,7 +120,7 @@ public class ColorsAlert {
                             String dataString = alertaCores.getFirstValue();
                             String dataString2 = alertaCores.getSecondValue();
                             if (valor != null && !valor.toString().trim().isEmpty()) {
-                                BIData data = new BIData(valor.toString(), BIData.FORMATO_DIA_MES_ANO_TELA);
+                                BIData data = new BIData(valor.toString(), BIData.MONTH_DAY_YEAR_FORMAT);
                                 if (dataString.trim().startsWith("@|") && dataString.trim().endsWith("|")) {
                                     DimensionFilter filtroDimensao = FilterFactory.createDimensionFilter(campo, alertaCores.getOperator().getSymbol(), dataString);
                                     if (filtroDimensao.getFilters() != null && !filtroDimensao.getFilters().isEmpty()) {
@@ -130,7 +130,7 @@ public class ColorsAlert {
                                             DimensionFilter filtro = iT.next();
                                             if (filtro != null && filtro.getCondition() != null) {
                                                 Condition condicao = filtro.getCondition();
-                                                BIData dataComparacao = new BIData(condicao.getFormattedValue(), BIData.FORMATO_DIA_MES_ANO_TELA);
+                                                BIData dataComparacao = new BIData(condicao.getFormattedValue(), BIData.MONTH_DAY_YEAR_FORMAT);
                                                 if (!comparaValorDate(data, condicao.getOperator(), dataComparacao, null)) {
                                                     todosVerdadeiro = false;
                                                 }
@@ -146,7 +146,7 @@ public class ColorsAlert {
                                         }
                                     } else {
                                         Condition condicao = filtroDimensao.getCondition();
-                                        BIData dataComparacao = new BIData(condicao.getFormattedValue(), BIData.FORMATO_DIA_MES_ANO_TELA);
+                                        BIData dataComparacao = new BIData(condicao.getFormattedValue(), BIData.MONTH_DAY_YEAR_FORMAT);
                                         if (comparaValorDate(data, condicao.getOperator(), dataComparacao, null)) {
                                             Object estilo = this.aplicaPropriedade(alertaCores, cell, line, ehHTML, Constants.DIMENSION.equals(alertaCores.getFirstField().getFieldType()));
                                             if (alertaCores.getAction().equals(ColorAlert.LINHA)) {
@@ -156,10 +156,10 @@ public class ColorsAlert {
                                         }
                                     }
                                 } else {
-                                    BIData dataComparacao = new BIData(dataString.trim(), BIData.FORMATO_DIA_MES_ANO_TELA);
+                                    BIData dataComparacao = new BIData(dataString.trim(), BIData.MONTH_DAY_YEAR_FORMAT);
                                     BIData dataComparacao2 = null;
                                     if (alertaCores.getOperator().getSymbol().equals(Operators.BETWEEN)) {
-                                        dataComparacao2 = new BIData(dataString2.trim(), BIData.FORMATO_DIA_MES_ANO_TELA);
+                                        dataComparacao2 = new BIData(dataString2.trim(), BIData.MONTH_DAY_YEAR_FORMAT);
                                     }
 
                                     if (comparaValorDate(data, alertaCores.getOperator(), dataComparacao, dataComparacao2)) {

@@ -1,6 +1,6 @@
 package com.msoft.mbi.data.api.data.htmlbuilder;
 
-import com.msoft.mbi.data.api.data.util.BIIOException;
+import com.msoft.mbi.data.api.data.exception.BIIOException;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
