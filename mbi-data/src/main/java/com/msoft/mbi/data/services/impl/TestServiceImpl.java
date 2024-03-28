@@ -43,26 +43,6 @@ public class TestServiceImpl implements TestService {
 
         JdbcTemplate jdbcTemplate = connectionManager.getNewConnection("b5b6a0d9-d627-4884-978a-ffde5ba0a149");
 
-        /*
-        DataSource dataSource = DataSourceBuilder.create()
-                .url("jdbc:sqlserver://localhost:1433;databaseName=thomas;encrypt=true;trustServerCertificate=true;")
-                .username("almeida").password("thomas")
-                .driverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver")
-                .build();
-
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-        */
-
-        /*
-        List<Map<String, Object>> biInterfaces = jdbcTemplate
-                .queryForList("select bui.grau_permissao,  bui.INTerf, bui.usuario from bi_usuario_INTerf bui" );
-         */
-
-
-        /*for (Map<String, Object> a : biInterfaces) {
-            System.out.println(a);
-        }*/
-
         try {
             return tabletest(jdbcTemplate);
         } catch (Exception ex) {
@@ -108,36 +88,7 @@ public class TestServiceImpl implements TestService {
 
             String sql = ind.getSqlExpression(DatabaseType.MSSQL, false);
 
-
             JdbcTemplate jdbcTemplate = connectionManager.getNewConnection(biTenant);
-            /*dataSource = jdbcTemplate.getDataSource();
-            connection = DataSourceUtils.getConnection(Objects.requireNonNull(dataSource));
-            statement = connection.createStatement();
-
-
-            resultSet = statement.executeQuery(sql);
-            ind.setResultSet(resultSet);
-
-            return ind.getTabela(true);*/
-
-            /*
-            testes
-            * */
-            /*
-            String countQuery = "Select count(*) " + ind.getFromClause() + " " + ind.getWhereClause();
-             long count = jdbcTemplate.queryForObject(countQuery, Long.class);
-
-            System.out.println("Total Count " + count);
-
-            String newSql = "SELECT DimCustomer.CompanyName CompanyName,DimCustomer.CustomerLabel CustomerLabel,DimCustomer.Education Education,DimCustomer.EmailAddress EmailAddress " +
-            "FROM DimCustomer DimCustomer, DimGeography DimGeography " +
-            "WHERE DimGeography.GeographyKey = DimCustomer.GeographyKey " +
-            "GROUP BY DimCustomer.CompanyName,DimCustomer.CustomerLabel,DimCustomer.Education,DimCustomer.EmailAddress";
-            */
-
-            /*
-            end testes
-            * */
 
             ind.startTableProcess();
 
@@ -150,7 +101,7 @@ public class TestServiceImpl implements TestService {
                 return null;
             });
 
-            return ind.getStringTable(true);
+            return ind.getStringTable(false);
 
 
         } catch (BIException e) {
