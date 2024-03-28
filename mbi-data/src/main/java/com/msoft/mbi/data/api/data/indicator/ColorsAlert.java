@@ -14,13 +14,15 @@ import com.msoft.mbi.data.api.data.util.BIData;
 import com.msoft.mbi.data.api.data.util.BIUtil;
 import com.msoft.mbi.data.api.data.util.Constants;
 import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
+@Log4j2
 @Setter
 public class ColorsAlert {
 
@@ -47,7 +49,7 @@ public class ColorsAlert {
         return list;
     }
 
-    public ArrayList<ColorAlert> getListaAlertasOutroField() {
+    public ArrayList<ColorAlert> getOtherFieldsAlertList() {
         ArrayList<ColorAlert> list = new ArrayList<>();
         for (ColorAlert colorsAlert : this.getColorAlertList()) {
             if (colorsAlert != null && colorsAlert.isCompareToAnotherField()) {
@@ -57,115 +59,109 @@ public class ColorsAlert {
         return list;
     }
 
-    public void remove(ColorAlert alertaCores) {
-        this.getColorAlertList().remove(alertaCores);
-        Iterator<ColorAlert> i = this.getColorAlertList().iterator();
+    public void remove(ColorAlert colorAlert) {
+        this.getColorAlertList().remove(colorAlert);
         int index = 0;
-        while (i.hasNext()) {
-            ColorAlert aux = i.next();
+        for (ColorAlert aux : this.getColorAlertList()) {
             aux.setSequence(index++);
         }
     }
 
     public void setIndicator(Indicator indicator) {
-        for (ColorAlert alertaCores : this.getColorAlertList()) {
-            if (alertaCores != null) {
-                alertaCores.setIndicator(indicator);
+        for (ColorAlert colorAlert : this.getColorAlertList()) {
+            if (colorAlert != null) {
+                colorAlert.setIndicator(indicator);
             }
         }
     }
 
-    public boolean buscaAplicaAlertaValor(Object valor, Cell cell, Line line, Field campo, String funcao, int numeroPosicaoDecimais, Dimension dimensao, boolean ehHTML) throws BIException, DateException {
+    public boolean searchAlertValueApply(Object value, Cell cell, Line line, Field field, String function, int decimalPositions, Dimension dimension, boolean isHtml) throws BIException, DateException {
         boolean retorno = false;
-        ColorAlert alertaCores;
-        ArrayList<ColorAlert> listaAlertasField = this.getListaAlertasValorFuncaoField(funcao, campo);
-        for (ColorAlert colorAlert : listaAlertasField) {
-            alertaCores = colorAlert;
-            if (alertaCores != null) {
-                if (!ehRestritaPorLinha(alertaCores.getAction(), dimensao)) {
-                    Operator operador = alertaCores.getOperator();
+        ColorAlert colorAlert;
+        List<ColorAlert> colorsAlert = this.getFieldAlertFunctionValueList(function, field);
+        for (ColorAlert alert : colorsAlert) {
+            colorAlert = alert;
+            if (colorAlert != null) {
+                if (!isrestrictByLine(colorAlert.getAction(), dimension)) {
+                    Operator operator = colorAlert.getOperator();
 
-                    if (campo == null || campo.getFieldType().equals(Constants.METRIC)) {
-                        valor = BIUtil.formatDoubleValue(String.valueOf(valor), numeroPosicaoDecimais);
-                        double valComp = BIUtil.formatDoubleValue(alertaCores.getFirstDoubleValue(), numeroPosicaoDecimais);
+                    if (field == null || field.getFieldType().equals(Constants.METRIC)) {
+                        value = BIUtil.formatDoubleValue(String.valueOf(value), decimalPositions);
+                        double valComp = BIUtil.formatDoubleValue(colorAlert.getFirstDoubleValue(), decimalPositions);
                         double segundoValor = 0;
-                        if (alertaCores.getSecondValue() != null) {
-                            segundoValor = BIUtil.formatDoubleValue(alertaCores.getSegundoValorDouble(), numeroPosicaoDecimais);
+                        if (colorAlert.getSecondValue() != null) {
+                            segundoValor = BIUtil.formatDoubleValue(colorAlert.getSegundoValorDouble(), decimalPositions);
                         }
-                        if (this.comparaValorDouble((Double) valor, operador, valComp, segundoValor)) {
-                            Object estilo = this.aplicaPropriedade(alertaCores, cell, line, ehHTML, Constants.DIMENSION.equals(alertaCores.getFirstField().getFieldType()));
-                            if (alertaCores.getAction().equals(ColorAlert.LINHA)) {
-                                dimensao.setLineAppliedStyle(estilo);
+                        if (this.compareDoubleValue((Double) value, operator, valComp, segundoValor)) {
+                            Object style = this.applyProperties(colorAlert, cell, line, isHtml, Constants.DIMENSION.equals(colorAlert.getFirstField().getFieldType()));
+                            if (colorAlert.getAction().equals(ColorAlert.LINHA)) {
+                                dimension.setLineAppliedStyle(style);
                                 retorno = true;
                             }
                             break;
                         }
                     } else {
-                        if (!campo.getDataType().equals(Constants.DATE)) {
-                            String valorComp = alertaCores.getFirstValue();
+                        if (!field.getDataType().equals(Constants.DATE)) {
+                            String valorComp = colorAlert.getFirstValue();
                             if (valorComp.trim().startsWith("@|") && valorComp.trim().endsWith("|")) {
-                                DimensionFilter filtroDimensao = FilterFactory.createDimensionFilter(campo, alertaCores.getOperator().getSymbol(), valorComp);
-                                Condition condicao = filtroDimensao.getCondition();
-                                valorComp = condicao.getValue();
+                                DimensionFilter dimensionFilter = FilterFactory.createDimensionFilter(field, colorAlert.getOperator().getSymbol(), valorComp);
+                                Condition condition = dimensionFilter.getCondition();
+                                valorComp = condition.getValue();
                             }
-                            if (this.comparaValorString((String) valor, operador, valorComp)) {
-                                Object estilo = this.aplicaPropriedade(alertaCores, cell, line, ehHTML, Constants.DIMENSION.equals(alertaCores.getFirstField().getFieldType()));
-                                if (alertaCores.getAction().equals(ColorAlert.LINHA)) {
-                                    dimensao.setLineAppliedStyle(estilo);
+                            if (this.compareStringValue((String) value, operator, valorComp)) {
+                                Object style = this.applyProperties(colorAlert, cell, line, isHtml, Constants.DIMENSION.equals(colorAlert.getFirstField().getFieldType()));
+                                if (colorAlert.getAction().equals(ColorAlert.LINHA)) {
+                                    dimension.setLineAppliedStyle(style);
                                     retorno = true;
                                 }
                                 break;
                             }
                         } else {
-                            String dataString = alertaCores.getFirstValue();
-                            String dataString2 = alertaCores.getSecondValue();
-                            if (valor != null && !valor.toString().trim().isEmpty()) {
-                                BIData data = new BIData(valor.toString(), BIData.MONTH_DAY_YEAR_FORMAT);
+                            String dataString = colorAlert.getFirstValue();
+                            String dataString2 = colorAlert.getSecondValue();
+                            if (value != null && !value.toString().trim().isEmpty()) {
+                                BIData data = new BIData(value.toString(), BIData.MONTH_DAY_YEAR_FORMAT);
                                 if (dataString.trim().startsWith("@|") && dataString.trim().endsWith("|")) {
-                                    DimensionFilter filtroDimensao = FilterFactory.createDimensionFilter(campo, alertaCores.getOperator().getSymbol(), dataString);
-                                    if (filtroDimensao.getFilters() != null && !filtroDimensao.getFilters().isEmpty()) {
-                                        Iterator<DimensionFilter> iT = filtroDimensao.getFilters().iterator();
-                                        boolean todosVerdadeiro = true;
-                                        while (iT.hasNext()) {
-                                            DimensionFilter filtro = iT.next();
-                                            if (filtro != null && filtro.getCondition() != null) {
-                                                Condition condicao = filtro.getCondition();
-                                                BIData dataComparacao = new BIData(condicao.getFormattedValue(), BIData.MONTH_DAY_YEAR_FORMAT);
-                                                if (!comparaValorDate(data, condicao.getOperator(), dataComparacao, null)) {
-                                                    todosVerdadeiro = false;
-                                                }
-                                            }
-                                        }
-                                        if (todosVerdadeiro) {
-                                            Object estilo = this.aplicaPropriedade(alertaCores, cell, line, ehHTML, Constants.DIMENSION.equals(alertaCores.getFirstField().getFieldType()));
-                                            if (alertaCores.getAction().equals(ColorAlert.LINHA)) {
-                                                dimensao.setLineAppliedStyle(estilo);
+                                    DimensionFilter dimensionFilter = FilterFactory.createDimensionFilter(field, colorAlert.getOperator().getSymbol(), dataString);
+                                    if (dimensionFilter.getFilters() != null && !dimensionFilter.getFilters().isEmpty()) {
+                                        boolean allTrue = dimensionFilter.getFilters().stream()
+                                                .filter(Objects::nonNull)
+                                                .filter(filter -> filter.getCondition() != null)
+                                                .allMatch(filter -> {
+                                                    Condition condition = filter.getCondition();
+                                                    BIData biData = new BIData(condition.getFormattedValue(), BIData.MONTH_DAY_YEAR_FORMAT);
+                                                    return compareDateValue(data, condition.getOperator(), biData, null);
+                                                });
+                                        if (allTrue) {
+                                            Object style = this.applyProperties(colorAlert, cell, line, isHtml, Constants.DIMENSION.equals(colorAlert.getFirstField().getFieldType()));
+                                            if (colorAlert.getAction().equals(ColorAlert.LINHA)) {
+                                                dimension.setLineAppliedStyle(style);
                                                 retorno = true;
                                             }
                                             break;
                                         }
                                     } else {
-                                        Condition condicao = filtroDimensao.getCondition();
-                                        BIData dataComparacao = new BIData(condicao.getFormattedValue(), BIData.MONTH_DAY_YEAR_FORMAT);
-                                        if (comparaValorDate(data, condicao.getOperator(), dataComparacao, null)) {
-                                            Object estilo = this.aplicaPropriedade(alertaCores, cell, line, ehHTML, Constants.DIMENSION.equals(alertaCores.getFirstField().getFieldType()));
-                                            if (alertaCores.getAction().equals(ColorAlert.LINHA)) {
-                                                dimensao.setLineAppliedStyle(estilo);
+                                        Condition condition = dimensionFilter.getCondition();
+                                        BIData biData = new BIData(condition.getFormattedValue(), BIData.MONTH_DAY_YEAR_FORMAT);
+                                        if (compareDateValue(data, condition.getOperator(), biData, null)) {
+                                            Object style = this.applyProperties(colorAlert, cell, line, isHtml, Constants.DIMENSION.equals(colorAlert.getFirstField().getFieldType()));
+                                            if (colorAlert.getAction().equals(ColorAlert.LINHA)) {
+                                                dimension.setLineAppliedStyle(style);
                                                 retorno = true;
                                             }
                                         }
                                     }
                                 } else {
-                                    BIData dataComparacao = new BIData(dataString.trim(), BIData.MONTH_DAY_YEAR_FORMAT);
+                                    BIData biData = new BIData(dataString.trim(), BIData.MONTH_DAY_YEAR_FORMAT);
                                     BIData dataComparacao2 = null;
-                                    if (alertaCores.getOperator().getSymbol().equals(Operators.BETWEEN)) {
+                                    if (colorAlert.getOperator().getSymbol().equals(Operators.BETWEEN)) {
                                         dataComparacao2 = new BIData(dataString2.trim(), BIData.MONTH_DAY_YEAR_FORMAT);
                                     }
 
-                                    if (comparaValorDate(data, alertaCores.getOperator(), dataComparacao, dataComparacao2)) {
-                                        Object estilo = this.aplicaPropriedade(alertaCores, cell, line, ehHTML, Constants.DIMENSION.equals(alertaCores.getFirstField().getFieldType()));
-                                        if (alertaCores.getAction().equals(ColorAlert.LINHA)) {
-                                            dimensao.setLineAppliedStyle(estilo);
+                                    if (compareDateValue(data, colorAlert.getOperator(), biData, dataComparacao2)) {
+                                        Object style = this.applyProperties(colorAlert, cell, line, isHtml, Constants.DIMENSION.equals(colorAlert.getFirstField().getFieldType()));
+                                        if (colorAlert.getAction().equals(ColorAlert.LINHA)) {
+                                            dimension.setLineAppliedStyle(style);
                                             retorno = true;
                                         }
                                         break;
@@ -180,83 +176,78 @@ public class ColorsAlert {
         return retorno;
     }
 
-    private ArrayList<ColorAlert> getListaAlertasValorFuncaoField(String funcao, Field campo) {
-        ArrayList<ColorAlert> retorno = new ArrayList<>();
-        for (ColorAlert alertaCores : this.getColorAlertListValues()) {
-            if (alertaCores != null) {
-                if (funcao.trim().equals(alertaCores.getFirstFieldFunction().trim())) {
-                    if (ColorAlert.TOTALIZACAO_HORIZONTAL.equals(funcao.trim()) || ColorAlert.TOTALIZACAO.equals(funcao.trim())) {
-                        retorno.add(alertaCores);
-                    } else {
-                        if (campo.equals(alertaCores.getFirstField())) {
-                            retorno.add(alertaCores);
-                        }
-                    }
-                }
-            }
-        }
-        return retorno;
+    private List<ColorAlert> getFieldAlertFunctionValueList(String function, Field field) {
+        return this.getColorAlertListValues().stream()
+                .filter(Objects::nonNull)
+                .filter(colorAlert -> function.trim().equals(colorAlert.getFirstFieldFunction().trim()))
+                .filter(colorAlert -> ColorAlert.TOTALIZACAO_HORIZONTAL.equals(function.trim())
+                        || ColorAlert.TOTALIZACAO.equals(function.trim())
+                        || field.equals(colorAlert.getFirstField()))
+                .collect(Collectors.toList());
     }
 
-    public boolean buscaAplicaAlertaOutroCampo(double valor, Field primeiroField, String funcaoPrimeiroField, Object[][] valores, Cell cell, Line line,
-                                               int numeroPosicaoDecimais, Dimension dimColuna, Dimension dimLinha, CachedResults registroTotalizado,
-                                               int tipoComparacao, boolean ehHTML) throws BIException {
-        boolean retorno = false;
-        ColorAlert alertaCores;
-        ArrayList<ColorAlert> listaAlertasField = this.getListaAlertasOutroFieldFuncaoField(funcaoPrimeiroField, primeiroField);
-        for (ColorAlert colorAlert : listaAlertasField) {
-            alertaCores = colorAlert;
-            if (alertaCores != null) {
-
-                if (primeiroField == null || primeiroField.getFieldType().equals(Constants.METRIC)) {
-                    if (alertaCores.getSecondField() != null && "S".equals(alertaCores.getSecondField().getDefaultField())) {
-                        if (!ehRestritaPorLinha(alertaCores.getAction(), dimColuna)) {
-                            valor = BIUtil.formatDoubleValue(valor, numeroPosicaoDecimais);
-
-                            double valComp;
-                            String funcaoField = alertaCores.getFirstFieldFunction();
-                            boolean mesmoField = false;
-                            if (alertaCores.getFirstField().equals(alertaCores.getSecondField())) {
-                                funcaoField = alertaCores.getSecondFieldFunction();
-                                mesmoField = true;
-                            }
-                            valComp = this.getValorComparacao(alertaCores.getSecondField(), alertaCores.getFirstField(), valores, funcaoField, dimColuna, dimLinha, alertaCores.getIndicator(), registroTotalizado, tipoComparacao, mesmoField);
-                            valComp = BIUtil.formatDoubleValue(valComp, numeroPosicaoDecimais);
-                            if (this.aplicaAlertaOutroField(alertaCores, valor, valComp, numeroPosicaoDecimais, cell, line, ehHTML, dimColuna)) {
-                                if (alertaCores.getAction().equals(ColorAlert.LINHA)) {
-                                    retorno = true;
-                                }
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return retorno;
+    public boolean searchOtherFieldAlertApply(double value, Field firstField, String firstFieldFunction, Object[][] values, Cell cell, Line line,
+                                              int decimalPositions, Dimension columnDimension, Dimension lineDimension, CachedResults cachedResults,
+                                              int comparisonType, boolean isHtml) {
+        return getAlerts(firstFieldFunction, firstField).stream()
+                .filter(Objects::nonNull)
+                .filter(alert -> isApplicable(alert, firstField, columnDimension))
+                .anyMatch(alert -> applyAlert(alert, value, firstField, firstFieldFunction, values, cell, line, decimalPositions, columnDimension, lineDimension, cachedResults, comparisonType, isHtml));
     }
 
-    private double getValorComparacao(Field campo, Field campoPrincipal, Object[][] valores, String funcaoField, Dimension dimColuna,
-                                      Dimension dimLinha, Indicator indicador, CachedResults registroTotalizado, int tipoComparacao,
-                                      boolean mesmoField) throws BIException {
-        double[] acumuladoLinha = dimColuna.getAccumulatedLine();
-        HashMap<String, Double> totaisLinha = dimColuna.getTotalLines();
-        HashMap<Field, Double> participacaoHorizontal = dimColuna.getHorizontalParticipation();
+    private List<ColorAlert> getAlerts(String firstFieldFunction, Field firstField) {
+        return Optional.of(this.getOtherFieldAlertFunctionList(firstFieldFunction, firstField))
+                .orElse(new ArrayList<>());
+    }
+
+    private boolean isApplicable(ColorAlert alert, Field firstField, Dimension columnDimension) {
+        return firstField == null || Constants.METRIC.equals(firstField.getFieldType())
+                && alert.getSecondField() != null && "S".equals(alert.getSecondField().getDefaultField())
+                && !isrestrictByLine(alert.getAction(), columnDimension);
+    }
+
+    private boolean applyAlert(ColorAlert alert, double value, Field firstField, String firstFieldFunction, Object[][] values, Cell cell, Line line,
+                               int decimalPositions, Dimension columnDimension, Dimension lineDimension, CachedResults cachedResults,
+                               int comparisonType, boolean isHtml) {
+        try {
+
+            value = BIUtil.formatDoubleValue(value, decimalPositions);
+            String functionField = alert.getFirstField().equals(alert.getSecondField()) ? alert.getSecondFieldFunction() : alert.getFirstFieldFunction();
+            double comparisonValue = BIUtil.formatDoubleValue(getComparisonValue(alert, firstField, values, functionField, columnDimension, lineDimension, cachedResults, comparisonType), decimalPositions);
+            return this.applyOtherFieldsAlert(alert, value, comparisonValue, decimalPositions, cell, line, isHtml, columnDimension) && ColorAlert.LINHA.equals(alert.getAction());
+
+        } catch (BIException e) {
+            log.error("Error applying alert", e);
+            return false;
+        }
+
+    }
+
+    private double getComparisonValue(ColorAlert alert, Field firstField, Object[][] values, String functionField, Dimension columnDimension, Dimension lineDimension, CachedResults cachedResults, int comparisonType) throws BIException {
+        return this.getComparisonValue(alert.getSecondField(), firstField, values, functionField, columnDimension, lineDimension, alert.getIndicator(), cachedResults, comparisonType, alert.getFirstField().equals(alert.getSecondField()));
+    }
+
+    private double getComparisonValue(Field field, Field mainField, Object[][] values, String fieldFunction, Dimension dimensionColumn,
+                                      Dimension dimensionLine, Indicator indicator, CachedResults cachedResults, int comparisonType,
+                                      boolean sameField) throws BIException {
+        double[] accumulatedLine = dimensionColumn.getAccumulatedLine();
+        HashMap<String, Double> totalizedLines = dimensionColumn.getTotalLines();
+        HashMap<Field, Double> horizontalParticipation = dimensionColumn.getHorizontalParticipation();
 
         double retorno = -1;
-        int indiceField = getIndiceField(valores, campo);
-        int indiceFieldPrincipal = getIndiceField(valores, campoPrincipal);
+        int fieldIndex = getFieldIndex(values, field);
+        int mainFieldIndex = getFieldIndex(values, mainField);
 
-        switch (funcaoField.trim()) {
-            case ColorAlert.SEM_FUNCAO -> retorno = (Double) valores[1][indiceField];
+        switch (fieldFunction.trim()) {
+            case ColorAlert.SEM_FUNCAO -> retorno = (Double) values[1][fieldIndex];
             case ColorAlert.ANALISE_HORIZONTAL -> {
-                if (campo.isHorizontalAnalysis()) {
-                    for (int i = indiceField + 1; valores[0][i] != null; i++) {
-                        if (((Field) valores[0][i]).isHorizontalAnalysis()) {
-                            if (valores[1][i] != null) {
+                if (field.isHorizontalAnalysis()) {
+                    for (int i = fieldIndex + 1; values[0][i] != null; i++) {
+                        if (((Field) values[0][i]).isHorizontalAnalysis()) {
+                            if (values[1][i] != null) {
                                 double ini, fin, res;
-                                fin = (Double) valores[1][indiceField];
-                                ini = (Double) valores[1][i];
+                                fin = (Double) values[1][fieldIndex];
+                                ini = (Double) values[1][i];
                                 if (ini != 0) {
                                     res = (ini - fin) / ini;
                                     retorno = (res * -1) * 100;
@@ -270,23 +261,23 @@ public class ColorsAlert {
                 }
             }
             case ColorAlert.PARTICIPACAO_HORIZONTAL -> {
-                if (campo.isHorizontalParticipation()) {
-                    double ini = (Double) valores[1][indiceField];
-                    double total = totaisLinha.get(String.valueOf(campo.getFieldId()));
+                if (field.isHorizontalParticipation()) {
+                    double ini = (Double) values[1][fieldIndex];
+                    double total = totalizedLines.get(String.valueOf(field.getFieldId()));
                     if (total != 0) {
                         retorno = (ini / total) * 100;
                     }
                 }
             }
             case ColorAlert.PARTICIPACAO_ACUMULADA_HORIZONTAL -> {
-                if (campo.isHorizontalParticipationAccumulated()) {
+                if (field.isHorizontalParticipationAccumulated()) {
                     double valAux;
-                    double ini = (Double) valores[1][indiceField];
-                    double total = totaisLinha.get(String.valueOf(campo.getFieldId()));
+                    double ini = (Double) values[1][fieldIndex];
+                    double total = totalizedLines.get(String.valueOf(field.getFieldId()));
 
                     if (ini != 0) {
-                        if (participacaoHorizontal.get(campo) != null) {
-                            valAux = participacaoHorizontal.get(campo);
+                        if (horizontalParticipation.get(field) != null) {
+                            valAux = horizontalParticipation.get(field);
                             if (total != 0) {
                                 retorno = (ini / total + valAux) * 100;
                             }
@@ -301,37 +292,37 @@ public class ColorsAlert {
                 }
             }
             case ColorAlert.ACUMULADO_HORIZONTAL -> {
-                if (!"N".equals(campo.getAccumulatedLine()) && acumuladoLinha.length > indiceField) {
-                    double valorComp = acumuladoLinha[indiceField];
-                    if (campo.getAccumulatedLine().equals("E")) {
-                        valorComp = dimColuna.calculaExpressaoAcumulado(campo, indiceField);
+                if (!"N".equals(field.getAccumulatedLine()) && accumulatedLine.length > fieldIndex) {
+                    double valorComp = accumulatedLine[fieldIndex];
+                    if (field.getAccumulatedLine().equals("E")) {
+                        valorComp = dimensionColumn.calAccExpression(field, fieldIndex);
                     }
                     retorno = valorComp;
                 }
             }
             case ColorAlert.MEDIA_HORIZONTAL -> {
-                if (campo.isMediaLine()) {
-                    double valorComp = acumuladoLinha[indiceField];
-                    if (campo.getAccumulatedLine().equals("E")) {
-                        valorComp = dimColuna.calculaExpressaoAcumulado(campo, indiceField);
+                if (field.isMediaLine()) {
+                    double valorComp = accumulatedLine[fieldIndex];
+                    if (field.getAccumulatedLine().equals("E")) {
+                        valorComp = dimensionColumn.calAccExpression(field, fieldIndex);
                     }
-                    retorno = valorComp / dimColuna.getColumnLineAmount();
+                    retorno = valorComp / dimensionColumn.getColumnLineAmount();
                 }
             }
             case ColorAlert.ANALISE_VERTICAL -> {
-                if (campo.isVerticalAnalysis()) {
-                    double perc = (Double) valores[1][indiceField] / (Double) valores[1][indiceField + 1];
+                if (field.isVerticalAnalysis()) {
+                    double perc = (Double) values[1][fieldIndex] / (Double) values[1][fieldIndex + 1];
                     retorno = perc * 100;
                 }
             }
             case ColorAlert.PARTICIPACAO_ACUMULADA -> {
-                if (campo.isAccumulatedParticipation()) {
-                    Double soma = (Double) valores[1][indiceField];
-                    if (indiceFieldPrincipal > indiceField) {
+                if (field.isAccumulatedParticipation()) {
+                    Double soma = (Double) values[1][fieldIndex];
+                    if (mainFieldIndex > fieldIndex) {
                         soma = 0d;
                     }
-                    soma = dimColuna.atualizaTeste(campo, valores[1], soma, indiceField);
-                    Double valor = (Double) valores[1][indiceField + 1];
+                    soma = dimensionColumn.updateTest(field, values[1], soma, fieldIndex);
+                    Double valor = (Double) values[1][fieldIndex + 1];
                     if (valor != 0) {
                         retorno = (soma / valor) * 100;
                     } else {
@@ -340,24 +331,24 @@ public class ColorsAlert {
                 }
             }
             case ColorAlert.ACUMULADO_VERTICAL -> {
-                if (campo.isAccumulatedValue()) {
-                    Double soma = (Double) valores[1][indiceField];
-                    if (indiceFieldPrincipal > indiceField) {
+                if (field.isAccumulatedValue()) {
+                    Double soma = (Double) values[1][fieldIndex];
+                    if (mainFieldIndex > fieldIndex) {
                         soma = 0d;
                     }
-                    soma = dimColuna.atualizaTeste(campo, valores[1], soma, indiceField);
+                    soma = dimensionColumn.updateTest(field, values[1], soma, fieldIndex);
                     retorno = soma;
                 }
             }
             case ColorAlert.TOTALIZACAO_VERTICAL -> {
-                if (campo.isTotalizingField()) {
-                    for (int k = 0; k < valores[0].length; k++) {
-                        if (valores[0][k] != null && valores[0][k].equals(campo)) {
-                            retorno = (Double) valores[1][k + 1];
-                            if (campo.isExpression() && campo.isApplyTotalizationExpression()) {
-                                if (registroTotalizado != null) {
-                                    Expression.aplicaExpressaoNoRegistroTotalizado(indicador, campo, registroTotalizado);
-                                    retorno = Double.parseDouble(registroTotalizado.getValor(campo.getFieldId()));
+                if (field.isTotalizingField()) {
+                    for (int k = 0; k < values[0].length; k++) {
+                        if (values[0][k] != null && values[0][k].equals(field)) {
+                            retorno = (Double) values[1][k + 1];
+                            if (field.isExpression() && field.isApplyTotalizationExpression()) {
+                                if (cachedResults != null) {
+                                    Expression.aplicaExpressaoNoRegistroTotalizado(indicator, field, cachedResults);
+                                    retorno = Double.parseDouble(cachedResults.getValor(field.getFieldId()));
                                 }
                             }
                             break;
@@ -366,75 +357,75 @@ public class ColorsAlert {
                 }
             }
             case ColorAlert.TOTALIZACAO_PARCIAL -> {
-                if (campo.isPartialTotalization()) {
+                if (field.isPartialTotalization()) {
                     double soma;
-                    if (mesmoField) {
-                        valores = dimColuna.consulta(valores);
+                    if (sameField) {
+                        values = dimensionColumn.consult(values);
                     }
-                    PartialTotalization totalizacaoParcial = indicador.getPartialTotalizations().getTotalPartial(valores, campo);
-                    if (totalizacaoParcial != null) {
-                        soma = totalizacaoParcial.getPartialTotalization();
-                        if (campo.isApplyTotalizationExpression()) {
-                            Expression.aplicaExpressaoNoRegistroTotalizado(indicador, campo, registroTotalizado);
-                            soma = registroTotalizado.getDouble(campo.getFieldId());
+                    PartialTotalization totalPartial = indicator.getPartialTotalizations().getTotalPartial(values, field);
+                    if (totalPartial != null) {
+                        soma = totalPartial.getPartialTotalization();
+                        if (field.isApplyTotalizationExpression()) {
+                            Expression.aplicaExpressaoNoRegistroTotalizado(indicator, field, cachedResults);
+                            soma = cachedResults.getDouble(field.getFieldId());
                         }
                         retorno = soma;
                     }
                 }
             }
-            case ColorAlert.TOTALIZACAO_HORIZONTAL -> retorno = dimColuna.getTotalLine();
-            case ColorAlert.TOTALIZACAO -> retorno = dimColuna.getLineSum();
+            case ColorAlert.TOTALIZACAO_HORIZONTAL -> retorno = dimensionColumn.getTotalLine();
+            case ColorAlert.TOTALIZACAO -> retorno = dimensionColumn.getLineSum();
         }
         return retorno;
     }
 
-    private boolean aplicaAlertaOutroField(ColorAlert alertaCores, double valor, double valComp, int numeroPosicaoDecimais,
-                                           Cell cell, Line line, boolean ehHTML, Dimension dimensao) {
-        boolean retorno = false;
-        Operator operador = alertaCores.getOperator();
-        double valorAuxiliar = BIUtil.formatDoubleValue(alertaCores.getSecondFieldFunction(), numeroPosicaoDecimais);
+    private boolean applyOtherFieldsAlert(ColorAlert colorAlert, double value, double valComp, int decimalPositions,
+                                          Cell cell, Line line, boolean isHtml, Dimension dimension) {
+        boolean result = false;
+        Operator operator = colorAlert.getOperator();
+        double auxValue = BIUtil.formatDoubleValue(colorAlert.getSecondFieldFunction(), decimalPositions);
 
-        boolean aplica;
-        if ("V".equals(alertaCores.getValueType())) {
-            aplica = this.comparaOutroFieldDouble(valor, operador, valComp, valorAuxiliar);
+        boolean apply;
+        if ("V".equals(colorAlert.getValueType())) {
+            apply = this.compareOtherFieldDouble(value, operator, valComp, auxValue);
         } else {
-            aplica = this.comparaOutroFieldPercentualDouble(valor, operador, valComp, valorAuxiliar);
+            apply = this.compareOtherFieldDoublePercentage(value, operator, valComp, auxValue);
         }
-        if (aplica) {
-            Object estilo = this.aplicaPropriedade(alertaCores, cell, line, ehHTML, Constants.DIMENSION.equals(alertaCores.getFirstField().getFieldType()));
-            if (ColorAlert.LINHA.equals(alertaCores.getAction())) {
-                dimensao.setLineAppliedStyle(estilo);
-                retorno = true;
+        if (apply) {
+            Object style = this.applyProperties(colorAlert, cell, line, isHtml, Constants.DIMENSION.equals(colorAlert.getFirstField().getFieldType()));
+            if (ColorAlert.LINHA.equals(colorAlert.getAction())) {
+                dimension.setLineAppliedStyle(style);
+                result = true;
             }
         }
-        return retorno;
+        return result;
     }
 
-    private ArrayList<ColorAlert> getListaAlertasOutroFieldFuncaoField(String funcao, Field campo) {
-        ArrayList<ColorAlert> retorno = new ArrayList<>();
-        for (ColorAlert alertaCores : this.getListaAlertasOutroField()) {
-            if (alertaCores != null) {
-                if (funcao.trim().equals(alertaCores.getFirstFieldFunction().trim())) {
-                    if (ColorAlert.TOTALIZACAO_HORIZONTAL.equals(funcao.trim()) || ColorAlert.TOTALIZACAO.equals(funcao.trim())) {
-                        retorno.add(alertaCores);
+    private List<ColorAlert> getOtherFieldAlertFunctionList(String function, Field field) {
+        List<ColorAlert> result = new ArrayList<>();
+        for (ColorAlert colorAlert : this.getOtherFieldsAlertList()) {
+            if (colorAlert != null) {
+                if (function.trim().equals(colorAlert.getFirstFieldFunction().trim())) {
+                    if (ColorAlert.TOTALIZACAO_HORIZONTAL.equals(function.trim()) || ColorAlert.TOTALIZACAO.equals(function.trim())) {
+                        result.add(colorAlert);
                     } else {
-                        if (campo.equals(alertaCores.getFirstField())) {
-                            retorno.add(alertaCores);
+                        if (field.equals(colorAlert.getFirstField())) {
+                            result.add(colorAlert);
                         }
                     }
                 }
             }
         }
-        return retorno;
+        return result;
     }
 
-    private Object aplicaPropriedade(ColorAlert alertaCores, Cell cell, Line line, boolean ehHTML, boolean isDimensao) {
-        Object estilo = this.criaEstilo(alertaCores, ehHTML, cell);
+    private Object applyProperties(ColorAlert colorAlert, Cell cell, Line line, boolean ehHTML, boolean isDimension) {
+        Object style = this.createStyle(colorAlert, ehHTML, cell);
 
-        if (alertaCores.getAction().equals(ColorAlert.LINHA)) {
-            line.setStyle(estilo, isDimensao);
+        if (colorAlert.getAction().equals(ColorAlert.LINHA)) {
+            line.setStyle(style, isDimension);
             line.setAppliedAlert(true);
-            line.setAppliedStyle(estilo);
+            line.setAppliedStyle(style);
 
             List<Cell> cells = line.getCells();
             if (cells != null) {
@@ -447,7 +438,7 @@ public class ColorsAlert {
                             if (cellAux.getContent().getClass().getName().endsWith("HTML")) {
                                 LinkHTML link = (LinkHTML) cellAux.getContent();
                                 link.setCellClass("");
-                                link.setStyle((HTMLStyle) estilo);
+                                link.setStyle((HTMLStyle) style);
                             }
                         }
                     } else {
@@ -456,257 +447,130 @@ public class ColorsAlert {
                 }
             }
         } else {
-            cell.setStyle(estilo);
+            cell.setStyle(style);
             if (cell.getContent().getClass().getName().endsWith("HTML")) {
                 LinkHTML link = (LinkHTML) cell.getContent();
                 link.setCellClass("");
-                link.setStyle((HTMLStyle) estilo);
+                link.setStyle((HTMLStyle) style);
             }
             cell.setAppliedAlert(true);
         }
-        return estilo;
+        return style;
     }
 
 
-    public Object criaEstilo(ColorAlert alertaCores, boolean ehHTML, Cell cell) {
-        return criaEstiloHTML(alertaCores);
+    public Object createStyle(ColorAlert colorAlert, boolean isHtml, Cell cell) {
+        return createHtlStyle(colorAlert);
     }
 
-        public Object criaEstiloHTML(ColorAlert alertaCores) {
-            HTMLStyle estilo = new HTMLStyle();
-            estilo.setFontFamily(alertaCores.getAlertProperty().getFontName());
-            estilo.setFontSize(alertaCores.getAlertProperty().getFontSize());
-            estilo.setFontColor(alertaCores.getAlertProperty().getFontColor());
-            estilo.setBackgroundColor(alertaCores.getAlertProperty().getCellBackgroundColor());
+    public Object createHtlStyle(ColorAlert colorAlert) {
+        HTMLStyle style = new HTMLStyle();
+        style.setFontFamily(colorAlert.getAlertProperty().getFontName());
+        style.setFontSize(colorAlert.getAlertProperty().getFontSize());
+        style.setFontColor(colorAlert.getAlertProperty().getFontColor());
+        style.setBackgroundColor(colorAlert.getAlertProperty().getCellBackgroundColor());
 
-            if (alertaCores.getAlertProperty().hasBold()) {
-                estilo.setFontWeight("bold");
-            }
-            if (alertaCores.getAlertProperty().hasItalic()) {
-                estilo.setFontStyle("italic");
-            }
-
-            return estilo;
+        if (colorAlert.getAlertProperty().hasBold()) {
+            style.setFontWeight("bold");
+        }
+        if (colorAlert.getAlertProperty().hasItalic()) {
+            style.setFontStyle("italic");
         }
 
-        private boolean comparaValorDouble(double valor, Operator operador, double valorComp, double segundoValor) {
-            boolean retorno = false;
-            switch (operador.getSymbol().trim()) {
-                case Operators.GREATER_THAN -> {
-                    if (valor > valorComp) {
-                        retorno = true;
-                    }
-                }
-                case Operators.GREATER_TAN_OR_EQUAL -> {
-                    if (valor >= valorComp) {
-                        retorno = true;
-                    }
-                }
-                case Operators.EQUAL_TO -> {
-                    if (valor == valorComp) {
-                        retorno = true;
-                    }
-                }
-                case Operators.LESS_THAN -> {
-                    if (valor < valorComp) {
-                        retorno = true;
-                    }
-                }
-                case Operators.LESS_THAN_OR_EQUAL -> {
-                    if (valor <= valorComp) {
-                        retorno = true;
-                    }
-                }
-                case Operators.BETWEEN -> {
-                    if (valor >= valorComp && valor <= segundoValor) {
-                        retorno = true;
-                    }
-                }
-                case Operators.NOT_EQUAL_TO -> {
-                    if (valor != valorComp) {
-                        retorno = true;
-                    }
-                }
-            }
-            return retorno;
-        }
-
-        private boolean comparaOutroFieldDouble(double valor, Operator operador, double valorComp, double valorAuxiliar) {
-            boolean retorno = false;
-            switch (operador.getSymbol().trim()) {
-                case Operators.GREATER_THAN -> {
-                    if (valor - valorComp > valorAuxiliar) {
-                        retorno = true;
-                    }
-                }
-                case Operators.GREATER_TAN_OR_EQUAL -> {
-                    if (valor - valorComp >= valorAuxiliar) {
-                        retorno = true;
-                    }
-                }
-                case Operators.EQUAL_TO -> {
-                    if (valor == (valorComp + valorAuxiliar)) {
-                        retorno = true;
-                    }
-                }
-                case Operators.LESS_THAN -> {
-                    if (valorComp - valor > valorAuxiliar) {
-                        retorno = true;
-                    }
-                }
-                case Operators.LESS_THAN_OR_EQUAL -> {
-                    if (valorComp - valor >= valorAuxiliar) {
-                        retorno = true;
-                    }
-                }
-                case Operators.NOT_EQUAL_TO -> {
-                    if (valor != (valorComp + valorAuxiliar)) {
-                        retorno = true;
-                    }
-                }
-            }
-            return retorno;
-        }
-
-        private boolean comparaValorDate(BIData data, Operator operador, BIData dataComparacao, BIData dataComparacao2) {
-            boolean retorno = false;
-            int comparacao = data.compareTo(dataComparacao);
-            switch (operador.getSymbol().trim()) {
-                case Operators.GREATER_THAN -> {
-                    if (comparacao > 0) {
-                        retorno = true;
-                    }
-                }
-                case Operators.GREATER_TAN_OR_EQUAL -> {
-                    if (comparacao == 0 || comparacao > 0) {
-                        retorno = true;
-                    }
-                }
-                case Operators.EQUAL_TO -> {
-                    if (comparacao == 0) {
-                        retorno = true;
-                    }
-                }
-                case Operators.LESS_THAN -> {
-                    if (comparacao < 0) {
-                        retorno = true;
-                    }
-                }
-                case Operators.LESS_THAN_OR_EQUAL -> {
-                    if (comparacao == 0 || comparacao < 0) {
-                        retorno = true;
-                    }
-                }
-                case Operators.BETWEEN -> {
-                    if (comparacao == 0 || comparacao > 0) {
-                        if (dataComparacao2 != null) {
-                            int comparacao2 = data.compareTo(dataComparacao2);
-                            if (comparacao2 == 0 || comparacao2 < 0) {
-                                retorno = true;
-                            }
-                        }
-                    }
-                }
-                case Operators.NOT_EQUAL_TO -> {
-                    if (comparacao != 0) {
-                        retorno = true;
-                    }
-                }
-            }
-            return retorno;
-        }
-
-        private boolean comparaOutroFieldPercentualDouble(double valor, Operator operador, double valorComp, double valorAuxiliar) {
-            boolean retorno = false;
-
-            valorAuxiliar = (valorAuxiliar / 100) * valorComp;
-
-            switch (operador.getSymbol().trim()) {
-                case Operators.GREATER_THAN -> {
-                    if (valor > valorAuxiliar) {
-                        retorno = true;
-                    }
-                }
-                case Operators.GREATER_TAN_OR_EQUAL -> {
-                    if (valor >= valorAuxiliar) {
-                        retorno = true;
-                    }
-                }
-                case Operators.EQUAL_TO -> {
-                    if (valor == valorAuxiliar) {
-                        retorno = true;
-                    }
-                }
-                case Operators.LESS_THAN -> {
-                    if (valor < valorAuxiliar) {
-                        retorno = true;
-                    }
-                }
-                case Operators.LESS_THAN_OR_EQUAL -> {
-                    if (valor <= valorAuxiliar) {
-                        retorno = true;
-                    }
-                }
-                case Operators.NOT_EQUAL_TO -> {
-                    if (valor != valorAuxiliar) {
-                        retorno = true;
-                    }
-                }
-            }
-            return retorno;
-        }
-
-        private boolean comparaValorString(String valor, Operator operador, String valorComp) {
-            boolean retorno = false;
-            if (Operators.EQUAL_TO.equals(operador.getSymbol().trim())) {
-                if (valor.trim().equals(valorComp.trim())) {
-                    retorno = true;
-                }
-            } else if (Operators.STARTS_WITH.equals(operador.getSymbol())) {
-                if (valor.startsWith(valorComp.trim())) {
-                    retorno = true;
-                }
-            } else if (Operators.CONTAINS.equals(operador.getSymbol())) {
-                if (valor.contains(valorComp.trim())) {
-                    retorno = true;
-                }
-            } else if (Operators.NOT_CONTAINS.equals(operador.getSymbol())) {
-                if (!valor.contains(valorComp.trim())) {
-                    retorno = true;
-                }
-            } else if (Operators.NOT_EQUAL_TO.equals(operador.getSymbol().trim())) {
-                if (!valor.trim().equals(valorComp.trim())) {
-                    retorno = true;
-                }
-            }
-            return retorno;
-        }
-
-        private int getIndiceField(Object[][] valores, Field campo) {
-            int retorno = -1;
-            for (int i = 0; i < valores[0].length; i++) {
-                if (valores[0][i] != null && campo.equals(valores[0][i])) {
-                    retorno = i;
-                    break;
-                }
-            }
-            return retorno;
-        }
-
-        public boolean ehRestritaPorLinha(String acao, Dimension dimensao) {
-            return ColorAlert.LINHA.equals(acao) && dimensao.isAlertLineStyle();
-        }
-
-        public ColorsAlert clone(Indicator indicador) {
-            ColorsAlert retorno = new ColorsAlert();
-            retorno.setColorAlertList(new ArrayList<>());
-            if (this.colorAlertList != null) {
-                for (ColorAlert alertaCores : this.colorAlertList) {
-                    ColorAlert novoAlerta = alertaCores.clone(indicador);
-
-                    retorno.addToColorAlertList(novoAlerta);
-                }
-            }
-            return retorno;
-        }
+        return style;
     }
+
+    private boolean compareDoubleValue(double value, Operator operator, double valorComp, double segundoValor) {
+        Map<String, BiPredicate<Double, Double>> operatorActions = Map.of(
+                Operators.GREATER_THAN, (v, vc) -> v > vc,
+                Operators.GREATER_TAN_OR_EQUAL, (v, vc) -> v >= vc,
+                Operators.EQUAL_TO, Double::equals,
+                Operators.LESS_THAN, (v, vc) -> v < vc,
+                Operators.LESS_THAN_OR_EQUAL, (v, vc) -> v <= vc,
+                Operators.NOT_EQUAL_TO, (v, vc) -> !v.equals(vc),
+                Operators.BETWEEN, (v, vc) -> v >= vc && v <= segundoValor
+        );
+
+        return operatorActions.getOrDefault(operator.getSymbol().trim(), (v, vc) -> false).test(value, valorComp);
+    }
+
+    private boolean compareOtherFieldDouble(double value, Operator operator, double valorComp, double valorAuxiliar) {
+        Map<String, BiPredicate<Double, Double>> operatorActions = Map.of(
+                Operators.GREATER_THAN, (v, va) -> v - va > valorAuxiliar,
+                Operators.GREATER_TAN_OR_EQUAL, (v, va) -> v - va >= valorAuxiliar,
+                Operators.EQUAL_TO, (v, va) -> v == (va + valorAuxiliar),
+                Operators.LESS_THAN, (v, va) -> va - v > valorAuxiliar,
+                Operators.LESS_THAN_OR_EQUAL, (v, va) -> va - v >= valorAuxiliar,
+                Operators.NOT_EQUAL_TO, (v, va) -> v != (va + valorAuxiliar)
+        );
+
+        return operatorActions.getOrDefault(operator.getSymbol().trim(), (v, va) -> false).test(value, valorComp);
+    }
+
+    private boolean compareDateValue(BIData data, Operator operator, BIData dateCompare, BIData dateCompareTwo) {
+        int comparison = data.compareTo(dateCompare);
+        return switch (operator.getSymbol().trim()) {
+            case Operators.GREATER_THAN -> comparison > 0;
+            case Operators.GREATER_TAN_OR_EQUAL -> comparison >= 0;
+            case Operators.EQUAL_TO -> comparison == 0;
+            case Operators.LESS_THAN -> comparison < 0;
+            case Operators.LESS_THAN_OR_EQUAL -> comparison <= 0;
+            case Operators.BETWEEN -> comparison >= 0 && Optional.ofNullable(dateCompareTwo)
+                    .map(data::compareTo)
+                    .map(compare -> compare <= 0)
+                    .orElse(false);
+            case Operators.NOT_EQUAL_TO -> comparison != 0;
+            default -> false;
+        };
+    }
+
+    private boolean compareOtherFieldDoublePercentage(double value, Operator operator, double valorComp, double valorAuxiliar) {
+        valorAuxiliar = (valorAuxiliar / 100) * valorComp;
+
+        Map<String, BiPredicate<Double, Double>> operatorActions = Map.of(
+                Operators.GREATER_THAN, (v, va) -> v > va,
+                Operators.GREATER_TAN_OR_EQUAL, (v, va) -> v >= va,
+                Operators.EQUAL_TO, Double::equals,
+                Operators.LESS_THAN, (v, va) -> v < va,
+                Operators.LESS_THAN_OR_EQUAL, (v, va) -> v <= va,
+                Operators.NOT_EQUAL_TO, (v, va) -> !v.equals(va)
+        );
+
+        return operatorActions.getOrDefault(operator.getSymbol().trim(), (v, va) -> false).test(value, valorAuxiliar);
+    }
+
+    private boolean compareStringValue(String value, Operator operator, String valorComp) {
+        Map<String, BiPredicate<String, String>> operatorActions = Map.of(
+                Operators.EQUAL_TO, String::equals,
+                Operators.STARTS_WITH, String::startsWith,
+                Operators.CONTAINS, String::contains,
+                Operators.NOT_CONTAINS, (v, vc) -> !v.contains(vc),
+                Operators.NOT_EQUAL_TO, (v, vc) -> !v.equals(vc)
+        );
+
+        return operatorActions.getOrDefault(operator.getSymbol().trim(), (v, vc) -> false).test(value.trim(), valorComp.trim());
+    }
+
+    private int getFieldIndex(Object[][] values, Field field) {
+        return IntStream.range(0, values[0].length)
+                .filter(i -> values[0][i] != null && field.equals(values[0][i]))
+                .findFirst()
+                .orElse(-1);
+    }
+
+    public boolean isrestrictByLine(String action, Dimension dimension) {
+        return ColorAlert.LINHA.equals(action) && dimension.isAlertLineStyle();
+    }
+
+    public ColorsAlert clone(Indicator indicator) {
+        ColorsAlert colorsAlert = new ColorsAlert();
+        colorsAlert.setColorAlertList(new ArrayList<>());
+        if (this.colorAlertList != null) {
+            this.colorAlertList.stream()
+                    .filter(Objects::nonNull)
+                    .map(alert -> alert.clone(indicator))
+                    .forEach(colorsAlert::addToColorAlertList);
+        }
+        return colorsAlert;
+    }
+}

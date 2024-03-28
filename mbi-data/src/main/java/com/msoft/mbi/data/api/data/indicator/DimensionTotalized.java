@@ -20,57 +20,58 @@ public class DimensionTotalized extends Dimension {
     @Getter
     private int resultNumber = 0;
 
-    public PartialTotalization getTotalizacaoParcial(Field campo, Dimension dimensaoConsulta) {
-        Object[][] valores = dimensaoConsulta.consulta(this.results);
-        return this.getPartialTotalizations().getTotalPartial(valores, campo);
+    public PartialTotalization getPartialTotalization(Field field, Dimension dimension) {
+        Object[][] values = dimension.consult(this.results);
+        return this.getPartialTotalizations().getTotalPartial(values, field);
 
     }
 
-    public boolean isDimensaoRaiz() {
+    public boolean isRootDimension() {
         return this.getParentDimension() == null || this.getParentDimension().getValue() == null;
     }
 
-    public DimensionTotalized(ConsultResult valor, int tamanho) {
-        super(valor, tamanho, null, null);
+    public DimensionTotalized(ConsultResult value, int size) {
+        super(value, size, null, null);
     }
 
-    public void setTotalizacaoParcial(Field campo, double valor, Dimension dimensaoConsulta) {
-        Object[][] valores = dimensaoConsulta.consulta(this.results);
-        PartialTotalization totalizacaoParcial = new PartialTotalization();
-        totalizacaoParcial.setField(campo);
-        totalizacaoParcial.setPartialTotalization(valor);
-        totalizacaoParcial.setValues(valores);
-        this.getPartialTotalizations().addToTotalPartial(totalizacaoParcial);
+    public void setPartialTotalization(Field field, double value, Dimension dimension) {
+        Object[][] values = dimension.consult(this.results);
+        PartialTotalization partialTotalization = new PartialTotalization();
+        partialTotalization.setField(field);
+        partialTotalization.setPartialTotalization(value);
+        partialTotalization.setValues(values);
+        this.getPartialTotalizations().addToTotalPartial(partialTotalization);
     }
 
-    public double geraTotalizacaoPai(Field campo, Dimension dimensaoConsulta) {
-        Object[][] valores = dimensaoConsulta.consulta(this.results);
-        double valorTotal = 0;
+    public double getParentTotalization(Field field, Dimension dimension) {
+        Object[][] values = dimension.consult(this.results);
+        double totalValue = 0;
         for (DimensionTotalized childDimension : childDimensions) {
-            PartialTotalization totalizacaoFilha = childDimension.getTotalizacaoParcial(campo, dimensaoConsulta);
-            valorTotal += totalizacaoFilha.getPartialTotalization();
+            PartialTotalization partialTotalization = childDimension.getPartialTotalization(field, dimension);
+            totalValue += partialTotalization.getPartialTotalization();
         }
-        PartialTotalization totalizacaoParcial = new PartialTotalization();
-        totalizacaoParcial.setField(campo);
-        totalizacaoParcial.setPartialTotalization(valorTotal);
-        totalizacaoParcial.setValues(valores);
-        this.getPartialTotalizations().addToTotalPartial(totalizacaoParcial);
-        return valorTotal;
+        PartialTotalization partialTotalization = new PartialTotalization();
+        partialTotalization.setField(field);
+        partialTotalization.setPartialTotalization(totalValue);
+        partialTotalization.setValues(values);
+        this.getPartialTotalizations().addToTotalPartial(partialTotalization);
+        return totalValue;
     }
 
 
-    public void adicionaFilha(DimensionTotalized newFilha) {
+    public void addChild(DimensionTotalized child) {
         if (this.childDimensions == null)
             this.childDimensions = new ArrayList<>();
-        this.childDimensions.add(newFilha);
-        this.resultNumber += newFilha.getResults().length - 1;
+        this.childDimensions.add(child);
+        this.resultNumber += child.getResults().length - 1;
     }
 
 
     @Override
-    public void redimensionaResultados() {
-        if (this.results != null)
-            super.redimensionaResultados(this.results, 0, this.results.length);
+    public void resizeResults() {
+        if (this.results != null) {
+            super.resizeResults(this.results);
+        }
     }
 
 
@@ -78,8 +79,8 @@ public class DimensionTotalized extends Dimension {
         return isParent;
     }
 
-    public void setParent(boolean isDimensaoPai) {
-        this.isParent = isDimensaoPai;
+    public void setParent(boolean isParent) {
+        this.isParent = isParent;
     }
 
 }

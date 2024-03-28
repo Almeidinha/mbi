@@ -4,16 +4,16 @@ import java.util.HashMap;
 
 public class ArithmeticOperators extends HashMap<Object, Object> {
 
-    public static final String MAIS = "+";
-    public static final String MENOS = "-";
-    public static final String DIVISAO = "/";
-    public static final String MULTIPLICACAO = "*";
+    public static final String ADDITION = "+";
+    public static final String SUBTRACTION = "-";
+    public static final String DIVISION = "/";
+    public static final String MULTIPLICATION = "*";
 
     public ArithmeticOperators() {
-        super.put(ArithmeticOperators.MAIS, "mais");
-        super.put(ArithmeticOperators.MENOS, "menos");
-        super.put(ArithmeticOperators.DIVISAO, "divisão");
-        super.put(ArithmeticOperators.MULTIPLICACAO, "multiplicação");
+        super.put(ArithmeticOperators.ADDITION, "mais");
+        super.put(ArithmeticOperators.SUBTRACTION, "menos");
+        super.put(ArithmeticOperators.DIVISION, "divisão");
+        super.put(ArithmeticOperators.MULTIPLICATION, "multiplicação");
     }
 
 }

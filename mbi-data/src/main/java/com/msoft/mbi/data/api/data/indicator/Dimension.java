@@ -14,22 +14,25 @@ import com.msoft.mbi.data.api.data.util.Constants;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
+@Log4j2
 @Getter
 @Setter
 @SuppressWarnings("unused")
 public class Dimension {
 
 
-    private Dimension[] bottomDimensions;
+    private List<Dimension> bottomDimensions;
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    private Dimension[] columnDimension;
+    private List<Dimension> columnDimension;
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    private Dimension[] lineDimension;
+    private List<Dimension> lineDimension;
     @Setter(AccessLevel.NONE)
     private ConsultResult value;
     @Getter(AccessLevel.NONE)
@@ -69,165 +72,124 @@ public class Dimension {
     private double parentValue = 0;
     private boolean parentValueFound = false;
 
-    public Dimension(ConsultResult valor, int tamanho, Dimension[] linha, Dimension[] coluna) {
+    public Dimension(ConsultResult valor, int size, List<Dimension> line, List<Dimension> column) {
         this.value = valor;
-        this.bottomDimensions = new Dimension[tamanho + 1];
-        this.results = new Object[tamanho + 1][];
-        this.lineDimension = linha;
-        this.columnDimension = coluna;
+        this.bottomDimensions = new ArrayList<>();
+        this.results = new Object[size + 1][];
+        this.lineDimension = line;
+        this.columnDimension = column;
     }
 
-    public int getAlturaDimensoesAbaixo() {
-        int retorno = 0;
-        if (this.bottomDimensions[0] != null) {
-            if (this.bottomDimensions[0].getValue().getField().getDefaultField().equals("S")) {
-                retorno = 1;
-            }
-            retorno += this.bottomDimensions[0].getAlturaDimensoesAbaixo();
-        }
-        return retorno;
-    }
+    public int getLowerDimensionsHeight() {
+        int result = 0;
+        List<Dimension> bottomDimensions = this.getBottomDimensions();
 
-    public int getQtdeDimensoesAbaixo(boolean adicionaTotal) {
-        int cont = 0;
-        int aux;
-        int qtdeFiltrAcum = 0;
-        int qtdeDimensoes = 0;
-        for (Dimension biDimension : this.bottomDimensions) {
-            if (biDimension != null) {
-                qtdeDimensoes++;
-                if (!biDimension.filterByAccumulated) {
-                    aux = biDimension.getQtdeDimensoesAbaixo(adicionaTotal);
-                    if (aux > 1) {
-                        cont += aux;
-                    } else {
-                        cont++;
-                    }
-                } else {
-                    qtdeFiltrAcum++;
+        if (!bottomDimensions.isEmpty()) {
+            if (bottomDimensions.get(0) != null) {
+                if (bottomDimensions.get(0).getValue().getField().getDefaultField().equals("S")) {
+                    result = 1;
                 }
-            } else {
-                break;
+                result += bottomDimensions.get(0).getLowerDimensionsHeight();
             }
         }
-        if (qtdeFiltrAcum > 0 && qtdeFiltrAcum == qtdeDimensoes) {
+        return result;
+    }
+
+    public int getLowerDimensionsCount(boolean addToTotal) {
+        List<Dimension> nonNullDimensions = this.bottomDimensions.stream()
+                .limit(this.bottomDimensions.indexOf(null))
+                .toList();
+
+        long dimensionsCount = nonNullDimensions.size();
+        long accFilterCount = nonNullDimensions.stream()
+                .filter(dimension -> dimension.filterByAccumulated)
+                .count();
+
+        if (accFilterCount == dimensionsCount) {
             this.filterByAccumulated = true;
         }
-        if (adicionaTotal && this.getValue().getField().isPartialTotalization() && this.getValue().getField().getDefaultField().equals("S") && this.temDimensoesAbaixo())
-            cont++;
-        return cont;
+
+        long count = nonNullDimensions.stream()
+                .filter(dimension -> !dimension.filterByAccumulated)
+                .mapToLong(dimension -> dimension.getLowerDimensionsCount(addToTotal))
+                .map(value -> value > 1 ? value : 1)
+                .sum();
+
+        if (addToTotal && this.getValue().getField().isPartialTotalization() &&
+                this.getValue().getField().getDefaultField().equals("S") && this.hasLowerDimensions()) {
+            count++;
+        }
+
+        return (int) count;
     }
 
-    public void atualizaFiltroAcumulado() {
-        int qtdeFiltrAcum = 0;
-        int qtdeDimensoes = 0;
-        if (this.temDimensoesAbaixo()) {
-            for (Dimension biDimension : this.bottomDimensions) {
-                if (biDimension != null) {
-                    biDimension.atualizaFiltroAcumulado();
-                } else {
-                    break;
-                }
-            }
+    public void updateAccFilter() {
+        if (this.hasLowerDimensions()) {
+            this.bottomDimensions.forEach(Dimension::updateAccFilter);
         }
-        for (Dimension biDimension : this.bottomDimensions) {
-            if (biDimension != null) {
-                qtdeDimensoes++;
-                if (biDimension.isFilterByAccumulated()) {
-                    qtdeFiltrAcum++;
-                }
-            } else {
-                break;
-            }
-        }
-        if (qtdeFiltrAcum == qtdeDimensoes && qtdeFiltrAcum != 0) {
+
+        // TODO check if dim can be null
+        long dimensionsCount = this.bottomDimensions.size();
+
+        long accFilterCount = this.bottomDimensions.stream()
+                .filter(Dimension::isFilterByAccumulated)
+                .count();
+
+        if (accFilterCount == dimensionsCount && dimensionsCount > 0) {
             this.filterByAccumulated = true;
         }
     }
 
-    public boolean temMaisDimensoesVisualizadasAbaixo() {
-        boolean retorno = false;
-        for (Dimension bottonDimension : this.bottomDimensions) {
-            if (bottonDimension != null) {
-                if (bottonDimension.getValue().getField().getDefaultField().equals("S")) {
-                    retorno = true;
-                    break;
-                } else {
-                    retorno = bottonDimension.temMaisDimensoesVisualizadasAbaixo();
-                    if (retorno) {
-                        break;
-                    }
-                }
-            }
-        }
-        return retorno;
+    public boolean hasLowerVisibleDimensions() {
+        return this.bottomDimensions.stream()
+                // .filter(Objects::nonNull) TODO check if dim can be null
+                .anyMatch(dimension -> dimension.getValue().getField().getDefaultField().equals("S") || dimension.hasLowerVisibleDimensions());
     }
 
-    public boolean temMaisDimensoesAbaixo() {
-        boolean retorno = false;
-        for (Dimension biDimension : this.bottomDimensions) {
-            if (biDimension != null) {
-                if (!biDimension.getValue().getField().getDefaultField().equals("N")) {
-                    retorno = true;
-                    break;
-                } else {
-                    retorno = biDimension.temMaisDimensoesVisualizadasAbaixo();
-                    if (retorno) {
-                        break;
-                    }
-                }
-            }
-        }
-        return retorno;
+    public boolean hasMoreLowerDimensions() {
+        return this.bottomDimensions.stream()
+                // .filter(Objects::nonNull) TODO check if dim can be null
+                .anyMatch(dimension -> !dimension.getValue().getField().getDefaultField().equals("N") || dimension.hasLowerVisibleDimensions());
     }
 
-    public boolean temMaisDimensoesVisualizadasAcima() {
-        boolean retorno = false;
-        if (this.parentDimension != null) {
-            if (this.parentDimension.getValue().getField().getDefaultField().equals("S")) {
-                retorno = true;
-            } else {
-                retorno = this.parentDimension.temMaisDimensoesVisualizadasAcima();
-            }
-        }
-        return retorno;
+    public boolean hasUpperVisibleDimensions() {
+        return Optional.ofNullable(this.parentDimension)
+                .map(parent -> "S".equals(parent.getValue().getField().getDefaultField()) || parent.hasUpperVisibleDimensions())
+                .orElse(false);
     }
 
-    public boolean temDimensoesAbaixo() {
-        for (Dimension biDimension : bottomDimensions) {
-            if (biDimension != null) {
-                return true;
-            }
-        }
-        return false;
+    public boolean hasLowerDimensions() {
+        return this.bottomDimensions.stream().anyMatch(Objects::nonNull);
     }
 
+    @Override
     public String toString() {
-        String retorno;
-        retorno = " " + this.value.getValor(0).toString().trim();
-        for (Dimension biDimension : this.bottomDimensions) {
-            if (biDimension != null) {
-                retorno += " " + biDimension;
-            } else {
-                break;
-            }
-        }
-        retorno += "\n";
-        return retorno;
+        StringBuilder sb = new StringBuilder();
+        sb.append(" ").append(this.value.getValor(0).toString().trim());
+
+        this.bottomDimensions.stream()
+                .takeWhile(Objects::nonNull)
+                .forEach(biDimension -> sb.append(" ").append(biDimension));
+
+        sb.append("\n");
+        return sb.toString();
     }
 
-    public double calculoLinha(Field metrica, int posicao) throws BIException {
-        for (int i = 2; i < this.results[0].length; i++) {
-            if (this.results[0][i] == metrica) {
-                return this.calculoLinha(i, posicao);
-            }
+    public double lineCalculation(Field metric, int position) throws BIException {
+        OptionalInt optionalIndex = IntStream.range(2, this.results[0].length)
+                .filter(i -> this.results[0][i] == metric)
+                .findFirst();
+
+        if (optionalIndex.isPresent()) {
+            return this.lineCalculation(optionalIndex.getAsInt(), position);
+        } else {
+            return 0d;
         }
-        return 0d;
     }
 
 
-    private double calculoLinha(int indice, int posicao) throws BIException {
-        Field campo = (Field) this.results[0][indice];
+    private double lineCalculation(int index, int position) throws BIException {
+        Field field = (Field) this.results[0][index];
 
         if (this.accumulatedLine == null)
             this.accumulatedLine = new double[this.results[0].length];
@@ -237,20 +199,20 @@ public class Dimension {
 
         double valAux = 0;
 
-        if (this.temDimensoesAbaixo()) {
+        if (this.hasLowerDimensions()) {
             double total = 0d;
             double valor;
             for (Dimension biDimension : this.bottomDimensions) {
                 if (biDimension != null) {
                     biDimension.setIndicator(this.indicator);
-                    valor = biDimension.calculoLinha(indice, indice);
-                    this.accumulatedLine[indice] += valor;
+                    valor = biDimension.lineCalculation(index, index);
+                    this.accumulatedLine[index] += valor;
                     total += valor;
 
-                    if (campo.isSumLine()) {
+                    if (field.isSumLine()) {
                         this.totalLine += valor;
                     }
-                    if (campo.isHorizontalParticipation() || campo.isHorizontalParticipationAccumulated() || campo.getAccumulatedOrder() != 0) {
+                    if (field.isHorizontalParticipation() || field.isHorizontalParticipationAccumulated() || field.getAccumulatedOrder() != 0) {
                         valAux += valor;
                     }
                 } else {
@@ -258,411 +220,398 @@ public class Dimension {
                 }
             }
 
-            if (campo.isHorizontalParticipation() || campo.isHorizontalParticipationAccumulated() || campo.getAccumulatedOrder() != 0) {
+            if (field.isHorizontalParticipation() || field.isHorizontalParticipationAccumulated() || field.getAccumulatedOrder() != 0) {
                 double finalValAux = valAux;
-                this.getTotalLines().computeIfAbsent(String.valueOf(campo.getFieldId()), k -> finalValAux);
+                this.getTotalLines().computeIfAbsent(String.valueOf(field.getFieldId()), k -> finalValAux);
             }
 
             return total;
         } else {
             for (int i = 1; i < this.results.length; i++) {
-                if (this.results[i][indice] != null) {
-                    this.accumulatedLine[indice] += (Double) this.results[i][indice];
+                if (this.results[i][index] != null) {
+                    this.accumulatedLine[index] += (Double) this.results[i][index];
                 }
             }
-            if (campo.isSumLine()) {
-                this.totalLine += this.accumulatedLine[indice];
+            if (field.isSumLine()) {
+                this.totalLine += this.accumulatedLine[index];
             }
 
-            if (campo.isHorizontalParticipation() || campo.isHorizontalParticipationAccumulated() || campo.getAccumulatedOrder() != 0) {
-                valAux = this.accumulatedLine[indice];
+            if (field.isHorizontalParticipation() || field.isHorizontalParticipationAccumulated() || field.getAccumulatedOrder() != 0) {
+                valAux = this.accumulatedLine[index];
                 double finalValAux1 = valAux;
-                this.getTotalLines().computeIfAbsent(String.valueOf(campo.getFieldId()), k -> finalValAux1);
+                this.getTotalLines().computeIfAbsent(String.valueOf(field.getFieldId()), k -> finalValAux1);
             }
         }
 
-        return this.accumulatedLine[indice];
+        return this.accumulatedLine[index];
     }
 
-    private boolean hasTotalizacaoParcial() {
-        if (this.value.getField().isPartialTotalization()) {
-            return this.temDimensoesAbaixo();
+    private boolean hasPartialTotal() {
+        return this.value.getField().isPartialTotalization() && this.hasLowerDimensions();
+    }
+
+    private void setLineColor(HTMLLine htmlLine, HTMLTable table) {
+        if (table.getLineIndex(htmlLine) % 2 == 1) {
+            htmlLine.setBackGroundColor("#FFFFFF");
+        } else {
+            htmlLine.setBackGroundColor("#D7E3F7");
         }
-        return false;
     }
 
-
-    private void caminha(Dimension dimensao, HTMLTable tabela, Field[] metricas, boolean coluna, Object[][] resultadosTodos, int indiceDimensaoLinha, int indiceDimensaoRaizLinha) throws BIException, DateException {
-        Object[][] resultado = dimensao.consulta(resultadosTodos);
-        if (resultado.length > 1 && dimensao.temDimensoesAbaixo()) {
-            Dimension[] dimensoesAbaixo = dimensao.getBottomDimensions();
-            for (int a = 0; a < dimensoesAbaixo.length; a++) {
-                if (dimensoesAbaixo[a] != null) {
-                    if (indiceDimensaoLinha != 0 && indiceDimensaoRaizLinha == 0) {
-                        indiceDimensaoRaizLinha = -1;
+    private void walk(Dimension dimension, HTMLTable table, List<Field> metrics, boolean isColumn, Object[][] resultObject, int dimensionLineIndex, int rootDimensionIndex) throws BIException, DateException {
+        Object[][] result = dimension.consult(resultObject);
+        if (result.length > 1 && dimension.hasLowerDimensions()) {
+            List<Dimension> lowerDimensions = dimension.getBottomDimensions();
+            for (int a = 0; a < lowerDimensions.size(); a++) {
+                if (lowerDimensions.get(a) != null) {
+                    if (dimensionLineIndex != 0 && rootDimensionIndex == 0) {
+                        rootDimensionIndex = -1;
                     }
-                    caminha(dimensoesAbaixo[a], tabela, metricas, coluna, resultado, a, indiceDimensaoRaizLinha);
+                    walk(lowerDimensions.get(a), table, metrics, isColumn, result, a, rootDimensionIndex);
                 } else {
                     break;
                 }
             }
         } else if (!this.filterByAccumulated) {
-            HTMLLine linha;
+            HTMLLine htmlLine = table.getCurrentLine();
 
-            linha = tabela.getCurrentLine();
-            if (tabela.getLineIndex(linha) % 2 == 1) {
-                linha.setBackGroundColor("#FFFFFF");
-            } else {
-                linha.setBackGroundColor("#D7E3F7");
-            }
-            for (int i = 0; i < metricas.length; i++) {
-                if (metricas[i] != null && !metricas[i].getName().isEmpty()) {
-                    if (coluna) {
-                        for (int x = 0; x < metricas.length - (i + 1); x++) {
-                            linha = tabela.getPreviousLine(linha);
+            this.setLineColor(htmlLine, table);
+
+            for (Field metric : metrics) {
+                if (metric != null && !metric.getName().isEmpty()) {
+                    if (isColumn) {
+                        for (int x = 0; x < metrics.size() - metrics.indexOf(metric) - 1; x++) {
+                            htmlLine = table.getPreviousLine(htmlLine);
                         }
                     }
-                    if (resultado.length > 1) {
-                        for (int j = 0; j < resultado[0].length; j++) {
-                            if (resultado[0][j] != null && resultado[0][j].equals(metricas[i])) {
-                                if (!((Field) resultado[0][j]).getDefaultField().equals("T")) {
-                                    linha.addCell(new HTMLCell());
-                                    linha.getCurrentCell().setNowrap(true);
-                                    if (resultado[0][j] == null) {
-                                        linha.getCurrentCell().setAlignment("left");
-                                    } else {
-                                        linha.getCurrentCell().setAlignment(((Field) resultado[0][j]).getColumnAlignment());
-                                    }
-                                    HTMLStyle estilo = MultidimensionalStyles.getInstancia().getEstilos().get(MultidimensionalStyles.ESTILO_VAL_METRICA_COLUNA);
-
-                                    int decimalPositions = ((Field) resultado[0][j]).getNumDecimalPositions();
-                                    linha.getCurrentCell().setContent(BIUtil.formatDoubleToText(resultado[1][j], decimalPositions));
-
-                                    boolean aplicouEstilo;
-                                    aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaValor(resultado[1][j], linha.getCurrentCell(), linha, (Field) resultado[0][j], ColorAlert.SEM_FUNCAO, ((Field) resultado[0][j]).getNumDecimalPositions(), this, true);
-                                    if (aplicouEstilo) {
-                                        this.setAlertLineStyle(aplicouEstilo);
-                                    }
-                                    aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaOutroCampo((Double) resultado[1][j], (Field) resultado[0][j], ColorAlert.SEM_FUNCAO, resultado, linha.getCurrentCell(), linha, ((Field) resultado[0][j]).getNumDecimalPositions(), this, dimensao, null, 0, true);
-                                    if (aplicouEstilo) {
-                                        this.setAlertLineStyle(aplicouEstilo);
-                                    }
-
-                                    if (this.alertLineStyle) {
-                                        linha.setStyle(lineAppliedStyle);
-                                    } else if (!linha.getCurrentCell().isAppliedAlert()) {
-                                        linha.getCurrentCell().setStyle(estilo);
-                                    }
-                                    Double soma = null;
-                                    if (((Field) resultado[0][j]).isAccumulatedParticipation() || ((Field) resultado[0][j]).isAccumulatedValue()) {
-                                        soma = this.resgataSomaAcumulada(resultado, j);
-                                    }
-                                    if (((Field) resultado[0][j]).isTotalizingField()) {
-                                        if (((Field) resultado[0][j]).isVerticalAnalysis()) {
-                                            linha.addCell(new HTMLCell());
-                                            linha.getCurrentCell().setNowrap(true);
-                                            if (resultado[0][j] == null || (Double) resultado[1][j + 1] == 0) {
-                                                linha.getCurrentCell().setContent("-");
-                                            } else {
-                                                linha.getCurrentCell().setAlignment(((Field) resultado[0][j]).getColumnAlignment());
-                                                double perc = (Double) resultado[1][j] / (Double) resultado[1][j + 1];
-                                                linha.getCurrentCell().setContent(BIUtil.formatDoubleToText(perc, 2));
-
-                                                aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaValor(perc * 100, linha.getCurrentCell(), linha, (Field) resultado[0][j], ColorAlert.ANALISE_VERTICAL, ((Field) resultado[0][j]).getNumDecimalPositions(), this, true);
-                                                if (aplicouEstilo) {
-                                                    this.setAlertLineStyle(aplicouEstilo);
-                                                }
-
-                                                aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaOutroCampo(perc * 100, (Field) resultado[0][j], ColorAlert.ANALISE_VERTICAL, resultado, linha.getCurrentCell(), linha, 2, this, null, null, 0, true);
-                                                if (aplicouEstilo) {
-                                                    this.setAlertLineStyle(aplicouEstilo);
-                                                }
-
-                                                if (this.alertLineStyle) {
-                                                    linha.setStyle(lineAppliedStyle);
-                                                } else if (!linha.getCurrentCell().isAppliedAlert()) {
-                                                    linha.getCurrentCell().setStyle(estilo);
-                                                }
-
-                                            }
-                                        }
-                                        if (((Field) resultado[0][j]).isAccumulatedParticipation()) {
-                                            linha.addCell(new HTMLCell());
-                                            linha.getCurrentCell().setNowrap(true);
-                                            if (resultado[0][j] == null || (Double) resultado[1][j + 1] == 0) {
-                                                linha.getCurrentCell().setContent("-");
-                                            } else {
-                                                linha.getCurrentCell().setAlignment(((Field) resultado[0][j]).getColumnAlignment());
-
-                                                linha.getCurrentCell().setContent(BIUtil.formatDoubleToText(soma / (Double) resultado[1][j + 1], 2));
-
-                                                aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaValor(soma / (Double) resultado[1][j + 1] * 100, linha.getCurrentCell(), linha, (Field) resultado[0][j], ColorAlert.PARTICIPACAO_ACUMULADA, 2, this, true);
-                                                if (aplicouEstilo) {
-                                                    this.setAlertLineStyle(aplicouEstilo);
-                                                }
-                                                aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaOutroCampo((soma / (Double) resultado[1][j + 1]) * 100, (Field) resultado[0][j], ColorAlert.PARTICIPACAO_ACUMULADA, resultado, linha.getCurrentCell(), linha, 2, this, null, null, 0, true);
-                                                if (aplicouEstilo) {
-                                                    this.setAlertLineStyle(aplicouEstilo);
-                                                }
-
-                                                if (this.alertLineStyle) {
-                                                    linha.setStyle(lineAppliedStyle);
-                                                } else if (!linha.getCurrentCell().isAppliedAlert()) {
-                                                    linha.getCurrentCell().setStyle(estilo);
-                                                }
-                                            }
-                                        }
-                                    }
-                                    if (((Field) resultado[0][j]).isAccumulatedValue()) {
-                                        linha.addCell(new HTMLCell());
-                                        linha.getCurrentCell().setNowrap(true);
-                                        if (resultado[0][j] == null) {
-                                            linha.getCurrentCell().setAlignment("left");
-                                        } else {
-                                            linha.getCurrentCell().setAlignment(((Field) resultado[0][j]).getColumnAlignment());
-                                        }
-
-                                        linha.getCurrentCell().setContent(BIUtil.formatDoubleToText(soma, decimalPositions));
-                                        aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaValor(soma, linha.getCurrentCell(), linha, (Field) resultado[0][j], ColorAlert.ACUMULADO_VERTICAL, ((Field) resultado[0][j]).getNumDecimalPositions(), this, true);
-                                        if (aplicouEstilo) {
-                                            this.setAlertLineStyle(aplicouEstilo);
-                                        }
-
-                                        aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaOutroCampo(soma, (Field) resultado[0][j], ColorAlert.ACUMULADO_VERTICAL, resultado, linha.getCurrentCell(), linha, ((Field) resultado[0][j]).getNumDecimalPositions(), this, null, null, 0, true);
-                                        if (aplicouEstilo) {
-                                            this.setAlertLineStyle(aplicouEstilo);
-                                        }
-
-                                        if (this.alertLineStyle) {
-                                            linha.setStyle(lineAppliedStyle);
-                                        } else if (!linha.getCurrentCell().isAppliedAlert()) {
-                                            linha.getCurrentCell().setStyle(estilo);
-                                        }
-                                    }
-
-                                    if (((Field) resultado[0][j]).isHorizontalAnalysis() && !(indiceDimensaoLinha == 0 && indiceDimensaoRaizLinha == 0)) {
-                                        linha.addCell(new HTMLCell());
-                                        linha.getCurrentCell().setNowrap(true);
-                                        if (resultado[0][j] == null) {
-                                            linha.getCurrentCell().setAlignment("left");
-                                        } else {
-                                            linha.getCurrentCell().setAlignment(((Field) resultado[0][j]).getColumnAlignment());
-                                        }
-
-                                        for (int ii = j + 1; resultado[0][ii] != null; ii++) {
-                                            if (((Field) resultado[0][ii]).isHorizontalAnalysis()) {
-                                                if (resultado[1][ii] != null) {
-                                                    double ini, fin, res;
-                                                    fin = (Double) resultado[1][j];
-                                                    ini = (Double) resultado[1][ii];
-                                                    if (ini != fin) {
-                                                        if (ini != 0) {
-                                                            res = (ini - fin) / ini;
-                                                            linha.getCurrentCell().setContent(BIUtil.formatDoubleToText((-1 * res), 2));
-                                                            aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaValor(-1 * res * 100, linha.getCurrentCell(), linha, (Field) resultado[0][j], ColorAlert.ANALISE_HORIZONTAL, ((Field) resultado[0][j]).getNumDecimalPositions(), this, true);
-                                                            if (aplicouEstilo) {
-                                                                this.setAlertLineStyle(aplicouEstilo);
-                                                            }
-
-                                                            aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaOutroCampo(-1 * res * 100, (Field) resultado[0][j], ColorAlert.ANALISE_HORIZONTAL, resultado, linha.getCurrentCell(), linha, 2, this, null, null, 0, true);
-                                                            if (aplicouEstilo) {
-                                                                this.setAlertLineStyle(aplicouEstilo);
-                                                            }
-                                                        } else {
-                                                            if (fin > 0) {
-                                                                linha.getCurrentCell().setContent(BIUtil.formatDoubleToText(1, 2));
-                                                            } else if (fin < 0) {
-                                                                linha.getCurrentCell().setContent(BIUtil.formatDoubleToText(-1, 2));
-                                                            }
-                                                        }
-                                                    } else {
-                                                        linha.getCurrentCell().setContent(BIUtil.formatDoubleToText(0, 2));
-                                                    }
-                                                } else {
-                                                    linha.getCurrentCell().setContent("-");
-                                                }
-                                                break;
-                                            }
-                                        }
-                                        if (this.alertLineStyle) {
-                                            linha.setStyle(lineAppliedStyle);
-                                        } else if (!linha.getCurrentCell().isAppliedAlert()) {
-                                            linha.getCurrentCell().setStyle(estilo);
-                                        }
-                                    }
-
-                                    if (((Field) resultado[0][j]).isHorizontalParticipation()) {
-                                        linha.addCell(new HTMLCell());
-                                        linha.getCurrentCell().setNowrap(true);
-                                        if (resultado[0][j] == null) {
-                                            linha.getCurrentCell().setAlignment("left");
-                                        } else {
-                                            linha.getCurrentCell().setAlignment(((Field) resultado[0][j]).getColumnAlignment());
-                                        }
-
-                                        Field campo = (Field) resultado[0][j];
-                                        if (campo.isHorizontalParticipation()) {
-                                            if (resultado[1][j] != null && campo.isMetric()) {
-                                                double ini = (Double) resultado[1][j];
-                                                double total = this.getTotalLines().get(String.valueOf(campo.getFieldId()));
-
-                                                if (total != 0) {
-                                                    aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaValor((ini / total) * 100, linha.getCurrentCell(), linha, campo, ColorAlert.PARTICIPACAO_HORIZONTAL, 2, this, true);
-                                                    if (aplicouEstilo) {
-                                                        this.setAlertLineStyle(aplicouEstilo);
-                                                    }
-
-                                                    aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaOutroCampo((ini / total) * 100, campo, ColorAlert.PARTICIPACAO_HORIZONTAL, resultado, linha.getCurrentCell(), linha, 2, this, null, null, 0, true);
-                                                    if (aplicouEstilo) {
-                                                        this.setAlertLineStyle(aplicouEstilo);
-                                                    }
-                                                }
-
-                                                if (ini != 0) {
-                                                    linha.getCurrentCell().setContent(BIUtil.formatDoubleToText((ini / total), 2));
-                                                } else {
-                                                    linha.getCurrentCell().setContent("0");
-                                                }
-
-                                                if (this.alertLineStyle) {
-                                                    linha.setStyle(lineAppliedStyle);
-                                                } else if (!linha.getCurrentCell().isAppliedAlert()) {
-                                                    linha.getCurrentCell().setStyle(estilo);
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    if (((Field) resultado[0][j]).isHorizontalParticipationAccumulated()) {
-                                        linha.addCell(new HTMLCell());
-                                        linha.getCurrentCell().setNowrap(true);
-                                        if (resultado[0][j] == null) {
-                                            linha.getCurrentCell().setAlignment("left");
-                                        } else {
-                                            linha.getCurrentCell().setAlignment(((Field) resultado[0][j]).getColumnAlignment());
-                                        }
-
-                                        Field campo = (Field) resultado[0][j];
-                                        if (horizontalParticipation == null) {
-                                            horizontalParticipation = new HashMap<>();
-                                        }
-                                        if (resultado[1][j] != null && campo.isMetric()) {
-                                            double valAux;
-                                            double ini = (Double) resultado[1][j];
-                                            double total = this.getTotalLines().get(String.valueOf(campo.getFieldId()));
-
-                                            if (ini != 0) {
-                                                if (horizontalParticipation.get(campo) != null) {
-                                                    valAux = horizontalParticipation.get(campo);
-                                                    ini = ini / total + valAux;
-                                                    horizontalParticipation.remove(campo);
-                                                } else {
-                                                    ini = ini / total;
-                                                }
-                                                horizontalParticipation.put(campo, ini);
-                                                linha.getCurrentCell().setContent(BIUtil.formatDoubleToText(ini, 2));
-
-                                                aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaValor(ini * 100, linha.getCurrentCell(), linha, campo, ColorAlert.PARTICIPACAO_ACUMULADA_HORIZONTAL, 2, this, true);
-                                                if (aplicouEstilo) {
-                                                    this.setAlertLineStyle(aplicouEstilo);
-                                                }
-
-                                                aplicouEstilo = this.indicator.getColorAlerts().buscaAplicaAlertaOutroCampo(ini * 100, campo, ColorAlert.PARTICIPACAO_ACUMULADA_HORIZONTAL, resultado, linha.getCurrentCell(), linha, 2, this, null, null, 0, true);
-                                                if (aplicouEstilo) {
-                                                    this.setAlertLineStyle(aplicouEstilo);
-                                                }
-                                            } else {
-                                                linha.getCurrentCell().setContent("0");
-                                            }
-                                        }
-                                        if (this.alertLineStyle) {
-                                            linha.setStyle(lineAppliedStyle);
-                                        } else if (!linha.getCurrentCell().isAppliedAlert()) {
-                                            linha.getCurrentCell().setStyle(estilo);
-                                        }
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    } else {
-                        int folhas;
-                        folhas = this.contFolhas(dimensao);
-                        if (folhas == 0)
-                            folhas = 1;
-
-                        HTMLStyle estilo = MultidimensionalStyles.getInstancia().getEstilos().get(MultidimensionalStyles.ESTILO_VAL_METRICA_COLUNA);
-
-                        for (int w = 0; w < folhas; w++) {
-                            if (!metricas[i].getDefaultField().equals("T")) {
-                                linha.addCell(new HTMLCell());
-                                linha.getCurrentCell().setNowrap(true);
-                                linha.getCurrentCell().setAlignment(metricas[i].getColumnAlignment());
-                                linha.getCurrentCell().setContent("-");
-                                if (metricas[i].isTotalizingField()) {
-                                    if (metricas[i].isVerticalAnalysis()) {
-                                        linha.addCell(new HTMLCell());
-                                        linha.getCurrentCell().setNowrap(true);
-                                        linha.getCurrentCell().setAlignment(metricas[i].getColumnAlignment());
-                                        linha.getCurrentCell().setStyle(estilo);
-                                        linha.getCurrentCell().setContent("-");
-                                    }
-                                    if (metricas[i].isAccumulatedParticipation()) {
-                                        linha.addCell(new HTMLCell());
-                                        linha.getCurrentCell().setNowrap(true);
-                                        linha.getCurrentCell().setAlignment(metricas[i].getColumnAlignment());
-                                        linha.getCurrentCell().setStyle(estilo);
-                                        linha.getCurrentCell().setContent("-");
-                                    }
-                                }
-                                if (metricas[i].isAccumulatedValue()) {
-                                    linha.addCell(new HTMLCell());
-                                    linha.getCurrentCell().setNowrap(true);
-                                    linha.getCurrentCell().setAlignment(metricas[i].getColumnAlignment());
-                                    linha.getCurrentCell().setStyle(estilo);
-                                    linha.getCurrentCell().setContent("-");
-                                }
-                                if (metricas[i].isHorizontalAnalysis() && !(w == 0 && indiceDimensaoLinha == 0 && indiceDimensaoRaizLinha == 0)) {
-                                    linha.addCell(new HTMLCell());
-                                    linha.getCurrentCell().setNowrap(true);
-                                    linha.getCurrentCell().setAlignment(metricas[i].getColumnAlignment());
-                                    linha.getCurrentCell().setStyle(estilo);
-                                    linha.getCurrentCell().setContent("-");
-                                }
-                                if (metricas[i].isHorizontalParticipation()) {
-                                    linha.addCell(new HTMLCell());
-                                    linha.getCurrentCell().setNowrap(true);
-                                    linha.getCurrentCell().setAlignment(metricas[i].getColumnAlignment());
-                                    linha.getCurrentCell().setStyle(estilo);
-                                    linha.getCurrentCell().setContent("-");
-                                }
-                                if (metricas[i].isHorizontalParticipationAccumulated()) {
-                                    linha.addCell(new HTMLCell());
-                                    linha.getCurrentCell().setNowrap(true);
-                                    linha.getCurrentCell().setAlignment(metricas[i].getColumnAlignment());
-                                    linha.getCurrentCell().setStyle(estilo);
-                                    linha.getCurrentCell().setContent("-");
-                                }
-                            }
-                        }
-                    }
+                    this.processMetric(htmlLine, table, metric, dimension, result, dimensionLineIndex, rootDimensionIndex);
                 }
             }
         }
     }
 
-    private Double resgataSomaAcumulada(Object[][] resultado, int posicaoFieldAtual) {
-        for (int i = posicaoFieldAtual + 1; i < resultado[1].length; i++) {
-            if (resultado[0][i] != null && (((Field) resultado[0][i]).isAccumulatedValue() || ((Field) resultado[0][i]).isAccumulatedParticipation()) && ((Field) resultado[0][i]).getName().equalsIgnoreCase("")) {
-                return (Double) resultado[1][i];
+    private void processMetric(HTMLLine htmlLine, HTMLTable table, Field metric, Dimension dimension, Object[][] result, int dimensionLineIndex, int rootDimensionIndex) throws BIException, DateException {
+
+        if (result.length > 1) {
+            this.processMultipleLines(htmlLine, metric, dimension, result, dimensionLineIndex, rootDimensionIndex);
+        } else {
+            this.processSingleLine(htmlLine, metric, dimension, dimensionLineIndex, rootDimensionIndex);
+        }
+    }
+
+    private void processMultipleLines(HTMLLine htmlLine, Field metric, Dimension dimension, Object[][] result, int dimensionLineIndex, int rootDimensionIndex) throws BIException, DateException {
+        for (int j = 0; j < result[0].length; j++) {
+            Field field = (Field) result[0][j];
+            double valueOne = (Double) result[1][j];
+
+            if (field == null || !field.equals(metric) || field.getDefaultField().equals("T")) {
+                continue;
+            }
+
+            htmlLine.addCell(new HTMLCell());
+            htmlLine.getCurrentCell().setNowrap(true);
+            htmlLine.getCurrentCell().setAlignment(field.getColumnAlignment());
+            HTMLStyle style = MultidimensionalStyles.getInstancia().getEstilos().get(MultidimensionalStyles.ESTILO_VAL_METRICA_COLUNA);
+
+            int decimalPositions = field.getNumDecimalPositions();
+            htmlLine.getCurrentCell().setContent(BIUtil.formatDoubleToText(valueOne, decimalPositions));
+
+            boolean applyAlertValue = this.indicator.getColorAlerts().searchAlertValueApply(valueOne, htmlLine.getCurrentCell(), htmlLine, field, ColorAlert.SEM_FUNCAO, field.getNumDecimalPositions(), this, true);
+            if (applyAlertValue) {
+                this.setAlertLineStyle(applyAlertValue);
+            }
+            applyAlertValue = this.indicator.getColorAlerts().searchOtherFieldAlertApply(valueOne, field, ColorAlert.SEM_FUNCAO, result, htmlLine.getCurrentCell(), htmlLine, field.getNumDecimalPositions(), this, dimension, null, 0, true);
+            if (applyAlertValue) {
+                this.setAlertLineStyle(applyAlertValue);
+            }
+
+            if (this.alertLineStyle) {
+                htmlLine.setStyle(lineAppliedStyle);
+            } else if (!htmlLine.getCurrentCell().isAppliedAlert()) {
+                htmlLine.getCurrentCell().setStyle(style);
+            }
+            Double sum = 0d;
+            if (field.isAccumulatedParticipation() || field.isAccumulatedValue()) {
+                sum = this.retrieveAccSum(result, j);
+            }
+
+            if (field.isTotalizingField()) {
+                this.handleTotalizedField(htmlLine, result, field, sum, style, valueOne, (Double) result[1][j + 1]);
+            }
+
+            if (field.isAccumulatedValue()) {
+                this.handleAccumulatedField(htmlLine, field, result, sum, style);
+            }
+
+            if (field.isHorizontalAnalysis() && !(dimensionLineIndex == 0 && rootDimensionIndex == 0)) {
+                this.handleHorizontalAnalysis(htmlLine, field, result, style, valueOne, j);
+            }
+
+            if (field.isHorizontalParticipation()) {
+                this.handleHorizontalParticipation(htmlLine, field, result, style, valueOne);
+            }
+
+            if (field.isHorizontalParticipationAccumulated()) {
+                this.handleHorizontalParticipationAccumulated(htmlLine, field, result, style, valueOne);
+            }
+        }
+    }
+
+    private void handleHorizontalParticipationAccumulated(HTMLLine htmlLine, Field field, Object[][] result, HTMLStyle style, double valueOne) throws BIException, DateException {
+        htmlLine.addCell(new HTMLCell());
+        htmlLine.getCurrentCell().setNowrap(true);
+        htmlLine.getCurrentCell().setAlignment(field.getColumnAlignment());
+
+        if (horizontalParticipation == null) {
+            horizontalParticipation = new HashMap<>();
+        }
+        if (field.isMetric()) {
+            double valAux;
+            double ini = valueOne;
+            double total = this.getTotalLines().get(String.valueOf(field.getFieldId()));
+
+            if (ini != 0) {
+                if (horizontalParticipation.get(field) != null) {
+                    valAux = horizontalParticipation.get(field);
+                    ini = ini / total + valAux;
+                    horizontalParticipation.remove(field);
+                } else {
+                    ini = ini / total;
+                }
+                horizontalParticipation.put(field, ini);
+                htmlLine.getCurrentCell().setContent(BIUtil.formatDoubleToText(ini, 2));
+
+                boolean applyAlertValue = this.indicator.getColorAlerts().searchAlertValueApply(ini * 100, htmlLine.getCurrentCell(), htmlLine, field, ColorAlert.PARTICIPACAO_ACUMULADA_HORIZONTAL, 2, this, true);
+                if (applyAlertValue) {
+                    this.setAlertLineStyle(applyAlertValue);
+                }
+
+                applyAlertValue = this.indicator.getColorAlerts().searchOtherFieldAlertApply(ini * 100, field, ColorAlert.PARTICIPACAO_ACUMULADA_HORIZONTAL, result, htmlLine.getCurrentCell(), htmlLine, 2, this, null, null, 0, true);
+                if (applyAlertValue) {
+                    this.setAlertLineStyle(applyAlertValue);
+                }
+            } else {
+                htmlLine.getCurrentCell().setContent("0");
+            }
+        }
+        if (this.alertLineStyle) {
+            htmlLine.setStyle(lineAppliedStyle);
+        } else if (!htmlLine.getCurrentCell().isAppliedAlert()) {
+            htmlLine.getCurrentCell().setStyle(style);
+        }
+    }
+
+    private void handleHorizontalParticipation(HTMLLine htmlLine, Field field, Object[][] result, HTMLStyle style, double valueOne) throws BIException, DateException {
+        htmlLine.addCell(new HTMLCell());
+        htmlLine.getCurrentCell().setNowrap(true);
+        htmlLine.getCurrentCell().setAlignment(field.getColumnAlignment());
+
+        if (!field.isHorizontalParticipation() || !field.isMetric()) {
+            return;
+        }
+
+        double total = this.getTotalLines().get(String.valueOf(field.getFieldId()));
+
+        if (total != 0) {
+            boolean applyAlertValue = this.indicator.getColorAlerts().searchAlertValueApply((valueOne / total) * 100, htmlLine.getCurrentCell(), htmlLine, field, ColorAlert.PARTICIPACAO_HORIZONTAL, 2, this, true);
+            if (applyAlertValue) {
+                this.setAlertLineStyle(applyAlertValue);
+            }
+
+            applyAlertValue = this.indicator.getColorAlerts().searchOtherFieldAlertApply((valueOne / total) * 100, field, ColorAlert.PARTICIPACAO_HORIZONTAL, result, htmlLine.getCurrentCell(), htmlLine, 2, this, null, null, 0, true);
+            if (applyAlertValue) {
+                this.setAlertLineStyle(applyAlertValue);
+            }
+        }
+
+        if (valueOne != 0) {
+            htmlLine.getCurrentCell().setContent(BIUtil.formatDoubleToText((valueOne / total), 2));
+        } else {
+            htmlLine.getCurrentCell().setContent("0");
+        }
+
+        if (this.alertLineStyle) {
+            htmlLine.setStyle(lineAppliedStyle);
+        } else if (!htmlLine.getCurrentCell().isAppliedAlert()) {
+            htmlLine.getCurrentCell().setStyle(style);
+        }
+    }
+
+    private void handleHorizontalAnalysis(HTMLLine htmlLine, Field field, Object[][] result, HTMLStyle style, double valueOne, int resultIndex) throws BIException, DateException {
+        htmlLine.addCell(new HTMLCell());
+        htmlLine.getCurrentCell().setNowrap(true);
+        htmlLine.getCurrentCell().setAlignment(field.getColumnAlignment());
+
+        for (int ii = resultIndex + 1; result[0][ii] != null; ii++) {
+            if (((Field) result[0][ii]).isHorizontalAnalysis()) {
+                if (result[1][ii] != null) {
+                    double ini, fin, res;
+                    fin = valueOne;
+                    ini = (Double) result[1][ii];
+                    if (ini != fin) {
+                        if (ini != 0) {
+                            res = (ini - fin) / ini;
+                            htmlLine.getCurrentCell().setContent(BIUtil.formatDoubleToText((-1 * res), 2));
+                            boolean applyAlertValue = this.indicator.getColorAlerts().searchAlertValueApply(-1 * res * 100, htmlLine.getCurrentCell(), htmlLine, field, ColorAlert.ANALISE_HORIZONTAL, field.getNumDecimalPositions(), this, true);
+                            if (applyAlertValue) {
+                                this.setAlertLineStyle(applyAlertValue);
+                            }
+
+                            applyAlertValue = this.indicator.getColorAlerts().searchOtherFieldAlertApply(-1 * res * 100, field, ColorAlert.ANALISE_HORIZONTAL, result, htmlLine.getCurrentCell(), htmlLine, 2, this, null, null, 0, true);
+                            if (applyAlertValue) {
+                                this.setAlertLineStyle(applyAlertValue);
+                            }
+                        } else {
+                            if (fin > 0) {
+                                htmlLine.getCurrentCell().setContent(BIUtil.formatDoubleToText(1, 2));
+                            } else if (fin < 0) {
+                                htmlLine.getCurrentCell().setContent(BIUtil.formatDoubleToText(-1, 2));
+                            }
+                        }
+                    } else {
+                        htmlLine.getCurrentCell().setContent(BIUtil.formatDoubleToText(0, 2));
+                    }
+                } else {
+                    htmlLine.getCurrentCell().setContent("-");
+                }
+                break;
+            }
+        }
+        if (this.alertLineStyle) {
+            htmlLine.setStyle(lineAppliedStyle);
+        } else if (!htmlLine.getCurrentCell().isAppliedAlert()) {
+            htmlLine.getCurrentCell().setStyle(style);
+        }
+    }
+
+    private void handleAccumulatedField(HTMLLine htmlLine, Field field, Object[][] result, double sum, HTMLStyle style) throws BIException, DateException {
+
+        int decimalPositions = field.getNumDecimalPositions();
+
+        htmlLine.addCell(new HTMLCell());
+        htmlLine.getCurrentCell().setNowrap(true);
+        htmlLine.getCurrentCell().setAlignment(field.getColumnAlignment());
+
+        htmlLine.getCurrentCell().setContent(BIUtil.formatDoubleToText(sum, decimalPositions));
+        boolean applyAlertValue = this.indicator.getColorAlerts().searchAlertValueApply(sum, htmlLine.getCurrentCell(), htmlLine, field, ColorAlert.ACUMULADO_VERTICAL, field.getNumDecimalPositions(), this, true);
+        if (applyAlertValue) {
+            this.setAlertLineStyle(applyAlertValue);
+        }
+
+        applyAlertValue = this.indicator.getColorAlerts().searchOtherFieldAlertApply(sum, field, ColorAlert.ACUMULADO_VERTICAL, result, htmlLine.getCurrentCell(), htmlLine, field.getNumDecimalPositions(), this, null, null, 0, true);
+        if (applyAlertValue) {
+            this.setAlertLineStyle(applyAlertValue);
+        }
+
+        if (this.alertLineStyle) {
+            htmlLine.setStyle(lineAppliedStyle);
+        } else if (!htmlLine.getCurrentCell().isAppliedAlert()) {
+            htmlLine.getCurrentCell().setStyle(style);
+        }
+    }
+
+    private void handleTotalizedField(HTMLLine htmlLine, Object[][] result, Field field, double sum, HTMLStyle style, double valueOne, double valueTwo) throws BIException, DateException {
+        if (field.isVerticalAnalysis()) {
+            htmlLine.addCell(new HTMLCell());
+            htmlLine.getCurrentCell().setNowrap(true);
+            if (valueTwo == 0) {
+                htmlLine.getCurrentCell().setContent("-");
+            } else {
+                htmlLine.getCurrentCell().setAlignment(field.getColumnAlignment());
+                double percentage = valueOne / valueTwo;
+                htmlLine.getCurrentCell().setContent(BIUtil.formatDoubleToText(percentage, 2));
+
+                boolean applyAlertValue = this.indicator.getColorAlerts().searchAlertValueApply(percentage * 100, htmlLine.getCurrentCell(), htmlLine, field, ColorAlert.ANALISE_VERTICAL, field.getNumDecimalPositions(), this, true);
+                if (applyAlertValue) {
+                    this.setAlertLineStyle(applyAlertValue);
+                }
+
+                applyAlertValue = this.indicator.getColorAlerts().searchOtherFieldAlertApply(percentage * 100, field, ColorAlert.ANALISE_VERTICAL, result, htmlLine.getCurrentCell(), htmlLine, 2, this, null, null, 0, true);
+                if (applyAlertValue) {
+                    this.setAlertLineStyle(applyAlertValue);
+                }
+
+                if (this.alertLineStyle) {
+                    htmlLine.setStyle(lineAppliedStyle);
+                } else if (!htmlLine.getCurrentCell().isAppliedAlert()) {
+                    htmlLine.getCurrentCell().setStyle(style);
+                }
+
+            }
+        }
+        if (field.isAccumulatedParticipation()) {
+            htmlLine.addCell(new HTMLCell());
+            htmlLine.getCurrentCell().setNowrap(true);
+            if (valueTwo == 0) {
+                htmlLine.getCurrentCell().setContent("-");
+            } else {
+                htmlLine.getCurrentCell().setAlignment(field.getColumnAlignment());
+
+                htmlLine.getCurrentCell().setContent(BIUtil.formatDoubleToText(sum / valueTwo, 2));
+
+                boolean applyAlertValue = this.indicator.getColorAlerts().searchAlertValueApply(sum / valueTwo * 100, htmlLine.getCurrentCell(), htmlLine, field, ColorAlert.PARTICIPACAO_ACUMULADA, 2, this, true);
+                if (applyAlertValue) {
+                    this.setAlertLineStyle(applyAlertValue);
+                }
+                applyAlertValue = this.indicator.getColorAlerts().searchOtherFieldAlertApply((sum / valueTwo) * 100, field, ColorAlert.PARTICIPACAO_ACUMULADA, result, htmlLine.getCurrentCell(), htmlLine, 2, this, null, null, 0, true);
+                if (applyAlertValue) {
+                    this.setAlertLineStyle(applyAlertValue);
+                }
+
+                if (this.alertLineStyle) {
+                    htmlLine.setStyle(lineAppliedStyle);
+                } else if (!htmlLine.getCurrentCell().isAppliedAlert()) {
+                    htmlLine.getCurrentCell().setStyle(style);
+                }
+            }
+        }
+    }
+
+    private void processSingleLine(HTMLLine htmlLine, Field metric, Dimension dimension, int dimensionLineIndex, int rootDimensionIndex) {
+        int sheets = this.contFolhas(dimension);
+        if (sheets == 0)
+            sheets = 1;
+
+        HTMLStyle htmlStyle = MultidimensionalStyles.getInstancia().getEstilos().get(MultidimensionalStyles.ESTILO_VAL_METRICA_COLUNA);
+
+        for (int i = 0; i < sheets; i++) {
+            if (!metric.getDefaultField().equals("T")) {
+                addCellToLine(htmlLine, metric, htmlStyle);
+                if (metric.isTotalizingField()) {
+                    if (metric.isVerticalAnalysis() || metric.isAccumulatedParticipation()) {
+                        addCellToLine(htmlLine, metric, htmlStyle);
+                    }
+                }
+                if (metric.isAccumulatedValue() ||
+                        (metric.isHorizontalAnalysis() && !(i == 0 && dimensionLineIndex == 0 && rootDimensionIndex == 0)) ||
+                        metric.isHorizontalParticipation() ||
+                        metric.isHorizontalParticipationAccumulated()) {
+                    addCellToLine(htmlLine, metric, htmlStyle);
+                }
+            }
+        }
+    }
+
+    private void addCellToLine(HTMLLine htmlLine, Field metric, HTMLStyle htmlStyle) {
+        htmlLine.addCell(new HTMLCell());
+        htmlLine.getCurrentCell().setNowrap(true);
+        htmlLine.getCurrentCell().setAlignment(metric.getColumnAlignment());
+        htmlLine.getCurrentCell().setStyle(htmlStyle);
+        htmlLine.getCurrentCell().setContent("-");
+    }
+
+    private Double retrieveAccSum(Object[][] result, int currentFieldPosition) {
+        for (int i = currentFieldPosition + 1; i < result[1].length; i++) {
+            if (result[0][i] != null && (((Field) result[0][i]).isAccumulatedValue() || ((Field) result[0][i]).isAccumulatedParticipation()) && ((Field) result[0][i]).getName().equalsIgnoreCase("")) {
+                return (Double) result[1][i];
             }
         }
         return 0D;
     }
 
-    public Double atualizaTeste(Field metrica, Object[] resultado, Double valor, int indice) {
-        Field campo = null;
-        int i = 0;
+    public Double updateTest(Field metric, Object[] result, Double value, int index) {
+        Field campo;
+        int i;
         int posicaoLinha = 0;
         for (i = 0; i < this.results[0].length; i++) {
             campo = (Field) this.results[0][i];
@@ -673,12 +622,12 @@ public class Dimension {
                 }
             }
         }
-        Dimension[] dimensoes = this.lineDimension;
+        List<Dimension> dimensoes = this.lineDimension;
         Dimension dimensao = null;
-        for (int ii = 0; ii < this.lineDimension.length; ii++) {
-            if (dimensoes[ii] != null) {
-                if (dimensoes[ii].getValue().getValor(0).equals(resultado[posicaoLinha])) {
-                    dimensao = dimensoes[ii];
+        for (int ii = 0; ii < this.lineDimension.size(); ii++) {
+            if (dimensoes.get(ii) != null) {
+                if (dimensoes.get(ii).getValue().getValor(0).equals(result[posicaoLinha])) {
+                    dimensao = dimensoes.get(ii);
                     dimensoes = dimensao.bottomDimensions;
                     ii = -1;
                     posicaoLinha++;
@@ -687,7 +636,7 @@ public class Dimension {
                 break;
             }
         }
-        for (i = indice + 1; i < dimensao.results[0].length; i++) {
+        for (i = index + 1; i < dimensao.results[0].length; i++) {
             campo = (Field) this.results[0][i];
             if (campo.getFieldType() != null) {
                 break;
@@ -696,7 +645,7 @@ public class Dimension {
                 if (atual == null) {
                     atual = 0d;
                 }
-                atual = atual + valor;
+                atual = atual + value;
                 return atual;
             }
         }
@@ -705,59 +654,59 @@ public class Dimension {
 
     private int contFolhas(Dimension raiz) {
         int cont = 0;
-        if (raiz.temDimensoesAbaixo()) {
-            Dimension[] dimensoesAbaixo = raiz.getBottomDimensions();
-            if (dimensoesAbaixo[0].temDimensoesAbaixo()) {
+        if (raiz.hasLowerDimensions()) {
+            List<Dimension> dimensoesAbaixo = raiz.getBottomDimensions();
+            if (dimensoesAbaixo.get(0).hasLowerDimensions()) {
                 for (Dimension biDimension : dimensoesAbaixo) {
                     if (biDimension != null) {
                         cont += contFolhas(biDimension);
                     }
                 }
             } else {
-                cont = raiz.getQtdeDimensoesAbaixo(false);
+                cont = raiz.getLowerDimensionsCount(false);
             }
         }
         return cont;
     }
 
-    public Object[][] consulta(Object[][] resultados) {
-        int coluna = -1;
-        Object[][] objFields = new Object[resultados.length][resultados[0].length];
-        objFields[0] = resultados[0];
-        for (int i = 0; i < resultados[0].length; i++) {
-            if (resultados[0][i] != null) {
-                if (((Field) resultados[0][i]).getFieldId() == this.value.getField().getFieldId()) {
-                    coluna = i;
+    public Object[][] consult(Object[][] results) {
+        int column = -1;
+        Object[][] objFields = new Object[results.length][results[0].length];
+        objFields[0] = results[0];
+        for (int i = 0; i < results[0].length; i++) {
+            if (results[0][i] != null) {
+                if (((Field) results[0][i]).getFieldId() == this.value.getField().getFieldId()) {
+                    column = i;
                     break;
                 }
             }
         }
         int cont = 1;
-        if (coluna != -1) {
-            for (int i = 1; i < resultados.length; i++) {
+        if (column != -1) {
+            for (int i = 1; i < results.length; i++) {
                 try {
-                    if (this.value.getValor(0) != null && this.value.getValor(0).equals(resultados[i][coluna])) {
+                    if (this.value.getValor(0) != null && this.value.getValor(0).equals(results[i][column])) {
 
                         Dimension dimenAux = this;
-                        int contDimensao = 1;
+                        int dimensionCount = 1;
                         boolean sair = false;
                         while (dimenAux.getParentDimension() != null) {
                             dimenAux = dimenAux.getParentDimension();
 
-                            if (!dimenAux.value.getValor(0).equals(resultados[i][coluna - contDimensao])) {
+                            if (!dimenAux.value.getValor(0).equals(results[i][column - dimensionCount])) {
                                 sair = true;
                                 break;
                             }
-                            contDimensao++;
+                            dimensionCount++;
                         }
                         if (sair)
                             continue;
 
-                        objFields[cont] = resultados[i];
+                        objFields[cont] = results[i];
                         cont++;
                     }
                 } catch (NullPointerException e) {
-                    e.printStackTrace();
+                    log.error("Erro ao consultar a dimensão: " + this.value.getValor(0));
                 }
             }
         }
@@ -801,140 +750,138 @@ public class Dimension {
         return objAux2;
     }
 
-    public void toHTMLLinha(HTMLTable tabela, HTMLLine linha, HTMLLine linhaInferior, Field[] metricasLinha, Field[] camposColuna, int colspanHeader, int indiceDimensaoLinha, int indiceDimensaoRaizLinha) throws BIException, DateException, CloneNotSupportedException {
+    public void toHTMLLine(HTMLTable table, HTMLLine line, HTMLLine bottonLine, Field[] lineMetrics, List<Field> columnFields, int colspanHeader, int lineDimensionIndex, int rooDimensionIndex) throws BIException, DateException, CloneNotSupportedException {
         boolean todosNull = true;
-        int contador_temp;
+        int counter;
+        int dimensionIndex = 0;
 
-        MultidimensionalStyles multidimensionalEstilos = MultidimensionalStyles.getInstancia();
+        MultidimensionalStyles multidimensionalStyles = MultidimensionalStyles.getInstancia();
 
-        HTMLStyle estilo1 = multidimensionalEstilos.getEstilos().get(MultidimensionalStyles.ESTILO_DESC_DIMENSAO_LINHA);
+        HTMLStyle htmlStyleOne = multidimensionalStyles.getEstilos().get(MultidimensionalStyles.ESTILO_DESC_DIMENSAO_LINHA);
 
-        HTMLStyle estilo2 = multidimensionalEstilos.getEstilos().get(MultidimensionalStyles.ESTILO_VAL_DIMENSAO_LINHA);
+        HTMLStyle htmlStyleTwo = multidimensionalStyles.getEstilos().get(MultidimensionalStyles.ESTILO_VAL_DIMENSAO_LINHA);
 
-        for (int i = 0; i < this.bottomDimensions.length; i++) {
-            if (this.bottomDimensions[i] != null) {
-                if (!this.bottomDimensions[i].getValue().getField().getDefaultField().equals("T")) {
-                    this.bottomDimensions[i].setMountTableWithoutLink(this.mountTableWithoutLink);
-                    if (linha.getCells().isEmpty()) {
-                        linha.addCell(new HTMLCell());
-                        linha.getCurrentCell().setAlignment("right");
+        for (Dimension bottomDimension : this.bottomDimensions) {
+            if (bottomDimension != null) {
+                if (!bottomDimension.getValue().getField().getDefaultField().equals("T")) {
+                    bottomDimension.setMountTableWithoutLink(this.mountTableWithoutLink);
+                    if (line.getCells().isEmpty()) {
+                        line.addCell(new HTMLCell());
+                        line.getCurrentCell().setAlignment("right");
 
-                        linha.getCurrentCell().setTHCell(true);
+                        line.getCurrentCell().setTHCell(true);
 
-                        linha.getCurrentCell().setStyle(estilo1);
-                        linha.getCurrentCell().setColspan(colspanHeader);
-                        LinkHTML linkField = new LinkHTML("javascript:alteraField('" + this.bottomDimensions[i].getValue().getField().getFieldId() + "');", this.bottomDimensions[i].getValue().getField().getTitle(), "textWhiteOff");
+                        line.getCurrentCell().setStyle(htmlStyleOne);
+                        line.getCurrentCell().setColspan(colspanHeader);
+                        LinkHTML linkField = new LinkHTML("javascript:alteraField('" + bottomDimension.getValue().getField().getFieldId() + "');", bottomDimension.getValue().getField().getTitle(), "textWhiteOff");
                         if (!this.isMountTableWithoutLink()) {
-                            linha.getCurrentCell().setContent("<b>" + linkField + "</b>");
+                            line.getCurrentCell().setContent("<b>" + linkField + "</b>");
                         } else {
-                            linha.getCurrentCell().setContent("<b>" + this.bottomDimensions[i].getValue().getField().getTitle() + "</b>");
+                            line.getCurrentCell().setContent("<b>" + bottomDimension.getValue().getField().getTitle() + "</b>");
                         }
-                        linha.getCurrentCell().setAppliedAlert(true);
+                        line.getCurrentCell().setAppliedAlert(true);
                     }
 
                     todosNull = false;
-                    linha.addCell(new HTMLCell());
-                    if (this.bottomDimensions[i].temDimensoesAbaixo()) {
-                        int colspan = this.bottomDimensions[i].getQtdeDimensoesAbaixo(false);
-                        if (metricasLinha != null && metricasLinha.length > 0) {
+                    line.addCell(new HTMLCell());
+                    if (bottomDimension.hasLowerDimensions()) {
+                        int colspan = bottomDimension.getLowerDimensionsCount(false);
+                        if (lineMetrics != null && lineMetrics.length > 0) {
 
-                            contador_temp = 0;
-                            for (Field field : metricasLinha) {
-                                if (!(field != null && field.getName().isEmpty() && field.getTitle().equals("total"))) {
-                                    if (!field.getDefaultField().equals("T")) {
-                                        contador_temp++;
-                                    }
-                                }
-                            }
+                            counter = (int) Arrays.stream(lineMetrics)
+                                    .filter(field -> field != null
+                                            && !field.getName().isEmpty()
+                                            && !field.getTitle().equals("total")
+                                            && !field.getDefaultField().equals("T"))
+                                    .count();
 
-                            colspan *= contador_temp;
+                            colspan *= counter;
                         }
-                        linha.getCurrentCell().setColspan(colspan);
+                        line.getCurrentCell().setColspan(colspan);
                     } else {
-                        if (metricasLinha != null) {
-                            contador_temp = 0;
-                            for (Field field : metricasLinha) {
-                                if (!(field != null && field.getName().isEmpty() && field.getTitle().equals("total"))) {
-                                    if (!field.getDefaultField().equals("T")) {
-                                        contador_temp++;
-                                    }
-                                }
-                            }
-                            linha.getCurrentCell().setColspan(contador_temp);
+                        if (lineMetrics != null) {
+                            counter = (int) Arrays.stream(lineMetrics)
+                                    .filter(field -> field != null
+                                            && !field.getName().isEmpty()
+                                            && !field.getTitle().equals("total")
+                                            && !field.getDefaultField().equals("T"))
+                                    .count();
+                            line.getCurrentCell().setColspan(counter);
                         }
                     }
 
-                    int quantidadeMetricasAH = this.getQuantidadeMetricasComAnaliseHorizontal(metricasLinha);
-                    if (indiceDimensaoRaizLinha == 0 && i == 0 && quantidadeMetricasAH > 0) {
-                        linha.getCurrentCell().setColspan(linha.getCurrentCell().getColspan() - quantidadeMetricasAH);
+                    int metricAHCount = this.getMetricLinesWithAH(lineMetrics);
+                    if (rooDimensionIndex == 0 && dimensionIndex == 0 && metricAHCount > 0) {
+                        line.getCurrentCell().setColspan(line.getCurrentCell().getColspan() - metricAHCount);
                     }
 
-                    linha.getCurrentCell().setAlignment("center");
-                    linha.getCurrentCell().setContent(this.bottomDimensions[i].getValue().getFormattedValue(0));
-                    boolean aplicouAlertaLinha = this.indicator.getColorAlerts().buscaAplicaAlertaValor(this.bottomDimensions[i].getValue().getFormattedValue(0), linha.getCurrentCell(), linha, this.bottomDimensions[i].getValue().getField(), ColorAlert.SEM_FUNCAO, this.bottomDimensions[i].getValue().getField().getNumDecimalPositions(), this, true);
-                    if (aplicouAlertaLinha) {
-                        linha.setAppliedAlert(true);
+                    line.getCurrentCell().setAlignment("center");
+                    line.getCurrentCell().setContent(bottomDimension.getValue().getFormattedValue(0));
+                    boolean appliedLineAlert = this.indicator.getColorAlerts().searchAlertValueApply(bottomDimension.getValue().getFormattedValue(0), line.getCurrentCell(), line, bottomDimension.getValue().getField(), ColorAlert.SEM_FUNCAO, bottomDimension.getValue().getField().getNumDecimalPositions(), this, true);
+                    if (appliedLineAlert) {
+                        line.setAppliedAlert(true);
                     }
 
-                    if (!linha.isAppliedAlert() && !linha.getCurrentCell().isAppliedAlert()) {
-                        linha.getCurrentCell().setStyle(estilo2);
+                    if (!line.isAppliedAlert() && !line.getCurrentCell().isAppliedAlert()) {
+                        line.getCurrentCell().setStyle(htmlStyleTwo);
                     }
 
-                    linha.getCurrentCell().setAlignment(this.bottomDimensions[i].getValue().getField().getColumnAlignment());
-                    linha.getCurrentCell().setWidth(String.valueOf(this.bottomDimensions[i].getValue().getField().getColumnWidth()));
+                    line.getCurrentCell().setAlignment(bottomDimension.getValue().getField().getColumnAlignment());
+                    line.getCurrentCell().setWidth(String.valueOf(bottomDimension.getValue().getField().getColumnWidth()));
 
-                    if (linhaInferior == null) {
-                        linhaInferior = new HTMLLine();
-                        tabela.addLine(linhaInferior);
+                    if (bottonLine == null) {
+                        bottonLine = new HTMLLine();
+                        table.addLine(bottonLine);
                     }
-                    if (i != 0 && indiceDimensaoRaizLinha == 0) {
-                        indiceDimensaoRaizLinha = -1;
+                    if (dimensionIndex != 0 && rooDimensionIndex == 0) {
+                        rooDimensionIndex = -1;
                     }
 
-                    this.bottomDimensions[i].setIndicator(this.indicator);
-                    this.bottomDimensions[i].setMountTableWithoutLink(this.mountTableWithoutLink);
-                    this.bottomDimensions[i].toHTMLLinha(tabela, linhaInferior, tabela.getNextLine(linhaInferior), metricasLinha, camposColuna, colspanHeader, i, indiceDimensaoRaizLinha);
+                    bottomDimension.setIndicator(this.indicator);
+                    bottomDimension.setMountTableWithoutLink(this.mountTableWithoutLink);
+                    bottomDimension.toHTMLLine(table, bottonLine, table.getNextLine(bottonLine), lineMetrics, columnFields, colspanHeader, dimensionIndex, rooDimensionIndex);
                 } else {
 
-                    if (i != 0 && indiceDimensaoRaizLinha == 0) {
-                        indiceDimensaoRaizLinha = -1;
+                    if (dimensionIndex != 0 && rooDimensionIndex == 0) {
+                        rooDimensionIndex = -1;
                     }
 
                     todosNull = false;
-                    this.bottomDimensions[i].setIndicator(this.indicator);
-                    this.bottomDimensions[i].setMountTableWithoutLink(this.mountTableWithoutLink);
-                    this.bottomDimensions[i].toHTMLLinha(tabela, linha, tabela.getNextLine(linha), metricasLinha, camposColuna, colspanHeader, i, indiceDimensaoRaizLinha);
+                    bottomDimension.setIndicator(this.indicator);
+                    bottomDimension.setMountTableWithoutLink(this.mountTableWithoutLink);
+                    bottomDimension.toHTMLLine(table, line, table.getNextLine(line), lineMetrics, columnFields, colspanHeader, dimensionIndex, rooDimensionIndex);
                 }
             }
+            dimensionIndex++;
         }
         if (todosNull) {
-            if (linha.getCells().isEmpty()) {
-                if (camposColuna != null) {
-                    HTMLStyle estilo = multidimensionalEstilos.getEstilos().get(MultidimensionalStyles.ESTILO_DESC_DIMENSAO_LINHA);
+            if (line.getCells().isEmpty()) {
+                if (columnFields != null) {
+                    HTMLStyle style = multidimensionalStyles.getEstilos().get(MultidimensionalStyles.ESTILO_DESC_DIMENSAO_LINHA);
 
                     if (this.indicator.isUsesSequence()) {
-                        linha.addCell(new HTMLCell());
-                        linha.getCurrentCell().setBackGroundColor("#3377CC");
-                        linha.getCurrentCell().setBorderColor("#FFFFFF");
-                        linha.getCurrentCell().setStyle(estilo);
-                        linha.getCurrentCell().setAlignment("center");
-                        linha.getCurrentCell().setContent("Seq");
+                        line.addCell(new HTMLCell());
+                        line.getCurrentCell().setBackGroundColor("#3377CC");
+                        line.getCurrentCell().setBorderColor("#FFFFFF");
+                        line.getCurrentCell().setStyle(style);
+                        line.getCurrentCell().setAlignment("center");
+                        line.getCurrentCell().setContent("Seq");
                     }
 
-                    for (Field field : camposColuna) {
+                    for (Field field : columnFields) {
                         if (field != null && !field.getDefaultField().equals("T")) {
-                            linha.addCell(new HTMLCell());
-                            linha.getCurrentCell().setBackGroundColor("#3377CC");
-                            linha.getCurrentCell().setBorderColor("#FFFFFF");
-                            linha.getCurrentCell().setStyle(estilo);
-                            linha.getCurrentCell().setAlignment("center");
-                            linha.getCurrentCell().setTHCell(true);
+                            line.addCell(new HTMLCell());
+                            line.getCurrentCell().setBackGroundColor("#3377CC");
+                            line.getCurrentCell().setBorderColor("#FFFFFF");
+                            line.getCurrentCell().setStyle(style);
+                            line.getCurrentCell().setAlignment("center");
+                            line.getCurrentCell().setTHCell(true);
                             HTMLTable tabelaAux = new HTMLTable();
                             tabelaAux.setWidth("100%");
                             tabelaAux.addLine(new HTMLLine());
                             tabelaAux.getCurrentLine().addCell(new HTMLCell());
                             tabelaAux.getCurrentLine().getCurrentCell().setWidth("100%");
-                            HTMLStyle estiloAux = (HTMLStyle) estilo.clone();
+                            HTMLStyle estiloAux = (HTMLStyle) style.clone();
                             tabelaAux.getCurrentLine().getCurrentCell().setStyle(estiloAux);
                             LinkHTML linkField = new LinkHTML("javascript:alteraField('" + field.getFieldId() + "');", field.getTitle(), "textWhiteOff");
                             if (!this.isMountTableWithoutLink()) {
@@ -977,42 +924,42 @@ public class Dimension {
                             } else {
                                 tabelaAux.getCurrentLine().getCurrentCell().setContent("&nbsp;");
                             }
-                            linha.getCurrentCell().setWidth(String.valueOf(field.getColumnWidth()));
-                            linha.getCurrentCell().setContent(tabelaAux);
+                            line.getCurrentCell().setWidth(String.valueOf(field.getColumnWidth()));
+                            line.getCurrentCell().setContent(tabelaAux);
                         }
                     }
                 }
             }
-            if (metricasLinha != null) {
+            if (lineMetrics != null) {
 
-                HTMLStyle estilo = multidimensionalEstilos.getEstilos().get(MultidimensionalStyles.ESTILO_DESC_METRICA_LINHA);
+                HTMLStyle style = multidimensionalStyles.getEstilos().get(MultidimensionalStyles.ESTILO_DESC_METRICA_LINHA);
 
-                for (Field field : metricasLinha) {
+                for (Field field : lineMetrics) {
                     if (field != null) {
                         if (!field.getDefaultField().equals("T") && !(field.getName().isEmpty() && field.getTitle().equals("total"))) {
-                            if (!(indiceDimensaoRaizLinha == 0 && indiceDimensaoLinha == 0 && field.isHorizontalAnalysis() && field.getTitle().contains("AH%"))) {
-                                linha.addCell(new HTMLCell());
-                                linha.getCurrentCell().setBackGroundColor("#A2C8E8");
-                                linha.getCurrentCell().setTHCell(true);
-                                linha.getCurrentCell().setStyle(estilo);
-                                linha.getCurrentCell().setWidth(String.valueOf(field.getColumnWidth()));
-                                linha.getCurrentCell().setAlignment(field.getColumnAlignment());
-                                linha.getCurrentCell().setNowrap(true);
+                            if (!(rooDimensionIndex == 0 && lineDimensionIndex == 0 && field.isHorizontalAnalysis() && field.getTitle().contains("AH%"))) {
+                                line.addCell(new HTMLCell());
+                                line.getCurrentCell().setBackGroundColor("#A2C8E8");
+                                line.getCurrentCell().setTHCell(true);
+                                line.getCurrentCell().setStyle(style);
+                                line.getCurrentCell().setWidth(String.valueOf(field.getColumnWidth()));
+                                line.getCurrentCell().setAlignment(field.getColumnAlignment());
+                                line.getCurrentCell().setNowrap(true);
                                 LinkHTML linkField = new LinkHTML("javascript:alteraField('" + field.getFieldId() + "');", field.getTitle(), "blueLinkDrillDown");
                                 if (!this.isMountTableWithoutLink() && !field.isChildField()) {
-                                    linha.getCurrentCell().setContent(linkField);
+                                    line.getCurrentCell().setContent(linkField);
                                 } else {
-                                    linha.getCurrentCell().setContent(field.getTitle());
+                                    line.getCurrentCell().setContent(field.getTitle());
                                 }
                             }
                         }
                     }
                 }
             } else {
-                linha.addCell(new HTMLCell());
-                linha.getCurrentCell().setAlignment("center");
-                linha.getCurrentCell().setBackGroundColor("#A2C8E8");
-                linha.getCurrentCell().setContent("&nbsp;");
+                line.addCell(new HTMLCell());
+                line.getCurrentCell().setAlignment("center");
+                line.getCurrentCell().setBackGroundColor("#A2C8E8");
+                line.getCurrentCell().setContent("&nbsp;");
             }
         }
     }
@@ -1026,131 +973,104 @@ public class Dimension {
         }
     }
 
-    public Dimension getUltimaDimesao() {
+    public Dimension getLastDimension() {
         Dimension ret = null;
         Dimension aux = this;
-        do {
-            if (aux.bottomDimensions != null && aux.bottomDimensions.length > 0) {
-                ret = aux;
-                aux = aux.bottomDimensions[0];
-            }
-        } while (aux != null);
+        while (aux != null && aux.bottomDimensions != null && !aux.bottomDimensions.isEmpty()) {
+            ret = aux;
+            aux = aux.bottomDimensions.get(0);
+        }
         return ret;
     }
 
-    public void redimensionaResultados() {
+    public void resizeResults() {
         for (Dimension bottonDimension : this.bottomDimensions) {
             if (bottonDimension != null) {
-                bottonDimension.redimensionaResultados();
+                bottonDimension.resizeResults();
             } else {
-                this.redimensionaResultados(this.results, 0, this.results.length);
+                this.resizeResults(this.results);
                 break;
             }
         }
     }
 
-    protected void redimensionaResultados(Object[][] vetor, int inicial, int fim) {
-        if (vetor[vetor.length - 1] != null)
-            return;
-        if (vetor[0] == null) {
-            inicial = 0;
-            fim = 0;
-        }
-        if (inicial > (fim - 20)) {
-            int indice;
-            for (indice = fim - 1; indice >= 0; indice--) {
-                if (vetor[indice] != null) {
-                    break;
-                }
-            }
-            this.results = new Object[indice + 1][];
-            System.arraycopy(vetor, 0, this.results, 0, indice + 1);
-        } else {
-            int posicao = (inicial + fim) / 2;
-            if (this.results[posicao] == null) {
-                this.redimensionaResultados(vetor, inicial, posicao);
-            } else {
-                this.redimensionaResultados(vetor, posicao, fim);
-            }
-        }
+    protected void resizeResults(Object[][] vector) {
+        List<Object[]> nonNullRows = Arrays.stream(vector)
+                .filter(Objects::nonNull)
+                .toList();
+        this.results = nonNullRows.toArray(new Object[0][]);
     }
 
-    public void caminhaDimensoesLinha(Dimension[] dimensoes, HTMLTable tabela) {
-        if (dimensoes[0] != null) {
-            for (Dimension dimensoe : dimensoes) {
-                if (dimensoe != null) {
-                    dimensoe.caminhaDimensoesLinha(dimensoe.bottomDimensions, tabela);
-                } else {
-                    break;
-                }
-            }
-        }
+    public void walkDimensionsLine(List<Dimension> dimensions, HTMLTable table) {
+        dimensions.stream()
+                .filter(Objects::nonNull)
+                .forEach(dimension -> dimension.walkDimensionsLine(dimension.bottomDimensions, table));
     }
 
-    private boolean escreveTotalParcial(HTMLLine linhaHTML, int indiceLinha, int sequencia, List<DimensionTotalized> dimensoesTotalizadas) throws BIException, DateException {
+    private boolean writeTotalPartial(HTMLLine htmlLine, int lineIndex, int sequence, List<DimensionTotalized> dimensionsTotal) throws BIException, DateException {
         boolean total = false;
-        HashMap<Field, Object> participParcialHorizontal = new HashMap<>();
-        HashMap<Field, List<Object>> participHorizontais = new HashMap<>();
+        HashMap<Field, Object> horizontalParticipation = new HashMap<>();
+        HashMap<Field, List<Object>> horizontalParticipations = new HashMap<>();
 
-        HTMLCell celula;
-        MultidimensionalStyles multidimensionalEstilos = MultidimensionalStyles.getInstancia();
+        HTMLCell cell;
+        MultidimensionalStyles multidimensionalStyles = MultidimensionalStyles.getInstancia();
 
-        HTMLStyle estilo = multidimensionalEstilos.getEstilos().get(MultidimensionalStyles.ESTILO_DESC_METRICA_LINHA);
+        HTMLStyle htmlStyle = multidimensionalStyles.getEstilos().get(MultidimensionalStyles.ESTILO_DESC_METRICA_LINHA);
 
-        if (this.temDimensoesAbaixo()) {
-            celula = new HTMLCell();
-            linhaHTML.addCell(celula);
-            celula.setStyle(estilo);
-            celula.setNowrap(true);
-            celula.setContent("Total");
-            celula.setDimensionColumn(true);
-            celula.setAlignment("left");
-            celula.setBackGroundColor("#CCCCCC");
-            celula.setTHCell(true);
-            celula.setColspan(this.getAlturaDimensoesAbaixo());
-            for (int i = 0; i < this.columnDimension.length; i++) {
-                if (this.lineDimension[i] != null) {
-                    total = total || this.escreveTotalParcial(this.lineDimension[i], this.results, linhaHTML, sequencia, i, i, participParcialHorizontal, dimensoesTotalizadas, participHorizontais);
+        if (this.hasLowerDimensions()) {
+            cell = new HTMLCell();
+            htmlLine.addCell(cell);
+            cell.setStyle(htmlStyle);
+            cell.setNowrap(true);
+            cell.setContent("Total");
+            cell.setDimensionColumn(true);
+            cell.setAlignment("left");
+            cell.setBackGroundColor("#CCCCCC");
+            cell.setTHCell(true);
+            cell.setColspan(this.getLowerDimensionsHeight());
+            for (int i = 0; i < this.columnDimension.size(); i++) {
+                if (this.lineDimension.get(i) != null) {
+                    total = total || this.writeTotalPartial(this.lineDimension.get(i), this.results, htmlLine, sequence, i, i, horizontalParticipation, dimensionsTotal, horizontalParticipations);
                 } else {
                     break;
                 }
             }
-            Field campo;
+            Field field;
             for (int ii = 3; ii < this.results[0].length; ii++) {
-                campo = (Field) this.results[0][ii];
+                field = (Field) this.results[0][ii];
                 double aux = 0d;
                 if (this.accumulatedLine != null)
                     aux = this.accumulatedLine[ii];
 
-                if (campo != null && !campo.getDefaultField().equals("T")) {
+                if (field != null && !field.getDefaultField().equals("T")) {
 
                     
-                    if (campo.isApplyTotalizationExpression()) {
+                    if (field.isApplyTotalizationExpression()) {
                         this.partialTotalizations = this.indicator.getPartialTotalizations();
                         if (this.accumulatedLine != null && this.partialTotalizations != null) {
-                            this.accumulatedLine[ii] = this.partialTotalizations.getTotalPartialAccumulated(campo, sequencia);
+                            this.accumulatedLine[ii] = this.partialTotalizations.getTotalPartialAccumulated(field, sequence);
                         }
                     }
-                    if (!campo.getAccumulatedLine().equals("N")) {
-                        celula = new HTMLCell();
-                        linhaHTML.addCell(celula);
-                        celula.setNowrap(true);
-                        celula.setStyle(estilo);
-                        celula.setAlignment(campo.getColumnAlignment());
-                        int decimalPositions = campo.getNumDecimalPositions();
+                    if (!field.getAccumulatedLine().equals("N")) {
+                        cell = new HTMLCell();
+                        htmlLine.addCell(cell);
+                        cell.setNowrap(true);
+                        cell.setStyle(htmlStyle);
+                        cell.setAlignment(field.getColumnAlignment());
+                        int decimalPositions = field.getNumDecimalPositions();
 
-                        if (campo.isPartialTotalization()) {
-                            this.accumulatedLine[ii] = this.getAcumuladoLinhaAtualizado(ii);
-                            if ("E".equals(campo.getAccumulatedLine())) {
-                                this.accumulatedLine[ii] = this.calculaExpressaoAcumulado(campo, ii);
+                        if (field.isPartialTotalization()) {
+                            this.accumulatedLine[ii] = this.getAccLineUpdated(ii);
+                            if ("E".equals(field.getAccumulatedLine())) {
+                                this.accumulatedLine[ii] = this.calAccExpression(field, ii);
                             }
-                            celula.setContent(BIUtil.formatDoubleToText(this.accumulatedLine[ii], decimalPositions));
-                            this.indicator.getColorAlerts().buscaAplicaAlertaValor(this.accumulatedLine[ii], celula, linhaHTML, campo, ColorAlert.TOTALIZACAO_PARCIAL, campo.getNumDecimalPositions(), this, true);
+                            cell.setContent(BIUtil.formatDoubleToText(this.accumulatedLine[ii], decimalPositions));
+                            this.indicator.getColorAlerts().searchAlertValueApply(this.accumulatedLine[ii], cell, htmlLine, field, ColorAlert.TOTALIZACAO_PARCIAL, field.getNumDecimalPositions(), this, true);
                         } else {
-                            celula.setContent("-");
+                            cell.setContent("-");
                         }
                     }
-                    if (campo.isSumLine() && this.accumulatedLine != null) {
+                    if (field.isSumLine() && this.accumulatedLine != null) {
                         this.totalLine -= aux;
                         this.totalLine += this.accumulatedLine[ii];
                         total = true;
@@ -1159,61 +1079,61 @@ public class Dimension {
             }
 
             for (int ii = 3; ii < this.results[0].length; ii++) {
-                campo = (Field) this.results[0][ii];
-                if (campo != null && !campo.getDefaultField().equals("T")) {
-                    if (campo.isMediaLine()) {
-                        celula = new HTMLCell();
-                        linhaHTML.addCell(celula);
-                        celula.setNowrap(true);
-                        celula.setStyle(estilo);
-                        celula.setAlignment(campo.getColumnAlignment());
-                        int decimalPositions = campo.getNumDecimalPositions();
-                        if (campo.isPartialTotalization()) {
-                            if ("E".equals(campo.getAccumulatedLine())) {
-                                this.accumulatedLine[ii] = this.calculaExpressaoAcumulado(campo, ii);
+                field = (Field) this.results[0][ii];
+                if (field != null && !field.getDefaultField().equals("T")) {
+                    if (field.isMediaLine()) {
+                        cell = new HTMLCell();
+                        htmlLine.addCell(cell);
+                        cell.setNowrap(true);
+                        cell.setStyle(htmlStyle);
+                        cell.setAlignment(field.getColumnAlignment());
+                        int decimalPositions = field.getNumDecimalPositions();
+                        if (field.isPartialTotalization()) {
+                            if ("E".equals(field.getAccumulatedLine())) {
+                                this.accumulatedLine[ii] = this.calAccExpression(field, ii);
                             }
                             if (getColumnLineAmount() > 0) {
-                                celula.setContent(BIUtil.formatDoubleToText(this.accumulatedLine[ii] / getColumnLineAmount(), decimalPositions));
-                                this.indicator.getColorAlerts().buscaAplicaAlertaValor(this.accumulatedLine[ii] / getColumnLineAmount(), celula, linhaHTML, campo, ColorAlert.TOTALIZACAO_PARCIAL, campo.getNumDecimalPositions(), this, true);
+                                cell.setContent(BIUtil.formatDoubleToText(this.accumulatedLine[ii] / getColumnLineAmount(), decimalPositions));
+                                this.indicator.getColorAlerts().searchAlertValueApply(this.accumulatedLine[ii] / getColumnLineAmount(), cell, htmlLine, field, ColorAlert.TOTALIZACAO_PARCIAL, field.getNumDecimalPositions(), this, true);
                             } else {
-                                celula.setContent(BIUtil.formatDoubleToText(this.accumulatedLine[ii], decimalPositions));
-                                this.indicator.getColorAlerts().buscaAplicaAlertaValor(this.accumulatedLine[ii], celula, linhaHTML, campo, ColorAlert.TOTALIZACAO_PARCIAL, campo.getNumDecimalPositions(), this, true);
+                                cell.setContent(BIUtil.formatDoubleToText(this.accumulatedLine[ii], decimalPositions));
+                                this.indicator.getColorAlerts().searchAlertValueApply(this.accumulatedLine[ii], cell, htmlLine, field, ColorAlert.TOTALIZACAO_PARCIAL, field.getNumDecimalPositions(), this, true);
                             }
                         } else {
-                            celula.setContent("-");
+                            cell.setContent("-");
                         }
                     }
                 }
             }
             if (total) {
-                celula = new HTMLCell();
-                linhaHTML.addCell(celula);
-                celula.setStyle(estilo);
-                celula.setNowrap(true);
-                celula.setAlignment("right");
-                celula.setContent(BIUtil.formatDoubleToText(this.totalLine, 2));
+                cell = new HTMLCell();
+                htmlLine.addCell(cell);
+                cell.setStyle(htmlStyle);
+                cell.setNowrap(true);
+                cell.setAlignment("right");
+                cell.setContent(BIUtil.formatDoubleToText(this.totalLine, 2));
             }
         }
         return total;
     }
 
-    private boolean escreveTotalParcial(Dimension dimensao,
-                                        Object[][] resultados, HTMLLine linha, int sequencia, int indiceDimensaoLinha, int indiceDimensaoRaizLinha,
-                                        HashMap<Field, Object> participParcialHorizontal, List<DimensionTotalized> dimensoesTotalizadas,
-                                        HashMap<Field, List<Object>> participHorizontais) throws BIException, DateException {
-        Object[][] valores = dimensao.consulta(resultados);
+    private boolean writeTotalPartial(Dimension dimension,
+                                      Object[][] results, HTMLLine htmlLine, int sequence, int lineDimensionIndex, int rootDimensionIndex,
+                                      HashMap<Field, Object> participParcialHorizontal, List<DimensionTotalized> totalizedDimensions,
+                                      HashMap<Field, List<Object>> horizontalParticipations) throws BIException, DateException {
+        Object[][] values = dimension.consult(results);
         boolean total = false;
-        if (dimensao.temDimensoesAbaixo()) {
-            for (int i = 0; i < dimensao.bottomDimensions.length; i++) {
-                if (dimensao.bottomDimensions[i] != null) {
-                    dimensao.setIndicator(this.indicator);
-                    dimensao.setAccumulatedLine(this.accumulatedLine);
+        if (dimension.hasLowerDimensions()) {
+            for (int i = 0; i < dimension.bottomDimensions.size(); i++) {
+                if (dimension.bottomDimensions.get(i) != null) {
+                    dimension.setIndicator(this.indicator);
+                    dimension.setAccumulatedLine(this.accumulatedLine);
 
-                    if (indiceDimensaoLinha != 0 && indiceDimensaoRaizLinha == 0) {
-                        indiceDimensaoRaizLinha = -1;
+                    if (lineDimensionIndex != 0 && rootDimensionIndex == 0) {
+                        rootDimensionIndex = -1;
                     }
 
-                    dimensao.escreveTotalParcial(dimensao.bottomDimensions[i], valores, linha, sequencia, i, indiceDimensaoRaizLinha, participParcialHorizontal, dimensoesTotalizadas, participHorizontais);
+                    dimension.writeTotalPartial(dimension.bottomDimensions.get(i), values, htmlLine, sequence, i, rootDimensionIndex, participParcialHorizontal, totalizedDimensions, horizontalParticipations);
                 } else {
                     break;
                 }
@@ -1222,192 +1142,194 @@ public class Dimension {
 
             CachedResults registroTotalizado = this.indicator.getTableRecords().getRegistroTotalizado();
             registroTotalizado.next();
-            registroTotalizado = this.geraRegistroTotalizado(valores, registroTotalizado, sequencia, dimensoesTotalizadas, dimensao);
+            registroTotalizado = this.getRegisterTotal(values, registroTotalizado, sequence, totalizedDimensions, dimension);
 
-            Field campo;
-            double soma;
+            Field field;
+            double sum;
             new HTMLCell();
-            HTMLCell celula;
+            HTMLCell cell;
 
-            HTMLStyle estilo = MultidimensionalStyles.getInstancia().getEstilos().get(MultidimensionalStyles.ESTILO_VAL_METRICA_LINHA);
+            HTMLStyle style = MultidimensionalStyles.getInstancia().getEstilos().get(MultidimensionalStyles.ESTILO_VAL_METRICA_LINHA);
 
-            for (int ii = 3; ii < valores[0].length; ii++) {
-                campo = (Field) valores[0][ii];
+            for (int i = 3; i < values[0].length; i++) {
+                field = (Field) values[0][i];
 
-                if (!campo.getDefaultField().equals("T")) {
-                    if (campo.isHorizontalAnalysis() && campo.getTitle().contains("AH%") && indiceDimensaoLinha == 0 && indiceDimensaoRaizLinha == 0) {
-                        Field pai = this.getFieldPai(campo, valores);
-                        if (pai.isPartialTotalization()) {
-                            PartialTotalization totalizParcial = this.partialTotalizations.getTotalPartial(valores, pai);
-                            if (totalizParcial != null) {
-                                double fin = totalizParcial.getPartialTotalization();
+                if (field.getDefaultField().equals("T")) {
+                    continue;
+                }
 
-                                if (pai.isApplyTotalizationExpression()) {
-                                    Expression.aplicaExpressaoNoRegistroTotalizado(this.indicator, pai, registroTotalizado);
-                                    fin = registroTotalizado.getDouble(pai.getFieldId());
-                                }
-                                totalizParcial.setPartialTotalization(fin);
-                                this.indicator.setPartialTotalizations(this.partialTotalizations);
-                                List<Object> valoresField = new ArrayList<>();
-                                participHorizontais.put(pai, valoresField);
-                                valoresField.add(fin);
+                if (field.isHorizontalAnalysis() && field.getTitle().contains("AH%") && lineDimensionIndex == 0 && rootDimensionIndex == 0) {
+                    Field parentField = this.getParentField(field, values);
+                    if (parentField.isPartialTotalization()) {
+                        PartialTotalization partialTotalization = this.partialTotalizations.getTotalPartial(values, parentField);
+                        if (partialTotalization != null) {
+                            double fin = partialTotalization.getPartialTotalization();
+
+                            if (parentField.isApplyTotalizationExpression()) {
+                                Expression.aplicaExpressaoNoRegistroTotalizado(this.indicator, parentField, registroTotalizado);
+                                fin = registroTotalizado.getDouble(parentField.getFieldId());
                             }
+                            partialTotalization.setPartialTotalization(fin);
+                            this.indicator.setPartialTotalizations(this.partialTotalizations);
+                            List<Object> fieldValues = new ArrayList<>();
+                            horizontalParticipations.put(parentField, fieldValues);
+                            fieldValues.add(fin);
                         }
-                    } else {
-                        if ((campo.getFieldType() == null && !campo.isTotalizingField()) || Constants.METRIC.equals(campo.getFieldType())) {
-                            celula = new HTMLCell();
-                            linha.addCell(celula);
-                            celula.setNowrap(true);
-                            celula.setStyle(estilo);
-                            celula.setAlignment(campo.getColumnAlignment());
-                            if (campo.isPartialTotalization()) {
-                                if (!("".equals(campo.getName()))) {
-                                    PartialTotalization totalizParcial = this.partialTotalizations.getTotalPartial(valores, campo);
-                                    soma = totalizParcial.getPartialTotalization();
+                    }
+                } else {
+                    if ((field.getFieldType() == null && !field.isTotalizingField()) || Constants.METRIC.equals(field.getFieldType())) {
+                        cell = new HTMLCell();
+                        htmlLine.addCell(cell);
+                        cell.setNowrap(true);
+                        cell.setStyle(style);
+                        cell.setAlignment(field.getColumnAlignment());
+                        if (field.isPartialTotalization()) {
+                            if (!("".equals(field.getName()))) {
+                                PartialTotalization partialTotalization = this.partialTotalizations.getTotalPartial(values, field);
+                                sum = partialTotalization.getPartialTotalization();
 
-                                    if (campo.isApplyTotalizationExpression()) {
-                                        Expression.aplicaExpressaoNoRegistroTotalizado(this.indicator, campo, registroTotalizado);
-                                        soma = registroTotalizado.getDouble(campo.getFieldId());
-                                    }
-                                    totalizParcial.setPartialTotalization(soma);
-                                    this.indicator.setPartialTotalizations(this.partialTotalizations);
-
-                                    celula.setContent(BIUtil.formatDoubleToText(soma, campo.getNumDecimalPositions()));
-                                    this.indicator.getColorAlerts().buscaAplicaAlertaValor(soma, celula, linha, campo, ColorAlert.TOTALIZACAO_PARCIAL, 2, this, true);
-                                    this.indicator.getColorAlerts().buscaAplicaAlertaOutroCampo(soma, campo, ColorAlert.TOTALIZACAO_PARCIAL, valores, linha.getCurrentCell(), linha, campo.getNumDecimalPositions(), this, dimensao, registroTotalizado, 0, true);
+                                if (field.isApplyTotalizationExpression()) {
+                                    Expression.aplicaExpressaoNoRegistroTotalizado(this.indicator, field, registroTotalizado);
+                                    sum = registroTotalizado.getDouble(field.getFieldId());
                                 }
-                            } else {
-                                String conteudo = "-";
-                                if (campo.isChildField() && campo.getTitle().startsWith("AH Participa��o")) {
-                                    Field pai = this.getFieldPai(campo, valores);
-                                    if (pai != null && this.partialTotalizations != null) {
-                                        int indice = this.getIndiceFieldPai(campo, valores);
+                                partialTotalization.setPartialTotalization(sum);
+                                this.indicator.setPartialTotalizations(this.partialTotalizations);
 
-                                        PartialTotalization totalizParcial = this.partialTotalizations.getTotalPartial(valores, pai);
-                                        if (totalizParcial != null) {
-                                            soma = totalizParcial.getPartialTotalization();
+                                cell.setContent(BIUtil.formatDoubleToText(sum, field.getNumDecimalPositions()));
+                                this.indicator.getColorAlerts().searchAlertValueApply(sum, cell, htmlLine, field, ColorAlert.TOTALIZACAO_PARCIAL, 2, this, true);
+                                this.indicator.getColorAlerts().searchOtherFieldAlertApply(sum, field, ColorAlert.TOTALIZACAO_PARCIAL, values, htmlLine.getCurrentCell(), htmlLine, field.getNumDecimalPositions(), this, dimension, registroTotalizado, 0, true);
+                            }
+                        } else {
+                            String content = "-";
+                            if (field.isChildField() && field.getTitle().startsWith("AH Participação")) {
+                                Field parentField = this.getParentField(field, values);
+                                if (parentField != null && this.partialTotalizations != null) {
+                                    int index = this.getParentFieldIndex(field, values);
 
-                                            if (pai.isApplyTotalizationExpression()) {
-                                                Expression.aplicaExpressaoNoRegistroTotalizado(this.indicator, pai, registroTotalizado);
-                                                soma = registroTotalizado.getDouble(pai.getFieldId());
-                                            }
-                                            totalizParcial.setPartialTotalization(soma);
-                                            this.indicator.setPartialTotalizations(this.partialTotalizations);
+                                    PartialTotalization partialTotalization = this.partialTotalizations.getTotalPartial(values, parentField);
+                                    if (partialTotalization != null) {
+                                        sum = partialTotalization.getPartialTotalization();
 
-                                            if (this.getAccumulatedLine(indice) != 0) {
-                                                if (campo.getTitle().equals("AH Participação Acumulada")) {
-                                                    if (participParcialHorizontal == null) {
-                                                        participParcialHorizontal = new HashMap<>();
-                                                    }
-                                                    if (participParcialHorizontal.get(pai) != null) {
-                                                        soma += Double.parseDouble((String) participParcialHorizontal.get(pai));
-                                                    }
-                                                    participParcialHorizontal.put(pai, String.valueOf(soma));
-                                                    this.indicator.getColorAlerts().buscaAplicaAlertaValor((soma / this.getAccumulatedLine(indice)) * 100, celula, linha, pai, ColorAlert.PARTICIPACAO_ACUMULADA_HORIZONTAL, 2, this, true);
-                                                } else {
-                                                    this.indicator.getColorAlerts().buscaAplicaAlertaValor((soma / this.getAccumulatedLine(indice)) * 100, celula, linha, pai, ColorAlert.PARTICIPACAO_HORIZONTAL, 2, this, true);
+                                        if (parentField.isApplyTotalizationExpression()) {
+                                            Expression.aplicaExpressaoNoRegistroTotalizado(this.indicator, parentField, registroTotalizado);
+                                            sum = registroTotalizado.getDouble(parentField.getFieldId());
+                                        }
+                                        partialTotalization.setPartialTotalization(sum);
+                                        this.indicator.setPartialTotalizations(this.partialTotalizations);
+
+                                        if (this.getAccumulatedLine(index) != 0) {
+                                            if (field.getTitle().equals("AH Participação Acumulada")) {
+                                                if (participParcialHorizontal == null) {
+                                                    participParcialHorizontal = new HashMap<>();
                                                 }
-                                                conteudo = BIUtil.formatDoubleToText(soma / this.getAccumulatedLine(indice), 2);
+                                                if (participParcialHorizontal.get(parentField) != null) {
+                                                    sum += Double.parseDouble((String) participParcialHorizontal.get(parentField));
+                                                }
+                                                participParcialHorizontal.put(parentField, String.valueOf(sum));
+                                                this.indicator.getColorAlerts().searchAlertValueApply((sum / this.getAccumulatedLine(index)) * 100, cell, htmlLine, parentField, ColorAlert.PARTICIPACAO_ACUMULADA_HORIZONTAL, 2, this, true);
+                                            } else {
+                                                this.indicator.getColorAlerts().searchAlertValueApply((sum / this.getAccumulatedLine(index)) * 100, cell, htmlLine, parentField, ColorAlert.PARTICIPACAO_HORIZONTAL, 2, this, true);
                                             }
+                                            content = BIUtil.formatDoubleToText(sum / this.getAccumulatedLine(index), 2);
                                         }
                                     }
-                                } else if (campo.isHorizontalAnalysis() && campo.getTitle().contains("AH%")) {
-                                    Field pai = this.getFieldPai(campo, valores);
-                                    if (pai.isPartialTotalization()) {
-                                        PartialTotalization totalizParcial = this.partialTotalizations.getTotalPartial(valores, pai);
-                                        if (totalizParcial != null) {
-                                            double fin = totalizParcial.getPartialTotalization();
+                                }
+                            } else if (field.isHorizontalAnalysis() && field.getTitle().contains("AH%")) {
+                                Field parentField = this.getParentField(field, values);
+                                if (parentField.isPartialTotalization()) {
+                                    PartialTotalization partialTotalization = this.partialTotalizations.getTotalPartial(values, parentField);
+                                    if (partialTotalization != null) {
+                                        double fin = partialTotalization.getPartialTotalization();
 
-                                            if (pai.isApplyTotalizationExpression()) {
-                                                Expression.aplicaExpressaoNoRegistroTotalizado(this.indicator, pai, registroTotalizado);
-                                                fin = registroTotalizado.getDouble(pai.getFieldId());
-                                            }
-                                            totalizParcial.setPartialTotalization(fin);
-                                            this.indicator.setPartialTotalizations(this.partialTotalizations);
-                                            
-                                            List<Object> valoresField = participHorizontais.get(pai);
-                                            valoresField.add(fin);
-                                            double ini;
-                                            if (Constants.DYNAMIC_HORIZONTAL_ANALYSIS.equals(pai.getHorizontalAnalysisType())) {
-                                                ini = (Double) valoresField.get(valoresField.size() - 2);
+                                        if (parentField.isApplyTotalizationExpression()) {
+                                            Expression.aplicaExpressaoNoRegistroTotalizado(this.indicator, parentField, registroTotalizado);
+                                            fin = registroTotalizado.getDouble(parentField.getFieldId());
+                                        }
+                                        partialTotalization.setPartialTotalization(fin);
+                                        this.indicator.setPartialTotalizations(this.partialTotalizations);
+
+                                        List<Object> fieldValues = horizontalParticipations.get(parentField);
+                                        fieldValues.add(fin);
+                                        double ini;
+                                        if (Constants.DYNAMIC_HORIZONTAL_ANALYSIS.equals(parentField.getHorizontalAnalysisType())) {
+                                            ini = (Double) fieldValues.get(fieldValues.size() - 2);
+                                        } else {
+                                            ini = (Double) fieldValues.get(0);
+                                        }
+
+                                        if (ini != fin) {
+                                            if (ini != 0) {
+                                                double res = (ini - fin) / ini;
+                                                content = BIUtil.formatDoubleToText(-1 * res, 2);
                                             } else {
-                                                ini = (Double) valoresField.get(0);
-                                            }
-
-                                            if (ini != fin) {
-                                                if (ini != 0) {
-                                                    double res = (ini - fin) / ini;
-                                                    conteudo = BIUtil.formatDoubleToText(-1 * res, 2);
-                                                } else {
-                                                    if (fin > 0) {
-                                                        conteudo = BIUtil.formatDoubleToText(1, 2);
-                                                    } else if (fin < 0) {
-                                                        conteudo = BIUtil.formatDoubleToText(-1, 2);
-                                                    }
+                                                if (fin > 0) {
+                                                    content = BIUtil.formatDoubleToText(1, 2);
+                                                } else if (fin < 0) {
+                                                    content = BIUtil.formatDoubleToText(-1, 2);
                                                 }
-                                            } else {
-                                                conteudo = BIUtil.formatDoubleToText(0, 2);
                                             }
                                         } else {
-                                            conteudo = "-";
+                                            content = BIUtil.formatDoubleToText(0, 2);
                                         }
                                     } else {
-                                        conteudo = "-";
+                                        content = "-";
                                     }
                                 } else {
-                                    if (campo.isChildField() && (campo.getTitle().startsWith("%"))) {
-                                        if (this.partialTotalizations != null) {
-                                            PartialTotalization totalizParcial = this.partialTotalizations.getTotalPartial(valores, campo);
-                                            if (totalizParcial != null) {
-                                                soma = totalizParcial.getPartialTotalization();
-                                                
-                                                if (campo.isApplyTotalizationExpression()) {
-                                                    Expression.aplicaExpressaoNoRegistroTotalizado(this.indicator, campo, registroTotalizado);
-                                                    soma = registroTotalizado.getDouble(campo.getFieldId());
-                                                }
-                                                totalizParcial.setPartialTotalization(soma);
-                                                this.indicator.setPartialTotalizations(this.partialTotalizations);
-                                                conteudo = BIUtil.formatDoubleToText(soma, 2);
+                                    content = "-";
+                                }
+                            } else {
+                                if (field.isChildField() && (field.getTitle().startsWith("%"))) {
+                                    if (this.partialTotalizations != null) {
+                                        PartialTotalization partialTotalization = this.partialTotalizations.getTotalPartial(values, field);
+                                        if (partialTotalization != null) {
+                                            sum = partialTotalization.getPartialTotalization();
+
+                                            if (field.isApplyTotalizationExpression()) {
+                                                Expression.aplicaExpressaoNoRegistroTotalizado(this.indicator, field, registroTotalizado);
+                                                sum = registroTotalizado.getDouble(field.getFieldId());
                                             }
+                                            partialTotalization.setPartialTotalization(sum);
+                                            this.indicator.setPartialTotalizations(this.partialTotalizations);
+                                            content = BIUtil.formatDoubleToText(sum, 2);
                                         }
                                     }
                                 }
-                                celula.setAlignment(campo.getColumnAlignment());
-                                celula.setContent(conteudo);
                             }
+                            cell.setAlignment(field.getColumnAlignment());
+                            cell.setContent(content);
                         }
                     }
                 }
             }
-            if (linha.isAppliedAlert()) {
-                linha.resetCellStyles();
+            if (htmlLine.isAppliedAlert()) {
+                htmlLine.resetCellStyles();
             }
         }
         return total;
     }
 
-    public Field getFieldPai(Field filho, Object[][] valores) {
-        Field retorno = null;
-        for (int i = 3; i < valores[0].length; i++) {
-            Field campo = (Field) valores[0][i];
-            if (campo != null) {
-                if (campo.getFieldId() == filho.getFieldId() && !campo.isChildField()) {
-                    retorno = campo;
+    public Field getParentField(Field child, Object[][] values) {
+        Field result = null;
+        for (int i = 3; i < values[0].length; i++) {
+            Field field = (Field) values[0][i];
+            if (field != null) {
+                if (field.getFieldId() == child.getFieldId() && !field.isChildField()) {
+                    result = field;
                     break;
                 }
             } else {
                 break;
             }
         }
-        return retorno;
+        return result;
     }
 
-    public int getIndiceFieldPai(Field filho, Object[][] valores) {
+    public int getParentFieldIndex(Field child, Object[][] values) {
         int retorno = -1;
-        for (int i = 3; i < valores[0].length; i++) {
-            Field campo = (Field) valores[0][i];
+        for (int i = 3; i < values[0].length; i++) {
+            Field campo = (Field) values[0][i];
             if (campo != null) {
-                if (campo.getFieldId() == filho.getFieldId() && !campo.isChildField()) {
+                if (campo.getFieldId() == child.getFieldId() && !campo.isChildField()) {
                     retorno = i;
                     break;
                 }
@@ -1418,106 +1340,106 @@ public class Dimension {
         return retorno;
     }
     
-    public CachedResults geraRegistroTotalizado(Object[][] valores, CachedResults registroTotalizado, int sequencia, List<DimensionTotalized> dimensoesTotalizadas, Dimension dimensaoLinha) throws BIException {
+    public CachedResults getRegisterTotal(Object[][] values, CachedResults registerTotal, int sequence, List<DimensionTotalized> dimensionsTotal, Dimension lineDimension) throws BIException {
 
-        Field campo;
-        Field campoMetrica = null;
-        int indiceMetrica = 0;
-        for (int ii = 3; ii < valores[0].length; ii++) {
-            campo = (Field) valores[0][ii];
+        Field field;
+        Field metricField = null;
+        int metricIndex = 0;
+        for (int ii = 3; ii < values[0].length; ii++) {
+            field = (Field) values[0][ii];
             double somaParcial = 0;
-            if ((campo.getFieldType() == null && !campo.isTotalizingField()) || Constants.METRIC.equals(campo.getFieldType())) {
+            if ((field.getFieldType() == null && !field.isTotalizingField()) || Constants.METRIC.equals(field.getFieldType())) {
 
-                if (campo.isPartialTotalization() || campo.isTotalizingField()) {
-                    if (!("".equals(campo.getName()))) {
-                        campoMetrica = campo;
-                        indiceMetrica = ii;
-                        for (int iii = 1; iii < valores.length; iii++) {
-                            somaParcial += (Double) valores[iii][ii];
+                if (field.isPartialTotalization() || field.isTotalizingField()) {
+                    if (!("".equals(field.getName()))) {
+                        metricField = field;
+                        metricIndex = ii;
+                        for (int iii = 1; iii < values.length; iii++) {
+                            somaParcial += (Double) values[iii][ii];
                         }
-                        this.setaTotalizacao(campo, valores, sequencia, somaParcial, registroTotalizado);
+                        this.setTotalization(field, values, sequence, somaParcial, registerTotal);
                     }
                 }
-                if (campo.isVerticalAnalysis()) {
+                if (field.isVerticalAnalysis()) {
                     double somaParticipacao = 0;
                     double somaParametroPercentual = 0;
 
-                    if (campoMetrica.getVerticalAnalysisType().equals(Constants.VERTICAL_ANALYSIS_PARTIAL_TYPE)) {
-                        this.getSomaParametroPercentual(dimensoesTotalizadas, campoMetrica, dimensaoLinha);
+                    if (metricField != null && metricField.getVerticalAnalysisType().equals(Constants.VERTICAL_ANALYSIS_PARTIAL_TYPE)) {
+                        this.getPercentageParameter(dimensionsTotal, metricField, lineDimension);
                         somaParametroPercentual = this.parentValue;
                         this.parentValue = 0;
                         this.parentValueFound = false;
                     } else {
-                        if (valores.length > 1)
-                            somaParametroPercentual = (Double) valores[1][indiceMetrica + 1];
+                        if (values.length > 1)
+                            somaParametroPercentual = (Double) values[1][metricIndex + 1];
                     }
-                    if (!("".equals(campo.getName()))) {
-                        for (int iii = 1; iii < valores.length; iii++) {
-                            double valorField = (Double) valores[iii][ii];
+                    if (!("".equals(field.getName()))) {
+                        for (int iii = 1; iii < values.length; iii++) {
+                            double valorField = (Double) values[iii][ii];
                             somaParticipacao += (valorField / somaParametroPercentual);
                         }
-                        this.setaTotalizacao((Field) valores[0][ii + 2], valores, sequencia, somaParticipacao, registroTotalizado);
+                        this.setTotalization((Field) values[0][ii + 2], values, sequence, somaParticipacao, registerTotal);
                     }
                 }
             }
         }
 
-        return registroTotalizado;
+        return registerTotal;
     }
 
-    public double getValorDimensaoGeral(Field metrica, Dimension dimensaoConsulta, List<DimensionTotalized> dimensoesTotalizadasRaiz) {
+    public double getGeneralDimensionValue(Field metric, Dimension dimension, List<DimensionTotalized> dimensionTotalRoot) {
         double valorTotal = 0;
-        for (DimensionTotalized biDimensionTotalizada : dimensoesTotalizadasRaiz) {
-            PartialTotalization totalizacaoFilha = biDimensionTotalizada.getTotalizacaoParcial(metrica, dimensaoConsulta);
-            valorTotal += totalizacaoFilha.getPartialTotalization();
+        for (DimensionTotalized dimensionTotalized : dimensionTotalRoot) {
+            PartialTotalization partialTotalization = dimensionTotalized.getPartialTotalization(metric, dimension);
+            valorTotal += partialTotalization.getPartialTotalization();
         }
         return valorTotal;
     }
 
-    private void getSomaParametroPercentual(List<DimensionTotalized> dimensoesTotalizadas, Field campo, Dimension dimensaoLinha) {
-        for (int x = 0; x < dimensoesTotalizadas.size() && !this.parentValueFound; x++) {
-            DimensionTotalized dimensaoTotalizada = dimensoesTotalizadas.get(x);
-            if (dimensaoTotalizada != null) {
-                if (dimensaoTotalizada.getChildDimensions() != null && !dimensaoTotalizada.getChildDimensions().isEmpty()) {
-                    if (this.getValorDimensao().equals(dimensaoTotalizada.getValorDimensao()) && Arrays.deepEquals(this.getResults(), dimensaoTotalizada.getResults())) {
-                        DimensionTotalized pai = (DimensionTotalized) dimensaoTotalizada.getParentDimension();
+    private void getPercentageParameter(List<DimensionTotalized> totalizedList, Field campo, Dimension lineDimension) {
+        for (int x = 0; x < totalizedList.size() && !this.parentValueFound; x++) {
+            DimensionTotalized dimensionTotalized = totalizedList.get(x);
+            if (dimensionTotalized != null) {
+                if (dimensionTotalized.getChildDimensions() != null && !dimensionTotalized.getChildDimensions().isEmpty()) {
+                    if (this.getDimensionValue().equals(dimensionTotalized.getDimensionValue()) && Arrays.deepEquals(this.getResults(), dimensionTotalized.getResults())) {
+                        DimensionTotalized parent = (DimensionTotalized) dimensionTotalized.getParentDimension();
 
-                        if (pai != null) {
+                        if (parent != null) {
                             this.parentValueFound = true;
-                            PartialTotalization totalizacaoParcial = pai.getTotalizacaoParcial(campo, dimensaoLinha);
-                            this.parentValue = totalizacaoParcial.getPartialTotalization();
+                            PartialTotalization partialTotalization = parent.getPartialTotalization(campo, lineDimension);
+                            this.parentValue = partialTotalization.getPartialTotalization();
                         } else {
-                            this.parentValue = this.getValorDimensaoGeral(campo, dimensaoLinha, dimensoesTotalizadas);
+                            this.parentValue = this.getGeneralDimensionValue(campo, lineDimension, totalizedList);
                         }
                     } else {
-                        this.getSomaParametroPercentual(dimensaoTotalizada.getChildDimensions(), campo, dimensaoLinha);
+                        this.getPercentageParameter(dimensionTotalized.getChildDimensions(), campo, lineDimension);
                     }
                 }
             }
         }
     }
 
-    private void setaTotalizacao(Field campo, Object[][] valores, int sequencia, double totalizacao, CachedResults registroTotalizado) throws BIException {
-        PartialTotalization totalizParcial = new PartialTotalization();
-        totalizParcial.setField(campo);
-        totalizParcial.setValues(valores);
-        totalizParcial.setSequence(sequencia);
-        totalizParcial.setPartialTotalization(totalizacao);
+    private void setTotalization(Field campo, Object[][] values, int sequence, double totalization, CachedResults totalizedRegister) throws BIException {
+        PartialTotalization partialTotalization = new PartialTotalization();
+        partialTotalization.setField(campo);
+        partialTotalization.setValues(values);
+        partialTotalization.setSequence(sequence);
+        partialTotalization.setPartialTotalization(totalization);
 
         if (this.partialTotalizations == null) {
             this.partialTotalizations = new PartialTotalizations();
         }
-        this.partialTotalizations.addToTotalPartial(totalizParcial);
-        registroTotalizado.setDouble(totalizacao, campo.getFieldId());
+        this.partialTotalizations.addToTotalPartial(partialTotalization);
+        totalizedRegister.setDouble(totalization, campo.getFieldId());
         this.indicator.setPartialTotalizations(this.partialTotalizations);
     }
 
-    public Object getValorDimensao() {
+    public Object getDimensionValue() {
         return this.value.getValor(0);
     }
 
-    public double getAccumulatedLine(int posicao) {
-        return accumulatedLine[posicao];
+    public double getAccumulatedLine(int position) {
+        return accumulatedLine[position];
     }
 
     public void setTotalLine(int totalLine) {
@@ -1525,7 +1447,7 @@ public class Dimension {
     }
 
 
-    public List<Field> getFieldsDaDimensao() {
+    public List<Field> getDimensionFields() {
         List<Field> result = new ArrayList<>();
         if (this.results != null && this.results[0] != null) {
             for (Object obj : this.results[0]) {
@@ -1537,173 +1459,157 @@ public class Dimension {
         return result;
     }
 
-    public ConsultResult[] getResultadoConsultaExpressao() {
-        ConsultResult[] retorno;
+    public ConsultResult[] getConsultExpressionResult() {
+        ConsultResult[] result;
         if (this.accumulatedLine != null) {
-            retorno = new ConsultResult[this.accumulatedLine.length];
+            result = new ConsultResult[this.accumulatedLine.length];
             int cont = 0;
             for (int i = 2; i < this.results[0].length; i++) {
                 Field campo = (Field) this.results[0][i];
                 if (campo.isMetric()) {
                     if (this.accumulatedLine != null) {
-                        retorno[cont] = ConsultResultFactory.factory(campo);
-                        retorno[cont++].addValor(this.accumulatedLine[i]);
+                        result[cont] = ConsultResultFactory.factory(campo);
+                        result[cont++].addValor(this.accumulatedLine[i]);
                     }
                 }
             }
         } else {
-            retorno = null;
+            result = null;
         }
-        return retorno;
+        return result;
     }
 
-    public double calculaExpressaoAcumulado(Field campo, int indice) throws BIException {
-        ConsultResult[] resultAux = this.getResultadoConsultaExpressao();
-        Double valorDaExpressao = null;
-        if (campo != null && campo.isExpression() && campo.getAccumulatedLine().equals("E")) {
-            Expression expressao = indicator.getFieldExpression(campo.getName());
-            if (StringHelper.hasAllExpressionFields(this.getFieldsDaDimensao(), campo, indicator)) {
+    public double calAccExpression(Field field, int index) throws BIException {
+        ConsultResult[] resultAux = this.getConsultExpressionResult();
+        Double expressionValue = null;
+        if (field != null && field.isExpression() && field.getAccumulatedLine().equals("E")) {
+            Expression expression = indicator.getFieldExpression(field.getName());
+            if (StringHelper.hasAllExpressionFields(this.getDimensionFields(), field, indicator)) {
                 CachedResults cacheResult = new CachedResults(resultAux);
                 cacheResult.next();
-                if (campo.isExpression() && (campo.getName().toUpperCase().trim().indexOf("SE(") == 0 || campo.getName().toUpperCase().trim().indexOf("IF(") == 0)) {
-                    ConditionalExpression expressaoCondicional = StringHelper.getExpressionConditional(campo.getName(), indicator);
-                    valorDaExpressao = StringHelper.calculateConditionalExpression(expressaoCondicional, cacheResult);
+                if (field.isExpression() && (field.getName().toUpperCase().trim().indexOf("SE(") == 0 || field.getName().toUpperCase().trim().indexOf("IF(") == 0)) {
+                    ConditionalExpression expressionConditional = StringHelper.getExpressionConditional(field.getName(), indicator);
+                    expressionValue = StringHelper.calculateConditionalExpression(expressionConditional, cacheResult);
                 } else {
-                    valorDaExpressao = expressao.calculaExpressao(cacheResult);
+                    expressionValue = expression.calculaExpressao(cacheResult);
                 }
-                this.lineExpression[indice] = valorDaExpressao;
+                this.lineExpression[index] = expressionValue;
             }
         }
-        if (valorDaExpressao == null) {
+        if (expressionValue == null) {
             return 0;
         }
-        return valorDaExpressao;
+        return expressionValue;
     }
 
-    public double calculaExpressaoAcumuladoExcel(Field campo, int indice) throws BIException {
-        ConsultResult[] resultAux = this.getResultadoConsultaExpressao();
-        Double valorDaExpressao = null;
-        if (campo != null && campo.isExpression() && campo.getAccumulatedLine().equals("E")) {
-            Expression expressao = indicator.getFieldExpression(campo.getName());
-            if (StringHelper.hasAllExpressionFields(this.getFieldsDaDimensao(), campo, indicator)) {
+    public double calcExcelAccExpression(Field field, int index) throws BIException {
+        ConsultResult[] resultAux = this.getConsultExpressionResult();
+        Double expressionValue = null;
+        if (field != null && field.isExpression() && field.getAccumulatedLine().equals("E")) {
+            Expression expression = indicator.getFieldExpression(field.getName());
+            if (StringHelper.hasAllExpressionFields(this.getDimensionFields(), field, indicator)) {
                 CachedResults cacheResult = new CachedResults(resultAux);
                 cacheResult.next();
-                if (campo.isExpression() && (campo.getName().toUpperCase().trim().indexOf("SE(") == 0 || campo.getName().toUpperCase().trim().indexOf("IF(") == 0)) {
-                    ConditionalExpression expressaoCondicional = StringHelper.getExpressionConditional(campo.getName(), indicator);
-                    valorDaExpressao = StringHelper.calculateConditionalExpression(expressaoCondicional, cacheResult);
+                if (field.isExpression() && (field.getName().toUpperCase().trim().indexOf("SE(") == 0 || field.getName().toUpperCase().trim().indexOf("IF(") == 0)) {
+                    ConditionalExpression conditionalExpression = StringHelper.getExpressionConditional(field.getName(), indicator);
+                    expressionValue = StringHelper.calculateConditionalExpression(conditionalExpression, cacheResult);
                 } else {
-                    valorDaExpressao = expressao.calculaExpressao(cacheResult);
+                    expressionValue = expression.calculaExpressao(cacheResult);
                 }
-                this.lineExpression[indice] = valorDaExpressao;
+                this.lineExpression[index] = expressionValue;
             }
         }
-        if (valorDaExpressao == null) {
+        if (expressionValue == null) {
             return 0;
         }
-        return valorDaExpressao;
+        return expressionValue;
     }
 
-    public int getQuantidadeColunas() {
-        int retorno = 0;
-        for (Dimension biDimension : this.bottomDimensions) {
-            if (biDimension != null) {
-                if (!biDimension.temDimensoesAbaixo()) {
-                    retorno++;
-                } else {
-                    retorno += biDimension.getQuantidadeColunas();
-                }
-            } else {
-                break;
-            }
+    public int getColumnCount() {
+        return this.bottomDimensions.stream()
+                .filter(Objects::nonNull)
+                .mapToInt(dimension -> dimension.hasLowerDimensions() ? dimension.getColumnCount() : 1)
+                .sum();
+    }
+
+    public double getAccLineUpdated(int fieldIndex) {
+        if (this.filterBySequence) {
+            return 0;
         }
-        return retorno;
-    }
 
-    public double getAcumuladoLinhaAtualizado(int indiceField) {
-        double retorno = 0;
-        if (!this.filterBySequence) {
-            if (this.temDimensoesAbaixo()) {
-                for (Dimension bottomDimension : this.bottomDimensions) {
-                    if (bottomDimension != null) {
-                        retorno += bottomDimension.getAcumuladoLinhaAtualizado(indiceField);
-                    } else {
-                        break;
-                    }
-                }
-                return retorno;
-            } else {
-                if (this.accumulatedLine != null && (!this.isFilterByAccumulated() && !this.isFilterBySequence())) {
-                    if (this.getValue().getField().isExpression()) {
-                        this.accumulatedLine[indiceField] = this.lineExpression[indiceField];
-                    }
-                    retorno = this.accumulatedLine[indiceField];
-                }
+        if (this.hasLowerDimensions()) {
+            return this.bottomDimensions.stream()
+                    .filter(Objects::nonNull)
+                    .mapToDouble(dimension -> dimension.getAccLineUpdated(fieldIndex))
+                    .sum();
+        } else if (this.accumulatedLine != null && !this.isFilterByAccumulated() && !this.isFilterBySequence()) {
+            if (this.getValue().getField().isExpression()) {
+                this.accumulatedLine[fieldIndex] = this.lineExpression[fieldIndex];
             }
+            return this.accumulatedLine[fieldIndex];
         }
-        return retorno;
+
+        return 0;
     }
 
-    public double getAcumuladoLinhaOutros(int indiceField) {
-        double retorno = 0;
-        if (this.temDimensoesAbaixo()) {
+    public double getAccLineOthers(int fieldIndex) {
+        if (this.hasLowerDimensions()) {
             if (this.isFilterBySequence()) {
-                return this.accumulatedLine[indiceField];
+                return this.accumulatedLine[fieldIndex];
             } else {
-                for (Dimension biDimension : this.bottomDimensions) {
-                    if (biDimension != null) {
-                        retorno += biDimension.getAcumuladoLinhaOutros(indiceField);
-                    }
-                }
+                return this.bottomDimensions.stream()
+                        .filter(Objects::nonNull)
+                        .mapToDouble(dimension -> dimension.getAccLineOthers(fieldIndex))
+                        .sum();
             }
         } else {
             if (this.isFilterBySequence() || this.isFilterByAccumulated()) {
-                return this.accumulatedLine[indiceField];
+                return this.accumulatedLine[fieldIndex];
             }
         }
-        return retorno;
+        return 0;
     }
 
-    public double getValorTotalDimensao(int indiceField) {
-        double retorno = 0;
-        for (int i = 1; i < this.results.length; i++) {
-            retorno += (Double) this.results[i][indiceField];
-        }
-        return retorno;
+    public double getDimensionTotalValue(int fieldIndex) {
+        return Arrays.stream(this.results)
+                .skip(1)
+                .mapToDouble(result -> (Double) result[fieldIndex])
+                .sum();
     }
 
-    public Object[][] aplicaFiltroSequencia(Object[][] resultados, boolean filtradoAcumulado, Dimension[] dimensoesLinha, Dimension colunaPai) {
-        if (this.temMaisDimensoesVisualizadasAbaixo()) {
-            Dimension[] dimensoes = this.bottomDimensions;
-            for (int i = 0; i < this.bottomDimensions.length; i++) {
-                if (dimensoes[i] != null) {
-                    dimensoes[i].setIndicator(this.indicator);
-                    resultados = dimensoes[i].aplicaFiltroSequencia(resultados, dimensoes[i].isFilterByAccumulated(), dimensoesLinha, colunaPai);
+    public Object[][] applySequenceFilter(Object[][] results, boolean accFiltered, List<Dimension> lineDimensions, Dimension parentColumn) {
+        if (this.hasLowerVisibleDimensions()) {
+            List<Dimension> dimensions = this.bottomDimensions;
+            for (Dimension dimension : this.bottomDimensions) {
+                if (dimension != null) {
+                    dimension.setIndicator(this.indicator);
+                    results = dimension.applySequenceFilter(results, dimension.isFilterByAccumulated(), lineDimensions, parentColumn);
                     this.setFilterBySequence(true);
                 } else {
                     break;
                 }
             }
         } else {
-            if (!filtradoAcumulado) {
-                this.procuraValoresFiltrados(resultados, dimensoesLinha, colunaPai, 1);
-                this.limpaResultadosDimensao();
+            if (!accFiltered) {
+                this.searchFilteredValues(results, lineDimensions, parentColumn, 1);
+                this.clearDimensionResults();
                 this.setFilterBySequence(true);
             }
         }
-        return resultados;
+        return results;
     }
 
-    public boolean validaAcumulado(Object[][] resultados, boolean filtradoSequencia, Dimension[] dimensoesLinha, Dimension colunaPai, boolean filtroAlgumaDimensao) {
-        if (this.temMaisDimensoesAbaixo()) {
-            Dimension[] dimensoes = this.bottomDimensions;
+    public boolean validateAccumulated(Object[][] results, boolean sequenceFiltered, List<Dimension> dimensionLine, Dimension parentColumn, boolean anyDimensionFilter) {
+        if (this.hasMoreLowerDimensions()) {
+            List<Dimension> dimensions = this.bottomDimensions;
             int total = 0;
             int filtrado = 0;
-            for (int i = 0; i < this.bottomDimensions.length; i++) {
-                if (dimensoes[i] != null) {
+            for (Dimension dimension : this.bottomDimensions) {
+                if (dimension != null) {
                     total++;
-                    dimensoes[i].setIndicator(this.indicator);
-                    filtroAlgumaDimensao = dimensoes[i].validaAcumulado(resultados, filtradoSequencia, dimensoesLinha, colunaPai, filtroAlgumaDimensao);
-                    if (dimensoes[i].isFilterByAccumulated() || dimensoes[i].isFilterBySequence()) {
+                    dimension.setIndicator(this.indicator);
+                    anyDimensionFilter = dimension.validateAccumulated(results, sequenceFiltered, dimensionLine, parentColumn, anyDimensionFilter);
+                    if (dimension.isFilterByAccumulated() || dimension.isFilterBySequence()) {
                         filtrado++;
                     }
                 } else {
@@ -1712,52 +1618,54 @@ public class Dimension {
             }
             if (total == filtrado && total > 0) {
                 this.setFilterByAccumulated(true);
-                filtroAlgumaDimensao = true;
+                anyDimensionFilter = true;
             }
         } else {
             boolean filtradoAcumulado = false;
             if (this.indicator.getFiltersFunction() != null && this.indicator.getFiltersFunction().getFilterAccumulated() != null) {
-                FilterAccumulated filtroAcumulado = this.indicator.getFiltersFunction().getFilterAccumulated();
+                FilterAccumulated filterAccumulated = this.indicator.getFiltersFunction().getFilterAccumulated();
                 for (int i = 2; i < this.results[0].length; i++) {
                     Field campo = (Field) this.results[0][i];
-                    if (campo.equals(filtroAcumulado.getField()) && !campo.getAccumulatedLine().equals("N")) {
-                        double valorVerificado = this.getAccumulatedLine(i);
+                    if (campo.equals(filterAccumulated.getField()) && !campo.getAccumulatedLine().equals("N")) {
+                        double value = this.getAccumulatedLine(i);
                         if (campo.isExpression() && campo.getAccumulatedLine().equals("E")) {
-                            valorVerificado = this.calculaExpressaoField(campo, i);
+                            value = this.calculateFieldExpression(campo, i);
                         }
-                        if (!filtroAcumulado.verifyCondition(valorVerificado)) {
+                        if (!filterAccumulated.verifyCondition(value)) {
                             filtradoAcumulado = true;
-                            filtroAlgumaDimensao = true;
+                            anyDimensionFilter = true;
                             break;
                         }
 
                     }
                 }
             }
-            if (filtradoAcumulado && !filtradoSequencia && !this.filterBySequence) {
-                this.procuraValoresFiltrados(resultados, dimensoesLinha, colunaPai, 2);
-                this.limpaResultadosDimensao();
+            if (filtradoAcumulado && !sequenceFiltered && !this.filterBySequence) {
+                this.searchFilteredValues(results, dimensionLine, parentColumn, 2);
+                this.clearDimensionResults();
             }
             this.setFilterByAccumulated(filtradoAcumulado);
         }
-        return filtroAlgumaDimensao;
+        return anyDimensionFilter;
     }
 
-    public void procuraValoresFiltrados(Object[][] resultados, Dimension[] dimensoesLinha, Dimension colunaPai, int tipo) {
-        for (Dimension biDimension : dimensoesLinha) {
-            if (biDimension != null) {
-                if (biDimension.temDimensoesAbaixo()) {
-                    this.procuraValoresFiltrados(resultados, biDimension.bottomDimensions, colunaPai, tipo);
+    public void searchFilteredValues(Object[][] results, List<Dimension> dimensionLines, Dimension parentColumn, int type) {
+        for (Dimension currentDimension : dimensionLines) {
+            Optional<Dimension> dimensionOptional = Optional.ofNullable(currentDimension);
+            if (dimensionOptional.isPresent()) {
+                Dimension dimension = dimensionOptional.get();
+                if (dimension.hasLowerDimensions()) {
+                    this.searchFilteredValues(results, dimension.getBottomDimensions(), parentColumn, type);
                 } else {
-                    Object[][] result = biDimension.consulta(this.results);
-                    for (int a = 0; a < result[0].length; a++) {
-                        if (result[0][a] != null) {
-                            Field campoAux = (Field) result[0][a];
+                    Object[][] result = dimension.consult(this.results);
+                    for (Object[] resultRow : result) {
+                        Field field = (Field) resultRow[0];
+                        if (field != null) {
                             for (int ii = 1; ii < result.length; ii++) {
-                                if (campoAux.isMetric() && campoAux.isTotalizingField()) {
-                                    double valor = (Double) result[ii][a];
-                                    ArrayList<Dimension> chaveDimensao = this.getChavesDimensaoLinha(biDimension);
-                                    this.removeValorTotalizacaoField(resultados, valor, campoAux, chaveDimensao, colunaPai, tipo);
+                                if (field.isMetric() && field.isTotalizingField()) {
+                                    double value = (Double) resultRow[ii];
+                                    List<Dimension> dimensionKey = this.getLineDimensionKeys(dimension);
+                                    this.removeTotalizationFieldValue(results, value, field, dimensionKey, parentColumn, type);
                                 }
                             }
                         }
@@ -1769,145 +1677,128 @@ public class Dimension {
         }
     }
 
-    public void removeValorTotalizacaoField(Object[][] resultados, double valor, Field campoValor, ArrayList<Dimension> chaveDimensao, Dimension colunaPai, int tipo) {
-        Field campoRef = null;
-        int indiceDimensaoLinhaAtual = -1;
+    public void removeTotalizationFieldValue(Object[][] results, double value, Field valueField, List<Dimension> dimensionKey, Dimension parentDimension, int type) {
+        final int NOT_FOUND = -1;
+        Field referenceField = Optional.ofNullable(dimensionKey.get(0))
+                .map(Dimension::getValue)
+                .map(ConsultResult::getField)
+                .orElse(null);
 
-        int indiceField = -1;
+        int lineDimensionIndex = NOT_FOUND;
+        int valueFieldIndex = NOT_FOUND;
 
-        Dimension dimensaoLinha = chaveDimensao.get(0);
-        if (dimensaoLinha != null && dimensaoLinha.getValue().getField() != null) {
-
-            campoRef = dimensaoLinha.getValue().getField();
-        }
-
-        for (int i = 0; i < resultados[0].length; i++) {
-            Field campoAux = (Field) resultados[0][i];
-            if (campoRef.getFieldId() == campoAux.getFieldId()) {
-                indiceDimensaoLinhaAtual = i;
-            } else if (campoValor.equals(campoAux)) {
-                indiceField = i;
+        for (int i = 0; i < results[0].length; i++) {
+            Field currentField = (Field) results[0][i];
+            if (referenceField != null && referenceField.getFieldId() == currentField.getFieldId()) {
+                lineDimensionIndex = i;
+            } else if (valueField.equals(currentField)) {
+                valueFieldIndex = i;
             }
         }
 
-        if (indiceDimensaoLinhaAtual != -1 && indiceField != -1) {
-            for (int i = 1; i < resultados.length; i++) {
-                if (resultados[i][indiceDimensaoLinhaAtual] != null) {
-                    Iterator<Dimension> iterator = chaveDimensao.iterator();
-                    int indice = indiceDimensaoLinhaAtual;
-                    int contador = 0;
-                    Dimension dimensaoAtual = iterator.next();
+        if (lineDimensionIndex != NOT_FOUND && valueFieldIndex != NOT_FOUND) {
+            for (int i = 1; i < results.length; i++) {
+                if (results[i][lineDimensionIndex] != null) {
+                    Iterator<Dimension> iterator = dimensionKey.iterator();
+                    int index = lineDimensionIndex;
+                    int count = 0;
+                    Dimension currentDimension = iterator.next();
 
-                    while (dimensaoAtual != null && dimensaoAtual.getValue().getValor(0).equals(resultados[i][indice])) {
+                    while (currentDimension != null && currentDimension.getValue().getValor(0).equals(results[i][index])) {
                         if (iterator.hasNext()) {
-                            dimensaoAtual = iterator.next();
+                            currentDimension = iterator.next();
                         }
-                        indice++;
-                        contador++;
+                        index++;
+                        count++;
                     }
 
-                    if (contador == chaveDimensao.size()) {
-                        double valorOriginal = (Double) resultados[i][indiceField + 1];
-                        double valorFinal = valorOriginal - valor;
-                        resultados[i][indiceField + 1] = valorFinal;
+                    if (count == dimensionKey.size()) {
+                        double originalValue = (Double) results[i][valueFieldIndex + 1];
+                        double finalValue = originalValue - value;
+                        results[i][valueFieldIndex + 1] = finalValue;
                     }
                 }
             }
         }
     }
 
-    public void limpaResultadosDimensao() {
-        for (int i = 1; i < this.results.length; i++) {
-            for (int j = 0; j < this.results[0].length; j++) {
-                Field campo = (Field) this.results[0][j];
-                if (campo.isMetric() && campo.isPartialTotalization()) {
-                    this.results[i][j] = (double) 0;
-                }
-            }
-        }
+    public void clearDimensionResults() {
+        IntStream.range(1, this.results.length)
+                .forEach(i -> IntStream.range(0, this.results[0].length)
+                        .filter(j -> {
+                            Field field = (Field) this.results[0][j];
+                            return field.isMetric() && field.isPartialTotalization();
+                        })
+                        .forEach(j -> this.results[i][j] = 0.0));
     }
 
-    public ArrayList<Dimension> getChavesDimensaoLinha(Dimension dimensao) {
-        ArrayList<Dimension> retorno = new ArrayList<>();
-        int tamanho = 0;
-        if (dimensao != null) {
-            retorno.add(dimensao);
-            tamanho++;
-            Dimension pai = dimensao;
-            while (pai != null) {
-                pai = dimensao.getParentDimension();
-                if (pai != null) {
-                    retorno.add(pai);
-                    tamanho++;
-                    dimensao = pai;
-                }
-            }
+    public List<Dimension> getLineDimensionKeys(Dimension dimension) {
+        List<Dimension> result = new ArrayList<>();
+        Dimension current = dimension;
+        while (current != null) {
+            result.add(current);
+            current = current.getParentDimension();
         }
-        ArrayList<Dimension> retorno2 = (ArrayList<Dimension>) retorno.clone();
-        for (Dimension obj : retorno2) {
-            if (tamanho > 0) {
-                retorno.set(--tamanho, obj);
-            }
-        }
-        return retorno;
+        Collections.reverse(result);
+        return result;
     }
 
-    public double calculaExpressaoField(Field campo, int i) {
-        ConsultResult[] resultAux = this.getResultadoConsultaExpressao();
-        Double valorDaExpressao = null;
-        if (campo != null && campo.isExpression() && campo.getAccumulatedLine().equals("E")) {
-            Expression expressao = indicator.getFieldExpression(campo.getName());
-            if (StringHelper.hasAllExpressionFields(this.getFieldsDaDimensao(), campo, indicator)) {
+    public double calculateFieldExpression(Field field, int i) {
+        ConsultResult[] resultAux = this.getConsultExpressionResult();
+        double valorDaExpressao = 0d;
+        if (field != null && field.isExpression() && field.getAccumulatedLine().equals("E")) {
+            Expression expression = indicator.getFieldExpression(field.getName());
+            if (StringHelper.hasAllExpressionFields(this.getDimensionFields(), field, indicator)) {
                 CachedResults cacheResult;
                 try {
                     cacheResult = new CachedResults(resultAux);
                     cacheResult.next();
-                    if (campo.isExpression() && (campo.getName().toUpperCase().trim().indexOf("SE(") == 0 || campo.getName().toUpperCase().trim().indexOf("IF(") == 0)) {
-                        ConditionalExpression expressaoCondicional = StringHelper.getExpressionConditional(campo.getName(), indicator);
-                        valorDaExpressao = StringHelper.calculateConditionalExpression(expressaoCondicional, cacheResult);
+                    if (field.isExpression() && (field.getName().toUpperCase().trim().indexOf("SE(") == 0 || field.getName().toUpperCase().trim().indexOf("IF(") == 0)) {
+                        ConditionalExpression conditional = StringHelper.getExpressionConditional(field.getName(), indicator);
+                        valorDaExpressao = StringHelper.calculateConditionalExpression(conditional, cacheResult);
                     } else {
-                        valorDaExpressao = expressao.calculaExpressao(cacheResult);
+                        valorDaExpressao = expression.calculaExpressao(cacheResult);
                     }
                     this.lineExpression[i] = valorDaExpressao;
                 } catch (BIException e) {
-                    e.printStackTrace();
+                    log.error("Error calculating expression", e);
                 }
             }
         }
         return valorDaExpressao;
     }
 
-    public Object[][] validaSequencia(FilterSequence filtroSequencia, Dimension[] dimensoesLinha, int quantidadeResultadosColuna, Dimension colunaPai, Object[][] resultados) {
+    public void validateSequence(FilterSequence sequenceFilter, List<Dimension> lineDimension, int columnResultCount, Dimension parentColumn, Object[][] results) {
         if ("S".equals(this.getValue().getField().getDefaultField())) {
 
             boolean filtradoSequencia = false;
             if (this.indicator.getFiltersFunction() != null && this.indicator.getFiltersFunction().getFilterSequence() != null && this.indicator.isUsesSequence()) {
-                if (filtroSequencia != null) {
-                    if (filtroSequencia.isRanking()) {
-                        if (!filtroSequencia.verifyRanking(this.getCounter(), quantidadeResultadosColuna)) {
+                if (sequenceFilter != null) {
+                    if (sequenceFilter.isRanking()) {
+                        if (!sequenceFilter.verifyRanking(this.getCounter(), columnResultCount)) {
                             filtradoSequencia = true;
                         }
                     } else {
-                        if (!filtroSequencia.verifyCondition(this.getCounter())) {
+                        if (!sequenceFilter.verifyCondition(this.getCounter())) {
                             filtradoSequencia = true;
                         }
                     }
                 }
             }
             if (filtradoSequencia) {
-                this.aplicaFiltroSequencia(resultados, this.isFilterByAccumulated(), dimensoesLinha, colunaPai);
+                this.applySequenceFilter(results, this.isFilterByAccumulated(), lineDimension, parentColumn);
                 this.setFilterBySequence(filtradoSequencia);
             }
         } else {
             int total = 0;
             int filtrado = 0;
-            Dimension[] dimensoesAbaixo = this.getBottomDimensions();
-            for (int j = 0; j < dimensoesAbaixo.length; j++) {
-                if (dimensoesAbaixo[j] != null) {
+            List<Dimension> bottomDimensions = this.getBottomDimensions();
+            for (Dimension dimension : bottomDimensions) {
+                if (dimension != null) {
                     total++;
-                    this.bottomDimensions[j].setIndicator(this.indicator);
-                    this.bottomDimensions[j].validaSequencia(filtroSequencia, dimensoesLinha, quantidadeResultadosColuna, colunaPai, resultados);
-                    if (this.bottomDimensions[j].isFilterBySequence() || this.bottomDimensions[j].isFilterByAccumulated()) {
+                    dimension.setIndicator(this.indicator);
+                    dimension.validateSequence(sequenceFilter, lineDimension, columnResultCount, parentColumn, results);
+                    if (dimension.isFilterBySequence() || dimension.isFilterByAccumulated()) {
                         filtrado++;
                     }
                 } else {
@@ -1918,16 +1809,15 @@ public class Dimension {
                 this.setFilterBySequence(true);
             }
         }
-        return resultados;
     }
 
-    public int getQuantidadeResultadosExistentesColuna() {
+    public int getColumnResultsCount() {
         int retorno = 0;
-        for (int i = 0; i < this.bottomDimensions.length; i++) {
-            if (this.bottomDimensions[i] != null) {
-                if ("T".equals(this.bottomDimensions[i].getValue().getField().getDefaultField())) {
-                    retorno += this.bottomDimensions[i].getQuantidadeResultadosExistentesColuna();
-                } else if (!this.bottomDimensions[i].isFilterByAccumulated()) {
+        for (Dimension dimension : this.bottomDimensions) {
+            if (dimension != null) {
+                if ("T".equals(dimension.getValue().getField().getDefaultField())) {
+                    retorno += dimension.getColumnResultsCount();
+                } else if (!dimension.isFilterByAccumulated()) {
                     retorno++;
                 }
             } else {
@@ -1937,40 +1827,40 @@ public class Dimension {
         return retorno;
     }
 
-    public int setContadoresDimensao(int cont) {
-        for (int i = 0; i < this.bottomDimensions.length; i++) {
-            if (this.bottomDimensions[i] != null) {
-                this.bottomDimensions[i].setIndicator(this.indicator);
-                if ("S".equals(this.bottomDimensions[i].getValue().getField().getDefaultField()) && !this.bottomDimensions[i].isFilterByAccumulated()) {
-                    this.bottomDimensions[i].setCounter(cont);
+    public int setDimensionCounter(int count) {
+        for (Dimension dimension : this.bottomDimensions) {
+            if (dimension != null) {
+                dimension.setIndicator(this.indicator);
+                if ("S".equals(dimension.getValue().getField().getDefaultField()) && !dimension.isFilterByAccumulated()) {
+                    dimension.setCounter(count);
                     if (this.indicator.getSequeceValuesRepository() != null) {
-                        this.indicator.getSequeceValuesRepository().addValor(this.bottomDimensions[i].getCounter());
+                        this.indicator.getSequeceValuesRepository().addValor(dimension.getCounter());
                     }
-                    this.bottomDimensions[i].setCounterEnabled(true);
-                    cont++;
+                    dimension.setCounterEnabled(true);
+                    count++;
                 } else {
-                    cont = this.bottomDimensions[i].setContadoresDimensao(cont);
+                    count = dimension.setDimensionCounter(count);
                 }
             } else {
                 break;
             }
         }
-        return cont;
+        return count;
     }
 
     public HashMap<String, Double> getTotalLines() {
         if (this.totalLines == null) {
-            this.totalLines = new HashMap<String, Double>();
+            this.totalLines = new HashMap<>();
         }
         return this.totalLines;
     }
 
-    public int calculaQuantidadeColunasLinha(Dimension[] dimensoesLinha) {
+    public int getColumnLinesCount(List<Dimension> lineDimensions) {
         int contador = 0;
-        for (Dimension biDimension : dimensoesLinha) {
+        for (Dimension biDimension : lineDimensions) {
             if (biDimension != null) {
-                if (biDimension.temDimensoesAbaixo()) {
-                    contador += biDimension.calculaQuantidadeColunasLinha(biDimension.getBottomDimensions());
+                if (biDimension.hasLowerDimensions()) {
+                    contador += biDimension.getColumnLinesCount(biDimension.getBottomDimensions());
                 } else {
                     contador++;
                 }
@@ -1981,12 +1871,12 @@ public class Dimension {
         return contador;
     }
 
-    public void aplicaQuantidadeColunasLinha(Dimension[] dimensoesColuna, int quantidadeColunasLinha) {
-        for (Dimension biDimension : dimensoesColuna) {
+    public void applyLineColumnsCount(List<Dimension> dimensionColumns, int lineColumnsCount) {
+        for (Dimension biDimension : dimensionColumns) {
             if (biDimension != null) {
-                biDimension.setColumnLineAmount(quantidadeColunasLinha);
-                if (biDimension.temDimensoesAbaixo()) {
-                    biDimension.aplicaQuantidadeColunasLinha(biDimension.getBottomDimensions(), quantidadeColunasLinha);
+                biDimension.setColumnLineAmount(lineColumnsCount);
+                if (biDimension.hasLowerDimensions()) {
+                    biDimension.applyLineColumnsCount(biDimension.getBottomDimensions(), lineColumnsCount);
                 }
             } else {
                 break;
@@ -1994,12 +1884,12 @@ public class Dimension {
         }
     }
 
-    public void aplicaSomaLinha(Dimension[] dimensoesColuna, double somaLinha) {
-        for (Dimension biDimension : dimensoesColuna) {
+    public void applyLineSum(List<Dimension> dimensionColumns, double lineSum) {
+        for (Dimension biDimension : dimensionColumns) {
             if (biDimension != null) {
-                biDimension.setLineSum(somaLinha);
-                if (biDimension.temDimensoesAbaixo()) {
-                    biDimension.aplicaSomaLinha(biDimension.getBottomDimensions(), somaLinha);
+                biDimension.setLineSum(lineSum);
+                if (biDimension.hasLowerDimensions()) {
+                    biDimension.applyLineSum(biDimension.getBottomDimensions(), lineSum);
                 }
             } else {
                 break;
@@ -2009,7 +1899,7 @@ public class Dimension {
 
     public void setAlertLineStyle(boolean alertLineStyle) {
         this.alertLineStyle = alertLineStyle;
-        if (this.temDimensoesAbaixo()) {
+        if (this.hasLowerDimensions()) {
             for (Dimension bottonDimension : this.bottomDimensions) {
                 if (bottonDimension != null) {
                     bottonDimension.setAlertLineStyle(alertLineStyle);
@@ -2022,7 +1912,7 @@ public class Dimension {
 
     public void setLineAppliedStyle(Object lineAppliedStyle) {
         this.lineAppliedStyle = lineAppliedStyle;
-        if (this.temDimensoesAbaixo()) {
+        if (this.hasLowerDimensions()) {
             for (Dimension bottonDimension : this.bottomDimensions) {
                 if (bottonDimension != null) {
                     bottonDimension.setLineAppliedStyle(lineAppliedStyle);
@@ -2033,10 +1923,10 @@ public class Dimension {
         }
     }
 
-    public int getQuantidadeMetricasComAnaliseHorizontal(Field[] metricasLinha) {
+    public int getMetricLinesWithAH(Field[] metricLines) {
         int retorno = 0;
-        if (metricasLinha != null) {
-            for (Field field : metricasLinha) {
+        if (metricLines != null) {
+            for (Field field : metricLines) {
                 if (field != null && field.isHorizontalAnalysis() && field.getTitle().contains("AH%")) {
                     retorno++;
                 }
@@ -2045,11 +1935,11 @@ public class Dimension {
         return retorno;
     }
 
-    public void retiraObjetosMemoria() {
+    public void clearMemoryObject() {
         if (this.bottomDimensions != null) {
             for (Dimension biDimension : this.bottomDimensions) {
                 if (biDimension != null) {
-                    biDimension.retiraObjetosMemoria();
+                    biDimension.clearMemoryObject();
                 } else {
                     break;
                 }

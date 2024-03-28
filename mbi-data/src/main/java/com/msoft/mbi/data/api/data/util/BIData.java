@@ -69,10 +69,15 @@ public final class BIData implements Comparable<Object> {
         resetHour();
     }
 
-    public BIData(String date, String entryFormat) throws DateException {
+    public BIData(String date, String entryFormat)  {
         super();
         this.entryFormat = entryFormat;
-        Date data = validate(date);
+        Date data;
+        try {
+            data = validate(date);
+        } catch (DateException e) {
+            throw new RuntimeException(e);
+        }
         this.calendar.setTimeInMillis(data.getTime());
         resetHour();
     }

@@ -4,10 +4,15 @@ import com.msoft.mbi.data.api.data.exception.BIFilterException;
 import com.msoft.mbi.data.api.data.indicator.Field;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
+@Log4j2
 public abstract class ConsultResult {
 
     @Getter
@@ -46,15 +51,15 @@ public abstract class ConsultResult {
         this.values.addAll(values);
     }
 
-    public void addToValues(ArrayList<Object> valores) {
-        this.values.addAll(valores);
+    public void addToValues(ArrayList<Object> values) {
+        this.values.addAll(values);
     }
 
-    public void addValor(Object valor) {
-        if (valor == null || valor.equals("")) {
-            valor = " ";
+    public void addValor(Object value) {
+        if (value == null || value.equals("")) {
+            value = " ";
         }
-        values.add(values.size(), valor);
+        values.add(values.size(), value);
     }
 
     public void removeValor(int index) {
@@ -91,13 +96,17 @@ public abstract class ConsultResult {
         this.isSequenceFiltered = isSequenceFiltered;
     }
 
-    public ArrayList<Object> getFormattedValues() throws BIFilterException {
-        ArrayList<Object> formattedValues = new ArrayList<>();
-        for (int x = 0; x < this.values.size(); x++) {
-            Object valor = this.getFormattedValue(x);
-            formattedValues.add(valor);
-        }
-        return formattedValues;
+    public List<Object> getFormattedValues() {
+        return IntStream.range(0, this.values.size())
+                .mapToObj(i -> {
+                    try {
+                        return this.getFormattedValue(i);
+                    } catch (BIFilterException e) {
+                        log.error("Error formatting value at index " + i + ": " + e.getMessage());
+                        return null; // or some default value
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
 }

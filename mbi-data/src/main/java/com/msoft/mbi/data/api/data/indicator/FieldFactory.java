@@ -24,49 +24,49 @@ public class FieldFactory {
     public FieldFactory() {
     }
 
-    public static List<Field> criaFields(ResultSet rsltField, Indicator indicador, NamedParameterJdbcTemplate jdbcTemplate) throws BIException {
+    public static List<Field> createFields(ResultSet resultSet, Indicator indicator, NamedParameterJdbcTemplate jdbcTemplate) throws BIException {
         List<Field> fields = new ArrayList<>();
         try {
-            while (rsltField.next()) {
-                Field campo = new Field(BIUtil.verificanullInt(rsltField, "campo_analise"), indicador, jdbcTemplate);
-                campo.setName(BIUtil.verificanullString(rsltField, "nom_campo"));
-                campo.setTitle(BIUtil.verificanullString(rsltField, "titulo_campo"));
-                campo.setFieldType(BIUtil.verificanullString(rsltField, "tip_campo"));
-                campo.setDataType(BIUtil.verificanullString(rsltField, "tip_dado"));
-                campo.setNickname(BIUtil.verificanullString(rsltField, "apelido_campo"));
-                campo.setExpression(BIUtil.verificanullString(rsltField, "eh_expressao").equals("S"));
-                campo.setDrillDownSequence(BIUtil.verificanullInt(rsltField, "sequencia_filtro"));
-                campo.setVisualizationSequence(BIUtil.verificanullInt(rsltField, "sequencia_visualiz"));
+            while (resultSet.next()) {
+                Field field = new Field(BIUtil.verificanullInt(resultSet, "campo_analise"), indicator, jdbcTemplate);
+                field.setName(BIUtil.verificanullString(resultSet, "nom_campo"));
+                field.setTitle(BIUtil.verificanullString(resultSet, "titulo_campo"));
+                field.setFieldType(BIUtil.verificanullString(resultSet, "tip_campo"));
+                field.setDataType(BIUtil.verificanullString(resultSet, "tip_dado"));
+                field.setNickname(BIUtil.verificanullString(resultSet, "apelido_campo"));
+                field.setExpression(BIUtil.verificanullString(resultSet, "eh_expressao").equals("S"));
+                field.setDrillDownSequence(BIUtil.verificanullInt(resultSet, "sequencia_filtro"));
+                field.setVisualizationSequence(BIUtil.verificanullInt(resultSet, "sequencia_visualiz"));
 
-                campo.setDisplayLocation(rsltField.getInt("local_apres"));
-                campo.setDefaultField(BIUtil.verificanullString(rsltField, "padrao"));
-                campo.setOrder(BIUtil.verificanullInt(rsltField, "ordem"));
-                campo.setTableNickname(BIUtil.verificanullString(rsltField, "apelido_tabela"));
-                campo.setOrderDirection(BIUtil.verificanullString(rsltField, "sentido_ordem"));
-                campo.setNumDecimalPositions(BIUtil.verificanullInt(rsltField, "num_pos_decimais"));
-                campo.setTotalizingField(BIUtil.verificanullString(rsltField, "totaliz_campo"));
-                campo.setVerticalAnalysisType(BIUtil.verificanullString(rsltField, "analise_vertical"));
-                campo.setAggregationType(BIUtil.verificanullString(rsltField, "tip_agregacao"));
-                campo.setAccumulatedParticipation(rsltField.getBoolean("particip_acumulada"));
-                campo.setAccumulatedValue(rsltField.getBoolean("val_acumulado"));
-                campo.setColumnWidth(rsltField.getString("largura_coluna"));
-                campo.setColumnAlignment(BIUtil.verificanullString(rsltField, "pos_alinham_coluna"));
-                campo.setHorizontalAnalysisType(BIUtil.verificanullString(rsltField, "analise_horizont"));
-                campo.setSumLine("S".equals(rsltField.getString("totaliz_camp_linha")));
-                campo.setAccumulatedLine(rsltField.getString("acum_campo_linha"));
-                campo.setDateMask(BIUtil.verificanullString(rsltField, "mascara_dat"));
-                campo.setPartialTotalization(rsltField.getInt("totaliz_parcial") == 1);
-                campo.setHorizontalParticipation(rsltField.getString("particip_horizont") != null && (rsltField.getString("particip_horizont").equals("S")));
-                campo.setHorizontalParticipationAccumulated(rsltField.getString("part_acum_horizont") != null && (rsltField.getString("part_acum_horizont").equals("S")));
-                campo.setAccumulatedOrder(rsltField.getInt("ordem_acumulado"));
-                campo.setAccumulatedOrderDirection(rsltField.getString("sent_ord_acumulado"));
-                campo.setMediaLine(rsltField.getString("utiliza_med_linha") != null && rsltField.getString("utiliza_med_linha").equals("S"));
-                campo.setFixedValue("S".equals(rsltField.getString("val_fixo")));
-                campo.setDrillDown("S".equals(rsltField.getString("eh_drilldown")));
-                campo.setGeneralFilter(rsltField.getInt("filtro_geral"));
-                String filtroObrigatorio = rsltField.getString("filtro_obrigatorio");
-                campo.setRequiredField((filtroObrigatorio != null) && (filtroObrigatorio.equals("S")));
-                FieldFactory.addField(fields, campo);
+                field.setDisplayLocation(resultSet.getInt("local_apres"));
+                field.setDefaultField(BIUtil.verificanullString(resultSet, "padrao"));
+                field.setOrder(BIUtil.verificanullInt(resultSet, "ordem"));
+                field.setTableNickname(BIUtil.verificanullString(resultSet, "apelido_tabela"));
+                field.setOrderDirection(BIUtil.verificanullString(resultSet, "sentido_ordem"));
+                field.setNumDecimalPositions(BIUtil.verificanullInt(resultSet, "num_pos_decimais"));
+                field.setTotalizingField(BIUtil.verificanullString(resultSet, "totaliz_campo"));
+                field.setVerticalAnalysisType(BIUtil.verificanullString(resultSet, "analise_vertical"));
+                field.setAggregationType(BIUtil.verificanullString(resultSet, "tip_agregacao"));
+                field.setAccumulatedParticipation(resultSet.getBoolean("particip_acumulada"));
+                field.setAccumulatedValue(resultSet.getBoolean("val_acumulado"));
+                field.setColumnWidth(resultSet.getString("largura_coluna"));
+                field.setColumnAlignment(BIUtil.verificanullString(resultSet, "pos_alinham_coluna"));
+                field.setHorizontalAnalysisType(BIUtil.verificanullString(resultSet, "analise_horizont"));
+                field.setSumLine("S".equals(resultSet.getString("totaliz_camp_linha")));
+                field.setAccumulatedLine(resultSet.getString("acum_campo_linha"));
+                field.setDateMask(BIUtil.verificanullString(resultSet, "mascara_dat"));
+                field.setPartialTotalization(resultSet.getInt("totaliz_parcial") == 1);
+                field.setHorizontalParticipation(resultSet.getString("particip_horizont") != null && (resultSet.getString("particip_horizont").equals("S")));
+                field.setHorizontalParticipationAccumulated(resultSet.getString("part_acum_horizont") != null && (resultSet.getString("part_acum_horizont").equals("S")));
+                field.setAccumulatedOrder(resultSet.getInt("ordem_acumulado"));
+                field.setAccumulatedOrderDirection(resultSet.getString("sent_ord_acumulado"));
+                field.setMediaLine(resultSet.getString("utiliza_med_linha") != null && resultSet.getString("utiliza_med_linha").equals("S"));
+                field.setFixedValue("S".equals(resultSet.getString("val_fixo")));
+                field.setDrillDown("S".equals(resultSet.getString("eh_drilldown")));
+                field.setGeneralFilter(resultSet.getInt("filtro_geral"));
+                String filtroObrigatorio = resultSet.getString("filtro_obrigatorio");
+                field.setRequiredField((filtroObrigatorio != null) && (filtroObrigatorio.equals("S")));
+                FieldFactory.addField(fields, field);
             }
         } catch (SQLException sqle) {
             BIDatabaseException biex = new BIDatabaseException(sqle);
@@ -77,7 +77,7 @@ public class FieldFactory {
         return fields;
     }
 
-    public static Field criaFieldFixoNaoVisualizado(int codigoIndicador) throws BIException {
+    public static Field createFieldDixedVisualization(int indCode) throws BIException {
         Field campo = new Field();
         campo.setFieldId(1000);
         campo.setName(" 1 ");

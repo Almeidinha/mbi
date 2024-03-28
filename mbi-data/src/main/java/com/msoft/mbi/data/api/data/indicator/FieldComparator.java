@@ -4,13 +4,13 @@ import java.util.Comparator;
 
 public class FieldComparator {
 
-    public static final Comparator<Field> ORDENACAO_TITULO = new OrdenacaoPeloTituloCampo();
+    public static final Comparator<Field> ORDER_BY_TITLE = new OrderByTitle();
 
-    private static class OrdenacaoPeloTituloCampo implements Comparator<Field> {
-        public int compare(Field campo1, Field campo2) {
-            String title1 = campo1.getTitle().toUpperCase().trim();
-            String title2 = campo2.getTitle().toUpperCase().trim();
-            return title1.compareTo(title2);
+    private static class OrderByTitle implements Comparator<Field> {
+        public int compare(Field fieldOne, Field fieldTwo) {
+            String titleOne = fieldOne.getTitle().toUpperCase().trim();
+            String titleTwo = fieldTwo.getTitle().toUpperCase().trim();
+            return titleOne.compareTo(titleTwo);
         }
     }
 

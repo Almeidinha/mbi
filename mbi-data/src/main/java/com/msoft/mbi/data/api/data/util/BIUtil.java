@@ -434,7 +434,7 @@ public class BIUtil {
     }
 
     public static List<Field> ordenaCampoPeloTitulo(List<Field> campos) {
-        campos.sort(FieldComparator.ORDENACAO_TITULO);
+        campos.sort(FieldComparator.ORDER_BY_TITLE);
         return campos;
     }
 

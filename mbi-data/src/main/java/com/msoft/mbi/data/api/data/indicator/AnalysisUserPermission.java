@@ -22,12 +22,12 @@ public class AnalysisUserPermission {
     private String allowChange;
     private String favorite;
 
-    public static final String PERMITE_MODIFICAR = "S";
-    public static final String NAO_PERMITE_MODIFICAR = "N";
+    public static final String ALLOW_CHANGE = "S";
+    public static final String DONT_ALLOW_CHANGE = "N";
 
-    public AnalysisUserPermission(int indicador, int usuario) throws BIException {
-        this.indicatorCode = indicador;
-        this.userId = usuario;
+    public AnalysisUserPermission(int indCode, int userCode) throws BIException {
+        this.indicatorCode = indCode;
+        this.userId = userCode;
         this.consulta();
     }
 
@@ -232,11 +232,11 @@ public class AnalysisUserPermission {
     }
 
     public ArrayList<String> getPermissoesEscrita(int codigoIndicador) throws BIException {
-        return getPermissoes(codigoIndicador, AnalysisUserPermission.PERMITE_MODIFICAR);
+        return getPermissoes(codigoIndicador, AnalysisUserPermission.ALLOW_CHANGE);
     }
 
     public ArrayList<String> getPermissoesLeitura(int codigoIndicador) throws BIException {
-        return getPermissoes(codigoIndicador, AnalysisUserPermission.NAO_PERMITE_MODIFICAR);
+        return getPermissoes(codigoIndicador, AnalysisUserPermission.DONT_ALLOW_CHANGE);
     }
 
 }
