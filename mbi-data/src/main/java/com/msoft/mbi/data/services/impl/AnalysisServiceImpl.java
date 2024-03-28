@@ -6,10 +6,10 @@ import com.msoft.mbi.data.api.data.*;
 import com.msoft.mbi.data.api.data.inputs.AnalysisInput;
 import com.msoft.mbi.data.api.data.exception.BIException;
 import com.msoft.mbi.data.api.data.indicator.Indicator;
+import com.msoft.mbi.data.api.dtos.indicators.FieldDTO;
 import com.msoft.mbi.data.api.dtos.indicators.IndicatorDTO;
-import com.msoft.mbi.data.api.dtos.indicators.entities.BIAnalysisFieldDTO;
 import com.msoft.mbi.data.api.mapper.indicators.IndicatorMapper;
-import com.msoft.mbi.data.api.mapper.indicators.entities.BIAnalysisFieldMapper;
+import com.msoft.mbi.data.api.mapper.indicators.entities.BIAnalysisFieldToFieldDTOMapper;
 import com.msoft.mbi.data.api.mapper.indicators.entities.BIIndToIndicatorDTOMapper;
 import com.msoft.mbi.data.connection.ConnectionManager;
 import com.msoft.mbi.data.services.*;
@@ -34,14 +34,15 @@ public class AnalysisServiceImpl implements AnalysisService {
     private final BIUserService userService;
     private final BIIndToIndicatorDTOMapper biIndToIndicatorDTOMapper;
     private final IndicatorMapper indicatorMapper;
-    private final BIAnalysisFieldMapper analysisFieldMapper;
+    private final BIAnalysisFieldToFieldDTOMapper biAnalysisFieldToFieldDTOMapper;
 
     @Override
     public IndicatorDTO createAnalysis(AnalysisInput analysisInput, String tenantId) {
 
         BIIndEntity biIndEntity = this.buildBIInd(analysisInput);
 
-        List<BIAnalysisFieldEntity> fields = this.buildFields(analysisInput.getBiAnalysisFields());
+        List<BIAnalysisFieldEntity> fields = this.buildEntityFieldsFromFieldDto(analysisInput.getFields());
+
         fields.forEach(biIndEntity::addField);
 
         BIIndEntity savedEntity = this.indService.save(biIndEntity);
@@ -60,7 +61,7 @@ public class AnalysisServiceImpl implements AnalysisService {
         int currentUserId = this.userService.getCurrentUserId();
         biIndEntity.setLastUpdatedUser(currentUserId);
 
-        List<BIAnalysisFieldEntity> fields = buildFields(analysisInput.getBiAnalysisFields());
+        List<BIAnalysisFieldEntity> fields = buildEntityFieldsFromFieldDto(analysisInput.getFields());
         fields.forEach(biIndEntity::addField);
 
         this.userIndService.deleteByIndicatorId(id);
@@ -191,13 +192,13 @@ public class AnalysisServiceImpl implements AnalysisService {
                 .build();
     }
 
-    private List<BIAnalysisFieldEntity> buildFields(List<BIAnalysisFieldDTO> analysisFieldDTOS) {
+    private List<BIAnalysisFieldEntity> buildEntityFieldsFromFieldDto(List<FieldDTO> analysisFieldDTOS) {
 
         if (analysisFieldDTOS == null || analysisFieldDTOS.isEmpty()) {
             return null;
         }
 
-        return analysisFieldMapper.listDTOToEntityList(analysisFieldDTOS);
+        return biAnalysisFieldToFieldDTOMapper.setDTOToEntity(analysisFieldDTOS);
     }
 
 }

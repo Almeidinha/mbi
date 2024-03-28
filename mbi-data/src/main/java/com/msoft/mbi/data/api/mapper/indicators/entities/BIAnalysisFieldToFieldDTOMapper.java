@@ -7,6 +7,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
 import java.util.Set;
 
 @Mapper(componentModel = "spring")
@@ -59,7 +60,7 @@ public interface BIAnalysisFieldToFieldDTOMapper {
             @Mapping(target = "verticalAnalysis", expression = "java(!entity.getVertical().equals(\"N\"))"),
             @Mapping(target = "horizontalAnalysis", expression = "java(!entity.getHorizontal().equals(\"N\"))"),
     })
-    Set<FieldDTO> setEntityToDTO(Set<BIAnalysisFieldEntity> entities);
+    List<FieldDTO> setEntityToDTO(List<BIAnalysisFieldEntity> entities);
 
     @Mappings({
             @Mapping(target = "vertical", source = "verticalAnalysisType"),
@@ -74,5 +75,5 @@ public interface BIAnalysisFieldToFieldDTOMapper {
             @Mapping(target = "accumulatedLineField", source = "horizontalParticipationAccumulated"),
 
     })
-    Set<BIAnalysisFieldEntity> setDTOToEntity(Set<FieldDTO> dtos);
+    List<BIAnalysisFieldEntity> setDTOToEntity(List<FieldDTO> dtos);
 }
