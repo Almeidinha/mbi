@@ -13,8 +13,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.msoft.mbi.data.api.data.util.Constants.*;
 
@@ -85,6 +83,45 @@ public class Field implements Cloneable {
     private boolean deleted;
 
     private int numberOfSteps;
+
+    private static final Map<String, String> replacements;
+
+    static {
+        replacements = new HashMap<>();
+        replacements.put("[^\\p{ASCII}]", "");
+        replacements.put("[\\s-_]", "");
+        replacements.put("'", CONSTANT_APOSTROPHE);
+        replacements.put("!", CONSTANT_EXCLAMATION);
+        replacements.put("@", CONSTANT_AT_SIGN);
+        replacements.put("#", CONSTANT_HASH);
+        replacements.put("\\$", CONSTANT_DOLLAR_SIGN);
+        replacements.put("%", CONSTANT_PERCENT);
+        replacements.put("´", CONSTANT_ACUTE);
+        replacements.put("`", CONSTANT_GRAVE_ACCENT);
+        replacements.put("&", CONSTANT_AMPERSAND);
+        replacements.put("\\*", CONSTANT_ASTERISK);
+        replacements.put("=", CONSTANT_EQUAL);
+        replacements.put("\\+", CONSTANT_PLUS);
+        replacements.put("§", SECTION_SIGN);
+        replacements.put("\\|", CONSTANT_VERTICAL_BAR);
+        replacements.put(",", CONSTANT_COMA);
+        replacements.put("\\.", CONSTANT_DOT);
+        replacements.put(";", CONSTANT_SEMICOLON);
+        replacements.put(":", CONSTANT_COLON);
+        replacements.put("\\?", CONSTANT_QUESTION_MARK);
+        replacements.put("/", CONSTANT_SLASH);
+        replacements.put("º", MASCULINE_ORDINAL);
+        replacements.put("ª", FEMININE_ORDINAL);
+        replacements.put("£", POUND_SIGN);
+        replacements.put("¢", CENT_SIGN);
+        replacements.put("¬", NOT_SIGN);
+        replacements.put("¹", CONSTANT_SUPERSCRIPT_ONE);
+        replacements.put("²", CONSTANT_SUPERSCRIPT_TWO);
+        replacements.put("³", CONSTANT_SUPERSCRIPT_THREE);
+        replacements.put("\\(", "__");
+        replacements.put("\\)", "__");
+        replacements.put("\\\\", "___");
+    }
 
     public boolean isDimension() {
         return DIMENSION.equals(this.fieldType);
@@ -271,61 +308,14 @@ public class Field implements Cloneable {
     }
 
     public static String convertTitleToNickname(String title) {
-
-        Map<String, String> replacements = new HashMap<>();
-
-        replacements.put("[^\\p{ASCII}]", "");
-        replacements.put("[\\s-_]", "");
-        replacements.put("'", CONSTANT_APOSTROPHE);
-        replacements.put("!", CONSTANT_EXCLAMATION);
-        replacements.put("@", CONSTANT_AT_SIGN);
-        replacements.put("#", CONSTANT_HASH);
-        replacements.put("\\$", CONSTANT_DOLLAR_SIGN);
-        replacements.put("%", CONSTANT_PERCENT);
-        replacements.put("´", CONSTANT_ACUTE);
-        replacements.put("`", CONSTANT_GRAVE_ACCENT);
-        replacements.put("&", CONSTANT_AMPERSAND);
-        replacements.put("\\*", CONSTANT_ASTERISK);
-        replacements.put("=", CONSTANT_EQUAL);
-        replacements.put("\\+", CONSTANT_PLUS);
-        replacements.put("§", SECTION_SIGN);
-        replacements.put("\\|", CONSTANT_VERTICAL_BAR);
-        replacements.put(",", CONSTANT_COMA);
-        replacements.put("\\.", CONSTANT_DOT);
-        replacements.put(";", CONSTANT_SEMICOLON);
-        replacements.put(":", CONSTANT_COLON);
-        replacements.put("\\?", CONSTANT_QUESTION_MARK);
-        replacements.put("/", CONSTANT_SLASH);
-        replacements.put("º", MASCULINE_ORDINAL);
-        replacements.put("ª", FEMININE_ORDINAL);
-        replacements.put("£", POUND_SIGN);
-        replacements.put("¢", CENT_SIGN);
-        replacements.put("¬", NOT_SIGN);
-        replacements.put("¹", CONSTANT_SUPERSCRIPT_ONE);
-        replacements.put("²", CONSTANT_SUPERSCRIPT_TWO);
-        replacements.put("³", CONSTANT_SUPERSCRIPT_THREE);
-        replacements.put("\\(", "__");
-        replacements.put("\\)", "__");
-        replacements.put("\\\\", "___");
-
-        StringBuilder result = getTitleTiNicknameResult(title, replacements);
+        StringBuilder result = getTitleTiNicknameResult(title);
         return result.toString().toLowerCase();
     }
 
-    private static StringBuilder getTitleTiNicknameResult(String title, Map<String, String> replacements) {
+    private static StringBuilder getTitleTiNicknameResult(String title) {
         StringBuilder result = new StringBuilder(title);
-        for (Map.Entry<String, String> entry : replacements.entrySet()) {
-            String regex = entry.getKey();
-            String replacement = entry.getValue();
-            Pattern pattern = Pattern.compile(Pattern.quote(regex));
-            Matcher matcher = pattern.matcher(result);
-            int offset = 0;
-            while (matcher.find()) {
-                int start = matcher.start() + offset;
-                int end = matcher.end() + offset;
-                result.replace(start, end, replacement);
-                offset += replacement.length() - (end - start);
-            }
+        for (Map.Entry<String, String> entry : Field.replacements.entrySet()) {
+            result = new StringBuilder(result.toString().replaceAll(entry.getKey(), entry.getValue()));
         }
         return result;
     }
