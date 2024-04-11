@@ -693,7 +693,7 @@ public class Indicator {
                 configureCampoMetaData(field, metaDataField, lastDrillDownSequence);
                 cubeMetaData.addField(metaDataField, field.getFieldType());
 
-                if (this.usesSequence && firtsColumn == null) {
+                if ("S".equals(field.getDefaultField()) && this.usesSequence && firtsColumn == null) {
                     firtsColumn = metaDataField;
                     configurePrimerColumn(firtsColumn);
                 }
@@ -706,6 +706,14 @@ public class Indicator {
 
     private boolean isFieldValid(Field field) {
         return field != null && !(field.getTitle().equalsIgnoreCase("Não visualizado") && field.isFixedValue());
+    }
+
+    private void configurePrimerColumn(MetaDataField firstColumn) {
+        firstColumn.setShowSequence(true);
+        FilterSequence filterSequence = getFiltersFunction().getFilterSequence();
+        if (filterSequence != null) {
+            firstColumn.setRankingExpression(filterSequence.toString());
+        }
     }
 
     private MetaDataField createCampoMetaData(Field field) {
@@ -733,14 +741,6 @@ public class Indicator {
                         "Verdana", false, false, 10);
                 metaDataField.addColorAlert(alertaCor, ColorAlertMetadata.VALUE_ALERT_TYPE);
             }
-        }
-    }
-
-    private void configurePrimerColumn(MetaDataField firstColumn) {
-        firstColumn.setShowSequence(true);
-        FilterSequence filterSequence = getFiltersFunction().getFilterSequence();
-        if (filterSequence != null) {
-            firstColumn.setRankingExpression(filterSequence.toString());
         }
     }
 
@@ -990,7 +990,7 @@ public class Indicator {
                 return null;
             }
 
-            if (field == null || (field.getTitle().equalsIgnoreCase("Não visualizado") && field.isFixedValue())) {
+            if (!isFieldValid(field)) {
                 continue;
             }
 
@@ -1270,7 +1270,7 @@ public class Indicator {
                 .filter(tempField ->
                         "S".equals(tempField.getDefaultField()) &&
                                 tempField.getDisplayLocation() == Constants.COLUMN &&
-                                !(tempField.getTitle().equalsIgnoreCase("Não visualizado") && tempField.isFixedValue()))
+                                isFieldValid(tempField))
                 .max(Comparator.comparingInt(Field::getDrillDownSequence))
                 .orElse(null);
     }
