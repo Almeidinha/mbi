@@ -40,7 +40,7 @@ public class AnalysisComments {
         } else if (this.getSearchType().equals("N")) {
             filtraPorData = true;
             clausula = " AND dat_expiracao >= ? ";
-        } else if (this.getSearchType().equals("V")) {
+        } else if (this.getSearchType().equals("M")) {
             filtraPorData = true;
             clausula = " AND dat_expiracao < ? ";
         }

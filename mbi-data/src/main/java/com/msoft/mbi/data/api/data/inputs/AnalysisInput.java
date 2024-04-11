@@ -20,6 +20,7 @@ public class AnalysisInput {
     private String connectionId;
     private Integer userId;
     private String name;
+    private Integer tableType = 1;
     private String defaultDisplay = "T";
     private boolean usesSequence = false;
     private BIAreaDTO biAreaByArea;

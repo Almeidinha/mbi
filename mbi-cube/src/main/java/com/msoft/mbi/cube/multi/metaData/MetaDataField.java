@@ -65,7 +65,7 @@ public class MetaDataField implements Serializable {
     public static final int LINE = 1;
     public static final int COLUMN = 2;
     public static final String DIMENSION = "D";
-    public static final String METRIC = "V";
+    public static final String METRIC = "M";
     public static final String TEST_TYPE = "S";
     public static final String DATA_TYPE = "D";
     public static final String HOUR_TYPE = "H";

@@ -57,16 +57,20 @@ public class DimensionLine extends Dimension {
     }
 
     private void processDimensionLine() {
-        Dimension dimensionLine = parent.getDimensionsLine().computeIfAbsent(this, k -> {
-            int dimensionIndex = cube.getDimensionsPool().indexOf(this);
-            return (dimensionIndex != -1) ? cube.getDimensionsPool().get(dimensionIndex) : this;
+        Dimension dimensionLine = this.parent.getDimensionsLine().computeIfAbsent(this, k -> {
+            int dimensionIndex = this.cube.getDimensionsPool().indexOf(this);
+            if (dimensionIndex != -1) {
+                return this.cube.getDimensionsPool().get(dimensionIndex);
+            }
+            this.cube.addDimensionPool(this);
+            return this;
         });
-        parent.addDimensionLine(dimensionLine);
+        this.parent.addDimensionLine(dimensionLine);
     }
 
     private void processDimensionChildren(ResultSet resultSet) throws SQLException {
-        if (!metaData.isLast()) {
-            Dimension dimension = new DimensionLine(parent.getDimensionsLine().get(this), metaData.getChild());
+        if (!this.metaData.isLast()) {
+            Dimension dimension = new DimensionLine(this.parent.getDimensionsLine().get(this), this.metaData.getChild());
             dimension.process(resultSet);
         }
     }

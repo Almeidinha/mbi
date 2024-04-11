@@ -27,6 +27,7 @@ public interface BIIndToIndicatorDTOMapper {
             @Mapping(target = "dimensionFilters", source = "biDimensionFilter.sqlText"),
             @Mapping(target = "metricFilters", source = "biIndMetricFilter.sqlText"),
             @Mapping(target = "metricSqlFilters", source = "biIndSqlMetricFilter.sqlText"),
+            @Mapping(target = "multidimensional", expression = "java(entity.getTableType().equals(2))"),
     })
     IndicatorDTO biEntityToDTO(BIIndEntity entity);
 
@@ -42,6 +43,7 @@ public interface BIIndToIndicatorDTOMapper {
             @Mapping(target = "biDimensionFilter.sqlText", source = "dimensionFilters"),
             @Mapping(target = "biIndMetricFilter.sqlText", source = "metricFilters"),
             @Mapping(target = "biIndSqlMetricFilter.sqlText", source = "metricSqlFilters"),
+            @Mapping(target = "tableType", expression = "java(dto.isMultidimensional() ? 2 : 1)"),
     })
     BIIndEntity dtoToEntity(IndicatorDTO dto);
 
@@ -57,6 +59,7 @@ public interface BIIndToIndicatorDTOMapper {
             @Mapping(target = "dimensionFilters", source = "biDimensionFilter.sqlText"),
             @Mapping(target = "metricFilters", source = "biIndMetricFilter.sqlText"),
             @Mapping(target = "metricSqlFilters", source = "biIndSqlMetricFilter.sqlText"),
+            @Mapping(target = "multidimensional", expression = "java(entity.getTableType().equals(2))"),
     })
     List<IndicatorDTO> entityListToDTO(List<BIIndEntity> entities);
 
@@ -72,6 +75,7 @@ public interface BIIndToIndicatorDTOMapper {
             @Mapping(target = "biDimensionFilter.sqlText", source = "dimensionFilters"),
             @Mapping(target = "biIndMetricFilter.sqlText", source = "metricFilters"),
             @Mapping(target = "biIndSqlMetricFilter.sqlText", source = "metricSqlFilters"),
+            @Mapping(target = "tableType", expression = "java(dto.isMultidimensional() ? 2 : 1)"),
     })
     List<BIIndEntity> setDTOToEntityList(List<IndicatorDTO> dtos);
 }

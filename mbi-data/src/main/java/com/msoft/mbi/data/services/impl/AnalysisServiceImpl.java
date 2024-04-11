@@ -56,20 +56,19 @@ public class AnalysisServiceImpl implements AnalysisService {
 
     @Override
     public IndicatorDTO updateAnalysis(AnalysisInput analysisInput, int id) {
-        BIIndEntity biIndEntity = this.buildBIInd(analysisInput);
+        BIIndEntity biIndEntity = this.indService.findById(id);
 
         int currentUserId = this.userService.getCurrentUserId();
         biIndEntity.setLastUpdatedUser(currentUserId);
 
-        List<BIAnalysisFieldEntity> fields = buildEntityFieldsFromFieldDto(analysisInput.getFields());
-        fields.forEach(biIndEntity::addField);
+        biIndEntity.setTableType(analysisInput.getTableType());
 
-        this.userIndService.deleteByIndicatorId(id);
-        this.userGroupIndService.deleteByIndicatorId(id);
+        if (!analysisInput.getFields().isEmpty()) {
+            List<BIAnalysisFieldEntity> fields = buildEntityFieldsFromFieldDto(analysisInput.getFields());
+            fields.forEach(biIndEntity::updateField);
+        }
 
         this.indService.update(id, biIndEntity);
-
-        this.savePermissions(biIndEntity, analysisInput);
 
         return this.biIndToIndicatorDTOMapper.biEntityToDTO(biIndEntity);
     }
@@ -184,7 +183,7 @@ public class AnalysisServiceImpl implements AnalysisService {
                 .biAreaByArea(BIAreaEntity.builder().id(analysisInput.getBiAreaByArea().getId()).build())
                 .name(analysisInput.getName())
                 .connectionId(UUID.fromString(analysisInput.getConnectionId()))
-                .tableType(0)
+                .tableType(analysisInput.getTableType())
                 .defaultDisplay(analysisInput.getDefaultDisplay())
                 .biSearchClause(biSearchClause)
                 .biFromClause(bIbiFromClause)

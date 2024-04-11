@@ -386,7 +386,7 @@ public class ColorsAlert {
         double auxValue = BIUtil.formatDoubleValue(colorAlert.getSecondFieldFunction(), decimalPositions);
 
         boolean apply;
-        if ("V".equals(colorAlert.getValueType())) {
+        if ("M".equals(colorAlert.getValueType())) {
             apply = this.compareOtherFieldDouble(value, operator, valComp, auxValue);
         } else {
             apply = this.compareOtherFieldDoublePercentage(value, operator, valComp, auxValue);

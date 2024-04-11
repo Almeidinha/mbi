@@ -17,7 +17,7 @@ public final class Constants {
     public static final String NUMBER = "N";
     public static final String STRING = "S";
     public static final String DIMENSION = "D";
-    public static final String METRIC = "V";
+    public static final String METRIC = "M";
     public static final String FIXED_HORIZONTAL_ANALYSIS = "F";
     public static final String DYNAMIC_HORIZONTAL_ANALYSIS = "D";
     public static final String NO_HORIZONTAL_ANALYSIS = "N";

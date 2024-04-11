@@ -42,7 +42,7 @@ public class IndicatorDTO {
     private String connectionId;
     private Integer databaseType;
     private UUID tenantId;
-    private boolean isMultidimensional;
+    private boolean multidimensional;
     private String currentView = "T";
     private String dateFormat = "dd/MM/yyyy";
 

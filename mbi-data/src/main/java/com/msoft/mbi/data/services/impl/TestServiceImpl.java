@@ -101,7 +101,7 @@ public class TestServiceImpl implements TestService {
                 return null;
             });
 
-            return ind.getStringTable(false);
+            return ind.getStringTable(true);
 
 
         } catch (BIException e) {

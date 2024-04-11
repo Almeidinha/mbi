@@ -210,4 +210,18 @@ public class BIIndEntity extends BaseEntity {
         }
     }
 
+    public void updateField(BIAnalysisFieldEntity biAnalysisField) {
+        if (this.biAnalysisFields != null) {
+            Optional<BIAnalysisFieldEntity> entityField = this.biAnalysisFields.stream()
+                    .filter(field -> field.getFieldId().equals(biAnalysisField.getFieldId())).findFirst();
+
+            if (entityField.isPresent()) {
+                entityField.get().setDefaultField(biAnalysisField.getDefaultField());
+                entityField.get().setVisualizationSequence(biAnalysisField.getVisualizationSequence());
+                entityField.get().setLocalApres(biAnalysisField.getLocalApres());
+            }
+
+        }
+    }
+
 }

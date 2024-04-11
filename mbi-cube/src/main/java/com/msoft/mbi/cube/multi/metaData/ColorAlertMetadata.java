@@ -48,7 +48,7 @@ public class ColorAlertMetadata implements Serializable {
     public static final String NO_FUNCTION = "semFuncao";
     public static final String VALUE_ALERT_TYPE = "tipoAlertaValor";
     public static final String SECOND_FIELD_ALERT_TYPE = "tipoAlertaOutroCampo";
-    public static final String COMPARISON_ALERT_TYPE = "V";
+    public static final String COMPARISON_ALERT_TYPE = "M";
     public static final String PERCENT_COMPARISON_ALERT_TYPE = "P";
     private static final List<String> AH_FUNCTIONS = new ArrayList<>();
 

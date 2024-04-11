@@ -475,7 +475,7 @@ public abstract class Cube extends Dimension {
     public void process(ResultSet set) throws SQLException {
         this.cubeListener.start();
         DimensionMetaData metadataLine = this.hierarchyLine.get(0);
-        Dimension dimensionLine = new DimensionLine(this, metadataLine);
+        Dimension dimensionLine;
         int batchSize = 50;
         int count = 0;
 
@@ -483,6 +483,7 @@ public abstract class Cube extends Dimension {
 
         while (set.next()) {
             this.cubeListener.setHasData(true);
+            dimensionLine = new DimensionLine(this, metadataLine);
             dimensionLine.process(set);
             this.metricsMap.accumulateMetricLine(this, set);
 

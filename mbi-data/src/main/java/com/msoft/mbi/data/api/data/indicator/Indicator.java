@@ -45,6 +45,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 @Getter
@@ -101,7 +102,7 @@ public class Indicator {
     private String connectionId;
     private DatabaseType databaseType;
     private UUID tenantId;
-    private boolean isMultidimensional;
+    private boolean multidimensional;
     private String currentView = "T";
     private String dateFormat = "dd/MM/yyyy";
 
@@ -480,7 +481,7 @@ public class Indicator {
         Object tabelaDrillUp = "&nbsp;";
 
         if (!montaSemLink) {
-            if (this.isMultidimensional) {
+            if (this.multidimensional) {
                 tabelaDrillUp = HtmlHelper.buildStringDrillUp(this.dimensionColumn.get(0).isDrillUp());
             } else {
                 tabelaDrillUp = this.buildDefaultStringDrillUp();
@@ -498,7 +499,7 @@ public class Indicator {
 
         ArrayNode drillUpTable = this.mapper.createArrayNode();
         if (!montaSemLink) {
-            if (this.isMultidimensional) {
+            if (this.multidimensional) {
                 drillUpTable = this.buildJsonDrillUp();
             } else {
                 drillUpTable = this.buildDefaultJsonDrillUp();
@@ -640,17 +641,17 @@ public class Indicator {
         try {
             if (this.getTableType() == 0 || this.getTableType() == 2) {
                 validateMultiDimensionalTable();
-                this.isMultidimensional = true;
+                this.multidimensional = true;
             } else {
-                this.isMultidimensional = false;
+                this.multidimensional = false;
             }
         } catch (Exception e) {
-            this.isMultidimensional = false;
+            this.multidimensional = false;
         }
     }
 
     private void configureCubeAndTable() throws BIException, DateException {
-        if (this.isMultidimensional) {
+        if (this.multidimensional) {
             orderFieldsPerDrillDownSequence();
             this.dimensionColumn = this.loadFields(Constants.DIMENSION, Constants.COLUMN);
             if (this.stopProcess())
@@ -1135,16 +1136,19 @@ public class Indicator {
 
     private void configureFieldsNavigation(List<Field> columnFields) {
         for (Field field : columnFields) {
-            int index = findPreviousDrillDown(field);
+            int index = IntStream.range(0, this.fields.size())
+                    .filter(i -> isValidFieldForDrillUp(i, field))
+                    .reduce((a, b) -> b).orElse(-1);
 
-            field.setDrillUp(index >= 0 && fields.get(index).isDrillDown());
+            field.setDrillUp(index != -1 && this.fields.get(index).isDrillDown());
 
-            index = findNextDrillDown(field);
-            Field indexField = fields.get(index);
+            index = IntStream.range(0, this.fields.size())
+                    .filter(i -> isValidFieldForNavigableUpwards(i, field))
+                    .findFirst().orElse(-1);
 
-            if (indexField.isDrillDown()) {
+            if (index != -1 && this.fields.get(index).isDrillDown()) {
                 field.setNavigableUpwards(true);
-                field.setNavigable(!indexField.getDefaultField().equals("S"));
+                field.setNavigable(!this.fields.get(index).getDefaultField().equals("S"));
             } else {
                 field.setNavigableUpwards(false);
                 field.setNavigable(false);
@@ -1152,38 +1156,18 @@ public class Indicator {
         }
     }
 
-    private int findPreviousDrillDown(Field field) {
-        for (int currentIndex = fields.size() - 1; currentIndex >= 0; currentIndex--) {
-            if (isDrillDownField(currentIndex, field)) {
-                return currentIndex;
-            }
-        }
-        return -1;
+    private boolean isValidFieldForDrillUp(int index, Field field) {
+        return this.fields.get(index) != null &&
+                (this.fields.get(index).getFieldType().equals(Constants.DIMENSION) && this.fields.get(index).getDisplayLocation() == Constants.LINE) ||
+                this.fields.get(index).getFieldType().equals(Constants.METRIC) ||
+                this.fields.get(index).isDrillDown() && this.fields.get(index).getDrillDownSequence() >= field.getDrillDownSequence();
     }
 
-    private int findNextDrillDown(Field field) {
-        for (int currentIndex = 0; currentIndex < fields.size(); currentIndex++) {
-            if (isDrillDownField(currentIndex, field)) {
-                return currentIndex;
-            }
-        }
-        return fields.size();
-    }
-
-    private boolean isDrillDownField(int index, Field field) {
-        Field auxField = fields.get(index);
-
-        if (auxField == null) {
-            return false;
-        }
-
-        boolean isNotDimension = !auxField.getFieldType().equals(Constants.DIMENSION);
-        boolean isNotMetric = !auxField.getFieldType().equals(Constants.METRIC);
-        boolean isNotInLine = auxField.getDisplayLocation() != Constants.LINE;
-        boolean isDrillDown = auxField.isDrillDown();
-        boolean isDrillDownSequenceLess = auxField.getDrillDownSequence() < field.getDrillDownSequence();
-
-        return isNotDimension && isNotMetric && isNotInLine && isDrillDown && isDrillDownSequenceLess;
+    private boolean isValidFieldForNavigableUpwards(int index, Field field) {
+        return this.fields.get(index) != null &&
+                (this.fields.get(index).getFieldType().equals(Constants.DIMENSION) && this.fields.get(index).getDisplayLocation() == Constants.LINE) ||
+                this.fields.get(index).getFieldType().equals(Constants.METRIC) ||
+                this.fields.get(index).isDrillDown() && this.fields.get(index).getDrillDownSequence() <= field.getDrillDownSequence();
     }
 
     public List<Field> getFieldsPerType(String fieldType) {
@@ -1222,7 +1206,7 @@ public class Indicator {
         this.fields.clear();
 
         this.fields.addAll(drillDownFields);
-        this.fields.addAll(drillDownFields);
+        this.fields.addAll(nonDrillDownFields);
         this.fields.addAll(metricFields);
 
     }
@@ -1258,7 +1242,7 @@ public class Indicator {
                 .filter(field -> field.getDisplayLocation() == displayLocation)
                 .mapToLong(field -> {
                     long count = 1;
-                    if (displayLocation == Constants.LINE && fieldType.equals("V")) {
+                    if (displayLocation == Constants.LINE && fieldType.equals("M")) {
                         if (field.isTotalizingField() || field.isAccumulatedParticipation() || field.isVerticalAnalysis()
                                 || field.isAccumulatedValue() || field.isHorizontalAnalysis()
                                 || field.isHorizontalParticipation() || field.isHorizontalParticipationAccumulated()) {
@@ -1327,7 +1311,7 @@ public class Indicator {
                     Stream.Builder<Field> builder = Stream.builder();
                     builder.add(field);
 
-                    if (displayLocation == Constants.LINE && fieldType.equals("V")) {
+                    if (displayLocation == Constants.LINE && fieldType.equals("M")) {
                         if (field.isTotalizingField()) {
                             builder.add(createField(field.getFieldId(), "", "total", "S", String.valueOf(field.getColumnWidth()), field.getColumnAlignment()));
                         }
