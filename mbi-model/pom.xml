@@ -39,11 +39,6 @@
 			<version>8.0.0.Final</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.liquibase</groupId>
-			<artifactId>liquibase-core</artifactId>
-		</dependency>
-
 	</dependencies>
 
 </project>

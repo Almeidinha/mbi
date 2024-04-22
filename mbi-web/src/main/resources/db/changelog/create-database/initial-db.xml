@@ -1,0 +1,2017 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1713778430158-1" author="Marcos (generated)">
+        <createTable tableName="bi_multitenant_model">
+            <column name="id" type="binary(16)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_multitenant_model"/>
+            </column>
+            <column name="created_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tenant" type="text">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430158-2" author="Marcos (generated)">
+        <createTable tableName="bi_tenants">
+            <column name="id" type="binary(16)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_tenants"/>
+            </column>
+            <column name="connection_name" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="company_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="database_type_value" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="url" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="host" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="instance" type="text"/>
+            <column name="database_name" type="text"/>
+            <column name="service" type="text"/>
+            <column name="informix_server" type="text"/>
+            <column name="informix_online" type="BOOLEAN"/>
+            <column name="port" type="INT"/>
+            <column name="sid" type="text"/>
+            <column name="date_format" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="decimal_separator" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="extra_properties" type="text"/>
+            <column name="username" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="text">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-1" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_access_restriction_interface">
+            <column autoIncrement="true" name="user_group_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_access_restriction_interface"/>
+            </column>
+            <column name="interface_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_access_restriction_interface"/>
+            </column>
+            <column name="user_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_access_restriction_interface"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-2" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_analysis_field">
+            <column name="field_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_analysis_field"/>
+            </column>
+            <column name="name" type="VARCHAR(2000)"/>
+            <column name="title" type="VARCHAR(100)"/>
+            <column name="field_type" type="VARCHAR(1)"/>
+            <column name="data_type" type="VARCHAR(1)"/>
+            <column name="field_nickname" type="VARCHAR(40)"/>
+            <column name="is_expression" type="BOOLEAN"/>
+            <column name="filter_sequence" type="INT"/>
+            <column name="visualization_sequence" type="INT"/>
+            <column name="is_default" type="VARCHAR(1)"/>
+            <column name="field_order" type="INT"/>
+            <column name="table_nickname" type="VARCHAR(40)"/>
+            <column name="direction" type="VARCHAR(4)"/>
+            <column name="decimal_position" type="INT"/>
+            <column name="field_totalization" type="BOOLEAN"/>
+            <column name="vertical" type="VARCHAR(1)"/>
+            <column name="aggregation_type" type="VARCHAR(15)"/>
+            <column name="accumulated_participation" type="VARCHAR(1)"/>
+            <column name="field_color" type="VARCHAR(7)"/>
+            <column name="default_graph" type="VARCHAR(1)"/>
+            <column name="ignore_zeros" type="VARCHAR(1)"/>
+            <column name="accumulated_value" type="BOOLEAN"/>
+            <column name="local_apres" type="INT"/>
+            <column name="column_width" type="INT"/>
+            <column name="column_alignment" type="VARCHAR(1)"/>
+            <column name="horizontal" type="VARCHAR(255)"/>
+            <column name="line_field_totalization" type="BOOLEAN"/>
+            <column name="accumulated_line_field" type="BOOLEAN"/>
+            <column name="tendency_line" type="VARCHAR(1)"/>
+            <column name="tendency_line_color" type="VARCHAR(7)"/>
+            <column name="date_mask" type="VARCHAR(20)"/>
+            <column name="partial_totalization" type="BOOLEAN"/>
+            <column name="number_of_steps" type="INT"/>
+            <column name="gantt_graph_position" type="INT"/>
+            <column name="gantt_graph_color" type="VARCHAR(7)"/>
+            <column name="horizontal_participation" type="BOOLEAN"/>
+            <column name="horizontal_participation_accumulated" type="BOOLEAN"/>
+            <column name="accumulated_order" type="INT"/>
+            <column name="accumulated_order_direction" type="VARCHAR(4)"/>
+            <column name="uses_line_metric" type="BOOLEAN"/>
+            <column name="is_fixed_value" type="BOOLEAN"/>
+            <column name="loc_apres_grapg" type="INT"/>
+            <column name="graph_type" type="VARCHAR(20)"/>
+            <column name="first_graph_type" type="VARCHAR(20)"/>
+            <column name="sec_graph_type" type="VARCHAR(20)"/>
+            <column name="reference_axis" type="VARCHAR(2)"/>
+            <column name="graph_visualization_sequence" type="INT"/>
+            <column name="original_analysis_field" type="INT"/>
+            <column name="is_drilldown" type="BOOLEAN"/>
+            <column name="general_filter" type="INT"/>
+            <column name="mandatory_filter" type="BOOLEAN"/>
+            <column name="delegate_order" type="INT"/>
+            <column name="indicator_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-3" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_analysis_graph">
+            <column name="graph_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_analysis_graph"/>
+            </column>
+            <column name="indicator_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_analysis_graph"/>
+            </column>
+            <column name="left_coord" type="SMALLINT"/>
+            <column name="top_coord" type="SMALLINT"/>
+            <column name="window_height" type="SMALLINT"/>
+            <column name="window_width" type="SMALLINT"/>
+            <column name="is_minimized" type="BOOLEAN"/>
+            <column name="bi_analysis_graph_dim_filter_indicator_id" type="INT"/>
+            <column name="bi_analysis_graph_dim_filter_graph_id" type="INT"/>
+            <column name="bi_analysis_graph_met_filter_indicator_id" type="INT"/>
+            <column name="bi_analysis_graph_met_filter_graph_id" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-4" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_analysis_graph_dim_filter">
+            <column autoIncrement="true" name="indicator_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_analysis_graph_dim_filter"/>
+            </column>
+            <column name="graph_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_analysis_graph_dim_filter"/>
+            </column>
+            <column name="sql_text" type="VARCHAR(4000)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-5" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_analysis_graph_met_filter">
+            <column autoIncrement="true" name="indicator_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_analysis_graph_met_filter"/>
+            </column>
+            <column name="graph_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_analysis_graph_met_filter"/>
+            </column>
+            <column name="sql_text" type="VARCHAR(4000)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-6" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_analysis_parameter">
+            <column autoIncrement="true" name="indicator_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_analysis_parameter"/>
+            </column>
+            <column name="parameter_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_analysis_parameter"/>
+            </column>
+            <column name="description" type="VARCHAR(40)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="VARCHAR(40)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-7" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_analysis_user_access">
+            <column autoIncrement="true" name="indicator_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_analysis_user_access"/>
+            </column>
+            <column name="user_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_analysis_user_access"/>
+            </column>
+            <column name="last_access_date" type="DATE">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_analysis_user_access"/>
+            </column>
+            <column name="last_access_hour" type="VARCHAR(8)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_analysis_user_access"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-8" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_area">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_area"/>
+            </column>
+            <column name="created_at" type="DATE"/>
+            <column name="updated_at" type="DATE"/>
+            <column name="company_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(30)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-9" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_cnf_graph_ind">
+            <column autoIncrement="true" name="indicator_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_cnf_graph_ind"/>
+            </column>
+            <column name="graph_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_cnf_graph_ind"/>
+            </column>
+            <column name="graph_title" type="VARCHAR(100)"/>
+            <column name="x_axis_title" type="VARCHAR(100)"/>
+            <column name="y_axis_title" type="VARCHAR(100)"/>
+            <column name="has_legend" type="BOOLEAN"/>
+            <column name="legend_position" type="INT"/>
+            <column name="graph_size" type="INT"/>
+            <column name="lim_max_graph" type="INT"/>
+            <column name="lim_min_graph" type="INT"/>
+            <column name="scale_interval" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-10" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_color_conditions">
+            <column name="indicator_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_color_conditions"/>
+            </column>
+            <column name="field_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_color_conditions"/>
+            </column>
+            <column name="initial_value" type="DECIMAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_color_conditions"/>
+            </column>
+            <column name="final_value" type="DECIMAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_color_conditions"/>
+            </column>
+            <column name="class_description" type="VARCHAR(40)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="font_color" type="VARCHAR(7)"/>
+            <column name="background_color" type="VARCHAR(7)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-11" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_comments">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_comments"/>
+            </column>
+            <column name="created_at" type="DATE"/>
+            <column name="updated_at" type="DATE"/>
+            <column name="indicator_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_comments"/>
+            </column>
+            <column name="user_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="comment" type="VARCHAR(2000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="send_by_email" type="VARCHAR(1)"/>
+            <column name="expire_date" type="DATE"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-12" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_company">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_company"/>
+            </column>
+            <column name="created_at" type="DATE"/>
+            <column name="updated_at" type="DATE"/>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone" type="VARCHAR(255)"/>
+            <column name="address" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-13" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_config_email">
+            <column autoIncrement="true" name="config_email" type="SMALLINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_config_email"/>
+            </column>
+            <column name="servidor_smtp" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="login_usuario" type="VARCHAR(100)"/>
+            <column name="senha_usuario" type="VARCHAR(50)"/>
+            <column name="eh_servidor_padrao" type="VARCHAR(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="num_porta" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="usa_tls" type="VARCHAR(1)"/>
+            <column name="usa_ssl" type="VARCHAR(1)"/>
+            <column name="email" type="VARCHAR(75)"/>
+            <column name="nome_exibicao" type="VARCHAR(75)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-14" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_cor_val_campo">
+            <column autoIncrement="true" name="sequencia_val" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_cor_val_campo"/>
+            </column>
+            <column name="ind" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="campo_analise" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="val" type="VARCHAR(2000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cor" type="VARCHAR(7)"/>
+            <column name="aplicacao" type="VARCHAR(1)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-15" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_dim_metric_restriction">
+            <column name="indicator_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_dim_metric_restriction"/>
+            </column>
+            <column name="metric_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_dim_metric_restriction"/>
+            </column>
+            <column name="dimension_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_dim_metric_restriction"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-16" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_dimension_filter">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_dimension_filter"/>
+            </column>
+            <column name="created_at" type="DATE"/>
+            <column name="updated_at" type="DATE"/>
+            <column name="sql_text" type="VARCHAR(4000)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-17" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_display_version">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_display_version"/>
+            </column>
+            <column name="created_at" type="DATE"/>
+            <column name="updated_at" type="DATE"/>
+            <column name="release_date" type="DATE"/>
+            <column name="last_conversion" type="VARCHAR(10)"/>
+            <column name="version_comment" type="VARCHAR(255)"/>
+            <column name="implemented_version" type="VARCHAR(-1)"/>
+            <column name="version_correction" type="VARCHAR(-1)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-18" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_documents">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_documents"/>
+            </column>
+            <column name="created_at" type="DATE"/>
+            <column name="updated_at" type="DATE"/>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(250)"/>
+            <column name="tittle" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expiration_date" type="DATE"/>
+            <column name="creator" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_restricted" type="BOOLEAN"/>
+            <column name="created_by" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-19" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_documents_indicator">
+            <column autoIncrement="true" name="indicator_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_documents_indicator"/>
+            </column>
+            <column name="document_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_documents_indicator"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-20" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_filtro_geral">
+            <column autoIncrement="true" name="filtro" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_filtro_geral"/>
+            </column>
+            <column name="descricao_filtro" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tip_dado" type="VARCHAR(1)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-21" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_fixed_condition_clause">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_fixed_condition_clause"/>
+            </column>
+            <column name="created_at" type="DATE"/>
+            <column name="updated_at" type="DATE"/>
+            <column name="sql_text" type="VARCHAR(4000)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-22" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_from_clause">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_from_clause"/>
+            </column>
+            <column name="created_at" type="DATE"/>
+            <column name="updated_at" type="DATE"/>
+            <column name="sql_text" type="VARCHAR(4000)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-23" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_graph_alert">
+            <column autoIncrement="true" name="indicator_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_graph_alert"/>
+            </column>
+            <column name="graph_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_graph_alert"/>
+            </column>
+            <column name="alert_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_graph_alert"/>
+            </column>
+            <column name="is_mark" type="BOOLEAN">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_graph_alert"/>
+            </column>
+            <column name="alert_title" type="VARCHAR(40)"/>
+            <column name="alert_type" type="VARCHAR(1)"/>
+            <column name="alert_color" type="VARCHAR(7)"/>
+            <column name="reference_axis" type="VARCHAR(1)"/>
+            <column name="initial_value" type="DECIMAL(6)"/>
+            <column name="final_value" type="DECIMAL(6)"/>
+            <column name="position" type="VARCHAR(1)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-24" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_graph_field_analysis">
+            <column autoIncrement="true" name="indicator_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_graph_field_analysis"/>
+            </column>
+            <column name="graph_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_graph_field_analysis"/>
+            </column>
+            <column name="graph_field_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_graph_field_analysis"/>
+            </column>
+            <column name="ignore_zeros" type="VARCHAR(1)"/>
+            <column name="tendency_line" type="VARCHAR(1)"/>
+            <column name="tendency_line_color" type="VARCHAR(7)"/>
+            <column name="gantt_position" type="INT"/>
+            <column name="grafico_color" type="VARCHAR(7)"/>
+            <column name="loc_graph_pres" type="INT"/>
+            <column name="graph_mark_type" type="VARCHAR(20)"/>
+            <column name="primary_graph_type" type="VARCHAR(20)"/>
+            <column name="secondary_graph_type" type="VARCHAR(20)"/>
+            <column name="reference_axis" type="VARCHAR(2)"/>
+            <column name="view_sequence" type="INT"/>
+            <column name="field_name" type="VARCHAR(2000)"/>
+            <column name="field_title" type="VARCHAR(40)"/>
+            <column name="field_type" type="VARCHAR(1)"/>
+            <column name="field_nickname" type="VARCHAR(40)"/>
+            <column name="data_type" type="VARCHAR(1)"/>
+            <column name="field_color" type="VARCHAR(7)"/>
+            <column name="field_order" type="INT"/>
+            <column name="order_direction" type="VARCHAR(4)"/>
+            <column name="filter_sequence" type="INT"/>
+            <column name="is_viewed" type="BOOLEAN"/>
+            <column name="is_drill_down" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-25" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_graph_par">
+            <column autoIncrement="true" name="indicator_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_graph_par"/>
+            </column>
+            <column name="graph_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_graph_par"/>
+            </column>
+            <column name="graph_type" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_graph_par"/>
+            </column>
+            <column name="parameter_description" type="VARCHAR(40)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_graph_par"/>
+            </column>
+            <column name="parameter_value" type="VARCHAR(100)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-26" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_group_clause">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_group_clause"/>
+            </column>
+            <column name="created_at" type="DATE"/>
+            <column name="updated_at" type="DATE"/>
+            <column name="sql_text" type="VARCHAR(2500)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-27" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_group_rule">
+            <column autoIncrement="true" name="user_group_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_group_rule"/>
+            </column>
+            <column name="rule_type_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_group_rule"/>
+            </column>
+            <column name="rule_type_action_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_group_rule"/>
+            </column>
+            <column name="product_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rule" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_group_rule"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-28" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_grp_usu_area">
+            <column autoIncrement="true" name="grupo_usuario" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_grp_usu_area"/>
+            </column>
+            <column name="area" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_grp_usu_area"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-29" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_grupo_usuario_slideshow">
+            <column autoIncrement="true" name="slideshow" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_grupo_usuario_slideshow"/>
+            </column>
+            <column name="grupo_usuario" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_grupo_usuario_slideshow"/>
+            </column>
+            <column name="permite_modificacao" type="VARCHAR(1)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-30" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_having_clause">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_having_clause"/>
+            </column>
+            <column name="created_at" type="DATE"/>
+            <column name="updated_at" type="DATE"/>
+            <column name="sql_text" type="VARCHAR(2500)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-31" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_ind">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_ind"/>
+            </column>
+            <column name="created_at" type="DATE"/>
+            <column name="updated_at" type="DATE"/>
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="file_name" type="VARCHAR(1)"/>
+            <column name="graph_title" type="VARCHAR(100)"/>
+            <column name="scheduled" type="BOOLEAN"/>
+            <column name="default_graph" type="INT"/>
+            <column name="last_updated_user" type="INT"/>
+            <column name="comment" type="VARCHAR(1)"/>
+            <column name="is_frozen" type="BOOLEAN"/>
+            <column name="default_display" type="VARCHAR(1)"/>
+            <column name="connection_id" type="binary(16)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="number_of_steps" type="INT"/>
+            <column name="uses_sequence" type="BOOLEAN"/>
+            <column name="table_type" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="original_indicator" type="INT"/>
+            <column name="inherits_fields" type="BOOLEAN"/>
+            <column name="inherits_restriction" type="BOOLEAN"/>
+            <column name="area_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="company_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="search_clause" type="INT"/>
+            <column name="from_clause" type="INT"/>
+            <column name="where_clause" type="INT"/>
+            <column name="fixed_condition_clause" type="INT"/>
+            <column name="dimension_filter" type="INT"/>
+            <column name="metric_filter" type="INT"/>
+            <column name="sql_metric_filter" type="INT"/>
+            <column name="group_clause" type="INT"/>
+            <column name="order_clause" type="INT"/>
+            <column name="having_clause" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-32" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_ind_alert_color">
+            <column name="alert_sequence" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_ind_alert_color"/>
+            </column>
+            <column name="indicator_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_ind_alert_color"/>
+            </column>
+            <column name="first_field_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_field_function" type="VARCHAR(40)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="operator" type="VARCHAR(35)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value_type" type="VARCHAR(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_value_reference" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="second_value_reference" type="VARCHAR(100)"/>
+            <column name="second_filed_id" type="INT"/>
+            <column name="second_filed_function" type="VARCHAR(40)"/>
+            <column name="action" type="VARCHAR(25)"/>
+            <column name="font_name" type="VARCHAR(40)"/>
+            <column name="font_size" type="INT"/>
+            <column name="font_style" type="VARCHAR(8)"/>
+            <column name="font_color" type="VARCHAR(8)"/>
+            <column name="background_color" type="VARCHAR(8)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-33" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_intercalation">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_intercalation"/>
+            </column>
+            <column name="created_at" type="DATE"/>
+            <column name="updated_at" type="DATE"/>
+            <column name="user_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="intercalation_time" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-34" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_interface">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_interface"/>
+            </column>
+            <column name="name" type="VARCHAR(60)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-35" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_interface_action">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_interface_action"/>
+            </column>
+            <column name="interface_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="action_weight" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(40)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-36" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_measure_par">
+            <column autoIncrement="true" name="indicator_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_measure_par"/>
+            </column>
+            <column name="graph_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_measure_par"/>
+            </column>
+            <column name="field_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_measure_par"/>
+            </column>
+            <column name="sequence_value" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_measure_par"/>
+            </column>
+            <column name="value" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="color" type="VARCHAR(7)"/>
+            <column name="font" type="VARCHAR(30)"/>
+            <column name="font_size" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-37" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_metric_filter">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_metric_filter"/>
+            </column>
+            <column name="created_at" type="DATE"/>
+            <column name="updated_at" type="DATE"/>
+            <column name="sql_text" type="VARCHAR(4000)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-38" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_order_clause">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_order_clause"/>
+            </column>
+            <column name="created_at" type="DATE"/>
+            <column name="updated_at" type="DATE"/>
+            <column name="sql_text" type="VARCHAR(2500)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-39" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_panel">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_panel"/>
+            </column>
+            <column name="created_at" type="DATE"/>
+            <column name="updated_at" type="DATE"/>
+            <column name="name" type="VARCHAR(40)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-40" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_panel_indicator">
+            <column autoIncrement="true" name="indicator_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_panel_indicator"/>
+            </column>
+            <column name="panel_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_panel_indicator"/>
+            </column>
+            <column name="graph_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_panel_indicator"/>
+            </column>
+            <column name="left_coords" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="top_coords" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="window_width" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="window_height" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_open" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_maximized" type="VARCHAR(1)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-41" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_panel_intercalation">
+            <column autoIncrement="true" name="intercalation_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_panel_intercalation"/>
+            </column>
+            <column name="panel_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_panel_intercalation"/>
+            </column>
+            <column name="sequence" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="painel_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-42" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_panel_user">
+            <column autoIncrement="true" name="panel_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_panel_user"/>
+            </column>
+            <column name="user_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_panel_user"/>
+            </column>
+            <column name="allow_change" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_favorite" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-43" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_parameter">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_parameter"/>
+            </column>
+            <column name="created_at" type="DATE"/>
+            <column name="updated_at" type="DATE"/>
+            <column name="parameter_code" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="parameter_value" type="VARCHAR(40)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-44" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_portlets">
+            <column autoIncrement="true" name="portlets" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_portlets"/>
+            </column>
+            <column name="nom_portlets" type="VARCHAR(100)"/>
+            <column name="tip_portlets" type="INT"/>
+            <column name="largura" type="INT"/>
+            <column name="altura" type="INT"/>
+            <column name="usuario" type="INT"/>
+            <column name="conteudo" type="VARCHAR(2500)"/>
+            <column name="publico" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-45" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_product">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_product"/>
+            </column>
+            <column name="created_at" type="DATE"/>
+            <column name="updated_at" type="DATE"/>
+            <column name="description" type="VARCHAR(50)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-46" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_proxy">
+            <column autoIncrement="true" name="proxy" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_proxy"/>
+            </column>
+            <column name="url" type="VARCHAR(30)"/>
+            <column name="porta" type="INT"/>
+            <column name="usuario" type="VARCHAR(20)"/>
+            <column name="senha" type="VARCHAR(20)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-47" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_restriction">
+            <column autoIncrement="true" name="indicator_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_restriction"/>
+            </column>
+            <column name="restriction_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_restriction"/>
+            </column>
+            <column name="description" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expression" type="VARCHAR(4000)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-48" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_rule_type">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_rule_type"/>
+            </column>
+            <column name="created_at" type="DATE"/>
+            <column name="updated_at" type="DATE"/>
+            <column name="description" type="VARCHAR(50)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-49" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_rule_type_action">
+            <column autoIncrement="true" name="rule_type_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_rule_type_action"/>
+            </column>
+            <column name="rule_type_action_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_rule_type_action"/>
+            </column>
+            <column name="description" type="VARCHAR(50)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-50" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_schedule">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_schedule"/>
+            </column>
+            <column name="created_at" type="DATE"/>
+            <column name="updated_at" type="DATE"/>
+            <column name="indicator_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="periodic_delivery" type="BOOLEAN"/>
+            <column name="recipient" type="VARCHAR(200)"/>
+            <column name="delivery_time" type="DATE"/>
+            <column name="start_delivery_date" type="DATE"/>
+            <column name="end_delivery_date" type="DATE"/>
+            <column name="delivery_amount" type="INT"/>
+            <column name="delivered_amount" type="INT"/>
+            <column name="delivery_frequency" type="INT"/>
+            <column name="sunday_deliver" type="BOOLEAN"/>
+            <column name="monday_deliver" type="BOOLEAN"/>
+            <column name="tuesday_deliver" type="BOOLEAN"/>
+            <column name="wednesday_deliver" type="BOOLEAN"/>
+            <column name="thursday_deliver" type="BOOLEAN"/>
+            <column name="friday_deliver" type="BOOLEAN"/>
+            <column name="saturday_deliver" type="BOOLEAN"/>
+            <column name="delivery_day" type="SMALLINT"/>
+            <column name="delivery_week" type="SMALLINT"/>
+            <column name="delivery_month" type="SMALLINT"/>
+            <column name="user" type="VARCHAR(8)"/>
+            <column name="owner" type="INT"/>
+            <column name="last_date_delivered" type="DATE"/>
+            <column name="send_table" type="BOOLEAN"/>
+            <column name="graph_type" type="SMALLINT"/>
+            <column name="send_attached_file" type="BOOLEAN"/>
+            <column name="send_comment" type="BOOLEAN"/>
+            <column name="send_attached_spreadsheet" type="VARCHAR(1)"/>
+            <column name="schedule_blocked" type="INT"/>
+            <column name="assembly_sequence" type="VARCHAR(8)"/>
+            <column name="blocks_empty_email" type="VARCHAR(1)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-51" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_search_clause">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_search_clause"/>
+            </column>
+            <column name="created_at" type="DATE"/>
+            <column name="updated_at" type="DATE"/>
+            <column name="sql_text" type="VARCHAR(2500)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-52" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_slideshow">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_slideshow"/>
+            </column>
+            <column name="created_at" type="DATE"/>
+            <column name="updated_at" type="DATE"/>
+            <column name="description" type="VARCHAR(250)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="display_logo" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="open_default" type="VARCHAR(1)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-53" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_slideshow_painel">
+            <column autoIncrement="true" name="slideshow" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_slideshow_painel"/>
+            </column>
+            <column name="painel" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_slideshow_painel"/>
+            </column>
+            <column name="tempo_espera" type="INT"/>
+            <column name="sequencial_exibicao" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-54" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_sql_metric_filters">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_sql_metric_filters"/>
+            </column>
+            <column name="created_at" type="DATE"/>
+            <column name="updated_at" type="DATE"/>
+            <column name="sq_text" type="VARCHAR(4000)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-55" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_user">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user"/>
+            </column>
+            <column name="created_at" type="DATE"/>
+            <column name="updated_at" type="DATE"/>
+            <column name="password" type="VARCHAR(64)"/>
+            <column name="first_name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(20)"/>
+            <column name="email" type="VARCHAR(60)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueBoolean="true" name="is_active" type="boolean"/>
+            <column defaultValueBoolean="false" name="password_updated" type="boolean"/>
+            <column defaultValueBoolean="false" name="email_verified" type="boolean"/>
+            <column name="default_panel" type="INT"/>
+            <column name="user_group_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="company_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-56" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_user_area">
+            <column autoIncrement="true" name="user_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_area"/>
+            </column>
+            <column name="area_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_area"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-57" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_user_default_indicator">
+            <column autoIncrement="true" name="user_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_default_indicator"/>
+            </column>
+            <column name="indicator_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_default_indicator"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-58" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_user_default_panel">
+            <column autoIncrement="true" name="user_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_default_panel"/>
+            </column>
+            <column name="panel_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_default_panel"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-59" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_user_documents">
+            <column autoIncrement="true" name="document_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_documents"/>
+            </column>
+            <column name="user_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_documents"/>
+            </column>
+            <column name="allow_modification" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-60" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_user_group">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group"/>
+            </column>
+            <column name="created_at" type="DATE"/>
+            <column name="updated_at" type="DATE"/>
+            <column name="name" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(250)"/>
+            <column name="role_code" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-61" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_user_group_default_panel">
+            <column autoIncrement="true" name="user_group_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group_default_panel"/>
+            </column>
+            <column name="panel_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group_default_panel"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-62" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_user_group_documents">
+            <column name="document_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group_documents"/>
+            </column>
+            <column name="user_group_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group_documents"/>
+            </column>
+            <column name="can_edit" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-63" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_user_group_indicator">
+            <column name="indicator_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group_indicator"/>
+            </column>
+            <column name="user_group_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group_indicator"/>
+            </column>
+            <column name="can_edit" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-64" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_user_group_interface">
+            <column autoIncrement="true" name="user_group_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group_interface"/>
+            </column>
+            <column name="interface_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group_interface"/>
+            </column>
+            <column name="permission_level" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-65" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_user_group_panel">
+            <column autoIncrement="true" name="panel_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group_panel"/>
+            </column>
+            <column name="user_group_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group_panel"/>
+            </column>
+            <column name="can_edit" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-66" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_user_group_restriction">
+            <column autoIncrement="true" name="indicator_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group_restriction"/>
+            </column>
+            <column name="restriction_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group_restriction"/>
+            </column>
+            <column name="user_group_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group_restriction"/>
+            </column>
+            <column name="write_permission" type="BOOLEAN">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group_restriction"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-67" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_user_group_schedule">
+            <column name="schedule_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group_schedule"/>
+            </column>
+            <column name="user_group_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group_schedule"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-68" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_user_group_slideshow_default">
+            <column autoIncrement="true" name="user_group_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group_slideshow_default"/>
+            </column>
+            <column name="slideshow_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group_slideshow_default"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-69" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_user_indicator">
+            <column name="user_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_indicator"/>
+            </column>
+            <column name="indicator_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_indicator"/>
+            </column>
+            <column name="can_change" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_favorite" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-70" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_user_interface">
+            <column autoIncrement="true" name="user_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_interface"/>
+            </column>
+            <column name="interface_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_interface"/>
+            </column>
+            <column name="permission_level" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-71" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_user_panel">
+            <column autoIncrement="true" name="panel_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_panel"/>
+            </column>
+            <column name="user_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_panel"/>
+            </column>
+            <column name="last_access_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_access_hour" type="TIME">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-72" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_user_portlets">
+            <column autoIncrement="true" name="user_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_portlets"/>
+            </column>
+            <column name="portlet_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_portlets"/>
+            </column>
+            <column name="portlet_order" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-73" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_user_restriction">
+            <column autoIncrement="true" name="indicator_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_restriction"/>
+            </column>
+            <column name="restriction_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_restriction"/>
+            </column>
+            <column name="user_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_restriction"/>
+            </column>
+            <column name="write_permission" type="BOOLEAN">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_restriction"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-74" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_user_rule">
+            <column autoIncrement="true" name="user_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_rule"/>
+            </column>
+            <column name="rule_type_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_rule"/>
+            </column>
+            <column name="rule_type_action_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_rule"/>
+            </column>
+            <column name="rule" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_rule"/>
+            </column>
+            <column name="product_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-75" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_user_schedule">
+            <column name="schedule_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_schedule"/>
+            </column>
+            <column name="user_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_schedule"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-76" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_user_slideshow">
+            <column autoIncrement="true" name="slideshow_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_slideshow"/>
+            </column>
+            <column name="user_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_slideshow"/>
+            </column>
+            <column name="allow_modification" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_favorite" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-77" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_user_slideshow_default">
+            <column autoIncrement="true" name="user_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_slideshow_default"/>
+            </column>
+            <column name="slideshow_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_slideshow_default"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-78" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="bi_where_clause">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_where_clause"/>
+            </column>
+            <column name="created_at" type="DATE"/>
+            <column name="updated_at" type="DATE"/>
+            <column name="sql_text" type="VARCHAR(4000)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-79" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="eis_dimension_data">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_eis_dimension_data"/>
+            </column>
+            <column name="created_at" type="DATE"/>
+            <column name="updated_at" type="DATE"/>
+            <column name="ano_dat" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="mes_extenso" type="VARCHAR(9)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="mes_abrev" type="VARCHAR(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="num_mes" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dia_dat" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ano_mes_dat" type="VARCHAR(7)"/>
+            <column name="num_semestre" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="num_trimestre" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="num_bimestre" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dia_semana" type="VARCHAR(13)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="num_dia_ano" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="num_semana_ano" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="num_semana_mes" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="eh_feriado" type="VARCHAR(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="eh_ultimo_dia_mes" type="VARCHAR(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="num_dia_semana" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-80" author="Marcos (generated)">
+        <createTable schemaName="dbo" tableName="user_group_company">
+            <column name="company_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_group_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1713778430706-81" author="Marcos (generated)">
+        <addUniqueConstraint columnNames="dimension_filter" constraintName="uc_bi_ind_dimension_filter" schemaName="dbo"
+                             tableName="bi_ind"/>
+    </changeSet>
+    <changeSet id="1713778430706-82" author="Marcos (generated)">
+        <addUniqueConstraint columnNames="fixed_condition_clause" constraintName="uc_bi_ind_fixed_condition_clause"
+                             schemaName="dbo" tableName="bi_ind"/>
+    </changeSet>
+    <changeSet id="1713778430706-83" author="Marcos (generated)">
+        <addUniqueConstraint columnNames="from_clause" constraintName="uc_bi_ind_from_clause" schemaName="dbo"
+                             tableName="bi_ind"/>
+    </changeSet>
+    <changeSet id="1713778430706-84" author="Marcos (generated)">
+        <addUniqueConstraint columnNames="group_clause" constraintName="uc_bi_ind_group_clause" schemaName="dbo"
+                             tableName="bi_ind"/>
+    </changeSet>
+    <changeSet id="1713778430706-85" author="Marcos (generated)">
+        <addUniqueConstraint columnNames="having_clause" constraintName="uc_bi_ind_having_clause" schemaName="dbo"
+                             tableName="bi_ind"/>
+    </changeSet>
+    <changeSet id="1713778430706-86" author="Marcos (generated)">
+        <addUniqueConstraint columnNames="metric_filter" constraintName="uc_bi_ind_metric_filter" schemaName="dbo"
+                             tableName="bi_ind"/>
+    </changeSet>
+    <changeSet id="1713778430706-87" author="Marcos (generated)">
+        <addUniqueConstraint columnNames="order_clause" constraintName="uc_bi_ind_order_clause" schemaName="dbo"
+                             tableName="bi_ind"/>
+    </changeSet>
+    <changeSet id="1713778430706-88" author="Marcos (generated)">
+        <addUniqueConstraint columnNames="search_clause" constraintName="uc_bi_ind_search_clause" schemaName="dbo"
+                             tableName="bi_ind"/>
+    </changeSet>
+    <changeSet id="1713778430706-89" author="Marcos (generated)">
+        <addUniqueConstraint columnNames="sql_metric_filter" constraintName="uc_bi_ind_sql_metric_filter"
+                             schemaName="dbo" tableName="bi_ind"/>
+    </changeSet>
+    <changeSet id="1713778430706-90" author="Marcos (generated)">
+        <addUniqueConstraint columnNames="where_clause" constraintName="uc_bi_ind_where_clause" schemaName="dbo"
+                             tableName="bi_ind"/>
+    </changeSet>
+    <changeSet id="1713778430706-91" author="Marcos (generated)">
+        <addUniqueConstraint columnNames="email" constraintName="uc_bi_user_email" schemaName="dbo"
+                             tableName="bi_user"/>
+    </changeSet>
+    <changeSet id="1713778430706-93" author="Marcos (generated)">
+        <createIndex indexName="ix1_bi_ind" schemaName="dbo" tableName="bi_ind">
+            <column name="name"/>
+        </createIndex>
+    </changeSet>
+    <changeSet id="1713778430706-94" author="Marcos (generated)">
+        <createIndex indexName="ix2_bi_analysis_field" schemaName="dbo" tableName="bi_analysis_field">
+            <column name="title"/>
+        </createIndex>
+    </changeSet>
+    <changeSet id="1713778430706-95" author="Marcos (generated)">
+        <createIndex indexName="ix2_bi_cnf_graf_in" schemaName="dbo" tableName="bi_cnf_graph_ind">
+            <column name="graph_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet id="1713778430706-96" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="interface_id" baseTableName="bi_access_restriction_interface"
+                                 baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_ACCESS_RESTRICTION_INTERFACE_ON_INTERFACE"
+                                 referencedColumnNames="id" referencedTableName="bi_interface"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-97" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="bi_access_restriction_interface"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_ACCESS_RESTRICTION_INTERFACE_ON_USER"
+                                 referencedColumnNames="id" referencedTableName="bi_user"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-98" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_group_id" baseTableName="bi_access_restriction_interface"
+                                 baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_ACCESS_RESTRICTION_INTERFACE_ON_USER_GROUP"
+                                 referencedColumnNames="id" referencedTableName="bi_user_group"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-99" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="indicator_id" baseTableName="bi_analysis_field"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_ANALYSIS_FIELD_ON_INDICATOR"
+                                 referencedColumnNames="id" referencedTableName="bi_ind"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-100" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="graph_id,indicator_id" baseTableName="bi_analysis_graph_dim_filter"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_ANALYSIS_GRAPH_DIM_FILTER_ON_GRIDINID"
+                                 referencedColumnNames="graph_id,indicator_id" referencedTableName="bi_analysis_graph"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-101" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="graph_id,indicator_id" baseTableName="bi_analysis_graph_met_filter"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_ANALYSIS_GRAPH_MET_FILTER_ON_GRIDINID"
+                                 referencedColumnNames="graph_id,indicator_id" referencedTableName="bi_analysis_graph"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-102" author="Marcos (generated)">
+        <addForeignKeyConstraint
+                baseColumnNames="bi_analysis_graph_dim_filter_indicator_id,bi_analysis_graph_dim_filter_graph_id"
+                baseTableName="bi_analysis_graph" baseTableSchemaName="dbo"
+                constraintName="FK_BI_ANALYSIS_GRAPH_ON_BIINIDBIGRID" referencedColumnNames="indicator_id,graph_id"
+                referencedTableName="bi_analysis_graph_dim_filter" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-103" author="Marcos (generated)">
+        <addForeignKeyConstraint
+                baseColumnNames="bi_analysis_graph_met_filter_indicator_id,bi_analysis_graph_met_filter_graph_id"
+                baseTableName="bi_analysis_graph" baseTableSchemaName="dbo"
+                constraintName="FK_BI_ANALYSIS_GRAPH_ON_BIINIDBIGRIDE3TSWN"
+                referencedColumnNames="indicator_id,graph_id" referencedTableName="bi_analysis_graph_met_filter"
+                referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-104" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="indicator_id" baseTableName="bi_analysis_graph"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_ANALYSIS_GRAPH_ON_INDICATOR"
+                                 referencedColumnNames="id" referencedTableName="bi_ind"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-105" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="indicator_id" baseTableName="bi_analysis_parameter"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_ANALYSIS_PARAMETER_ON_INDICATOR"
+                                 referencedColumnNames="id" referencedTableName="bi_ind"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-106" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="bi_analysis_parameter"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_ANALYSIS_PARAMETER_ON_USER"
+                                 referencedColumnNames="id" referencedTableName="bi_user"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-107" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="indicator_id" baseTableName="bi_analysis_user_access"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_ANALYSIS_USER_ACCESS_ON_INDICATOR"
+                                 referencedColumnNames="id" referencedTableName="bi_ind"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-108" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="bi_analysis_user_access"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_ANALYSIS_USER_ACCESS_ON_USER"
+                                 referencedColumnNames="id" referencedTableName="bi_user"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-109" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="indicator_id" baseTableName="bi_cnf_graph_ind"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_CNF_GRAPH_IND_ON_INDICATOR"
+                                 referencedColumnNames="id" referencedTableName="bi_ind"
+                                 referencedTableSchemaName="dbo"/>
+
+        <createIndex indexName="ix1_bi_cnf_graf_in" schemaName="dbo" tableName="bi_cnf_graph_ind">
+            <column name="indicator_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet id="1713778430706-110" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="field_id" baseTableName="bi_color_conditions"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_COLOR_CONDITIONS_ON_FIELD"
+                                 referencedColumnNames="field_id,indicator_id" referencedTableName="bi_analysis_field"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-111" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="indicator_id" baseTableName="bi_color_conditions"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_COLOR_CONDITIONS_ON_INDICATOR"
+                                 referencedColumnNames="id" referencedTableName="bi_ind"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-112" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="indicator_id" baseTableName="bi_comments" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_COMMENTS_ON_INDICATOR" referencedColumnNames="id"
+                                 referencedTableName="bi_ind" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-113" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="dimension_id" baseTableName="bi_dim_metric_restriction"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_DIM_METRIC_RESTRICTION_ON_DIMENSION"
+                                 referencedColumnNames="field_id,indicator_id" referencedTableName="bi_analysis_field"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-114" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="indicator_id" baseTableName="bi_dim_metric_restriction"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_DIM_METRIC_RESTRICTION_ON_INDICATOR"
+                                 referencedColumnNames="id" referencedTableName="bi_ind"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-115" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="metric_id" baseTableName="bi_dim_metric_restriction"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_DIM_METRIC_RESTRICTION_ON_METRIC"
+                                 referencedColumnNames="field_id,indicator_id" referencedTableName="bi_analysis_field"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-116" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="document_id" baseTableName="bi_documents_indicator"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_DOCUMENTS_INDICATOR_ON_DOCUMENT"
+                                 referencedColumnNames="id" referencedTableName="bi_documents"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-117" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="indicator_id" baseTableName="bi_documents_indicator"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_DOCUMENTS_INDICATOR_ON_INDICATOR"
+                                 referencedColumnNames="id" referencedTableName="bi_ind"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-118" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="graph_id,indicator_id" baseTableName="bi_graph_alert"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_GRAPH_ALERT_ON_GRIDINID"
+                                 referencedColumnNames="graph_id,indicator_id" referencedTableName="bi_analysis_graph"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-119" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="indicator_id" baseTableName="bi_graph_alert" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_GRAPH_ALERT_ON_INDICATOR" referencedColumnNames="id"
+                                 referencedTableName="bi_ind" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-120" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="graph_id,indicator_id" baseTableName="bi_graph_field_analysis"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_GRAPH_FIELD_ANALYSIS_ON_GRIDINID"
+                                 referencedColumnNames="graph_id,indicator_id" referencedTableName="bi_analysis_graph"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-121" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="graph_id,indicator_id" baseTableName="bi_graph_par"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_GRAPH_PAR_ON_GRIDINID"
+                                 referencedColumnNames="graph_id,indicator_id" referencedTableName="bi_analysis_graph"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-122" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="bi_group_rule" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_GROUP_RULE_ON_PRODUCT" referencedColumnNames="id"
+                                 referencedTableName="bi_product" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-123" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="rule_type_id,rule_type_action_id" baseTableName="bi_group_rule"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_GROUP_RULE_ON_RUTYIDRUTYACID"
+                                 referencedColumnNames="rule_type_id,rule_type_action_id"
+                                 referencedTableName="bi_rule_type_action" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-124" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_group_id" baseTableName="bi_group_rule" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_GROUP_RULE_ON_USER_GROUP" referencedColumnNames="id"
+                                 referencedTableName="bi_user_group" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-125" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="first_field_id" baseTableName="bi_ind_alert_color"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_IND_ALERT_COLOR_ON_FIRST_FIELD"
+                                 referencedColumnNames="field_id,indicator_id" referencedTableName="bi_analysis_field"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-126" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="indicator_id" baseTableName="bi_ind_alert_color"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_IND_ALERT_COLOR_ON_INDICATOR"
+                                 referencedColumnNames="id" referencedTableName="bi_ind"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-127" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="second_filed_id" baseTableName="bi_ind_alert_color"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_IND_ALERT_COLOR_ON_SECOND_FILED"
+                                 referencedColumnNames="field_id,indicator_id" referencedTableName="bi_analysis_field"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-128" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="area_id" baseTableName="bi_ind" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_IND_ON_AREA" referencedColumnNames="id"
+                                 referencedTableName="bi_area" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-129" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="company_id" baseTableName="bi_ind" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_IND_ON_COMPANY" referencedColumnNames="id"
+                                 referencedTableName="bi_company" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-130" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="dimension_filter" baseTableName="bi_ind" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_IND_ON_DIMENSION_FILTER" referencedColumnNames="id"
+                                 referencedTableName="bi_dimension_filter" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-131" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="fixed_condition_clause" baseTableName="bi_ind"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_IND_ON_FIXED_CONDITION_CLAUSE"
+                                 referencedColumnNames="id" referencedTableName="bi_fixed_condition_clause"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-132" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="from_clause" baseTableName="bi_ind" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_IND_ON_FROM_CLAUSE" referencedColumnNames="id"
+                                 referencedTableName="bi_from_clause" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-133" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="group_clause" baseTableName="bi_ind" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_IND_ON_GROUP_CLAUSE" referencedColumnNames="id"
+                                 referencedTableName="bi_group_clause" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-134" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="having_clause" baseTableName="bi_ind" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_IND_ON_HAVING_CLAUSE" referencedColumnNames="id"
+                                 referencedTableName="bi_having_clause" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-135" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="metric_filter" baseTableName="bi_ind" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_IND_ON_METRIC_FILTER" referencedColumnNames="id"
+                                 referencedTableName="bi_metric_filter" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-136" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="order_clause" baseTableName="bi_ind" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_IND_ON_ORDER_CLAUSE" referencedColumnNames="id"
+                                 referencedTableName="bi_order_clause" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-137" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="search_clause" baseTableName="bi_ind" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_IND_ON_SEARCH_CLAUSE" referencedColumnNames="id"
+                                 referencedTableName="bi_search_clause" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-138" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="sql_metric_filter" baseTableName="bi_ind" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_IND_ON_SQL_METRIC_FILTER" referencedColumnNames="id"
+                                 referencedTableName="bi_sql_metric_filters" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-139" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="where_clause" baseTableName="bi_ind" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_IND_ON_WHERE_CLAUSE" referencedColumnNames="id"
+                                 referencedTableName="bi_where_clause" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-140" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="bi_intercalation" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_INTERCALATION_ON_USER" referencedColumnNames="id"
+                                 referencedTableName="bi_user" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-141" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="interface_id" baseTableName="bi_interface_action"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_INTERFACE_ACTION_ON_INTERFACE"
+                                 referencedColumnNames="id" referencedTableName="bi_interface"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-142" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="graph_id,indicator_id" baseTableName="bi_measure_par"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_MEASURE_PAR_ON_GRIDINID"
+                                 referencedColumnNames="graph_id,indicator_id" referencedTableName="bi_analysis_graph"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-143" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="indicator_id" baseTableName="bi_measure_par" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_MEASURE_PAR_ON_INDICATOR" referencedColumnNames="id"
+                                 referencedTableName="bi_ind" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-144" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="indicator_id" baseTableName="bi_panel_indicator"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_PANEL_INDICATOR_ON_INDICATOR"
+                                 referencedColumnNames="id" referencedTableName="bi_ind"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-145" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="panel_id" baseTableName="bi_panel_indicator" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_PANEL_INDICATOR_ON_PANEL" referencedColumnNames="id"
+                                 referencedTableName="bi_panel" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-146" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="intercalation_id" baseTableName="bi_panel_intercalation"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_PANEL_INTERCALATION_ON_INTERCALATION"
+                                 referencedColumnNames="id" referencedTableName="bi_intercalation"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-147" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="painel_id" baseTableName="bi_panel_intercalation"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_PANEL_INTERCALATION_ON_PAINEL"
+                                 referencedColumnNames="id" referencedTableName="bi_panel"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-148" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="panel_id" baseTableName="bi_panel_user" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_PANEL_USER_ON_PANEL" referencedColumnNames="id"
+                                 referencedTableName="bi_panel" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-149" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="bi_panel_user" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_PANEL_USER_ON_USER" referencedColumnNames="id"
+                                 referencedTableName="bi_user" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-150" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="indicator_id" baseTableName="bi_restriction" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_RESTRICTION_ON_INDICATOR" referencedColumnNames="id"
+                                 referencedTableName="bi_ind" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-151" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="rule_type_id" baseTableName="bi_rule_type_action"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_RULE_TYPE_ACTION_ON_RULE_TYPE"
+                                 referencedColumnNames="id" referencedTableName="bi_rule_type"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-152" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="indicator_id" baseTableName="bi_schedule" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_SCHEDULE_ON_INDICATOR" referencedColumnNames="id"
+                                 referencedTableName="bi_ind" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-153" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="indicator_id" baseTableName="bi_user_default_indicator"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_DEFAULT_INDICATOR_ON_INDICATOR"
+                                 referencedColumnNames="id" referencedTableName="bi_ind"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-154" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="bi_user_default_indicator"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_DEFAULT_INDICATOR_ON_USER"
+                                 referencedColumnNames="id" referencedTableName="bi_user"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-155" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="panel_id" baseTableName="bi_user_default_panel"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_DEFAULT_PANEL_ON_PANEL"
+                                 referencedColumnNames="id" referencedTableName="bi_panel"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-156" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="bi_user_default_panel"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_DEFAULT_PANEL_ON_USER"
+                                 referencedColumnNames="id" referencedTableName="bi_user"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-157" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="document_id" baseTableName="bi_user_documents"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_DOCUMENTS_ON_DOCUMENT"
+                                 referencedColumnNames="id" referencedTableName="bi_documents"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-158" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="bi_user_documents" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_USER_DOCUMENTS_ON_USER" referencedColumnNames="id"
+                                 referencedTableName="bi_user" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-159" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="panel_id" baseTableName="bi_user_group_default_panel"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_GROUP_DEFAULT_PANEL_ON_PANEL"
+                                 referencedColumnNames="id" referencedTableName="bi_panel"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-160" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_group_id" baseTableName="bi_user_group_default_panel"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_GROUP_DEFAULT_PANEL_ON_USER_GROUP"
+                                 referencedColumnNames="id" referencedTableName="bi_user_group"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-161" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="document_id" baseTableName="bi_user_group_documents"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_GROUP_DOCUMENTS_ON_DOCUMENT"
+                                 referencedColumnNames="id" referencedTableName="bi_documents"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-162" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_group_id" baseTableName="bi_user_group_documents"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_GROUP_DOCUMENTS_ON_USER_GROUP"
+                                 referencedColumnNames="id" referencedTableName="bi_user_group"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-163" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="indicator_id" baseTableName="bi_user_group_indicator"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_GROUP_INDICATOR_ON_INDICATOR"
+                                 referencedColumnNames="id" referencedTableName="bi_ind"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-164" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_group_id" baseTableName="bi_user_group_indicator"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_GROUP_INDICATOR_ON_USER_GROUP"
+                                 referencedColumnNames="id" referencedTableName="bi_user_group"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-165" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="interface_id" baseTableName="bi_user_group_interface"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_GROUP_INTERFACE_ON_INTERFACE"
+                                 referencedColumnNames="id" referencedTableName="bi_interface"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-166" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_group_id" baseTableName="bi_user_group_interface"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_GROUP_INTERFACE_ON_USER_GROUP"
+                                 referencedColumnNames="id" referencedTableName="bi_user_group"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-167" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="panel_id" baseTableName="bi_user_group_panel"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_GROUP_PANEL_ON_PANEL"
+                                 referencedColumnNames="id" referencedTableName="bi_panel"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-168" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_group_id" baseTableName="bi_user_group_panel"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_GROUP_PANEL_ON_USER_GROUP"
+                                 referencedColumnNames="id" referencedTableName="bi_user_group"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-169" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="indicator_id" baseTableName="bi_user_group_restriction"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_GROUP_RESTRICTION_ON_INDICATOR"
+                                 referencedColumnNames="id" referencedTableName="bi_ind"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-170" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="indicator_id,restriction_id" baseTableName="bi_user_group_restriction"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_GROUP_RESTRICTION_ON_INIDREID"
+                                 referencedColumnNames="indicator_id,restriction_id"
+                                 referencedTableName="bi_restriction" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-171" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_group_id" baseTableName="bi_user_group_restriction"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_GROUP_RESTRICTION_ON_USER_GROUP"
+                                 referencedColumnNames="id" referencedTableName="bi_user_group"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-172" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="schedule_id" baseTableName="bi_user_group_schedule"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_GROUP_SCHEDULE_ON_SCHEDULE"
+                                 referencedColumnNames="id" referencedTableName="bi_schedule"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-173" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_group_id" baseTableName="bi_user_group_schedule"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_GROUP_SCHEDULE_ON_USER_GROUP"
+                                 referencedColumnNames="id" referencedTableName="bi_user_group"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-174" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="slideshow_id" baseTableName="bi_user_group_slideshow_default"
+                                 baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_USER_GROUP_SLIDESHOW_DEFAULT_ON_SLIDESHOW"
+                                 referencedColumnNames="id" referencedTableName="bi_slideshow"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-175" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_group_id" baseTableName="bi_user_group_slideshow_default"
+                                 baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_USER_GROUP_SLIDESHOW_DEFAULT_ON_USER_GROUP"
+                                 referencedColumnNames="id" referencedTableName="bi_user_group"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-176" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="indicator_id" baseTableName="bi_user_indicator"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_INDICATOR_ON_INDICATOR"
+                                 referencedColumnNames="id" referencedTableName="bi_ind"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-177" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="bi_user_indicator" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_USER_INDICATOR_ON_USER" referencedColumnNames="id"
+                                 referencedTableName="bi_user" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-178" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="interface_id" baseTableName="bi_user_interface"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_INTERFACE_ON_INTERFACE"
+                                 referencedColumnNames="id" referencedTableName="bi_interface"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-179" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="bi_user_interface" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_USER_INTERFACE_ON_USER" referencedColumnNames="id"
+                                 referencedTableName="bi_user" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-180" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="company_id" baseTableName="bi_user" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_USER_ON_COMPANY" referencedColumnNames="id"
+                                 referencedTableName="bi_company" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-181" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_group_id" baseTableName="bi_user" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_USER_ON_USER_GROUP" referencedColumnNames="id"
+                                 referencedTableName="bi_user_group" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-182" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="panel_id" baseTableName="bi_user_panel" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_USER_PANEL_ON_PANEL" referencedColumnNames="id"
+                                 referencedTableName="bi_panel" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-183" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="bi_user_panel" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_USER_PANEL_ON_USER" referencedColumnNames="id"
+                                 referencedTableName="bi_user" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-184" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="indicator_id" baseTableName="bi_user_restriction"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_RESTRICTION_ON_INDICATOR"
+                                 referencedColumnNames="id" referencedTableName="bi_ind"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-185" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="indicator_id,restriction_id" baseTableName="bi_user_restriction"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_RESTRICTION_ON_INIDREID"
+                                 referencedColumnNames="indicator_id,restriction_id"
+                                 referencedTableName="bi_restriction" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-186" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="bi_user_restriction" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_USER_RESTRICTION_ON_USER" referencedColumnNames="id"
+                                 referencedTableName="bi_user" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-187" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="bi_user_rule" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_USER_RULE_ON_PRODUCT" referencedColumnNames="id"
+                                 referencedTableName="bi_product" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-188" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="rule_type_id,rule_type_action_id" baseTableName="bi_user_rule"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_RULE_ON_RUTYIDRUTYACID"
+                                 referencedColumnNames="rule_type_id,rule_type_action_id"
+                                 referencedTableName="bi_rule_type_action" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-189" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="bi_user_rule" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_USER_RULE_ON_USER" referencedColumnNames="id"
+                                 referencedTableName="bi_user" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-190" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="schedule_id" baseTableName="bi_user_schedule"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_SCHEDULE_ON_SCHEDULE"
+                                 referencedColumnNames="id" referencedTableName="bi_schedule"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-191" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="bi_user_schedule" baseTableSchemaName="dbo"
+                                 constraintName="FK_BI_USER_SCHEDULE_ON_USER" referencedColumnNames="id"
+                                 referencedTableName="bi_user" referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-192" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="slideshow_id" baseTableName="bi_user_slideshow_default"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_SLIDESHOW_DEFAULT_ON_SLIDESHOW"
+                                 referencedColumnNames="id" referencedTableName="bi_slideshow"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-193" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="bi_user_slideshow_default"
+                                 baseTableSchemaName="dbo" constraintName="FK_BI_USER_SLIDESHOW_DEFAULT_ON_USER"
+                                 referencedColumnNames="id" referencedTableName="bi_user"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-194" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="company_id" baseTableName="user_group_company"
+                                 baseTableSchemaName="dbo" constraintName="fk_usegrocom_on_b_i_company_entity"
+                                 referencedColumnNames="id" referencedTableName="bi_company"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+    <changeSet id="1713778430706-195" author="Marcos (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_group_id" baseTableName="user_group_company"
+                                 baseTableSchemaName="dbo" constraintName="fk_usegrocom_on_b_i_user_group_entity"
+                                 referencedColumnNames="id" referencedTableName="bi_user_group"
+                                 referencedTableSchemaName="dbo"/>
+    </changeSet>
+
+</databaseChangeLog>
