@@ -12,17 +12,14 @@ import jakarta.persistence.*;
 @IdClass(BIDimMetricRestrictionPK.class)
 public class BIDimMetricRestrictionEntity {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "indicator_id", nullable = false)
     private int indicatorId;
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "metric_id", nullable = false)
     private int metricId;
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "dimension_id", nullable = false)
     private int dimensionId;

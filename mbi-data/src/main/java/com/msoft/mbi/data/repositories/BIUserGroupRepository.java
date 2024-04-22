@@ -1,10 +1,7 @@
 package com.msoft.mbi.data.repositories;
 
-import com.msoft.mbi.data.api.dtos.user.BIUserGroupDTO;
-import com.msoft.mbi.model.BICompanyEntity;
 import com.msoft.mbi.model.BIUserGroupEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

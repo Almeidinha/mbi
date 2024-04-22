@@ -15,19 +15,10 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class BIDimMetricRestrictionPK implements Serializable {
 
-    @Column(name = "indicator_id", nullable = false)
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int indicatorId;
 
-    @Column(name = "metric_id", nullable = false)
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int metricId;
 
-    @Column(name = "dimension_id", nullable = false)
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int dimensionId;
 
 }
