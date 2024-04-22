@@ -18,6 +18,7 @@ public interface BIUserMapper {
     @Mappings({
             @Mapping(target = "biCompanyId", source = "biCompany.id"),
             @Mapping(target = "userGroup", source = "biUserGroupByUserGroup"),
+            @Mapping(target = "userGroupId", source = "biUserGroupByUserGroup.id"),
             @Mapping(target = "userInterface", source = "biUserInterfacesByUser"),
             @Mapping(target = "accessRestrictionInterface", source = "biAccessRestrictionInterfacesByUser"),
             @Mapping(target = "isAdmin", expression = "java(biUser.getAdmin())")
