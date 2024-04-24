@@ -1,13 +1,15 @@
 package com.msoft.mbi.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import jakarta.persistence.*;
 
 @Getter
 @Setter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "bi_dim_metric_restriction", schema = "dbo", catalog = "BISERVER")
 @IdClass(BIDimMetricRestrictionPK.class)
 public class BIDimMetricRestrictionEntity {

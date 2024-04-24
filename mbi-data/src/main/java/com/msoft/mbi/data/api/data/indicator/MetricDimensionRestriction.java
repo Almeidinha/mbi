@@ -4,46 +4,34 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 @Setter
 @Getter
 public class MetricDimensionRestriction {
 
-    private Field metric;
-    private List<Field> dimensions;
+    private Integer metricId;
+    private List<Integer> dimensionIds;
 
-    public MetricDimensionRestriction(Field metrica) {
-        this.metric = metrica;
+    public MetricDimensionRestriction(Integer id) {
+        this.metricId = id;
     }
 
-    public void addDimensao(Field dimensao) {
-        this.getDimensions().add(dimensao);
+    public boolean isRestrictDimension(int dimensionId) {
+       return dimensionIds.contains(dimensionId);
     }
 
-    public boolean isDimensaoRestrita(int codigoDimensao) {
-        boolean retorno = false;
-        for (Field dimAux : this.getDimensions()) {
-            if (dimAux != null) {
-                if (dimAux.getFieldId() == codigoDimensao) {
-                    retorno = true;
-                    break;
-                }
-            }
+
+    public boolean isRestrictMetric(Indicator indicator, int lastLevelCode) {
+        if (lastLevelCode == -1) {
+            return false;
         }
-        return retorno;
-    }
 
-    public boolean isMetricaRestrita(Indicator indicador, int codigoUltimoNivel) {
-        boolean retorno = false;
-        for (Field dimensao : this.getDimensions()) {
-            if (dimensao.getFieldId() == codigoUltimoNivel || codigoUltimoNivel == -1) {
-                Field campoIndicador = indicador.getFieldByCode(String.valueOf(dimensao.getFieldId()));
-                if (campoIndicador != null && "S".equals(campoIndicador.getDefaultField())) {
-                    retorno = true;
-                    break;
-                }
-            }
-        }
-        return retorno;
+        return this.getDimensionIds().stream()
+                .filter(dimensionId -> dimensionId == lastLevelCode)
+                .anyMatch(dimensionId -> {
+                    Field indField = indicator.getFieldByCode(String.valueOf(dimensionId));
+                    return indField != null && "S".equals(indField.getDefaultField());
+                });
     }
 }

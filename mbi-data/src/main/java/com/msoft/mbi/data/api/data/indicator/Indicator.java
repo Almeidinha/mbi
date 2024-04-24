@@ -120,7 +120,7 @@ public class Indicator {
     private int tableType;
     private ValuesRepository sequeceValuesRepository;
     // private ArrayList<ValuesRepository> accumulatedValuesRepository; // TODO: CODE THIS WHEN IMPLEMENTIND ANALYSIS PERMISSIONS
-    // private MetricDimensionRestrictions metricDimensionRestrictions; // TODO: CODE THIS WHEN IMPLEMENTIND ANALYSIS PERMISSIONS
+    private List<MetricDimensionRestriction> metricDimensionRestrictions;
     private ColorsAlert colorAlerts;
     private List<Field> dimensionColumn;
     private int panelIndex;

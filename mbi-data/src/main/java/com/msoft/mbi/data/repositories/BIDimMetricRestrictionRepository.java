@@ -1,6 +1,6 @@
 package com.msoft.mbi.data.repositories;
 
-import com.msoft.mbi.data.api.dtos.restrictions.BIMetricRestrictionDTO;
+import com.msoft.mbi.data.api.dtos.restrictions.MetricDimensionRestrictionEntityDTO;
 import com.msoft.mbi.model.BIDimMetricRestrictionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -15,10 +15,10 @@ import java.util.Set;
 @Repository
 public interface BIDimMetricRestrictionRepository extends JpaRepository<BIDimMetricRestrictionEntity, Integer> {
 
-    @Query(value = " SELECT new com.msoft.mbi.data.api.dtos.restrictions.BIMetricRestrictionDTO(indicatorId, metricId, dimensionId)" +
+    @Query(value = " SELECT new com.msoft.mbi.data.api.dtos.restrictions.MetricDimensionRestrictionEntityDTO(indicatorId, metricId, dimensionId)" +
     "FROM BIDimMetricRestrictionEntity " +
     "WHERE indicatorId = :indicatorId")
-    List<BIMetricRestrictionDTO> findAllByIndicatorId(@Param("indicatorId") Integer indicatorId);
+    List<MetricDimensionRestrictionEntityDTO> findAllByIndicatorId(@Param("indicatorId") Integer indicatorId);
 
     @Modifying
     @Transactional

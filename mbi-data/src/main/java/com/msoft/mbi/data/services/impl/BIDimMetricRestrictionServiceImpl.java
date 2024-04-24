@@ -1,13 +1,13 @@
 package com.msoft.mbi.data.services.impl;
 
-import com.msoft.mbi.data.api.dtos.restrictions.BIMetricRestrictionDTO;
+import com.msoft.mbi.data.api.dtos.restrictions.MetricDimensionRestrictionDTO;
+import com.msoft.mbi.data.api.dtos.restrictions.MetricDimensionRestrictionEntityDTO;
 import com.msoft.mbi.data.repositories.BIDimMetricRestrictionRepository;
 import com.msoft.mbi.data.services.BIDimMetricRestrictionService;
 import com.msoft.mbi.model.BIDimMetricRestrictionEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,7 +48,7 @@ public class BIDimMetricRestrictionServiceImpl implements BIDimMetricRestriction
     }
 
     @Override
-    public List<BIMetricRestrictionDTO> findAllByIndicatorId(Integer indicatorId) {
+    public List<MetricDimensionRestrictionEntityDTO> findAllByIndicatorId(Integer indicatorId) {
         return this.repository.findAllByIndicatorId(indicatorId);
     }
 

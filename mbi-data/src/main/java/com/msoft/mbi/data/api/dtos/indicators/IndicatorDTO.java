@@ -1,6 +1,7 @@
 package com.msoft.mbi.data.api.dtos.indicators;
 
 import com.msoft.mbi.data.api.dtos.filters.FiltersDTO;
+import com.msoft.mbi.data.api.dtos.restrictions.MetricDimensionRestrictionDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -56,7 +57,7 @@ public class IndicatorDTO {
     private PartialTotalizationsDTO partialTotalizations;
     private boolean usesSequence = false;
     private int tableType;
-    // private MetricDimensionRestrictions metricDimensionRestrictions; TODO: MAP THIS WHEN IMPLEMENTING metricDimensionRestrictions
+    private List<MetricDimensionRestrictionDTO> metricDimensionRestrictions;
     private ColorsAlertDTO colorAlerts = new ColorsAlertDTO();
     private int panelIndex;
     private boolean hasData;

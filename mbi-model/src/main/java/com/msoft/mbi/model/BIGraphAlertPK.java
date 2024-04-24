@@ -15,24 +15,12 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class BIGraphAlertPK implements Serializable {
 
-    @Column(name = "indicator_id", nullable = false)
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int indicatorId;
 
-    @Column(name = "graph_id", nullable = false)
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int graphId;
 
-    @Column(name = "alert_id", nullable = false)
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int alertId;
 
-    @Column(name = "is_mark", nullable = false, length = 1)
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String isMark;
 
 }

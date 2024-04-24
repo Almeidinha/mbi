@@ -7,10 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BIMetricRestrictionDTO {
+public class MetricDimensionRestrictionEntityDTO {
+
     private int indicatorId;
-
     private int metricId;
-
     private int dimensionId;
 }

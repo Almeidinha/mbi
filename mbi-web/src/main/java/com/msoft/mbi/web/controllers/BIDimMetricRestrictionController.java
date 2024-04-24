@@ -1,7 +1,7 @@
 package com.msoft.mbi.web.controllers;
 
-import com.msoft.mbi.data.api.dtos.restrictions.BIMetricRestrictionDTO;
-import com.msoft.mbi.data.api.mapper.restrictions.BIMetricRestrictionMapper;
+import com.msoft.mbi.data.api.dtos.restrictions.MetricDimensionRestrictionEntityDTO;
+import com.msoft.mbi.data.api.mapper.restrictions.MetricDimensionRestrictionEntityMapper;
 import com.msoft.mbi.data.services.BIDimMetricRestrictionService;
 import com.msoft.mbi.model.BIDimMetricRestrictionEntity;
 import lombok.RequiredArgsConstructor;
@@ -17,25 +17,25 @@ import java.util.List;
 public class BIDimMetricRestrictionController {
 
     private final BIDimMetricRestrictionService restrictionService;
-    private final BIMetricRestrictionMapper restrictionMapper;
+    private final MetricDimensionRestrictionEntityMapper restrictionMapper;
 
     @GetMapping("{indicatorId}/all")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<BIMetricRestrictionDTO>> findAllByIndicatorId(@PathVariable Integer indicatorId) {
-        List<BIMetricRestrictionDTO> metricRestrictions = this.restrictionService.findAllByIndicatorId(indicatorId);
+    public ResponseEntity<List<MetricDimensionRestrictionEntityDTO>> findAllByIndicatorId(@PathVariable Integer indicatorId) {
+        List<MetricDimensionRestrictionEntityDTO> metricRestrictions = this.restrictionService.findAllByIndicatorId(indicatorId);
         return ResponseEntity.ok(metricRestrictions);
     }
 
     @PostMapping("/list/save")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<BIMetricRestrictionDTO>> saveAll(@RequestBody List<BIMetricRestrictionDTO> restrictionEntities) {
+    public ResponseEntity<List<MetricDimensionRestrictionEntityDTO>> saveAll(@RequestBody List<MetricDimensionRestrictionEntityDTO> restrictionEntities) {
         List<BIDimMetricRestrictionEntity> metricRestrictions = this.restrictionService.saveAll(restrictionMapper.listDTOToEntities(restrictionEntities));
         return ResponseEntity.ok(restrictionMapper.listEntityToDTOs(metricRestrictions));
     }
 
     @PostMapping("/save")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<BIMetricRestrictionDTO> save(@RequestBody BIMetricRestrictionDTO restrictionEntity) {
+    public ResponseEntity<MetricDimensionRestrictionEntityDTO> save(@RequestBody MetricDimensionRestrictionEntityDTO restrictionEntity) {
         BIDimMetricRestrictionEntity metricRestriction = this.restrictionService.save(restrictionMapper.dtoToEntity((restrictionEntity)));
         return ResponseEntity.ok(restrictionMapper.biEntityToDTO(metricRestriction));
     }

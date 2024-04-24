@@ -55,7 +55,6 @@ public class BIGraphAlertEntity {
     @Column(name = "final_value", precision = 6)
     private BigDecimal finalValue;
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic
     @Column(name = "position", length = 1)
     private String position;

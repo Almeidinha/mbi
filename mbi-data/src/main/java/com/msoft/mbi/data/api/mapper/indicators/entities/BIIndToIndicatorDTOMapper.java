@@ -1,13 +1,18 @@
 package com.msoft.mbi.data.api.mapper.indicators.entities;
 
 import com.msoft.mbi.data.api.dtos.indicators.IndicatorDTO;
+import com.msoft.mbi.data.api.dtos.restrictions.MetricDimensionRestrictionDTO;
+import com.msoft.mbi.model.BIDimMetricRestrictionEntity;
 import com.msoft.mbi.model.BIIndEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", uses = BIAnalysisFieldToFieldDTOMapper.class)
 public interface BIIndToIndicatorDTOMapper {
@@ -27,6 +32,7 @@ public interface BIIndToIndicatorDTOMapper {
             @Mapping(target = "dimensionFilters", source = "biDimensionFilter.sqlText"),
             @Mapping(target = "metricFilters", source = "biIndMetricFilter.sqlText"),
             @Mapping(target = "metricSqlFilters", source = "biIndSqlMetricFilter.sqlText"),
+            @Mapping(target = "metricDimensionRestrictions", source  = "biDimMetricRestrictions", qualifiedByName = "getMetricDimRestrictionsDTO"),
             @Mapping(target = "multidimensional", expression = "java(entity.getTableType().equals(2))"),
     })
     IndicatorDTO biEntityToDTO(BIIndEntity entity);
@@ -43,6 +49,7 @@ public interface BIIndToIndicatorDTOMapper {
             @Mapping(target = "biDimensionFilter.sqlText", source = "dimensionFilters"),
             @Mapping(target = "biIndMetricFilter.sqlText", source = "metricFilters"),
             @Mapping(target = "biIndSqlMetricFilter.sqlText", source = "metricSqlFilters"),
+            @Mapping(target = "biDimMetricRestrictions", source  = "dto", qualifiedByName = "getMetricDimRestrictionEntities"),
             @Mapping(target = "tableType", expression = "java(dto.isMultidimensional() ? 2 : 1)"),
     })
     BIIndEntity dtoToEntity(IndicatorDTO dto);
@@ -59,6 +66,7 @@ public interface BIIndToIndicatorDTOMapper {
             @Mapping(target = "dimensionFilters", source = "biDimensionFilter.sqlText"),
             @Mapping(target = "metricFilters", source = "biIndMetricFilter.sqlText"),
             @Mapping(target = "metricSqlFilters", source = "biIndSqlMetricFilter.sqlText"),
+            @Mapping(target = "metricDimensionRestrictions", source  = "biDimMetricRestrictions", qualifiedByName = "getMetricDimRestrictionsDTO"),
             @Mapping(target = "multidimensional", expression = "java(entity.getTableType().equals(2))"),
     })
     List<IndicatorDTO> entityListToDTO(List<BIIndEntity> entities);
@@ -75,7 +83,34 @@ public interface BIIndToIndicatorDTOMapper {
             @Mapping(target = "biDimensionFilter.sqlText", source = "dimensionFilters"),
             @Mapping(target = "biIndMetricFilter.sqlText", source = "metricFilters"),
             @Mapping(target = "biIndSqlMetricFilter.sqlText", source = "metricSqlFilters"),
+            @Mapping(target = "biDimMetricRestrictions", source  = "dto", qualifiedByName = "getMetricDimRestrictionEntities"),
             @Mapping(target = "tableType", expression = "java(dto.isMultidimensional() ? 2 : 1)"),
     })
     List<BIIndEntity> setDTOToEntityList(List<IndicatorDTO> dtos);
+
+    @Named("getMetricDimRestrictionsDTO")
+    default List<MetricDimensionRestrictionDTO> getMetricDimRestrictionsDTO(List<BIDimMetricRestrictionEntity> restrictionEntities) {
+        System.out.println("restrictionEntities > " + restrictionEntities);
+        Map<Integer, List<Integer>> metricToDimensionMap = restrictionEntities.stream()
+                .collect(Collectors.groupingBy(
+                        BIDimMetricRestrictionEntity::getMetricId,
+                        Collectors.mapping(BIDimMetricRestrictionEntity::getDimensionId, Collectors.toList())
+                ));
+
+        return metricToDimensionMap.entrySet().stream()
+                .map(entry -> new MetricDimensionRestrictionDTO(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
+
+    @Named("getMetricDimRestrictionEntities")
+    default List<BIDimMetricRestrictionEntity> getMetricDimRestrictionEntities(IndicatorDTO dto) {
+        return dto.getMetricDimensionRestrictions().stream()
+                .flatMap(b -> b.getDimensionIds().stream().map(dimensionId -> BIDimMetricRestrictionEntity
+                        .builder()
+                        .indicatorId(0)
+                        .dimensionId(dimensionId)
+                        .metricId(b.getMetricId()).build()))
+                .collect(Collectors.toList());
+    }
+
 }

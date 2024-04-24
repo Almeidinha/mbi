@@ -1,6 +1,6 @@
 package com.msoft.mbi.data.api.mapper.restrictions;
 
-import com.msoft.mbi.data.api.dtos.restrictions.BIMetricRestrictionDTO;
+import com.msoft.mbi.data.api.dtos.restrictions.MetricDimensionRestrictionDTO;
 import com.msoft.mbi.model.BIDimMetricRestrictionEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -12,13 +12,13 @@ public interface BIMetricRestrictionMapper {
 
     BIMetricRestrictionMapper BI_METRIC_RESTRICTION_MAPPER = Mappers.getMapper(BIMetricRestrictionMapper.class);
 
-    BIMetricRestrictionDTO biEntityToDTO(BIDimMetricRestrictionEntity entity);
+    MetricDimensionRestrictionDTO biEntityToDTO(BIDimMetricRestrictionEntity entity);
 
-    BIDimMetricRestrictionEntity dtoToEntity(BIMetricRestrictionDTO dto);
+    BIDimMetricRestrictionEntity dtoToEntity(MetricDimensionRestrictionDTO dto);
 
-    List<BIMetricRestrictionDTO> listEntityToDTOs(List<BIDimMetricRestrictionEntity> entities);
+    List<MetricDimensionRestrictionDTO> listEntityToDTOs(List<BIDimMetricRestrictionEntity> entities);
 
-    List<BIDimMetricRestrictionEntity> listDTOToEntities(List<BIMetricRestrictionDTO> dtos);
+    List<BIDimMetricRestrictionEntity> listDTOToEntities(List<MetricDimensionRestrictionDTO> dtos);
 
 }
 
