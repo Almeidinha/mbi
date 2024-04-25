@@ -229,7 +229,6 @@ public class BIAnalysisFieldEntity {
     @Column(name = "delegate_order")
     private Integer delegateOrder;
 
-    @Getter(AccessLevel.NONE)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "indicator_id", nullable = false)
     private BIIndEntity biIndByInd;

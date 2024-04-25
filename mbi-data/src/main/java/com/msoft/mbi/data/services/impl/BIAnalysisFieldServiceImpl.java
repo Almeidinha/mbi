@@ -5,6 +5,7 @@ import com.msoft.mbi.data.api.mapper.indicators.entities.BIAnalysisFieldMapper;
 import com.msoft.mbi.data.repositories.BIAnalysisFieldRepository;
 import com.msoft.mbi.data.services.BIAnalysisFieldService;
 import com.msoft.mbi.model.BIAnalysisFieldEntity;
+import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ public class BIAnalysisFieldServiceImpl implements BIAnalysisFieldService {
 
     @Override
     public List<BIAnalysisFieldEntity> findAll() {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
@@ -62,6 +63,7 @@ public class BIAnalysisFieldServiceImpl implements BIAnalysisFieldService {
             entity.get().setColumnWidth(field.getColumnWidth());
             entity.get().setColumnAlignment(field.getColumnAlignment());
             entity.get().setDateMask(field.getDateMask());
+            entity.get().setDelegateOrder(field.getDelegateOrder());
 
             return this.analysisFieldRepository.save(entity.get());
         }

@@ -26,6 +26,7 @@ public interface BIAnalysisFieldToFieldDTOMapper {
             @Mapping(target = "totalizingField", source = "fieldTotalization"),
             @Mapping(target = "sumLine", source = "lineFieldTotalization"),
             @Mapping(target = "horizontalParticipationAccumulated", source = "accumulatedLineField"),
+            @Mapping(target = "indicatorId", source = "biIndByInd.id"),
             @Mapping(target = "verticalAnalysis", expression = "java(!entity.getVertical().equals(\"N\"))"),
             @Mapping(target = "horizontalAnalysis", expression = "java(!entity.getHorizontal().equals(\"N\"))"),
     })
@@ -41,6 +42,7 @@ public interface BIAnalysisFieldToFieldDTOMapper {
             @Mapping(target = "localApres", source = "displayLocation"),
             @Mapping(target = "fieldTotalization", source = "totalizingField"),
             @Mapping(target = "lineFieldTotalization", source = "sumLine"),
+            @Mapping(target = "biIndByInd.id", source = "indicatorId"),
             @Mapping(target = "accumulatedLineField", source = "horizontalParticipationAccumulated"),
 
     })
@@ -57,6 +59,7 @@ public interface BIAnalysisFieldToFieldDTOMapper {
             @Mapping(target = "totalizingField", source = "fieldTotalization"),
             @Mapping(target = "sumLine", source = "lineFieldTotalization"),
             @Mapping(target = "horizontalParticipationAccumulated", source = "accumulatedLineField"),
+            @Mapping(target = "indicatorId", source = "biIndByInd.id"),
             @Mapping(target = "verticalAnalysis", expression = "java(!entity.getVertical().equals(\"N\"))"),
             @Mapping(target = "horizontalAnalysis", expression = "java(!entity.getHorizontal().equals(\"N\"))"),
     })
@@ -72,6 +75,7 @@ public interface BIAnalysisFieldToFieldDTOMapper {
             @Mapping(target = "localApres", source = "displayLocation"),
             @Mapping(target = "fieldTotalization", source = "totalizingField"),
             @Mapping(target = "lineFieldTotalization", source = "sumLine"),
+            @Mapping(target = "biIndByInd.id", source = "indicatorId"),
             @Mapping(target = "accumulatedLineField", source = "horizontalParticipationAccumulated"),
 
     })
