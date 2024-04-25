@@ -61,9 +61,8 @@ public class MultiDimensionalDefaultTableBuilder extends TableGenerator {
             int checkProcess = 0;
             for (DimensionMetaData metadata : this.cube.getHierarchyColumn()) {
                 checkProcess++;
-                if (checkProcess % 100 == 0) {
-                    if (this.cube.getCubeListener().stopProcess())
-                        return;
+                if (checkProcess % 100 == 0 && this.cube.getCubeListener().stopProcess()) {
+                    return;
                 }
                 this.openLine();
                 this.printer.printColumnHeader(CellProperty.CELL_PROPERTY_DIMENSION_HEADER, metadata, sequenceLineColspanLevel, 1);
@@ -257,9 +256,8 @@ public class MultiDimensionalDefaultTableBuilder extends TableGenerator {
         int verificaProcessamento = 0;
         for (MetricMetaData metaData : this.cube.getHierarchyMetric()) {
             verificaProcessamento++;
-            if (verificaProcessamento % 100 == 0) {
-                if (this.cube.getCubeListener().stopProcess())
-                    return;
+            if (verificaProcessamento % 100 == 0 && this.cube.getCubeListener().stopProcess()) {
+                return;
             }
             if (metaData.isViewed()) {
                 if (metaData.isTotalSumColumns()) {
@@ -384,7 +382,7 @@ public class MultiDimensionalDefaultTableBuilder extends TableGenerator {
         this.openLine();
         this.printer.printTotalPartialHeader(CellProperty.CELL_PROPERTY_TOTAL_PARTIAL_HEADER,
                 "Total", (dimensionLine.getMetaData().getLowerLevelSequenceCount()), 1, dimensionLine.getMetaData().getChild());
-        List<String> alertFunctions = new ArrayList<String>();
+        List<String> alertFunctions = new ArrayList<>();
         alertFunctions.add(MetricMetaData.TOTAL_PARTIAL);
         this.printMetrics(dimensionLine, CellProperty.CELL_PROPERTY_TOTAL_PARTIAL_LINES,
                 new PrintMetricLineTotalPartialLines(this.visibleMetrics), alertFunctions, MetricMetaData.TOTAL_PARTIAL);
@@ -421,13 +419,12 @@ public class MultiDimensionalDefaultTableBuilder extends TableGenerator {
         this.printer.printColumn(CellProperty.CELL_PROPERTY_TOTAL_PARTIAL_HEADER, "Total", qtdMetricas, (dimensionLine.getMetaData().getLowerLevelsCount()));
     }
 
-    private void diveInColumnLevel(Iterator<Dimension> it, int printlevel, String previousCellProperty) {
+    private void diveInColumnLevel(Iterator<Dimension> it, int printLevel, String previousCellProperty) {
         Dimension dimension = null;
         int i;
         for (i = 0; it.hasNext(); i++) {
-            if (i % 100 == 0) {
-                if (this.cube.getCubeListener().stopProcess())
-                    return;
+            if (i % 100 == 0 && this.cube.getCubeListener().stopProcess()) {
+                return;
             }
             dimension = it.next();
             String propriedadeAplicar = previousCellProperty;
@@ -436,18 +433,18 @@ public class MultiDimensionalDefaultTableBuilder extends TableGenerator {
                 propriedadeAplicar = currentDimensionAlertLineProperty;
             }
 
-            if (dimension.getLevel() == printlevel) {
+            if (dimension.getLevel() == printLevel) {
                 String currentDimensionAlertCellProperty = dimension.searchDimensionAlertCellProperty();
                 if (currentDimensionAlertCellProperty != null) {
                     this.printDimensionColumn(dimension, currentDimensionAlertCellProperty, i);
                 } else {
                     this.printDimensionColumn(dimension, propriedadeAplicar, i);
                 }
-            } else if (dimension.getLevel() < printlevel) {
-                this.diveInColumnLevel(dimension.getDimensionsColumn().values().iterator(), printlevel, propriedadeAplicar);
+            } else if (dimension.getLevel() < printLevel) {
+                this.diveInColumnLevel(dimension.getDimensionsColumn().values().iterator(), printLevel, propriedadeAplicar);
             }
         }
-        if (Objects.requireNonNull(dimension).getLevel() == printlevel && dimension.getParent().getMetaData().isTotalPartial()) {
+        if (Objects.requireNonNull(dimension).getLevel() == printLevel && dimension.getParent().getMetaData().isTotalPartial()) {
             this.printTotalPartialColumnHeader(dimension.getParent());
         }
     }
@@ -457,9 +454,8 @@ public class MultiDimensionalDefaultTableBuilder extends TableGenerator {
         String property;
         int i;
         for (i = 0; it.hasNext(); i++) {
-            if (i % 100 == 0) {
-                if (this.cube.getCubeListener().stopProcess())
-                    return;
+            if (i % 100 == 0 && this.cube.getCubeListener().stopProcess()) {
+                return;
             }
             dimension = it.next();
             if (i != 0) {
@@ -558,9 +554,8 @@ public class MultiDimensionalDefaultTableBuilder extends TableGenerator {
             }
             Dimension currentParentDimension = this.lestLevelDimensionColumns.get(0).getParent();
             for (int x = 0; x < this.lestLevelDimensionColumns.size(); x++) {
-                if (x % 100 == 0) {
-                    if (this.cube.getCubeListener().stopProcess())
-                        return;
+                if (x % 100 == 0 && this.cube.getCubeListener().stopProcess()) {
+                    return;
                 }
                 Dimension lastDimensionColumn = this.lestLevelDimensionColumns.get(x);
                 List<MetricMetaData> oldMetrics = metricLinePrinter.getMetricMetaData();

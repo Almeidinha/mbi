@@ -26,13 +26,14 @@ public class JsonPrinter implements Printer {
 
     private final ArrayNode headers;
 
+    private ArrayNode cells;
     private final ArrayNode rows;
 
     ObjectNode resultNode;
 
     private final Map<CellProperty, String> columnSpecificProperties;
 
-    private final HtmlEffectApplier aplicadorEfeitoHTML;
+    private final HtmlEffectApplier htmlEffectApplier;
 
     private static final String BACKGROUND_COLOR = "backgroundColor";
     private static final String FONT_SIZE = "fontSize";
@@ -51,7 +52,7 @@ public class JsonPrinter implements Printer {
         this.styles = mapper.createObjectNode();
         this.resultNode = mapper.createObjectNode();
         this.columnSpecificProperties = new HashMap<>();
-        this.aplicadorEfeitoHTML = new HtmlEffectApplierApply();
+        this.htmlEffectApplier = new HtmlEffectApplierApply();
     }
 
     public JsonPrinter(ObjectNode jsonNode) {
@@ -92,18 +93,19 @@ public class JsonPrinter implements Printer {
 
     @Override
     public void openLine() {
-
+        this.cells = mapper.createArrayNode();
     }
 
     @Override
     public void closeLine() {
-
+        if (!this.cells.isEmpty()) {
+            this.rows.add(this.cells);
+        }
     }
 
     @Override
     public void addStyle(CellProperty cellProperty, String name) {
         this.createStyles(cellProperty, name);
-
     }
 
     @Override
@@ -138,7 +140,7 @@ public class JsonPrinter implements Printer {
         ObjectNode jsonObject = mapper.createObjectNode();
         jsonObject.put("className", cellProperty);
         jsonObject.put("value", formattedValue);
-        this.rows.add(jsonObject);
+        this.cells.add(jsonObject);
     }
 
     @Override
@@ -148,7 +150,7 @@ public class JsonPrinter implements Printer {
         jsonObject.put("rowspan", rowspan);
         jsonObject.put("className", cellProperty);
         jsonObject.put("value", formattedValue);
-        this.rows.add(jsonObject);
+        this.cells.add(jsonObject);
     }
 
     @Override
@@ -325,10 +327,10 @@ public class JsonPrinter implements Printer {
     }
 
     private String applyHtmlEffect(Object value, MaskRenderer htmlDecoratorEffect) {
-        return this.aplicadorEfeitoHTML.applyHtmlEffect(value, htmlDecoratorEffect);
+        return this.htmlEffectApplier.applyHtmlEffect(value, htmlDecoratorEffect);
     }
 
     private String applyDynamicHtmlEffect(Object printValue, String parameterValue, MaskLinkHTMLDynamicValueRenderer htmlDecoratorEffect) {
-        return this.aplicadorEfeitoHTML.applyDynamicHtmlEffect(printValue, parameterValue, htmlDecoratorEffect);
+        return this.htmlEffectApplier.applyDynamicHtmlEffect(printValue, parameterValue, htmlDecoratorEffect);
     }
 }

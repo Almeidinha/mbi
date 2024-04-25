@@ -7,12 +7,12 @@ import com.msoft.mbi.data.api.mapper.indicators.entities.BIIndToIndicatorDTOMapp
 import com.msoft.mbi.data.repositories.BIIndRepository;
 import com.msoft.mbi.data.services.BIIndService;
 import com.msoft.mbi.model.BIIndEntity;
+import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +26,7 @@ public class BIIndServiceImpl implements BIIndService {
 
     @Override
     public List<BIIndEntity> findAll() {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
@@ -70,7 +70,7 @@ public class BIIndServiceImpl implements BIIndService {
     public List<BIIndInfoDTO> findAllDTOs() {
         return  this.indRepository.findAll().stream()
                 .map(this.indMapper::biEntityToDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -85,7 +85,7 @@ public class BIIndServiceImpl implements BIIndService {
     public List<IndicatorDTO> findAllBIIndLogicDTOs() {
         return  this.indRepository.findAll().stream()
                 .map(this.biIndToIndicatorDTOMapper::biEntityToDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

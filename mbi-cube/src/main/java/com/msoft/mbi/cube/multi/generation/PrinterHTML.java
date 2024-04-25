@@ -23,60 +23,60 @@ public class PrinterHTML implements Printer {
     private final List<String> classesIndex = new ArrayList<>();
     private final HashMap<String, String> classesCSS = new HashMap<>();
     @SuppressWarnings("unused")
-    private String corBordasPadrao = "FFFFFF";
-    private final Map<CellProperty, String> propriedadesEspecificasColuna;
-    private final HtmlEffectApplier aplicadorEfeitoHTML;
+    private String defaultBorderColor = "FFFFFF";
+    private final Map<CellProperty, String> columnSpecificProperties;
+    private final HtmlEffectApplier htmlEffectApplier;
 
-    public PrinterHTML(String arquivoHTML) {
+    public PrinterHTML(String htmlFile) {
         try {
-            fos = new FileOutputStream("c:\\" + arquivoHTML);
+            fos = new FileOutputStream("c:\\" + htmlFile);
             this.output = new OutputStreamWriter(fos);
-            this.propriedadesEspecificasColuna = new HashMap<>();
-            this.aplicadorEfeitoHTML = new HtmlEffectApplierApply();
+            this.columnSpecificProperties = new HashMap<>();
+            this.htmlEffectApplier = new HtmlEffectApplierApply();
         } catch (FileNotFoundException e) {
             throw new CubeMathParserException("Não foi possível criar o arquivo.", e);
         }
     }
 
-    public PrinterHTML(Writer output, boolean imprimeLinks) {
+    public PrinterHTML(Writer output, boolean printLinks) {
         this.output = output;
-        this.propriedadesEspecificasColuna = new HashMap<>();
-        if (imprimeLinks) {
-            this.aplicadorEfeitoHTML = new HtmlEffectApplierApply();
+        this.columnSpecificProperties = new HashMap<>();
+        if (printLinks) {
+            this.htmlEffectApplier = new HtmlEffectApplierApply();
         } else {
-            this.aplicadorEfeitoHTML = new HtmlEffectApplierNotApply();
+            this.htmlEffectApplier = new HtmlEffectApplierNotApply();
         }
     }
 
-    private void imprime(String texto) {
+    private void print(String text) {
         try {
-            this.output.write(texto + "\n");
+            this.output.write(text + "\n");
         } catch (IOException e) {
             throw new CubeMathParserException("Não foi possível realizar a impressão do valor.", e);
         }
     }
 
     public void printColumn(String cellProperty, String formattedValue) {
-        this.imprime("<td class='" + cellProperty + "'>" + formattedValue + "</td>");
+        this.print("<td class='" + cellProperty + "'>" + formattedValue + "</td>");
     }
 
     public void printColumn(String cellProperty, String formattedValue, int colspan, int rowspan) {
-        this.imprime("<td colspan='" + colspan + "' rowspan='" + rowspan + "' class='" + cellProperty + "'>" + formattedValue + "</td>");
+        this.print("<td colspan='" + colspan + "' rowspan='" + rowspan + "' class='" + cellProperty + "'>" + formattedValue + "</td>");
     }
 
-    private void abreTabela() {
-        this.imprime("<table class='mainTable'>");
+    private void openTable() {
+        this.print("<table class='mainTable'>");
     }
 
-    private void fechaTabela() {
-        this.imprime("</table>");
+    private void closeTable() {
+        this.print("</table>");
     }
 
     public String getNullValue() {
         return "-";
     }
 
-    private void imprimeCassesCSS() {
+    private void printCss() {
         StringBuilder css = new StringBuilder();
 
         for (String cssName : this.classesIndex) {
@@ -84,13 +84,13 @@ public class PrinterHTML implements Printer {
             css.append(".").append(cssName).append(" {").append(cssValue).append("}\n");
         }
 
-        this.imprime("\n<style type=\"text/css\">");
-        this.imprime(css.toString());
-        this.imprime("</style>\n");
+        this.print("\n<style type=\"text/css\">");
+        this.print(css.toString());
+        this.print("</style>\n");
     }
 
     public void endPrinting() {
-        this.fechaTabela();
+        this.closeTable();
         try {
             if (this.fos != null) {
                 output.close();
@@ -129,40 +129,40 @@ public class PrinterHTML implements Printer {
 
     @Override
     public void openLine() {
-        this.imprime("<tr>");
+        this.print("<tr>");
     }
 
     @Override
     public void openHeadLine() {
-        this.imprime("<thead>");
+        this.print("<thead>");
     }
 
     @Override
     public void openBodyLine() {
-        this.imprime("<tbody>");
+        this.print("<tbody>");
     }
 
     @Override
     public void closeBodyLine() {
-        this.imprime("</tbody>");
+        this.print("</tbody>");
     }
 
     @Override
     public void closeHeadLine() {
-        this.imprime("</thead>");
+        this.print("</thead>");
     }
 
     @Override
     public void closeLine() {
-        this.imprime("</tr>");
+        this.print("</tr>");
     }
 
     private String applyHTMLEffect(Object valor, MaskRenderer effectDecorator) {
-        return this.aplicadorEfeitoHTML.applyHtmlEffect(valor, effectDecorator);
+        return this.htmlEffectApplier.applyHtmlEffect(valor, effectDecorator);
     }
 
     private String applyDynamicHTMLEffect(Object printValue, String parameterValue, MaskLinkHTMLDynamicValueRenderer effectDecorator) {
-        return this.aplicadorEfeitoHTML.applyDynamicHtmlEffect(printValue, parameterValue, effectDecorator);
+        return this.htmlEffectApplier.applyDynamicHtmlEffect(printValue, parameterValue, effectDecorator);
     }
 
     private String getColumnHeaderContent(ColumnMetaData metaData, int colspan, int rowspan, String headerStyle) {
@@ -208,17 +208,17 @@ public class PrinterHTML implements Printer {
 
     @Override
     public void startPrinting() {
-        this.imprimeCassesCSS();
-        this.abreTabela();
+        this.printCss();
+        this.openTable();
     }
 
     @Override
     public void setDefaultBorderColor(String corBorda) {
-        this.corBordasPadrao = corBorda;
+        this.defaultBorderColor = corBorda;
     }
 
     public String getColumnSpecificStyle(ColumnMetaData metaData) {
-        return this.propriedadesEspecificasColuna.get(metaData.getCellProperty());
+        return this.columnSpecificProperties.get(metaData.getCellProperty());
     }
 
     private String getPrintValue(ColumnMetaData metaData) {
@@ -227,22 +227,22 @@ public class PrinterHTML implements Printer {
 
     @Override
     public void printColumnHeader(String cellProperty, ColumnMetaData metaData) {
-        this.imprime(this.getColumnHeaderContent(metaData, 1, 1, cellProperty));
+        this.print(this.getColumnHeaderContent(metaData, 1, 1, cellProperty));
     }
 
     @Override
     public void printColumnHeader(String cellProperty, ColumnMetaData metaData, int colspan, int rowspan) {
-        this.imprime(this.getColumnHeaderContent(metaData, colspan, rowspan, cellProperty));
+        this.print(this.getColumnHeaderContent(metaData, colspan, rowspan, cellProperty));
     }
 
     @Override
     public void printColumnHeader(String cellProperty, String title) {
-        this.imprime("<th class='" + cellProperty + "'>" + title + "</th>");
+        this.print("<th class='" + cellProperty + "'>" + title + "</th>");
     }
 
     @Override
     public void addColumnSpecificPropertyStyle(CellProperty cellProperty, String name) {
-        this.propriedadesEspecificasColuna.put(cellProperty, name);
+        this.columnSpecificProperties.put(cellProperty, name);
         this.addStyle(cellProperty, name);
     }
 

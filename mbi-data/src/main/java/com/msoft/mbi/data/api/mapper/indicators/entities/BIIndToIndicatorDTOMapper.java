@@ -90,7 +90,10 @@ public interface BIIndToIndicatorDTOMapper {
 
     @Named("getMetricDimRestrictionsDTO")
     default List<MetricDimensionRestrictionDTO> getMetricDimRestrictionsDTO(List<BIDimMetricRestrictionEntity> restrictionEntities) {
-        System.out.println("restrictionEntities > " + restrictionEntities);
+        if (restrictionEntities == null || restrictionEntities.isEmpty()) {
+            return List.of();
+        }
+
         Map<Integer, List<Integer>> metricToDimensionMap = restrictionEntities.stream()
                 .collect(Collectors.groupingBy(
                         BIDimMetricRestrictionEntity::getMetricId,
@@ -99,18 +102,21 @@ public interface BIIndToIndicatorDTOMapper {
 
         return metricToDimensionMap.entrySet().stream()
                 .map(entry -> new MetricDimensionRestrictionDTO(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Named("getMetricDimRestrictionEntities")
     default List<BIDimMetricRestrictionEntity> getMetricDimRestrictionEntities(IndicatorDTO dto) {
+        if (dto.getMetricDimensionRestrictions() == null || dto.getMetricDimensionRestrictions().isEmpty()) {
+            return List.of();
+        }
         return dto.getMetricDimensionRestrictions().stream()
                 .flatMap(b -> b.getDimensionIds().stream().map(dimensionId -> BIDimMetricRestrictionEntity
                         .builder()
                         .indicatorId(0)
                         .dimensionId(dimensionId)
                         .metricId(b.getMetricId()).build()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
 }

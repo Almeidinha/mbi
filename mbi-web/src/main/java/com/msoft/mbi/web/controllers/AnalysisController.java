@@ -52,8 +52,8 @@ public class AnalysisController {
 
     @GetMapping("/{id}/table")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<ObjectNode> getJsonTable(@PathVariable Integer id, @RequestBody(required = false) IndicatorDTO dto) {
-        dto = Optional.ofNullable(dto).orElse(this.indService.getBIIndLogicDTO(id));
+    public ResponseEntity<ObjectNode> getJsonTable(@PathVariable Integer id) {
+        IndicatorDTO dto = this.indService.getBIIndLogicDTO(id);
 
         ObjectNode table = this.analysisService.getTableAsJson(dto);
 
