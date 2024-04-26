@@ -44,18 +44,18 @@ public abstract class Dimension implements Comparable<Dimension> {
     @Setter(AccessLevel.NONE)
     private int totalSize = 0;
     @Setter(AccessLevel.NONE)
-    private transient Dimension dimensionTotalLevelUp = null;
-    protected transient DataType<Object> type;
+    private Dimension dimensionTotalLevelUp = null;
+    protected DataType<Object> type;
     private Integer rankingSequence = -1;
     @Setter(AccessLevel.NONE)
-    protected transient String keyValue;
+    protected String keyValue;
 
-    public Dimension(DimensionMetaData metaData) {
+    protected Dimension(DimensionMetaData metaData) {
         this.metaData = metaData;
         this.type = this.metaData.getDataType();
     }
 
-    public Dimension(Dimension parent, DimensionMetaData metaData) {
+    protected Dimension(Dimension parent, DimensionMetaData metaData) {
         this(metaData);
         this.parent = parent;
         this.cube = this.parent.getCube();
@@ -86,11 +86,11 @@ public abstract class Dimension implements Comparable<Dimension> {
                 obj = TextType.EMPTY;
             }
         } else {
-            DimensionMetaData metaData = this.metaData;
+            DimensionMetaData dimensionMetaData = this.metaData;
             if (this.metaData.getOrderingDimension() != null) {
-                metaData = this.metaData.getOrderingDimension();
+                dimensionMetaData = this.metaData.getOrderingDimension();
             }
-            if (metaData.getDataType() instanceof TextType) {
+            if (dimensionMetaData.getDataType() instanceof TextType) {
                 obj = this.getValue().toString().trim();
                 int posIni = obj.toString().indexOf("(*");
                 if (posIni > -1) {
@@ -169,7 +169,7 @@ public abstract class Dimension implements Comparable<Dimension> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || obj.getClass() != obj.getClass()) return false;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
 
         if (Objects.equals(this.getKeyValue(), ((Dimension) obj).getKeyValue())) {
             return true;
@@ -203,10 +203,8 @@ public abstract class Dimension implements Comparable<Dimension> {
 
     protected StringBuilder buildKeyValue() {
         StringBuilder key = new StringBuilder(EMPTY);
-        if (this.isSameAxis(this.parent)) {
-            if (this.parent != null) {
-                key = this.parent.buildKeyValue();
-            }
+        if (this.isSameAxis(this.parent) && (this.parent != null)) {
+            key = this.parent.buildKeyValue();
         }
         key.append(OPEN);
         key.append(this.value);
@@ -258,11 +256,11 @@ public abstract class Dimension implements Comparable<Dimension> {
     }
 
     public boolean isFirstDimensionColumnSameLevel() {
-        Dimension parent = this.getParent();
-        if (parent != null) {
-            Dimension primeiraDimension = parent.getFirstDimensionColumn();
+        Dimension dimension = this.getParent();
+        if (dimension != null) {
+            Dimension primeiraDimension = dimension.getFirstDimensionColumn();
             if (this.equals(primeiraDimension)) {
-                return parent.isFirstDimensionColumnSameLevel();
+                return dimension.isFirstDimensionColumnSameLevel();
             } else {
                 return false;
             }
@@ -389,7 +387,7 @@ public abstract class Dimension implements Comparable<Dimension> {
         }
 
         return metricasMetaData.stream()
-                .map(metaData -> metricLine.getMetrics().get(metaData.getTitle()))
+                .map(metricMetaData -> metricLine.getMetrics().get(metricMetaData.getTitle()))
                 .filter(Objects::nonNull)
                 .map(metricExpression -> metricExpression.searchMetricLineAlert(function, this, dimensionColumn))
                 .filter(Objects::nonNull)

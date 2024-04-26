@@ -24,9 +24,9 @@ public class MultiDimensionalDefaultTableBuilder extends TableGenerator {
     private final DimensionNullColumn dimensionNullColumn;
     private String currentLineMetricAlert;
     private final List<Dimension> lestLevelDimensionColumns;
-
     private Dimension previousLineDimension = null;
-
+  
+    
     public MultiDimensionalDefaultTableBuilder(Cube cube) {
         this.cube = cube;
         dimensionNullColumn = new DimensionNullColumn(cube);
@@ -61,16 +61,15 @@ public class MultiDimensionalDefaultTableBuilder extends TableGenerator {
             int checkProcess = 0;
             for (DimensionMetaData metadata : this.cube.getHierarchyColumn()) {
                 checkProcess++;
-                if (checkProcess % 100 == 0 && this.cube.getCubeListener().stopProcess()) {
+                if (this.shouldStopProcess(checkProcess)) {
                     return;
                 }
                 this.openLine();
                 this.printer.printColumnHeader(CellProperty.CELL_PROPERTY_DIMENSION_HEADER, metadata, sequenceLineColspanLevel, 1);
 
                 if (!this.cube.getDimensionsColumn().isEmpty()) {
-                    Collection<Dimension> set = this.cube.getDimensionsColumn().values();
-                    Iterator<Dimension> it = set.iterator();
-                    this.diveInColumnLevel(it, printLevel, CellProperty.CELL_PROPERTY_DIMENSION_VALUE);
+                    Collection<Dimension> dimensions = this.cube.getDimensionsColumn().values();
+                    this.diveInColumnLevel(dimensions, printLevel, CellProperty.CELL_PROPERTY_DIMENSION_VALUE);
                 }
 
                 printLevel++;
@@ -94,17 +93,16 @@ public class MultiDimensionalDefaultTableBuilder extends TableGenerator {
 
             this.printer.openBodyLine();
             if (!this.cube.getDimensionsLine().isEmpty()) {
-                Collection<Dimension> set = ((Dimensions) this.cube.getDimensionsLine().clone()).values();
-                Iterator<Dimension> it = set.iterator();
+                Collection<Dimension> dimensions = ((Dimensions) this.cube.getDimensionsLine().clone()).values();
                 this.openLine();
-                this.diveInLineLevel(it, null);
+                this.diveInLineLevel(dimensions, null);
                 this.printTotalGeneralLines(sequenceLineColspanLevel);
             }
             this.printer.closeBodyLine();
             this.printer.endPrinting();
 
         } else {
-            this.printer.setDefaultBorderColor("3377CC");
+            this.printer.setDefaultBorderColor(ColorUtil.BLUE);
             createDimensionHeader();
             this.processEmptyTable();
         }
@@ -115,14 +113,127 @@ public class MultiDimensionalDefaultTableBuilder extends TableGenerator {
             ColorAlertConditions alerts = (ColorAlertConditions) colorAlert;
             this.printer.addStyle(alerts.getAlertProperty(), CellProperty.CELL_PROPERTY_ALERTS_PREFIX + alerts.getSequence());
             CellProperty cellProperty = new CellProperty();
-            cellProperty.addExtraAttributes("cursor", "pointer");
+            cellProperty.addExtraAttributes(CellProperty.PROPERTY_CURSOR, CellProperty.CURSOR_MODE);
             this.printer.addLinkStyle(cellProperty, CellProperty.CELL_PROPERTY_ALERTS_PREFIX + alerts.getSequence() + " span");
         }
     }
 
+    @Override
     protected void openLine() {
         super.openLine();
         this.currentLineMetricAlert = null;
+    }
+
+    @Override
+    protected void createDefaultStyles() {
+        this.printer.setDefaultBorderColor(ColorUtil.BLUE);
+        super.createDefaultStyles();
+        
+        this.printer.addStyle(CellProperty.builder()
+                        .alignment(CellProperty.ALIGNMENT_LEFT)
+                        .fontColor(ColorUtil.DARK_BLUE)
+                        .backGroundColor(ColorUtil.PALE_BLUE)
+                        .fontName(CellProperty.FONT_VERDANA)
+                        .fontSize(10)
+                        .specificBorder(true)
+                        .borderColor(ColorUtil.BLUE)
+                        .extraAttributes(Map.of(CellProperty.BORDER_TOP, CellProperty.NONE,CellProperty.BORDER_LEFT, CellProperty.NONE))
+                        .build(), CellProperty.CELL_PROPERTY_DIMENSION_VALUE);
+        
+        this.printer.addLinkStyle(CellProperty.builder()
+                .extraAttributes(Map.of(CellProperty.PROPERTY_CURSOR, CellProperty.CURSOR_MODE)).build(), CellProperty.CELL_PROPERTY_DIMENSION_VALUE + " span");
+        
+        this.printer.addStyle(CellProperty.builder()
+                .alignment(CellProperty.ALIGNMENT_LEFT)
+                .fontColor(ColorUtil.DARK_BLUE)
+                .backGroundColor(ColorUtil.PALE_BLUE)
+                .fontName(CellProperty.FONT_VERDANA)
+                .fontSize(10)
+                .bold(true)
+                .specificBorder(true)
+                .borderColor(ColorUtil.BLUE)
+                .extraAttributes(Map.of(CellProperty.BORDER_TOP, CellProperty.NONE))
+                .build(), CellProperty.CELL_PROPERTY_TOTAL_PARTIAL_LINES);
+
+        this.printer.addStyle(CellProperty.builder()
+                .alignment(CellProperty.ALIGNMENT_LEFT)
+                .fontColor(ColorUtil.DARK_BLUE)
+                .backGroundColor(ColorUtil.GREY_25_PERCENT)
+                .fontName(CellProperty.FONT_VERDANA)
+                .fontSize(10)
+                .bold(true)
+                .borderColor(ColorUtil.BLUE)
+                .specificBorder(true)
+                .extraAttributes(Map.of(CellProperty.BORDER_TOP, CellProperty.NONE))
+                .build(), CellProperty.CELL_PROPERTY_TOTAL_PARTIAL_HEADER);
+
+        this.printer.addStyle(CellProperty.builder()
+                .alignment(CellProperty.ALIGNMENT_CENTER)
+                .fontColor(ColorUtil.DARK_BLUE)
+                .backGroundColor(ColorUtil.GREY_25_PERCENT)
+                .fontName(CellProperty.FONT_VERDANA)
+                .fontSize(10)
+                .bold(true)
+                .borderColor(ColorUtil.BLUE)
+                .specificBorder(true)
+                .extraAttributes(Map.of(CellProperty.BORDER_TOP, CellProperty.NONE))
+                .build(), CellProperty.CELL_PROPERTY_COLUMN_TOTAL_HEADER);
+
+        createDimensionHeader();
+
+        this.printer.addLinkStyle(
+                CellProperty.builder().extraAttributes(Map.of(CellProperty.PROPERTY_CURSOR, CellProperty.CURSOR_MODE)).build(),
+                CellProperty.CELL_PROPERTY_DIMENSION_HEADER + " span"
+        );
+
+        this.printer.addLinkStyle(
+                CellProperty.builder().extraAttributes(Map.of(CellProperty.PROPERTY_CURSOR, CellProperty.CURSOR_MODE)).build(),
+                CellProperty.CELL_PROPERTY_DIMENSION_HEADER + " IMG"
+        );
+
+        this.printer.addColumnHeaderStyle(CellProperty.builder()
+                .alignment(CellProperty.ALIGNMENT_CENTER)
+                .fontColor(ColorUtil.DARK_BLUE)
+                .backGroundColor(ColorUtil.PALE_BLUE)
+                .fontName(CellProperty.FONT_VERDANA)
+                .bold(true)
+                .fontSize(10)
+                .specificBorder(true)
+                .borderColor(ColorUtil.BLUE)
+                .build(), CellProperty.CELL_PROPERTY_METRIC_HEADER);
+
+        this.printer.addLinkStyle(
+                CellProperty.builder().extraAttributes(Map.of(CellProperty.PROPERTY_CURSOR, CellProperty.CURSOR_MODE)).build(),
+                CellProperty.CELL_PROPERTY_METRIC_HEADER + " span"
+        );
+
+        this.printer.addStyle(CellProperty.builder()
+                .alignment(CellProperty.ALIGNMENT_LEFT)
+                .fontColor(ColorUtil.DARK_BLUE)
+                .backGroundColor(ColorUtil.PALE_BLUE)
+                .fontName(CellProperty.FONT_VERDANA)
+                .fontSize(10)
+                .borderColor(ColorUtil.BLUE)
+                .specificBorder(true)
+                .extraAttributes(Map.of(CellProperty.BORDER_LEFT, CellProperty.NONE, CellProperty.BORDER_RIGHT, "1px solid #3377CC"))
+                .build(), CellProperty.CELL_PROPERTY_OTHERS);
+
+        this.createColorAlertStyles();
+
+        super.createsSpecificStylesColumns();
+    }
+
+    private void createDimensionHeader() {
+
+        this.printer.addColumnHeaderStyle(CellProperty.builder()
+                .fontColor(ColorUtil.WHITE)
+                .backGroundColor(ColorUtil.BLUE)
+                .fontName(CellProperty.FONT_VERDANA)
+                .bold(true)
+                .fontSize(10)
+                .specificBorder(true)
+                .borderColor(ColorUtil.BLACK)
+                .build(), CellProperty.CELL_PROPERTY_DIMENSION_HEADER);
     }
 
     private void createColorAlertStyles() {
@@ -140,123 +251,13 @@ public class MultiDimensionalDefaultTableBuilder extends TableGenerator {
         }
     }
 
-    private void createDimensionHeader() {
-        CellProperty cellProperty = new CellProperty();
-        cellProperty.setFontColor("ffffff");
-        cellProperty.setBackGroundColor("3377CC");
-        cellProperty.setFontName("Verdana");
-        cellProperty.setBold(true);
-        cellProperty.setFontSize(10);
-        cellProperty.setSpecificBorder(true);
-        cellProperty.setBorderColor("000000");
-
-        this.printer.addColumnHeaderStyle(cellProperty, CellProperty.CELL_PROPERTY_DIMENSION_HEADER);
-    }
-
-    protected void createDefaultStyles() {
-        this.printer.setDefaultBorderColor("3377CC");
-        super.createDefaultStyles();
-        CellProperty propriedadeDimensaoPadrao = new CellProperty();
-        propriedadeDimensaoPadrao.setAlignment(CellProperty.ALIGNMENT_LEFT);
-        propriedadeDimensaoPadrao.setFontColor("000080");
-        propriedadeDimensaoPadrao.setBackGroundColor("A2C8E8");
-        propriedadeDimensaoPadrao.setFontName("Verdana");
-        propriedadeDimensaoPadrao.setFontSize(10);
-        propriedadeDimensaoPadrao.setSpecificBorder(true);
-        propriedadeDimensaoPadrao.setBorderColor("3377CC");
-        propriedadeDimensaoPadrao.addExtraAttributes("border-top", "none");
-        propriedadeDimensaoPadrao.addExtraAttributes("border-left", "none");
-        this.printer.addStyle(propriedadeDimensaoPadrao, CellProperty.CELL_PROPERTY_DIMENSION_VALUE);
-
-        CellProperty cellProperty = new CellProperty();
-        cellProperty.addExtraAttributes("cursor", "pointer");
-        this.printer.addLinkStyle(cellProperty, CellProperty.CELL_PROPERTY_DIMENSION_VALUE + " span");
-
-        cellProperty = new CellProperty();
-        cellProperty.setAlignment(CellProperty.ALIGNMENT_RIGHT);
-        cellProperty.setFontColor("000080");
-        cellProperty.setBackGroundColor("CCCCCC");
-        cellProperty.setFontName("Verdana");
-        cellProperty.setFontSize(10);
-        cellProperty.setBold(true);
-        cellProperty.setBorderColor("3377CC");
-        cellProperty.setSpecificBorder(true);
-        cellProperty.addExtraAttributes("border-top", "none");
-        this.printer.addStyle(cellProperty, CellProperty.CELL_PROPERTY_TOTAL_PARTIAL_LINES);
-
-        cellProperty = new CellProperty();
-        cellProperty.setAlignment(CellProperty.ALIGNMENT_LEFT);
-        cellProperty.setFontColor("000080");
-        cellProperty.setBackGroundColor("CCCCCC");
-        cellProperty.setFontName("Verdana");
-        cellProperty.setFontSize(10);
-        cellProperty.setBold(true);
-        cellProperty.setBorderColor("3377CC");
-        cellProperty.setSpecificBorder(true);
-        cellProperty.addExtraAttributes("border-top", "none");
-        this.printer.addStyle(cellProperty, CellProperty.CELL_PROPERTY_TOTAL_PARTIAL_HEADER);
-
-        cellProperty = new CellProperty();
-        cellProperty.setAlignment(CellProperty.ALIGNMENT_CENTER);
-        cellProperty.setFontColor("000080");
-        cellProperty.setBackGroundColor("CCCCCC");
-        cellProperty.setFontName("Verdana");
-        cellProperty.setFontSize(10);
-        cellProperty.setBold(true);
-        cellProperty.setBorderColor("3377CC");
-        cellProperty.setSpecificBorder(true);
-        cellProperty.addExtraAttributes("border-top", "none");
-        this.printer.addStyle(cellProperty, CellProperty.CELL_PROPERTY_COLUMN_TOTAL_HEADER);
-
-        createDimensionHeader();
-
-        cellProperty = new CellProperty();
-        cellProperty.addExtraAttributes("cursor", "pointer");
-        this.printer.addLinkStyle(cellProperty, CellProperty.CELL_PROPERTY_DIMENSION_HEADER + " span");
-
-        cellProperty = new CellProperty();
-        cellProperty.addExtraAttributes("cursor", "pointer");
-        this.printer.addLinkStyle(cellProperty, CellProperty.CELL_PROPERTY_DIMENSION_HEADER + " IMG");
-
-        CellProperty propriedadeCabecalhoMetrica = new CellProperty();
-        propriedadeCabecalhoMetrica.setAlignment(CellProperty.ALIGNMENT_CENTER);
-        propriedadeCabecalhoMetrica.setFontColor("000080");
-        propriedadeCabecalhoMetrica.setBackGroundColor("A2C8E8");
-        propriedadeCabecalhoMetrica.setFontName("Verdana");
-        propriedadeCabecalhoMetrica.setBold(true);
-        propriedadeCabecalhoMetrica.setFontSize(10);
-        propriedadeCabecalhoMetrica.setSpecificBorder(true);
-        propriedadeCabecalhoMetrica.setBorderColor("3377CC");
-        this.printer.addColumnHeaderStyle(propriedadeCabecalhoMetrica, CellProperty.CELL_PROPERTY_METRIC_HEADER);
-
-        cellProperty = new CellProperty();
-        cellProperty.addExtraAttributes("cursor", "pointer");
-        this.printer.addLinkStyle(cellProperty, CellProperty.CELL_PROPERTY_METRIC_HEADER + " span");
-
-        CellProperty cellPropertyValorMetricaOutros = new CellProperty();
-        cellPropertyValorMetricaOutros.setAlignment(CellProperty.ALIGNMENT_LEFT);
-        cellPropertyValorMetricaOutros.setFontColor("000080");
-        cellPropertyValorMetricaOutros.setBackGroundColor("A2C8E8");
-        cellPropertyValorMetricaOutros.setFontName("Verdana");
-        cellPropertyValorMetricaOutros.setFontSize(10);
-        cellPropertyValorMetricaOutros.addExtraAttributes("border-left", "none");
-        cellPropertyValorMetricaOutros.addExtraAttributes("border-right", "1px solid #3377CC");
-        cellPropertyValorMetricaOutros.setBorderColor("3377CC");
-        cellPropertyValorMetricaOutros.setSpecificBorder(true);
-        this.printer.addStyle(cellPropertyValorMetricaOutros, CellProperty.CELL_PROPERTY_OTHERS);
-
-        this.createColorAlertStyles();
-
-        super.createsSpecificStylesColumns();
-    }
-
     private void populateVisualizedMetrics() {
         boolean hasDimensionColumn = !this.cube.getHierarchyColumn().isEmpty();
         this.metricTotalColumnGeneralSum = this.cube.getMetricsTotalHorizontal();
-        int verificaProcessamento = 0;
+        int processIndex = 0;
         for (MetricMetaData metaData : this.cube.getHierarchyMetric()) {
-            verificaProcessamento++;
-            if (verificaProcessamento % 100 == 0 && this.cube.getCubeListener().stopProcess()) {
+            processIndex++;
+            if (this.shouldStopProcess(processIndex)) {
                 return;
             }
             if (metaData.isViewed()) {
@@ -407,7 +408,7 @@ public class MultiDimensionalDefaultTableBuilder extends TableGenerator {
         List<String> alertFunctions = new ArrayList<>();
         alertFunctions.add(MetricMetaData.EXPRESSION_PARTIAL);
         this.printMetrics(dimensionLine, CellProperty.CELL_PROPERTY_TOTAL_PARTIAL_LINES,
-                new PrintMetricLinePartialExpressionLines(this.visibleMetrics), alertFunctions, MetricMetaData.EXPRESSION_PARTIAL); // cria o objeto ImpressaoMetricaLinhaTotalizacaoParcialLinhas que vai fazer o calculo
+                new PrintMetricLinePartialExpressionLines(this.visibleMetrics), alertFunctions, MetricMetaData.EXPRESSION_PARTIAL);
         this.printer.closeLine();
     }
 
@@ -419,14 +420,14 @@ public class MultiDimensionalDefaultTableBuilder extends TableGenerator {
         this.printer.printColumn(CellProperty.CELL_PROPERTY_TOTAL_PARTIAL_HEADER, "Total", qtdMetricas, (dimensionLine.getMetaData().getLowerLevelsCount()));
     }
 
-    private void diveInColumnLevel(Iterator<Dimension> it, int printLevel, String previousCellProperty) {
-        Dimension dimension = null;
-        int i;
-        for (i = 0; it.hasNext(); i++) {
-            if (i % 100 == 0 && this.cube.getCubeListener().stopProcess()) {
+    private void diveInColumnLevel(Collection<Dimension> dimensions, int printLevel, String previousCellProperty) {
+        Dimension lastDimension = null;
+        int processIndex = 0;
+        for (Dimension dimension : dimensions) {
+            if (this.shouldStopProcess(processIndex)) {
                 return;
             }
-            dimension = it.next();
+            lastDimension = dimension;
             String propriedadeAplicar = previousCellProperty;
             String currentDimensionAlertLineProperty = dimension.searchDimensionAlertLineProperty();
             if (currentDimensionAlertLineProperty != null) {
@@ -436,29 +437,29 @@ public class MultiDimensionalDefaultTableBuilder extends TableGenerator {
             if (dimension.getLevel() == printLevel) {
                 String currentDimensionAlertCellProperty = dimension.searchDimensionAlertCellProperty();
                 if (currentDimensionAlertCellProperty != null) {
-                    this.printDimensionColumn(dimension, currentDimensionAlertCellProperty, i);
+                    this.printDimensionColumn(dimension, currentDimensionAlertCellProperty);
                 } else {
-                    this.printDimensionColumn(dimension, propriedadeAplicar, i);
+                    this.printDimensionColumn(dimension, propriedadeAplicar);
                 }
             } else if (dimension.getLevel() < printLevel) {
-                this.diveInColumnLevel(dimension.getDimensionsColumn().values().iterator(), printLevel, propriedadeAplicar);
+                this.diveInColumnLevel(dimension.getDimensionsColumn().values(), printLevel, propriedadeAplicar);
             }
+            processIndex++;
         }
-        if (Objects.requireNonNull(dimension).getLevel() == printLevel && dimension.getParent().getMetaData().isTotalPartial()) {
-            this.printTotalPartialColumnHeader(dimension.getParent());
+        if (Objects.requireNonNull(lastDimension).getLevel() == printLevel && lastDimension.getParent().getMetaData().isTotalPartial()) {
+            this.printTotalPartialColumnHeader(lastDimension.getParent());
         }
     }
 
-    private void diveInLineLevel(Iterator<Dimension> it, String previousLevelCellProperty) {
-        Dimension dimension;
+    private void diveInLineLevel(Collection<Dimension> dimensions, String previousLevelCellProperty) {
+
         String property;
-        int i;
-        for (i = 0; it.hasNext(); i++) {
-            if (i % 100 == 0 && this.cube.getCubeListener().stopProcess()) {
+        int processIndex = 0;
+        for (Dimension dimension: dimensions) {
+            if (this.shouldStopProcess(processIndex)) {
                 return;
             }
-            dimension = it.next();
-            if (i != 0) {
+            if (processIndex != 0) {
                 this.openLine();
             }
             property = dimension.getMetaData().getDefaultStyle();
@@ -478,13 +479,12 @@ public class MultiDimensionalDefaultTableBuilder extends TableGenerator {
             if (currentDimensionAlertCellProperty != null) {
                 property = currentDimensionAlertCellProperty;
             }
-            this.printDimensionLine(dimension, property, (i + 1));
+            this.printDimensionLine(dimension, property);
             if (!dimension.getDimensionsLine().isEmpty()) {
 
                 Dimensions dims = (Dimensions) dimension.getDimensionsLine().clone();
 
-                Iterator<Dimension> dimensionIterator = dims.values().iterator();
-                this.diveInLineLevel(dimensionIterator, propriedadeCelulaNivelAnteriorAplicar);
+                this.diveInLineLevel(dims.values(), propriedadeCelulaNivelAnteriorAplicar);
 
                 if (dimension.getMetaData().isTotalPartial() || dimension.getMetaData().isPartialTotalExpression()) {
                     this.printTotalPartialLines(dimension);
@@ -507,23 +507,23 @@ public class MultiDimensionalDefaultTableBuilder extends TableGenerator {
                         ColorAlertMetadata.getHorizaontalToalFunctionList(), ColorAlertMetadata.NO_FUNCTION);
                 this.printer.closeLine();
             }
+            processIndex++;
         }
     }
 
-    private void printMetricValuesTotalPartialColumns(Dimension dimensionLine, Dimension dimensionColumn,
-                                                      MetricLinePrinter impressao) {
+    private void printMetricValuesTotalPartialColumns(Dimension dimensionLine, Dimension dimensionColumn, MetricLinePrinter printer) {
         if (dimensionColumn.getMetaData().isTotalPartial()) {
-            List<MetricMetaData> oldMetric = impressao.getMetricMetaData();
+            List<MetricMetaData> oldMetric = printer.getMetricMetaData();
             if (dimensionColumn.isFirstDimensionColumnSameLevel()) {
-                impressao.setMetricMetaData(this.getMetricsWithoutAH(oldMetric));
+                printer.setMetricMetaData(this.getMetricsWithoutAH(oldMetric));
             }
             String propriedadeCelula = CellProperty.CELL_PROPERTY_TOTAL_PARTIAL_LINES;
             if (this.currentLineMetricAlert != null) {
                 propriedadeCelula = this.currentLineMetricAlert;
             }
-            impressao.printMetricValues(dimensionColumn, null, dimensionLine, propriedadeCelula,
+            printer.printMetricValues(dimensionColumn, null, dimensionLine, propriedadeCelula,
                     this.printer, this.cube, CalculationSummaryType.TOTAL);
-            impressao.setMetricMetaData(oldMetric);
+            printer.setMetricMetaData(oldMetric);
         }
     }
 
@@ -531,7 +531,7 @@ public class MultiDimensionalDefaultTableBuilder extends TableGenerator {
                                                    Dimension current, MetricLinePrinter printer) {
         if (!current.getParent().equals(previousParent)) {
             this.printMetricValuesTotalPartialColumns(dimensionLine, previousParent, printer);
-            previousParent = this.checkPrintTotalPartialColumn(dimensionLine, previousParent.getParent(), current.getParent(), printer);
+            this.checkPrintTotalPartialColumn(dimensionLine, previousParent.getParent(), current.getParent(), printer);
         }
         return current.getParent();
     }
@@ -554,7 +554,7 @@ public class MultiDimensionalDefaultTableBuilder extends TableGenerator {
             }
             Dimension currentParentDimension = this.lestLevelDimensionColumns.get(0).getParent();
             for (int x = 0; x < this.lestLevelDimensionColumns.size(); x++) {
-                if (x % 100 == 0 && this.cube.getCubeListener().stopProcess()) {
+                if (this.shouldStopProcess(x)) {
                     return;
                 }
                 Dimension lastDimensionColumn = this.lestLevelDimensionColumns.get(x);
@@ -637,7 +637,7 @@ public class MultiDimensionalDefaultTableBuilder extends TableGenerator {
         return result;
     }
 
-    public void printDimensionColumn(Dimension dim, String previousLevelCellProperty, int dimensionIndex) {
+    public void printDimensionColumn(Dimension dim, String previousLevelCellProperty) {
         int metricsToRemoveCount = 0;
         boolean isFirstDimension = dim.isFirstDimensionColumnSameLevel();
 
@@ -655,7 +655,7 @@ public class MultiDimensionalDefaultTableBuilder extends TableGenerator {
         return colspan;
     }
 
-    public void printDimensionLine(Dimension dim, String previousLevelCellProperty, int sequence) {
+    public void printDimensionLine(Dimension dim, String previousLevelCellProperty) {
         DimensionLine dimensionLine = (DimensionLine) dim;
         int rowspan = calculateRowspan(dimensionLine);
         int colspan = dimensionLine.getColspanLinePrint();
@@ -674,5 +674,9 @@ public class MultiDimensionalDefaultTableBuilder extends TableGenerator {
 
     private String getRankingSequence(DimensionLine dimensionLine) {
         return Optional.ofNullable(dimensionLine.getRankingSequence()).map(String::valueOf).orElse(this.printer.getEmptyValue());
+    }
+
+    private boolean shouldStopProcess(int index) {
+        return index % 100 == 0 && this.cube.getCubeListener().stopProcess();
     }
 }

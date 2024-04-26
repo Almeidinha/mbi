@@ -36,22 +36,22 @@ public abstract class TableGenerator {
     }
 
     protected void createDefaultStyles() {
-        CellProperty cellPropertyOne = createCellProperty(CellProperty.ALIGNMENT_RIGHT, "000080", "CCCCCC", "Verdana", 10, "3377CC", true);
+        CellProperty cellPropertyOne = createCellProperty(CellProperty.ALIGNMENT_RIGHT, ColorUtil.DARK_BLUE, ColorUtil.GREY_25_PERCENT, CellProperty.FONT_VERDANA, 10, ColorUtil.BLUE, true);
         this.printer.addStyle(cellPropertyOne, CellProperty.CELL_PROPERTY_TOTAL_GENERAL);
 
-        CellProperty metricOneProperty = createCellProperty(CellProperty.ALIGNMENT_RIGHT, "000080", "D7E3F7", "Verdana", 10, "3377CC", true);
+        CellProperty metricOneProperty = createCellProperty(CellProperty.ALIGNMENT_RIGHT, ColorUtil.DARK_BLUE, ColorUtil.LIGHT_TURQUOISE, CellProperty.FONT_VERDANA, 10, ColorUtil.BLUE, true);
         this.printer.addStyle(metricOneProperty, CellProperty.CELL_PROPERTY_METRIC_VALUE_ONE);
 
-        CellProperty metricTwoProperty = createCellProperty(CellProperty.ALIGNMENT_RIGHT, "000080", "FFFFFF", "Verdana", 10, "3377CC", true);
+        CellProperty metricTwoProperty = createCellProperty(CellProperty.ALIGNMENT_RIGHT, ColorUtil.DARK_BLUE, ColorUtil.WHITE, CellProperty.FONT_VERDANA, 10, ColorUtil.BLUE, true);
         this.printer.addStyle(metricTwoProperty, CellProperty.CELL_PROPERTY_METRIC_VALUE_TWO);
 
-        CellProperty dataMetricOneProperty = createCellProperty(CellProperty.ALIGNMENT_RIGHT, "000080", "D7E3F7", "Verdana", 10, "3377CC", true);
+        CellProperty dataMetricOneProperty = createCellProperty(CellProperty.ALIGNMENT_RIGHT, ColorUtil.DARK_BLUE, ColorUtil.LIGHT_TURQUOISE, CellProperty.FONT_VERDANA, 10, ColorUtil.BLUE, true);
         this.printer.addStyle(dataMetricOneProperty, CellProperty.CELL_PROPERTY_METRIC_DATA_ONE);
 
-        CellProperty dataMetricTwoProperty = createCellProperty(CellProperty.ALIGNMENT_RIGHT, "000080", "FFFFFF", "Verdana", 10, "3377CC", true);
+        CellProperty dataMetricTwoProperty = createCellProperty(CellProperty.ALIGNMENT_RIGHT, ColorUtil.DARK_BLUE, ColorUtil.WHITE, CellProperty.FONT_VERDANA, 10, ColorUtil.BLUE, true);
         this.printer.addStyle(dataMetricTwoProperty, CellProperty.CELL_PROPERTY_METRIC_DATA_TWO);
 
-        CellProperty cellPropertyTwo = createCellProperty(CellProperty.ALIGNMENT_CENTER, "FFFFFF", "3377CC", "Verdana", 10, "000000", true);
+        CellProperty cellPropertyTwo = createCellProperty(CellProperty.ALIGNMENT_CENTER, ColorUtil.WHITE, ColorUtil.BLUE, CellProperty.FONT_VERDANA, 10, ColorUtil.BLACK, true);
         cellPropertyTwo.setWidth(10);
         this.printer.addStyle(cellPropertyTwo, CellProperty.CELL_PROPERTY_SEQUENCE);
     }

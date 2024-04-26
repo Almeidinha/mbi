@@ -1,18 +1,31 @@
 package com.msoft.mbi.cube.multi.generation;
 
 import java.util.HashMap;
+import java.util.Map;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.poi.hssf.util.HSSFColor;
 
-public class ColorUtil {
+@NoArgsConstructor(access= AccessLevel.PRIVATE)
+public final class ColorUtil {
 
-    private static HashMap<String, Short> coresExcelHTML;
+    public static final String BLUE = "3377CC";
+    public static final String WHITE = "ffffff";
+    public static final String DARK_BLUE = "000080";
+    public static final String BLACK = "000000";
+
+    public static final String GREY_25_PERCENT = "cccccc";
+    public static final String PALE_BLUE = "A2C8E8";
+    public static final String LIGHT_TURQUOISE = "D7E3F7";
+
+    public static Map<String, Short> coresExcelHTML;
 
     private static void addColor(String hexCode, HSSFColor.HSSFColorPredefined color) {
         getCoresExcelHTML().put(hexCode, color.getIndex());
     }
 
-    public static synchronized HashMap<String, Short> getCoresExcelHTML() {
+    public static synchronized Map<String, Short> getCoresExcelHTML() {
         if (coresExcelHTML == null) {
             coresExcelHTML = new HashMap<>();
             initializeColors();

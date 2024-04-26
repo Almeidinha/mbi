@@ -30,25 +30,36 @@ public class CellProperty implements Serializable {
     public static String ALIGNMENT_LEFT = "left";
     public static String ALIGNMENT_RIGHT = "right";
     public static String ALIGNMENT_CENTER = "center";
-    public final static String CELL_PROPERTY_TOTAL_PARTIAL_LINES = "vlrTPcl";
-    public final static String CELL_PROPERTY_TOTAL_PARTIAL_HEADER = "cbcTPcl";
-    public final static String CELL_PROPERTY_COLUMN_TOTAL_HEADER = "cbcTCls";
-    public final static String CELL_PROPERTY_TOTAL_GENERAL = "totGrl";
-    public final static String CELL_PROPERTY_DIMENSION_HEADER = "cbcDim";
-    public final static String PROPERTY_TEXT = "Texto";
-    public final static String CELL_PROPERTY_DIMENSION_VALUE = "vlrDim";
-    public final static String CELL_PROPERTY_METRIC_HEADER = "cbcMet";
-    public final static String CELL_PROPERTY_OTHERS = "linOtrs";
-    public final static String CELL_PROPERTY_SEQUENCE = "celSeq";
-    public final static String CELL_PROPERTY_PREFIX = "propCel";
-    public final static String CELL_PROPERTY_METRIC_VALUE_ONE = "vlrMet1";
-    public final static String CELL_PROPERTY_METRIC_VALUE_TWO = "vlrMet2";
-    public final static String CELL_PROPERTY_METRIC_DATA_ONE = "datMet1";
-    public final static String CELL_PROPERTY_METRIC_DATA_TWO = "datMet2";
-    public final static String CELL_PROPERTY_ALERTS_PREFIX = "alrt";
-    public final static String[] CELL_PROPERTY_METRIC_VALUES = new String[]{CELL_PROPERTY_METRIC_VALUE_ONE, CELL_PROPERTY_METRIC_VALUE_TWO};
-    public final static String CELL_PROPERTY_DEFAULT_HEADER = "cbcPad";
-    public final static String CELL_PROPERTY_SEQUENCE_HEADER = "cbcPad";
+    public static final String CELL_PROPERTY_TOTAL_PARTIAL_LINES = "vlrTPcl";
+    public static final String CELL_PROPERTY_TOTAL_PARTIAL_HEADER = "cbcTPcl";
+    public static final String CELL_PROPERTY_COLUMN_TOTAL_HEADER = "cbcTCls";
+    public static final String CELL_PROPERTY_TOTAL_GENERAL = "totGrl";
+    public static final String CELL_PROPERTY_DIMENSION_HEADER = "cbcDim";
+    public static final String CELL_PROPERTY_DIMENSION_VALUE = "vlrDim";
+    public static final String PROPERTY_TEXT = "Texto";
+    public static final String CELL_PROPERTY_METRIC_HEADER = "cbcMet";
+    public static final String CELL_PROPERTY_OTHERS = "linOtrs";
+    public static final String CELL_PROPERTY_SEQUENCE = "celSeq";
+    public static final String CELL_PROPERTY_PREFIX = "propCel";
+    public static final String CELL_PROPERTY_METRIC_VALUE_ONE = "vlrMet1";
+    public static final String CELL_PROPERTY_METRIC_VALUE_TWO = "vlrMet2";
+    public static final String CELL_PROPERTY_METRIC_DATA_ONE = "datMet1";
+    public static final String CELL_PROPERTY_METRIC_DATA_TWO = "datMet2";
+    public static final String CELL_PROPERTY_ALERTS_PREFIX = "alrt";
+    public static final String CELL_PROPERTY_DEFAULT_HEADER = "cbcPad";
+    public static final String CELL_PROPERTY_SEQUENCE_HEADER = "cbcPad";
+
+    public static final String PROPERTY_CURSOR = "cursor";
+    public static final String CURSOR_MODE = "pointer";
+    public static final String FONT_VERDANA = "Verdana";
+    public static final String BORDER_TOP = "border-top";
+    public static final String BORDER_LEFT = "border-left";
+    public static final String BORDER_RIGHT = "border-right";
+    public static final String NONE = "none";
+
+
+
+    public static final String[] CELL_PROPERTY_METRIC_VALUES = new String[]{CELL_PROPERTY_METRIC_VALUE_ONE, CELL_PROPERTY_METRIC_VALUE_TWO};
 
     public String getSFloat() {
         return sFloat;
