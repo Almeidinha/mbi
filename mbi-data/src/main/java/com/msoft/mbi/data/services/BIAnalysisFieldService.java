@@ -17,4 +17,6 @@ public interface BIAnalysisFieldService extends CrudService<BIAnalysisFieldEntit
 
     BIAnalysisFieldDTO updateDto(Integer integer, BIAnalysisFieldDTO dto);
 
+    List<BIAnalysisFieldDTO> updateDtoList(List<BIAnalysisFieldDTO> dtos);
+
 }

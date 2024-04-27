@@ -5,6 +5,8 @@ import com.msoft.mbi.data.api.mapper.indicators.entities.BIAnalysisFieldMapper;
 import com.msoft.mbi.data.repositories.BIAnalysisFieldRepository;
 import com.msoft.mbi.data.services.BIAnalysisFieldService;
 import com.msoft.mbi.model.BIAnalysisFieldEntity;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.IterableUtils;
@@ -54,21 +56,42 @@ public class BIAnalysisFieldServiceImpl implements BIAnalysisFieldService {
 
     @Override
     public BIAnalysisFieldEntity update(Integer id, BIAnalysisFieldEntity field) {
-        Optional<BIAnalysisFieldEntity> entity = this.analysisFieldRepository.findById(id);
-        if (entity.isPresent()) {
-            entity.get().setTitle(field.getTitle());
-            entity.get().setFieldType(field.getFieldType());
-            entity.get().setDataType(field.getDataType());
-            entity.get().setDefaultField(field.getDefaultField());
-            entity.get().setColumnWidth(field.getColumnWidth());
-            entity.get().setColumnAlignment(field.getColumnAlignment());
-            entity.get().setDateMask(field.getDateMask());
-            entity.get().setDelegateOrder(field.getDelegateOrder());
+        return this.analysisFieldRepository.findById(id)
+                .map(entity -> {
+                    if (field.getTitle() != null) {
+                        entity.setTitle(field.getTitle());
+                    }
+                    if (field.getFieldType() != null) {
+                        entity.setFieldType(field.getFieldType());
+                    }
+                    if (field.getDataType() != null) {
+                        entity.setDataType(field.getDataType());
+                    }
+                    if (field.getDefaultField() != null) {
+                        entity.setDefaultField(field.getDefaultField());
+                    }
+                    if (field.getColumnWidth() != null) {
+                        entity.setColumnWidth(field.getColumnWidth());
+                    }
+                    if (field.getColumnAlignment() != null) {
+                        entity.setColumnAlignment(field.getColumnAlignment());
+                    }
+                    if (field.getDateMask() != null) {
+                        entity.setDateMask(field.getDateMask());
+                    }
+                    if (field.getDelegateOrder() != null) {
+                        entity.setDelegateOrder(field.getDelegateOrder());
+                    }
+                    if (field.getFieldOrder() != null) {
+                        entity.setFieldOrder(field.getFieldOrder());
+                    }
+                    if (field.getVisualizationSequence() != null) {
+                        entity.setVisualizationSequence(field.getVisualizationSequence());
+                    }
 
-            return this.analysisFieldRepository.save(entity.get());
-        }
-        return null;
-
+                    return this.analysisFieldRepository.save(entity);
+                })
+                .orElse(null);
     }
 
     public BIAnalysisFieldDTO updateDto(Integer id, BIAnalysisFieldDTO dto) {
@@ -76,14 +99,22 @@ public class BIAnalysisFieldServiceImpl implements BIAnalysisFieldService {
         return this.analysisFieldMapper.biEntityToDTO(field);
     }
 
-    @Override
-    public void delete(BIAnalysisFieldEntity object) {
-
+    public List<BIAnalysisFieldDTO> updateDtoList(List<BIAnalysisFieldDTO> dtos) {
+        List<BIAnalysisFieldDTO> savedDtos = new ArrayList<>();
+        for (BIAnalysisFieldDTO dto : dtos) {
+            savedDtos.add(this.updateDto(dto.getFieldId(), dto));
+        }
+        return savedDtos;
     }
 
     @Override
-    public void deleteById(Integer integer) {
+    public void delete(BIAnalysisFieldEntity entity) {
+        this.analysisFieldRepository.delete(entity);
+    }
 
+    @Override
+    public void deleteById(Integer fieldId) {
+        this.analysisFieldRepository.deleteById(fieldId);
     }
 
     @Override
