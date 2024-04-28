@@ -8,7 +8,6 @@ import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
-import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public interface BIAnalysisFieldToFieldDTOMapper {
@@ -21,7 +20,7 @@ public interface BIAnalysisFieldToFieldDTOMapper {
             @Mapping(target = "drillDownSequence", source = "filterSequence"),
             @Mapping(target = "order", source = "fieldOrder"),
             @Mapping(target = "orderDirection", source = "direction"),
-            @Mapping(target = "numDecimalPositions", source = "decimalPosition"),
+            @Mapping(target = "numDecimalPositions", source = "decimalPositions"),
             @Mapping(target = "displayLocation", source = "localApres"),
             @Mapping(target = "totalizingField", source = "fieldTotalization"),
             @Mapping(target = "sumLine", source = "lineFieldTotalization"),
@@ -38,7 +37,7 @@ public interface BIAnalysisFieldToFieldDTOMapper {
             @Mapping(target = "filterSequence", source = "drillDownSequence"),
             @Mapping(target = "fieldOrder", source = "order"),
             @Mapping(target = "direction", source = "orderDirection"),
-            @Mapping(target = "decimalPosition", source = "numDecimalPositions"),
+            @Mapping(target = "decimalPositions", source = "numDecimalPositions"),
             @Mapping(target = "localApres", source = "displayLocation"),
             @Mapping(target = "fieldTotalization", source = "totalizingField"),
             @Mapping(target = "lineFieldTotalization", source = "sumLine"),
@@ -54,7 +53,7 @@ public interface BIAnalysisFieldToFieldDTOMapper {
             @Mapping(target = "drillDownSequence", source = "filterSequence"),
             @Mapping(target = "order", source = "fieldOrder"),
             @Mapping(target = "orderDirection", source = "direction"),
-            @Mapping(target = "numDecimalPositions", source = "decimalPosition"),
+            @Mapping(target = "numDecimalPositions", source = "decimalPositions"),
             @Mapping(target = "displayLocation", source = "localApres"),
             @Mapping(target = "totalizingField", source = "fieldTotalization"),
             @Mapping(target = "sumLine", source = "lineFieldTotalization"),
@@ -71,7 +70,7 @@ public interface BIAnalysisFieldToFieldDTOMapper {
             @Mapping(target = "filterSequence", source = "drillDownSequence"),
             @Mapping(target = "fieldOrder", source = "order"),
             @Mapping(target = "direction", source = "orderDirection"),
-            @Mapping(target = "decimalPosition", source = "numDecimalPositions"),
+            @Mapping(target = "decimalPositions", source = "numDecimalPositions"),
             @Mapping(target = "localApres", source = "displayLocation"),
             @Mapping(target = "fieldTotalization", source = "totalizingField"),
             @Mapping(target = "lineFieldTotalization", source = "sumLine"),

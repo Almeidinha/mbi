@@ -75,7 +75,7 @@ public class BIAnalysisFieldEntity {
 
     @Basic
     @Column(name = "decimal_position")
-    private Integer decimalPosition;
+    private Integer decimalPositions;
 
     @Basic
     @Column(name = "field_totalization")

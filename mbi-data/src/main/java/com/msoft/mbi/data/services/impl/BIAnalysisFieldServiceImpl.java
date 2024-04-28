@@ -88,6 +88,9 @@ public class BIAnalysisFieldServiceImpl implements BIAnalysisFieldService {
                     if (field.getVisualizationSequence() != null) {
                         entity.setVisualizationSequence(field.getVisualizationSequence());
                     }
+                    if (field.getDecimalPositions() != null) {
+                        entity.setDecimalPositions(field.getDecimalPositions());
+                    }
 
                     return this.analysisFieldRepository.save(entity);
                 })

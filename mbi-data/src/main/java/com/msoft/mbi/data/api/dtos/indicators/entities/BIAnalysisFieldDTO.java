@@ -22,7 +22,7 @@ public class BIAnalysisFieldDTO {
     private Integer fieldOrder;
     private String tableNickname;
     private String direction;
-    private Integer decimalPosition;
+    private Integer decimalPositions;
     private boolean fieldTotalization;
     private String vertical;
     private String aggregationType;
