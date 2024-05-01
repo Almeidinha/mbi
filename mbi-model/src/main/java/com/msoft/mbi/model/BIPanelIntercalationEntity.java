@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_panel_intercalation", schema = "dbo", catalog = "BISERVER")
+@Table(name = "bi_panel_intercalation", schema = "biserver", catalog = "BISERVER")
 @IdClass(BIPanelIntercalationPK.class)
 public class BIPanelIntercalationEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)

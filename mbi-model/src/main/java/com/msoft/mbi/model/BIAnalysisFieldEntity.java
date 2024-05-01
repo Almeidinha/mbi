@@ -1,10 +1,8 @@
 package com.msoft.mbi.model;
 
-import lombok.*;
-
 import jakarta.persistence.*;
 import org.hibernate.annotations.DynamicUpdate;
-
+import lombok.*;
 import java.util.Collection;
 
 @Getter
@@ -15,7 +13,7 @@ import java.util.Collection;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(
-        name = "bi_analysis_field", schema = "dbo", catalog = "BISERVER",
+        name = "bi_analysis_field", schema = "biserver", catalog = "BISERVER",
         indexes = @Index(name = "ix2_bi_analysis_field", columnList = "title")
 )
 public class BIAnalysisFieldEntity {
@@ -78,8 +76,8 @@ public class BIAnalysisFieldEntity {
     private Integer decimalPositions;
 
     @Basic
-    @Column(name = "field_totalization")
-    private boolean fieldTotalization;
+    @Column(name = "field_totalization",length = 1)
+    private String fieldTotalization;
 
     @Basic
     @Column(name = "vertical",length = 1)
@@ -90,8 +88,8 @@ public class BIAnalysisFieldEntity {
     private String aggregationType;
 
     @Basic
-    @Column(name = "accumulated_participation", length = 1)
-    private String accumulatedShare;
+    @Column(name = "accumulated_participation")
+    private boolean accumulatedParticipation;
 
     @Basic
     @Column(name = "field_color", length = 7)
@@ -130,8 +128,8 @@ public class BIAnalysisFieldEntity {
     private boolean lineFieldTotalization;
 
     @Basic
-    @Column(name = "accumulated_line_field")
-    private boolean accumulatedLineField;
+    @Column(name = "accumulated_line_field", length = 1)
+    private String accumulatedLineField;
 
     @Basic
     @Column(name = "tendency_line", length = 1)
@@ -178,8 +176,8 @@ public class BIAnalysisFieldEntity {
     private String accumulatedOrderDirection;
 
     @Basic
-    @Column(name = "uses_line_metric")
-    private boolean usesLineMetric;
+    @Column(name = "uses_med_line")
+    private boolean usesMediaLine;
 
     @Basic
     @Column(name = "is_fixed_value")

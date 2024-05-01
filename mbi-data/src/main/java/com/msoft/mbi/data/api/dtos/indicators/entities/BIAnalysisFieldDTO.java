@@ -23,10 +23,10 @@ public class BIAnalysisFieldDTO {
     private String tableNickname;
     private String direction;
     private Integer decimalPositions;
-    private boolean fieldTotalization;
+    private String fieldTotalization;
     private String vertical;
     private String aggregationType;
-    private String accumulatedShare;
+    private boolean accumulatedParticipation;
     private String fieldColor;
     private String defaultGraph;
     private String ignoreZeros;
@@ -36,7 +36,7 @@ public class BIAnalysisFieldDTO {
     private String columnAlignment;
     private String horizontal;
     private boolean lineFieldTotalization;
-    private boolean accumulatedLineField;
+    private String accumulatedLineField;
     private String tendencyLine;
     private String tendencyLineColor;
     private String dateMask;
@@ -48,7 +48,7 @@ public class BIAnalysisFieldDTO {
     private boolean horizontalParticipationAccumulated;
     private Integer accumulatedOrder;
     private String accumulatedOrderDirection;
-    private boolean usesLineMetric;
+    private boolean usesMediaLine;
     private boolean fixedValue;
     private Integer locApresGraph;
     private String graphType;

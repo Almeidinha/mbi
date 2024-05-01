@@ -16,7 +16,7 @@ import com.msoft.mbi.cube.multi.metrics.additive.MetricAdditiveMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculated;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedFunctionMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedMetaData;
-import com.msoft.mbi.cube.multi.partialTotalization.PartialTotalizationApplyTypeSoma;
+import com.msoft.mbi.cube.multi.partialtotalization.PartialTotalizationApplyTypeSoma;
 
 public class MetricsMap {
 

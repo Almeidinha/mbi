@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_ind_alert_color", schema = "dbo", catalog = "BISERVER")
+@Table(name = "bi_ind_alert_color", schema = "biserver", catalog = "BISERVER")
 @IdClass(BIIndAlertColorPK.class)
 public class BIIndAlertColorEntity {
 

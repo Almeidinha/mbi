@@ -9,7 +9,7 @@ import java.util.Collection;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_restriction", schema = "dbo", catalog = "BISERVER")
+@Table(name = "bi_restriction", schema = "biserver", catalog = "BISERVER")
 @IdClass(BIRestrictionPK.class)
 public class BIRestrictionEntity {
 

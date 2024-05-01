@@ -5,10 +5,9 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
-import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditionsMetrica;
+import com.msoft.mbi.cube.multi.coloralertcondition.ColorAlertConditionsMetrica;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
-import lombok.NonNull;
 
 public class DimensionLineOutros extends DimensionLine {
 

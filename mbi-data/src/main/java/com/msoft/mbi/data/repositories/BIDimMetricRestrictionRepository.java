@@ -23,6 +23,24 @@ public interface BIDimMetricRestrictionRepository extends JpaRepository<BIDimMet
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM BIDimMetricRestrictionEntity WHERE indicatorId IN :indicatorIds")
-    void deleteByIndicatorId(@Param("indicatorIds") Set<Integer> indicatorIds);
+    void deleteByIndicatorIds(@Param("indicatorIds") Set<Integer> indicatorIds);
+
+    @Modifying
+    @Transactional
+    void deleteByIndicatorId(@Param("indicatorId") Integer indicatorId);
+
+    @Modifying
+    @Transactional
+    void deleteByIndicatorIdAndMetricId(
+            @Param("indicatorId") Integer indicatorId,
+            @Param("metricId") Integer metricId);
+
+    @Modifying
+    @Transactional
+    void deleteByIndicatorIdAndMetricIdAndDimensionId(
+            @Param("indicatorId") Integer indicatorId,
+            @Param("metricId") Integer metricId,
+            @Param("dimensionId") Integer dimensionId
+    );
 
 }

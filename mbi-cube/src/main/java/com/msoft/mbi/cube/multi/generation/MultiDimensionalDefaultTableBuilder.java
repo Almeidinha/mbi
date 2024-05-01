@@ -3,13 +3,13 @@ package com.msoft.mbi.cube.multi.generation;
 import java.util.*;
 
 import com.msoft.mbi.cube.multi.Cube;
-import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditions;
+import com.msoft.mbi.cube.multi.coloralertcondition.ColorAlertConditions;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.dimension.DimensionNullColumn;
 import com.msoft.mbi.cube.multi.dimension.DimensionLine;
 import com.msoft.mbi.cube.multi.dimension.DimensionMetaData;
 import com.msoft.mbi.cube.multi.dimension.Dimensions;
-import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
+import com.msoft.mbi.cube.multi.metadata.ColorAlertMetadata;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedAHEvolutionMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedFunctionMetaData;
@@ -296,7 +296,8 @@ public class MultiDimensionalDefaultTableBuilder extends TableGenerator {
 
     private void printMetricTotalGeneralColumnHeader() {
         if (!this.metricTotalColumnGeneralSum.isEmpty()) {
-            this.printer.printColumn(CellProperty.CELL_PROPERTY_COLUMN_TOTAL_HEADER, "Total", 1, this.cube.getHierarchyColumn().size() + 1);
+            //this.printer.printColumn(CellProperty.CELL_PROPERTY_COLUMN_TOTAL_HEADER, "Total", 1, this.cube.getHierarchyColumn().size() + 1);
+            this.printer.printColumnHeader(CellProperty.CELL_PROPERTY_COLUMN_TOTAL_HEADER, "Total");
         }
     }
 
@@ -330,12 +331,14 @@ public class MultiDimensionalDefaultTableBuilder extends TableGenerator {
     }
 
     private void printHeaderMetricsTotalColumns() {
+        // TODO, keep an eye out for this, might generate errors in the future
+        // for some reason it was printing as columns and headers
         if (this.cube.getHierarchyColumn().isEmpty()) {
             for (MetricMetaData metaData : this.metricTotalColumnSum) {
-                this.printer.printColumn(CellProperty.CELL_PROPERTY_COLUMN_TOTAL_HEADER, "Acumulado " + metaData.getTitle());
+                this.printer.printColumnHeader(CellProperty.CELL_PROPERTY_COLUMN_TOTAL_HEADER, "Acumulado " + metaData.getTitle());
             }
             for (MetricMetaData metaData : this.metricTotalColumnMedia) {
-                this.printer.printColumn(CellProperty.CELL_PROPERTY_COLUMN_TOTAL_HEADER, "Média " + metaData.getTitle());
+                 this.printer.printColumnHeader(CellProperty.CELL_PROPERTY_COLUMN_TOTAL_HEADER, "Média " + metaData.getTitle());
             }
             this.printMetricTotalGeneralColumnHeader();
         } else {

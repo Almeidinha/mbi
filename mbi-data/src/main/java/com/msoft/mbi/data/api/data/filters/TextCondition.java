@@ -6,6 +6,7 @@ import com.msoft.mbi.data.api.data.indicator.Field;
 import com.msoft.mbi.data.api.data.indicator.Operator;
 import com.msoft.mbi.data.api.data.util.BIUtil;
 import com.msoft.mbi.data.api.data.util.Constants;
+import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.NotImplementedException;
 
@@ -15,10 +16,8 @@ import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
 @Log4j2
+@NoArgsConstructor
 public class TextCondition extends Condition {
-
-    public TextCondition() {
-    }
 
     public TextCondition(Condition condition) throws BIException {
         super(condition);
@@ -46,17 +45,6 @@ public class TextCondition extends Condition {
         }
 
         return query;
-    }
-
-    protected Object clone() throws CloneNotSupportedException {
-        TextCondition condition;
-        try {
-            condition = new TextCondition(this);
-        } catch (BIException e) {
-            log.error("Error inTextCondition.clone()" + e.getMessage());
-            return null;
-        }
-        return condition;
     }
 
     protected String format(String valor) throws BIFilterException {
@@ -100,6 +88,11 @@ public class TextCondition extends Condition {
             log.error("Error inTextCondition.toString()" + e.getMessage());
             return null;
         }
+    }
+
+    @Override
+    public Condition copy() throws BIException {
+        return new TextCondition(this);
     }
 
 }

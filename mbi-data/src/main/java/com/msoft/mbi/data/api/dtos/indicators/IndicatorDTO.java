@@ -22,7 +22,7 @@ public class IndicatorDTO {
     private FiltersDTO filters = new FiltersDTO();
     // private FiltersFunction filtersFunction; TODO: MAP THIS WHEN IMPLEMENTING FILTERS FUNCTION
     // private AnalysisComments analysisComments; TODO: MAP THIS WHEN IMPLEMENTING AnalysisComments
-    // private List<AnalysisUserPermission> AnalysisUserPermissions; TODO: CODE THIS WHEN IMPLEMENTING ANALYSIS PERMISSIONS
+    // private List<AnalysisUserPermission> analysisUserPermissions; TODO: CODE THIS WHEN IMPLEMENTING ANALYSIS PERMISSIONS
     // private List<AnalysisGroupPermissions> analysisGroupPermissions; TODO: CODE THIS WHEN IMPLEMENTING ANALYSIS PERMISSIONS
     private String fileName;
     private String searchClause;

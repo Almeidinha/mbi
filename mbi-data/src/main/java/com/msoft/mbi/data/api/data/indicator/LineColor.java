@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LineColor implements Cloneable {
+public class LineColor {
 
     private String initialValue;
     private String finalValue;
@@ -17,9 +17,15 @@ public class LineColor implements Cloneable {
     private String backGroundColor;
     private String fontColor;
 
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
+    public static LineColor copy(LineColor template) {
+        LineColor copyLineColor = new LineColor();
+        copyLineColor.setInitialValue(template.getInitialValue());
+        copyLineColor.setFinalValue(template.getFinalValue());
+        copyLineColor.setColorClass(template.getColorClass());
+        copyLineColor.setBackGroundColor(template.getBackGroundColor());
+        copyLineColor.setFontColor(template.getFontColor());
+
+        return copyLineColor;
     }
 
 }

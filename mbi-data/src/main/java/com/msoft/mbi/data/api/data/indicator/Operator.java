@@ -1,13 +1,12 @@
 package com.msoft.mbi.data.api.data.indicator;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Data
 @Getter
 @Setter
-public class Operator implements Cloneable {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class Operator {
 
     private String symbol;
     private String description;
@@ -32,12 +31,19 @@ public class Operator implements Cloneable {
         this.description = (new Operators()).get(symbol);
     }
 
-    @Override
-    public Operator clone() {
-        try {
-            return (Operator) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
+    public static Operator copy(Operator template) {
+        Operator copy = new Operator();
+        copy.symbol = template.symbol;
+        copy.description = template.description;
+
+        return copy;
+    }
+
+    public Operator copy() {
+        Operator copy = new Operator();
+        copy.symbol = this.symbol;
+        copy.description = this.description;
+
+        return copy;
     }
 }

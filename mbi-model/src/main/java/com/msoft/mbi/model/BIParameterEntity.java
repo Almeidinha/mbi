@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_parameter", schema = "dbo", catalog = "BISERVER")
+@Table(name = "bi_parameter", schema = "biserver", catalog = "BISERVER")
 public class BIParameterEntity extends BaseEntity {
 
     @Id

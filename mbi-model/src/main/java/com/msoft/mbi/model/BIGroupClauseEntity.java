@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_group_clause", schema = "dbo", catalog = "BISERVER")
+@Table(name = "bi_group_clause", schema = "biserver", catalog = "BISERVER")
 public class BIGroupClauseEntity extends BaseEntity {
 
     @Id

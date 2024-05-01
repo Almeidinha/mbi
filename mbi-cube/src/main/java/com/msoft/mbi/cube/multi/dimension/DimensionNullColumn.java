@@ -1,7 +1,7 @@
 package com.msoft.mbi.cube.multi.dimension;
 
 import com.msoft.mbi.cube.multi.Cube;
-import com.msoft.mbi.cube.multi.metaData.MetaDataField;
+import com.msoft.mbi.cube.multi.metadata.MetaDataField;
 
 
 public class DimensionNullColumn extends DimensionNull {

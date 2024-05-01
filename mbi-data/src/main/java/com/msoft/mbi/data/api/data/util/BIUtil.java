@@ -1,10 +1,21 @@
 package com.msoft.mbi.data.api.data.util;
 
+import com.msoft.mbi.cube.multi.column.MaskColumnMetaData;
+import com.msoft.mbi.cube.multi.metadata.HTMLLineMask;
+import com.msoft.mbi.cube.multi.metadata.MetaDataField;
+import com.msoft.mbi.cube.multi.renderers.MaskMonth;
+import com.msoft.mbi.cube.multi.renderers.MaskMonthYear;
+import com.msoft.mbi.cube.multi.renderers.MaskPeriod;
+import com.msoft.mbi.cube.multi.renderers.MaskWeek;
+import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLColumnText;
+import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLText;
 import com.msoft.mbi.data.api.data.exception.*;
 import com.msoft.mbi.data.api.data.indicator.Field;
-import com.msoft.mbi.data.api.data.indicator.FieldComparator;
 import com.msoft.mbi.data.api.dtos.user.BIUserDTO;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -17,11 +28,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.Date;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 
 @Log4j2
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BIUtil {
-
-    public static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
     private static final String NULL_DATE           = "31/12/1899";
 
     public static List<String> stringToList(String word) {
@@ -53,7 +64,7 @@ public class BIUtil {
             } else if (Constants.NUMBER.equals(type)) {
                 return formatDoubleToTextObject(valor, field.getNumDecimalPositions());
             } else {
-                return formatDateToText(valor, field);
+                return formatDateToText(valor);
             }
         } catch (Exception e) {
             log.error("Error in BIUtil.textFormat() : " + e.getMessage());
@@ -112,13 +123,13 @@ public class BIUtil {
         return trimmedValue;
     }
 
-    private static Object formatDateToText(String valor, Field field) throws BIException {
-        if (valor == null) {
-            valor = NULL_DATE;
+    private static Object formatDateToText(String value) throws BIException {
+        if (value == null) {
+            value = NULL_DATE;
         }
 
         // TODO get format from db
-        return getFormattedDate(valor,"dd/MM/yy");
+        return getFormattedDate(value, BIData.DAY_MONTH_YEAR_4DF);
     }
 
     public static String getFormattedDate(String date, String format) throws BIException {
@@ -128,29 +139,29 @@ public class BIUtil {
 
             DateTimeFormatter formatter;
             switch (format.trim()) {
-                case "dd/MM/yyyy":
-                    formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                case BIData.DAY_MONTH_YEAR_4DF:
+                    formatter = DateTimeFormatter.ofPattern(BIData.DAY_MONTH_YEAR_4DF);
                     break;
-                case "dd/MM/yy":
-                    formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
+                case BIData.DAY_MONTH_YEAR_2DF:
+                    formatter = DateTimeFormatter.ofPattern(BIData.DAY_MONTH_YEAR_2DF);
                     break;
-                case "MM/dd/yyyy":
-                    formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+                case BIData.MONTH_DAY_YEAR_4DF:
+                    formatter = DateTimeFormatter.ofPattern(BIData.MONTH_DAY_YEAR_4DF);
                     break;
-                case "MM/dd/yy":
-                    formatter = DateTimeFormatter.ofPattern("MM/dd/yy");
+                case BIData.MONTH_DAY_YEAR_2DF:
+                    formatter = DateTimeFormatter.ofPattern(BIData.MONTH_DAY_YEAR_2DF);
                     break;
-                case "yyyy/MM/dd":
-                    formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+                case BIData.YEAR_MONTH_DAY_4DF:
+                    formatter = DateTimeFormatter.ofPattern(BIData.YEAR_MONTH_DAY_4DF);
                     break;
-                case "yyyy-MM-dd":
-                    formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                case BIData.YEAR_MONTH_DAY_DASH_4DF:
+                    formatter = DateTimeFormatter.ofPattern(BIData.YEAR_MONTH_DAY_DASH_4DF);
                     break;
-                case "dd-MM-yyyy":
-                    formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                case BIData.DAY_MONTH_YEAR_DASH_4DF:
+                    formatter = DateTimeFormatter.ofPattern(BIData.DAY_MONTH_YEAR_DASH_4DF);
                     break;
-                case "yyyyMMdd":
-                    formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+                case BIData.YEAR_MONTH_DAY_2D_NS:
+                    formatter = DateTimeFormatter.ofPattern(BIData.YEAR_MONTH_DAY_2D_NS);
                     break;
                 default:
                     return date;
@@ -195,12 +206,12 @@ public class BIUtil {
         Date date = null;
         SimpleDateFormat sdf;
         try {
-            sdf = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
-            date = new Date(sdf.parse(BIUtil.getFormattedDate(value, DEFAULT_DATE_FORMAT)).getTime());
+            sdf = new SimpleDateFormat(BIData.DAY_MONTH_YEAR_4DF);
+            date = new Date(sdf.parse(BIUtil.getFormattedDate(value, BIData.DAY_MONTH_YEAR_4DF)).getTime());
         } catch (ParseException e) {
             String conexao = field.getIndicator().getConnectionId();
             // TODO Get this from db
-            String format = DEFAULT_DATE_FORMAT;
+            String format = BIData.DAY_MONTH_YEAR_4DF;
             //String format = Configuracao.getInstanse().getConexao(conexao).getFormatoData();
             sdf = new SimpleDateFormat(format);
             try {
@@ -219,7 +230,7 @@ public class BIUtil {
             try {
                 statement.close();
             } catch (SQLException e) {
-                System.out.println("Erro ao Fechar PreparedStatement. Erro: " + e.getMessage());
+                log.error("Error closing PreparedStatement. Error: " + e.getMessage());
             }
         }
     }
@@ -229,7 +240,7 @@ public class BIUtil {
             try {
                 statement.close();
             } catch (SQLException e) {
-                System.out.println("Erro ao Fechar PreparedStatement. Erro: " + e.getMessage());
+                log.error("Erro ao Fechar PreparedStatement. Erro: " + e.getMessage());
             }
         }
     }
@@ -239,7 +250,7 @@ public class BIUtil {
             try {
                 set.close();
             } catch (SQLException e) {
-                System.out.println("Erro ao Fechar ResultSet. Erro: " + e.getMessage());
+                log.error("Erro ao Fechar ResultSet. Erro: " + e.getMessage());
             }
         }
     }
@@ -261,7 +272,7 @@ public class BIUtil {
     public static String getNewData(String campo, String table, String whereClause, ConnectionBean connectionBean) throws BIException {
         if (campo != null && !campo.isEmpty() && table != null && !table.isEmpty()) {
 
-            int ultimo = 0;
+            int last = 0;
             String ultimoTemp = "";
             String sqlNovoDado = "SELECT MAX(" + campo + ") AS maximo FROM " + table + " " + whereClause;
             ResultSet results = null;
@@ -286,11 +297,10 @@ public class BIUtil {
                     bidbex.setLocal("util.BIUtil", "getNovoDado(String, String, String)");
                     throw bidbex;
                 }
-                if (ultimoTemp != null) {
-                    if (!ultimoTemp.isEmpty())
-                        ultimo = Integer.parseInt(ultimoTemp);
+                if (ultimoTemp != null && !ultimoTemp.isEmpty())
+                        {last = Integer.parseInt(ultimoTemp);
                 }
-                return String.valueOf(ultimo + 1);
+                return String.valueOf(last + 1);
             } finally {
                 closeResultSet(results);
             }
@@ -318,7 +328,7 @@ public class BIUtil {
     }
 
     public static double formatDoubleValue(double value, int decimalPositions) {
-        BigDecimal bd = new BigDecimal(value);
+        BigDecimal bd = BigDecimal.valueOf(value);
         bd = bd.setScale(decimalPositions, RoundingMode.HALF_UP);
         return bd.doubleValue();
     }
@@ -374,8 +384,8 @@ public class BIUtil {
         }
     }
 
-    public static String getDescNumber(int numero) {
-        String desc_number = switch (numero) {
+    public static String getDescNumber(int number) {
+        return switch (number) {
             case 0 -> "nenhuma";
             case 1 -> "uma";
             case 2 -> "duas";
@@ -389,71 +399,14 @@ public class BIUtil {
             case 10 -> "dez";
             default -> "";
         };
-        return desc_number;
     }
 
-    public static List<Hashtable<String, String>> getAggregationList() {
-        List<Hashtable<String, String>> list_agregacao = new ArrayList<>();
-        Hashtable<String, String> hash_agregacao = new Hashtable<>();
-
-        hash_agregacao.put("agregacao", "EMPTY");
-        hash_agregacao.put("descricao", "Sem Agregação");
-        list_agregacao.add(hash_agregacao);
-
-        hash_agregacao = new Hashtable<>();
-        hash_agregacao.put("agregacao", "SUM");
-        hash_agregacao.put("descricao", "Somatário");
-        list_agregacao.add(hash_agregacao);
-
-        hash_agregacao = new Hashtable<>();
-        hash_agregacao.put("agregacao", "AVG");
-        hash_agregacao.put("descricao", "Média");
-        list_agregacao.add(hash_agregacao);
-
-        hash_agregacao = new Hashtable<>();
-        hash_agregacao.put("agregacao", "MIN");
-        hash_agregacao.put("descricao", "Mínimo");
-        list_agregacao.add(hash_agregacao);
-
-        hash_agregacao = new Hashtable<>();
-        hash_agregacao.put("agregacao", "MAX");
-        hash_agregacao.put("descricao", "Máximo");
-        list_agregacao.add(hash_agregacao);
-
-        hash_agregacao = new Hashtable<>();
-        hash_agregacao.put("agregacao", "COUNT");
-        hash_agregacao.put("descricao", "Contagem");
-        list_agregacao.add(hash_agregacao);
-
-        hash_agregacao = new Hashtable<>();
-        hash_agregacao.put("agregacao", "COUNT_DIST");
-        hash_agregacao.put("descricao", "Contagem Distinta");
-        list_agregacao.add(hash_agregacao);
-
-        return list_agregacao;
-    }
-
-    public static List<Field> ordenaCampoPeloTitulo(List<Field> campos) {
-        campos.sort(FieldComparator.ORDER_BY_TITLE);
-        return campos;
-    }
-
-    public static List<Field> getFieldList(List<Field> campos) {
-        List<Field> listaCampos = new ArrayList<>();
-        for (Field campo : campos) {
-            if (campo != null) {
-                listaCampos.add(campo);
-            }
-        }
-        return ordenaCampoPeloTitulo(listaCampos);
-    }
-
-    public static int verificanullInt(ResultSet results, String campo) throws BIException {
+    public static int verifyNullInt(ResultSet results, String name) throws BIException {
         try {
-            return Math.max(results.getInt(campo), 0);
-        } catch (NullPointerException npex) {
-            BINullPointerException binullex = new BINullPointerException(npex);
-            binullex.setAction("capturar campo do banco.");
+            return Math.max(results.getInt(name), 0);
+        } catch (NullPointerException exception) {
+            BINullPointerException binullex = new BINullPointerException(exception);
+            binullex.setAction("capturar name do banco.");
             binullex.setLocal("BIUtil", "verificanullInt(ResultSet, String)");
             throw binullex;
         } catch (SQLException sqle) {
@@ -461,54 +414,130 @@ public class BIUtil {
             try {
                 ResultSetMetaData rmd = results.getMetaData();
                 for (int i = 1; i <= rmd.getColumnCount(); i++) {
-                    if (rmd.getColumnName(i).equalsIgnoreCase(campo))
+                    if (rmd.getColumnName(i).equalsIgnoreCase(name))
                         tabela = rmd.getTableName(i);
                 }
-            } catch (SQLException sqle1) {
-                BIDatabaseException bidbex = new BIDatabaseException(sqle1);
-                bidbex.setAction("capturar nome da tabela.");
-                bidbex.setLocal("BIUtil", "verificanullInt(ResultSet, String)");
-                throw bidbex;
+            } catch (SQLException sqlException) {
+                BIDatabaseException databaseException = new BIDatabaseException(sqlException);
+                databaseException.setAction("capturar nome da tabela.");
+                databaseException.setLocal("BIUtil", "verificanullInt(ResultSet, String)");
+                throw databaseException;
             }
-            sqle.printStackTrace();
-            BIFieldNotFoundException bifnfex = new BIFieldNotFoundException(sqle, tabela, campo);
-            bifnfex.setAction("capturar campo do banco.");
-            bifnfex.setLocal("BIUtil", "verificanullInt(ResultSet, String)");
-            throw bifnfex;
+            log.info("Error in BIUtil.verifyNullInt() : " + sqle.getMessage());
+            BIFieldNotFoundException notFoundException = new BIFieldNotFoundException(sqle, tabela, name);
+            notFoundException.setAction("capturar campo do banco.");
+            notFoundException.setLocal("BIUtil", "verificanullInt(ResultSet, String)");
+            throw notFoundException;
         }
     }
 
-    public static String verificanullString(ResultSet results, String campo) throws BIException {
+    public static String verifyNullString(ResultSet results, String name) throws BIException {
         try {
-            if (results.getString(campo) != null && !results.getString(campo).isEmpty()) {
-                return results.getString(campo).trim();
+            if (results.getString(name) != null && !results.getString(name).isEmpty()) {
+                return results.getString(name).trim();
             } else {
                 return "";
             }
-        } catch (NullPointerException npex) {
-            BINullPointerException binullex = new BINullPointerException(npex);
-            binullex.setAction("capturar campo do banco.");
-            binullex.setLocal("BIUtil", "verificanullString(ResultSet, String)");
-            throw binullex;
-        } catch (SQLException sqle) {
+        } catch (NullPointerException nullPointerException) {
+            BINullPointerException biNullPointerException = new BINullPointerException(nullPointerException);
+            biNullPointerException.setAction("capturar name do banco.");
+            biNullPointerException.setLocal("BIUtil", "verificanullString(ResultSet, String)");
+            throw biNullPointerException;
+        } catch (SQLException sqlException) {
             String tabela = "";
             try {
                 ResultSetMetaData rmd = results.getMetaData();
                 for (int i = 1; i <= rmd.getColumnCount(); i++) {
-                    if (rmd.getColumnName(i).equalsIgnoreCase(campo))
+                    if (rmd.getColumnName(i).equalsIgnoreCase(name))
                         tabela = rmd.getTableName(i);
                 }
-            } catch (SQLException sqle1) {
-                BIDatabaseException bidbex = new BIDatabaseException(sqle1);
+            } catch (SQLException exception) {
+                BIDatabaseException bidbex = new BIDatabaseException(exception);
                 bidbex.setAction("capturar nome da tabela.");
                 bidbex.setLocal("BIUtil", "verificanullString(ResultSet, String)");
                 throw bidbex;
             }
-            BIFieldNotFoundException bifnfex = new BIFieldNotFoundException(sqle, tabela, campo);
+            BIFieldNotFoundException bifnfex = new BIFieldNotFoundException(sqlException, tabela, name);
             bifnfex.setAction("capturar nome da tabela.");
             bifnfex.setLocal("BIUtil", "verificanullString(ResultSet, String)");
             throw bifnfex;
         }
+    }
+
+    public static void removeTrailingComma(StringBuilder builder) {
+        if (!builder.isEmpty() &&  builder.charAt(builder.length() - 1) == ',') {
+            builder.deleteCharAt(builder.length() - 1);
+        }
+    }
+
+    public static String quoteSQLString(String input, String quote) {
+
+        Set<String> sqlKeywords = new HashSet<>(Set.of(
+                "?", "<", ">", "=", "-", "+", "/", "*", "}", "{", "]", "[", ")", "(", ",", " ", ".", "MAX", "MIN",
+                "SUM", "AND", "AS", "ASC", "BETWEEN", "COUNT", "BY", "CASE", "CURRENT_DATE", "CURRENT_TIME",
+                "DELETE", "DESC", "INSERT", "DISTINCT", "EACH", "ELSEIF", "FALSE", "TOP",
+                "FROM", "HAVING", "IF", "IN", "INTERVAL", "INTO", "IS", "INNER", "JOIN", "KEY",
+                "KEYS", "LEFT", "LIKE", "LIMIT", "MATCH", "NOT", "NULL", "ON", "OPTION", "OR", "ORDER", "OUT",
+                "OUTER", "REPLACE", "RIGHT", "SELECT", "SET", "TABLE", "THEN", "TO", "TRUE", "UPDATE", "VALUES",
+                "WHEN", "WHERE", "DATE", "DECIMAL", "ELSE", "EXISTS", "FOR", "VARCHAR", "UNION", "GROUP",
+                "WITH"));
+
+        String[] words = input.trim()
+                .replaceAll("\\n", " ")
+                .replaceAll(" +", " ")
+                .split("((?<=[\\s,.)(=\\-+/*])|(?=[\\s,.)(=\\-+/*]))");
+
+        StringBuilder builder = new StringBuilder();
+
+        for (String word : words) {
+            if (!sqlKeywords.contains(word.toUpperCase()) && !StringUtils.isNumeric(word)) {
+                word = quote + word + quote;
+            }
+            builder.append(word);
+        }
+
+        return builder.toString();
+    }
+
+    public static void setMetaDataFieldMask(MetaDataField metaDataField, Field field) {
+        String fieldDateMask = field.getDateMask();
+
+        if (!"".equalsIgnoreCase(field.getDateMask()) && fieldDateMask != null && !"".equalsIgnoreCase(field.getDataType())) {
+            if (Constants.DATE.equalsIgnoreCase(field.getDataType())) {
+                metaDataField.addMask(new MaskColumnMetaData(fieldDateMask, MaskColumnMetaData.DATA_TYPE));
+            } else if (Constants.DIMENSION.equals(field.getFieldType()) && (Constants.NUMBER.equals(field.getDataType()) || Constants.STRING.equals(field.getDataType()))) {
+                if (field.getName().equalsIgnoreCase("num_mes") && (fieldDateMask.equalsIgnoreCase(MaskMonth.ABBREVIATED)
+                            || fieldDateMask.equalsIgnoreCase(MaskMonth.NOT_ABBREVIATED))) {
+                    metaDataField.addMask(new MaskColumnMetaData(fieldDateMask, MaskColumnMetaData.TYPE_EIS_DIMENSION_MONTH));
+                }
+                if (field.getName().equalsIgnoreCase("num_dia_semana") && (fieldDateMask.equalsIgnoreCase(MaskWeek.ABBREVIATED)
+                            || fieldDateMask.equalsIgnoreCase(MaskWeek.NOT_ABBREVIATED))) {
+                    metaDataField.addMask(new MaskColumnMetaData(fieldDateMask, MaskColumnMetaData.TYPE_EIS_DIMENSION_WEEK));
+                }
+                if (field.getName().equalsIgnoreCase("num_bimestre") || field.getName().equalsIgnoreCase("num_trimestre")
+                        || field.getName().equalsIgnoreCase("num_semestre") && (Constants.NUMBER.equals(field.getDataType()) && (MaskPeriod.validaMascara(fieldDateMask)))) {
+                    metaDataField.addMask(new MaskColumnMetaData(fieldDateMask, MaskColumnMetaData.TYPE_EIS_DIMENSION_PERIOD));
+                }
+                if (field.getName().equalsIgnoreCase("ano_mes_dat") && (Constants.STRING.equals(field.getDataType()) && (MaskMonthYear.validaMascara(fieldDateMask)))) {
+                    metaDataField.addMask(new MaskColumnMetaData(fieldDateMask, MaskColumnMetaData.TYPE_EIS_DIMENSION_MONTH_YEAR));
+                }
+            }
+        } else if (Constants.DATE.equals(field.getDataType())) {
+            metaDataField.addMask(new MaskColumnMetaData(BIData.DAY_MONTH_YEAR_4DF, MaskColumnMetaData.DATA_TYPE));
+        }
+    }
+
+    public static int getFieldIndex(List<Field> fields, String code) throws BIException {
+        int fieldId = Integer.parseInt(code);
+        return IntStream.range(0, fields.size())
+                .filter(i -> fields.get(i) != null && fields.get(i).getFieldId() == fieldId)
+                .findFirst()
+                .orElseThrow(() -> BIException.builder()
+                        .message("Nao foi possivel encontrar o campo de codigo " + code + " no indicador atual.")
+                        .action("buscar indice de um field")
+                        .local("Indicator: getIndiceField(String)")
+                        .build()
+                );
     }
 
 }

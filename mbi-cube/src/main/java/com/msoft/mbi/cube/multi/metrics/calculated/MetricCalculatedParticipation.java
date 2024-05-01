@@ -12,30 +12,30 @@ import com.msoft.mbi.cube.multi.metrics.MetricValueUse;
 public class MetricCalculatedParticipation extends MetricCalculated {
 
 
-    private Dimension getUpperParticipationDimension(Dimension currentDimension, MetricCalculatedParticipacaoMetaData metaData) {
+    private Dimension getUpperParticipationDimension(Dimension currentDimension, MetricCalculatedParticipationMetaData metaData) {
         return metaData.getParticipationAnalysisType().getUpperLevelDimension(currentDimension);
     }
 
     @Override
     public Double calculate(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior) {
 
-        MetricCalculatedParticipacaoMetaData metaData = (MetricCalculatedParticipacaoMetaData) this.getMetaData();
+        MetricCalculatedParticipationMetaData metaData = (MetricCalculatedParticipationMetaData) this.getMetaData();
         Calculation calculation = metaData.createCalculo();
         Double result = null;
         try {
-            String titleColumnAV = calculation.getVariables().get(MetricCalculatedParticipacaoMetaData.COLUNA_AV_VARIABLE);
+            String titleColumnAV = calculation.getVariables().get(MetricCalculatedParticipationMetaData.COLUNA_AV_VARIABLE);
 
             Metric expression = metricLine.getMetrics().get(titleColumnAV);
             Double valor = expression.getMetaData().calculaValorTotalParcial(metricLine.getDimensionLine(), metricLine.getDimensionColumn());
             if (valor != null) {
-                calculation.setVariableValue(MetricCalculatedParticipacaoMetaData.COLUNA_AV_VARIABLE, valor);
+                calculation.setVariableValue(MetricCalculatedParticipationMetaData.COLUNA_AV_VARIABLE, valor);
 
                 Dimension dimensionPai = this.getUpperParticipationDimension(metaData.DimensionReferenceAxis(metricLine), metaData);
 
                 Double valueAbove = expression.getMetaData().calculaValorTotalParcial(dimensionPai, metaData.getDimensionOther(metricLine));
                 if (valueAbove != null && valueAbove != 0) {
 
-                    calculation.setVariableValue(MetricCalculatedParticipacaoMetaData.VALOR_NIVEL_ACIMA_VARIABLE, valueAbove);
+                    calculation.setVariableValue(MetricCalculatedParticipationMetaData.VALOR_NIVEL_ACIMA_VARIABLE, valueAbove);
                     result = calculation.calculateValue();
                 } else {
                     result = (double) 0;

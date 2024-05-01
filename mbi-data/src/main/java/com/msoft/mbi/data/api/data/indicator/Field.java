@@ -1,5 +1,6 @@
 package com.msoft.mbi.data.api.data.indicator;
 
+import com.msoft.mbi.cube.multi.renderers.CellProperty;
 import com.msoft.mbi.data.api.data.exception.BIException;
 import com.msoft.mbi.data.api.data.util.BIUtil;
 import com.msoft.mbi.data.api.data.util.Constants;
@@ -22,7 +23,7 @@ import static com.msoft.mbi.data.api.data.util.Constants.*;
 @Log4j2
 @NoArgsConstructor
 @SuppressWarnings("unused")
-public class Field implements Cloneable {
+public class Field {
 
     private int fieldId;
     protected Indicator indicator;
@@ -161,21 +162,18 @@ public class Field implements Cloneable {
         this.defaultField = defaultField;
         if ("N".equals(this.defaultField)) {
             this.displayLocation = 0;
-        } else if ("T".equals(this.defaultField)) {
-            if (this.displayLocation == 0) {
+        } else if ("T".equals(this.defaultField) && this.displayLocation == 0) {
                 this.displayLocation = 1;
-            }
+
         }
     }
     
     public String getTableNickname() {
-        if (Optional.ofNullable(this.tableNickname).isPresent()) {
-            if (!this.tableNickname.isEmpty())
-                return tableNickname;
+        if (Optional.ofNullable(this.tableNickname).isPresent() && !this.tableNickname.isEmpty()) {
+            return tableNickname;
         }
         return "";
     }
-
 
     public void setOrderDirection(String orderDirection) {
         if (Optional.ofNullable(orderDirection).isEmpty() || orderDirection.isEmpty()) {
@@ -183,6 +181,11 @@ public class Field implements Cloneable {
         } else {
             this.orderDirection = orderDirection;
         }
+    }
+
+    public void setTotalizingField(boolean totalizingField) {
+        String totalizingFieldString = totalizingField ? "S" : "N";
+        this.setTotalizingField(totalizingFieldString);
     }
 
     public void setTotalizingField(String totalizingField) {
@@ -229,7 +232,7 @@ public class Field implements Cloneable {
         return count > 0;
     }
 
-    public void setLineColor(NamedParameterJdbcTemplate jdbcTemplate) throws BIException {
+    public void setLineColor(NamedParameterJdbcTemplate jdbcTemplate) {
         String sql = "SELECT initial_value, final_value, background_color, font_color, class_description "
                 + "FROM bi_color_conditions WHERE field_id = :fieldId AND indicator_id = :ind";
 
@@ -254,11 +257,11 @@ public class Field implements Cloneable {
             try {
                 while (resultSet.next()) {
                     LineColor lineColor = new LineColor();
-                    lineColor.setInitialValue(BIUtil.verificanullString(resultSet, "initial_value"));
-                    lineColor.setFinalValue(BIUtil.verificanullString(resultSet, "final_value"));
-                    lineColor.setColorClass(BIUtil.verificanullString(resultSet, "class_description"));
-                    lineColor.setBackGroundColor(BIUtil.verificanullString(resultSet, "background_color"));
-                    lineColor.setFontColor(BIUtil.verificanullString(resultSet, "font_color"));
+                    lineColor.setInitialValue(BIUtil.verifyNullString(resultSet, "initial_value"));
+                    lineColor.setFinalValue(BIUtil.verifyNullString(resultSet, "final_value"));
+                    lineColor.setColorClass(BIUtil.verifyNullString(resultSet, "class_description"));
+                    lineColor.setBackGroundColor(BIUtil.verifyNullString(resultSet, "background_color"));
+                    lineColor.setFontColor(BIUtil.verifyNullString(resultSet, "font_color"));
                     this.addLineColor(lineColor);
                 }
             } catch (BIException e) {
@@ -320,59 +323,57 @@ public class Field implements Cloneable {
         return result;
     }
 
-    @Override
-    public Object clone() throws CloneNotSupportedException {
+    public static Field copy(Field template) {
 
-        Field c = (Field) super.clone();
-        c.setFieldId(this.fieldId);
-        c.setIndicator(this.indicator);
-        c.setVerticalAnalysisType(this.verticalAnalysisType);
-        c.setHorizontalAnalysisType(this.horizontalAnalysisType);
-        c.setColumnAlignment(this.columnAlignment);
-        c.setColumnWidth(String.valueOf(this.columnWidth));
-        c.setNickname(this.nickname);
-        c.setTableNickname(this.tableNickname);
-        List<LineColor> lineColors = new ArrayList<>();
-        for (LineColor lineColor : this.getLineColors()) {
+        Field copyField = new Field();
+        copyField.setFieldId(template.fieldId);
+        copyField.setIndicator(template.indicator);
+        copyField.setVerticalAnalysisType(template.verticalAnalysisType);
+        copyField.setHorizontalAnalysisType(template.horizontalAnalysisType);
+        copyField.setColumnAlignment(template.columnAlignment);
+        copyField.setColumnWidth(String.valueOf(template.columnWidth));
+        copyField.setNickname(template.nickname);
+        copyField.setTableNickname(template.tableNickname);
+        List<LineColor> lineColorsCopy = new ArrayList<>();
+        for (LineColor lineColor : template.getLineColors()) {
             if (Optional.ofNullable(lineColor).isPresent()) {
-                LineColor novoLineColor = (LineColor) lineColor.clone();
-
-                lineColors.add(novoLineColor);
+                LineColor novoLineColor = LineColor.copy(lineColor);
+                lineColorsCopy.add(novoLineColor);
             }
         }
-        c.setLineColors(lineColors);
-        c.setExpression(this.expression);
-        c.setDisplayLocation(this.displayLocation);
-        c.setName(this.name);
-        c.setNumDecimalPositions(this.numDecimalPositions);
-        c.setOrder(this.order);
-        c.setDefaultField(this.defaultField);
-        c.setAccumulatedParticipation(this.accumulatedParticipation);
-        c.setAccumulatedValue(this.accumulatedValue);
-        c.setOrderDirection(this.orderDirection);
-        c.setDrillDownSequence(this.drillDownSequence);
-        c.setVisualizationSequence(this.visualizationSequence);
-        c.setAggregationType(this.aggregationType);
-        c.setFieldType(this.fieldType);
-        c.setDataType(this.dataType);
-        c.setTitle(this.title);
-        c.setTotalizingField(this.totalizingField ? "S" : "N");
-        c.setSumLine(this.sumLine);
-        c.setAccumulatedLine(this.accumulatedLine);
-        c.setDateMask(this.dateMask);
-        c.setPartialTotalization(this.partialTotalization);
-        c.setPartialMedia(this.isPartialMedia());
-        c.setPartialExpression(this.partialExpression);
-        c.setHorizontalParticipationAccumulated(this.horizontalParticipationAccumulated);
-        c.setHorizontalParticipation(this.horizontalParticipation);
-        c.setAccumulatedOrder(this.accumulatedOrder);
-        c.setAccumulatedOrderDirection(this.accumulatedOrderDirection);
-        c.setMediaLine(this.mediaLine);
-        c.setApplyTotalizationExpression(this.applyTotalizationExpression);
-        c.setFixedValue(this.fixedValue);
-        c.setFieldColorValues((FieldColorValues) this.getFieldColorValues().clone(c.getIndicator(), c));
-        c.setDelegateOrder(this.delegateOrder);
-        return c;
+        copyField.setLineColors(lineColorsCopy);
+        copyField.setExpression(template.expression);
+        copyField.setDisplayLocation(template.displayLocation);
+        copyField.setName(template.name);
+        copyField.setNumDecimalPositions(template.numDecimalPositions);
+        copyField.setOrder(template.order);
+        copyField.setDefaultField(template.defaultField);
+        copyField.setAccumulatedParticipation(template.accumulatedParticipation);
+        copyField.setAccumulatedValue(template.accumulatedValue);
+        copyField.setOrderDirection(template.orderDirection);
+        copyField.setDrillDownSequence(template.drillDownSequence);
+        copyField.setVisualizationSequence(template.visualizationSequence);
+        copyField.setAggregationType(template.aggregationType);
+        copyField.setFieldType(template.fieldType);
+        copyField.setDataType(template.dataType);
+        copyField.setTitle(template.title);
+        copyField.setTotalizingField(template.totalizingField ? "S" : "N");
+        copyField.setSumLine(template.sumLine);
+        copyField.setAccumulatedLine(template.accumulatedLine);
+        copyField.setDateMask(template.dateMask);
+        copyField.setPartialTotalization(template.partialTotalization);
+        copyField.setPartialMedia(template.isPartialMedia());
+        copyField.setPartialExpression(template.partialExpression);
+        copyField.setHorizontalParticipationAccumulated(template.horizontalParticipationAccumulated);
+        copyField.setHorizontalParticipation(template.horizontalParticipation);
+        copyField.setAccumulatedOrder(template.accumulatedOrder);
+        copyField.setAccumulatedOrderDirection(template.accumulatedOrderDirection);
+        copyField.setMediaLine(template.mediaLine);
+        copyField.setApplyTotalizationExpression(template.applyTotalizationExpression);
+        copyField.setFixedValue(template.fixedValue);
+        copyField.setFieldColorValues((FieldColorValues) template.getFieldColorValues().clone(copyField.getIndicator(), copyField));
+        copyField.setDelegateOrder(template.delegateOrder);
+        return copyField;
     }
 
     public void setDisplayLocation(int displayLocation) {
@@ -381,10 +382,8 @@ public class Field implements Cloneable {
 
     public void setDisplayLocation(int exhibitionLocal, boolean doValidate) {
         this.displayLocation = exhibitionLocal;
-        if (doValidate) {
-            if (this.displayLocation == Constants.LINE || this.displayLocation == Constants.COLUMN) {
-                this.defaultField = "S";
-            }
+        if (doValidate && (this.displayLocation == Constants.LINE || this.displayLocation == Constants.COLUMN)) {
+            this.defaultField = "S";
         }
     }
 
@@ -432,10 +431,10 @@ public class Field implements Cloneable {
     public String getColumnAlignment() {
         String aux = this.getInternalAlignmentPosition();
         return switch (aux) {
-            case MIDDLE_COLUMN_ALIGNMENT -> "center";
-            case LEFT_COLUMN_ALIGNMENT -> "left";
-            case RIGHT_COLUMN_ALIGNMENT -> "right";
-            default -> "center";
+            case MIDDLE_COLUMN_ALIGNMENT -> CellProperty.ALIGNMENT_CENTER;
+            case LEFT_COLUMN_ALIGNMENT -> CellProperty.ALIGNMENT_LEFT;
+            case RIGHT_COLUMN_ALIGNMENT -> CellProperty.ALIGNMENT_RIGHT;
+            default -> CellProperty.ALIGNMENT_CENTER;
         };
     }
 
@@ -444,9 +443,9 @@ public class Field implements Cloneable {
         String lowerCaseAlignmentPosition = alignmentPosition.toLowerCase();
 
         switch (lowerCaseAlignmentPosition) {
-            case "right" -> this.columnAlignment = RIGHT_COLUMN_ALIGNMENT;
-            case "left" -> this.columnAlignment = LEFT_COLUMN_ALIGNMENT;
-            case "center" -> this.columnAlignment = MIDDLE_COLUMN_ALIGNMENT;
+            case CellProperty.ALIGNMENT_RIGHT -> this.columnAlignment = RIGHT_COLUMN_ALIGNMENT;
+            case CellProperty.ALIGNMENT_LEFT -> this.columnAlignment = LEFT_COLUMN_ALIGNMENT;
+            case CellProperty.ALIGNMENT_CENTER -> this.columnAlignment = MIDDLE_COLUMN_ALIGNMENT;
             default -> this.columnAlignment = alignmentPosition;
         }
     }

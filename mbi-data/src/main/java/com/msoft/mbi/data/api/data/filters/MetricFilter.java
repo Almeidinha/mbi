@@ -5,6 +5,7 @@ import com.msoft.mbi.data.api.data.indicator.Field;
 import com.msoft.mbi.data.api.data.indicator.Operator;
 import com.msoft.mbi.data.api.data.util.Constants;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.PreparedStatement;
@@ -12,12 +13,10 @@ import java.util.Optional;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public abstract class MetricFilter implements Filter {
 
     private Condition condition;
-
-    public MetricFilter() {
-    }
 
     public Field getField() {
         return this.condition.getField();
@@ -27,8 +26,8 @@ public abstract class MetricFilter implements Filter {
         return this.condition.getOperator();
     }
 
-    public String getSQLValue() throws BIException {
-        return this.condition.getSQLValue();
+    public String getSqlValue() {
+        return this.condition.getSqlValue();
     }
 
     public String toString() {
@@ -71,4 +70,6 @@ public abstract class MetricFilter implements Filter {
     public String applyValues(String query, Integer position) throws BIException {
         return this.getCondition().applyValues(query, position);
     }
+
+    protected abstract MetricFilter copy() throws BIException;
 }

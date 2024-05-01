@@ -7,6 +7,7 @@ import com.msoft.mbi.data.api.data.indicator.Operator;
 import com.msoft.mbi.data.api.data.util.BIPreparedStatementAction;
 import com.msoft.mbi.data.api.data.util.BIUtil;
 import com.msoft.mbi.data.api.data.util.Constants;
+import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.NotImplementedException;
 
@@ -15,11 +16,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 @Log4j2
-public class ConditionJDBC extends Condition implements Cloneable {
-
-    public ConditionJDBC() {
-        super();
-    }
+@NoArgsConstructor
+public class ConditionJDBC extends Condition {
 
     public ConditionJDBC(Field field, Operator operator, String value) throws BIException {
         super(field, operator, value);
@@ -66,18 +64,6 @@ public class ConditionJDBC extends Condition implements Cloneable {
         }
     }
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        ConditionJDBC conditionJDBC;
-        try {
-            conditionJDBC = new ConditionJDBC(this);
-        } catch (BIException e) {
-            log.error("Error in ConditionJDBC.clone() : " + e.getMessage());
-            return null;
-        }
-        return conditionJDBC;
-    }
-
     protected Object format(String valor) throws BIException {
         return BIUtil.formatSQL(this.getField(), valor);
     }
@@ -85,7 +71,7 @@ public class ConditionJDBC extends Condition implements Cloneable {
     @Override
     public String getFormattedValue() {
         try {
-            return this.formatSQLValue();
+            return this.formatSqlValue();
         } catch (BIException e) {
             log.error("Error in ConditionJDBC.getFormattedValue() : " + e.getMessage());
             return null;
@@ -95,5 +81,10 @@ public class ConditionJDBC extends Condition implements Cloneable {
     @Override
     public String toString() {
         return super.toString();
+    }
+
+    @Override
+    public Condition copy() throws BIException {
+        return new ConditionJDBC(this);
     }
 }

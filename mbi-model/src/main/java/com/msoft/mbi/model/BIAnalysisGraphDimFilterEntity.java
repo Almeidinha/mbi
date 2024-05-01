@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_analysis_graph_dim_filter", schema = "dbo", catalog = "BISERVER")
+@Table(name = "bi_analysis_graph_dim_filter", schema = "biserver", catalog = "BISERVER")
 @IdClass(BIAnalysisGraphDimFilterPK.class)
 public class BIAnalysisGraphDimFilterEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)

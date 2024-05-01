@@ -11,7 +11,7 @@ import java.util.Collection;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_interface", schema = "dbo", catalog = "BISERVER")
+@Table(name = "bi_interface", schema = "biserver", catalog = "BISERVER")
 public class BIInterfaceEntity implements Serializable {
 
     @Id

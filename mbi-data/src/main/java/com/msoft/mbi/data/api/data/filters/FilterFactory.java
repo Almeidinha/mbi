@@ -4,9 +4,10 @@ import com.msoft.mbi.data.api.data.exception.BIException;
 import com.msoft.mbi.data.api.data.indicator.*;
 import com.msoft.mbi.data.api.data.util.BIMacro;
 import com.msoft.mbi.data.api.data.util.Constants;
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
+@NoArgsConstructor(access= AccessLevel.PRIVATE)
 public class FilterFactory {
 
 

@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.msoft.mbi.cube.multi.Cube;
 import com.msoft.mbi.cube.multi.column.ColumnMetaData;
-import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditions;
+import com.msoft.mbi.cube.multi.coloralertcondition.ColorAlertConditions;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
 

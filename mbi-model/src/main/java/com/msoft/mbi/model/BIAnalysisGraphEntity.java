@@ -4,17 +4,18 @@ import lombok.Getter;
 import lombok.Setter;
 
 import jakarta.persistence.*;
+
 import java.util.Collection;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_analysis_graph", schema = "dbo", catalog = "BISERVER")
+@Table(name = "bi_analysis_graph", schema = "biserver", catalog = "BISERVER")
 @IdClass(BIAnalysisGraphPK.class)
 public class BIAnalysisGraphEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "graph_id", nullable = false)
     private int graphId;
 

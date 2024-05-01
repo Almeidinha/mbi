@@ -1,6 +1,5 @@
 package com.msoft.mbi.data.services.impl;
 
-import com.msoft.mbi.data.api.dtos.restrictions.MetricDimensionRestrictionDTO;
 import com.msoft.mbi.data.api.dtos.restrictions.MetricDimensionRestrictionEntityDTO;
 import com.msoft.mbi.data.repositories.BIDimMetricRestrictionRepository;
 import com.msoft.mbi.data.services.BIDimMetricRestrictionService;
@@ -19,7 +18,7 @@ public class BIDimMetricRestrictionServiceImpl implements BIDimMetricRestriction
 
     @Override
     public List<BIDimMetricRestrictionEntity> findAll() {
-        return null;
+        return repository.findAll();
     }
 
     @Override
@@ -38,13 +37,13 @@ public class BIDimMetricRestrictionServiceImpl implements BIDimMetricRestriction
     }
 
     @Override
-    public void delete(BIDimMetricRestrictionEntity object) {
-
+    public void delete(BIDimMetricRestrictionEntity entity) {
+        this.repository.delete(entity);
     }
 
     @Override
     public void deleteById(Integer integer) {
-
+        this.repository.deleteById(integer);
     }
 
     @Override
@@ -55,9 +54,30 @@ public class BIDimMetricRestrictionServiceImpl implements BIDimMetricRestriction
 
     @Override
     public List<BIDimMetricRestrictionEntity> saveAll(List<BIDimMetricRestrictionEntity> restrictionEntities) {
-        this.repository.deleteByIndicatorId(restrictionEntities.stream()
-                .map(BIDimMetricRestrictionEntity::getIndicatorId)
-                .collect(Collectors.toSet()));
+        this.deleteAll(restrictionEntities);
         return this.repository.saveAll(restrictionEntities);
     }
+
+    @Override
+    public void deleteAll(List<BIDimMetricRestrictionEntity> restrictionEntities) {
+        this.repository.deleteByIndicatorIds(restrictionEntities.stream()
+                .map(BIDimMetricRestrictionEntity::getIndicatorId)
+                .collect(Collectors.toSet()));
+    }
+
+    @Override
+    public void deleteByIndicator(Integer indicatorId) {
+        this.repository.deleteByIndicatorId(indicatorId);
+    }
+
+    @Override
+    public void deleteByMetric(Integer indicatorId, Integer metricId) {
+        this.repository.deleteByIndicatorIdAndMetricId(indicatorId, metricId);
+    }
+
+    @Override
+    public void deleteByDimension(Integer indicatorId, Integer metricId, Integer dimensionId) {
+        this.repository.deleteByIndicatorIdAndMetricIdAndDimensionId(indicatorId, metricId, dimensionId);
+    }
+
 }

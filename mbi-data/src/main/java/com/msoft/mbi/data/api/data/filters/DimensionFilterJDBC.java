@@ -7,15 +7,15 @@ import com.msoft.mbi.data.api.data.indicator.Operator;
 import com.msoft.mbi.data.api.data.util.BIMacro;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import org.apache.commons.lang3.NotImplementedException;
 
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
-public class DimensionFilterJDBC extends DimensionFilter implements Filter, Cloneable {
+public class DimensionFilterJDBC extends DimensionFilter implements Filter {
 
     private boolean startParentheses = false;
     private boolean endParentheses = false;
@@ -36,27 +36,27 @@ public class DimensionFilterJDBC extends DimensionFilter implements Filter, Clon
         super.setCondition(conditionJDBC);
     }
 
-    @SneakyThrows
+
     @Override
-    public Object clone() {
+    public DimensionFilter copy() throws BIException {
         DimensionFilter dimensionFilter = new DimensionFilterJDBC();
         if (this.getCondition() == null || this.getMacro() != null) {
             if (this.getFilters() != null) {
-                ArrayList<DimensionFilter> novo = new ArrayList<>();
+                List<DimensionFilter> dimensionFilters = new ArrayList<>();
                 for (DimensionFilter filter : this.getFilters()) {
-                    novo.add((DimensionFilterJDBC) filter.clone());
+                    dimensionFilters.add(filter.copy());
                 }
-                dimensionFilter.setFilters(novo);
+                dimensionFilter.setFilters(dimensionFilters);
                 dimensionFilter.setConnector(this.getConnector());
             }
             if (this.getMacro() != null) {
-                dimensionFilter.setMacro((BIMacro) this.getMacro().clone(), (Field) this.getMacroField().clone());
+                dimensionFilter.setMacro(BIMacro.copy(this.getMacro()), Field.copy(this.getMacroField()));
                 if (this.getCondition() != null)
-                    dimensionFilter.setCondition((Condition) this.getCondition().clone());
+                    dimensionFilter.setCondition(this.getCondition().copy());
             }
         } else {
             dimensionFilter.setConnector(this.getConnector());
-            dimensionFilter.setCondition((Condition) this.getCondition().clone());
+            dimensionFilter.setCondition(this.getCondition().copy());
         }
         dimensionFilter.setDrillDown(this.isDrillDown());
         return dimensionFilter;

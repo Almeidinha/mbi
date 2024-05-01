@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_graph_alert", schema = "dbo", catalog = "BISERVER")
+@Table(name = "bi_graph_alert", schema = "biserver", catalog = "BISERVER")
 @IdClass(BIGraphAlertPK.class)
 public class BIGraphAlertEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)

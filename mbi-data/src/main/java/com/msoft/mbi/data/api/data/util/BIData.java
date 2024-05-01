@@ -16,15 +16,22 @@ import java.util.TimeZone;
 public final class BIData implements Comparable<Object> {
 
     private GregorianCalendar calendar = new GregorianCalendar();
-    public static final String MONTH_DAY_YEAR_FORMAT = "dd/MM/yyyy";
+    public static final String DAY_MONTH_YEAR_4DF = "dd/MM/yyyy";
+    public static final String DAY_MONTH_YEAR_2DF = "dd/MM/yy";
+    public static final String MONTH_DAY_YEAR_4DF = "MM/dd/yyyy";
+    public static final String MONTH_DAY_YEAR_2DF = "MM/dd/yy";
+    public static final String YEAR_MONTH_DAY_4DF = "yyyy/MM/dd";
+    public static final String YEAR_MONTH_DAY_DASH_4DF = "yyyy-MM-dd";
+    public static final String DAY_MONTH_YEAR_DASH_4DF = "dd-MM-yyyy";
+    public static final String YEAR_MONTH_DAY_2D_NS = "yyyyMMdd";
     public static final String MONTH_YEAR_FORMAT = "MM/yyyy";
     public static final String MONTH_YEAR_EMPTY_FORMAT = "yyyyMM";
     @Getter
     @Setter
-    private String entryFormat = MONTH_DAY_YEAR_FORMAT;
+    private String entryFormat = DAY_MONTH_YEAR_4DF;
     @Getter
     @Setter
-    private String outputFormat = MONTH_DAY_YEAR_FORMAT;
+    private String outputFormat = DAY_MONTH_YEAR_4DF;
     public static final int ONE_SECOND = 1000;
     public static final int ONE_MINUTE = 60 * ONE_SECOND;
     public static final int ONE_HOUR = 60 * ONE_MINUTE;

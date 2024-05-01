@@ -2,10 +2,10 @@ package com.msoft.mbi.cube.multi.column;
 
 import java.util.List;
 
-import com.msoft.mbi.cube.multi.resumeFunctions.FunctionRanking;
+import com.msoft.mbi.cube.multi.resumefunctions.FunctionRanking;
 import com.msoft.mbi.cube.multi.generation.Printer;
-import com.msoft.mbi.cube.multi.metaData.MetaDataField;
-import com.msoft.mbi.cube.multi.metaData.HTMLLineMask;
+import com.msoft.mbi.cube.multi.metadata.MetaDataField;
+import com.msoft.mbi.cube.multi.metadata.HTMLLineMask;
 import com.msoft.mbi.cube.multi.renderers.MaskBeforeRenderer;
 import com.msoft.mbi.cube.multi.renderers.MascaraDataRenderer;
 import com.msoft.mbi.cube.multi.renderers.MaskAfterRenderer;

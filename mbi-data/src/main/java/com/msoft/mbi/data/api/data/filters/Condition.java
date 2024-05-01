@@ -28,27 +28,27 @@ public abstract class Condition {
     private Field field;
     private Operator operator;
     private String value;
-    private String SQLValue;
+    private String sqlValue;
 
     private Condition(Field field, Operator operator, String value, int valueCount) throws BIException {
         this.valueCount = 0;
         this.operator = operator;
         this.value = value;
         this.field = field;
-        this.SQLValue = "";
+        this.sqlValue = "";
         this.valuesMap = new HashMap<>();
         this.init();
     }
 
-    public Condition(Condition condition) throws BIException {
+    protected Condition(Condition condition) throws BIException {
         this(condition.getField(), condition.getOperator(), condition.getValue(), 0);
     }
 
-    public Condition(Field field, Operator operator, String value) throws BIException {
+    protected Condition(Field field, Operator operator, String value) throws BIException {
         this(field, operator, value, 0);
     }
 
-    public Condition(Field field, String operator, String value) throws BIException {
+    protected Condition(Field field, String operator, String value) throws BIException {
         this(field, new Operator(operator), value, 0);
     }
 
@@ -56,7 +56,7 @@ public abstract class Condition {
         if (!this.value.isEmpty()) {
             this.value = this.value.replace("'", "").replace(",", "; ");
         }
-        this.SQLValue = this.formatSQLValue();
+        this.sqlValue = this.formatSqlValue();
     }
 
     public String toString() {
@@ -68,7 +68,7 @@ public abstract class Condition {
             String op = this.mapOperator(this.operator.getSymbol());
             StringBuilder result;
 
-            if (this.SQLValue.equalsIgnoreCase("null")) {
+            if (this.sqlValue.equalsIgnoreCase("null")) {
                 op = (op.equals("IN(")) ? "IS" : "IS NOT";
             }
 
@@ -93,9 +93,9 @@ public abstract class Condition {
 
         result.append(fieldName).append(" ").append(op).append(" ");
         if (op.contains("IN(")) {
-            result.append(this.getDimensionValuesIN(this.SQLValue)).append(")");
+            result.append(this.getDimensionValuesIN(this.sqlValue)).append(")");
         } else {
-            result.append(this.SQLValue);
+            result.append(this.sqlValue);
         }
 
         return result;
@@ -122,9 +122,9 @@ public abstract class Condition {
             result.append("(").append(fieldName).append(") ").append(op).append(" ");
 
             if (op.contains("IN(")) {
-                result.append(this.getMetricValuesIN(this.SQLValue)).append(")");
+                result.append(this.getMetricValuesIN(this.sqlValue)).append(")");
             } else {
-                result.append(this.getMetricValuesIN(this.SQLValue));
+                result.append(this.getMetricValuesIN(this.sqlValue));
             }
 
         }
@@ -156,8 +156,8 @@ public abstract class Condition {
             return "";
         }
 
-        String processedSQLValue = sqlValue.contains(",") ? sqlValue.replaceAll(",", ";") : sqlValue;
-        List<String> values = BIUtil.stringToList(processedSQLValue, ";");
+        String processedSqlValue = sqlValue.contains(",") ? sqlValue.replace(",", ";") : sqlValue;
+        List<String> values = BIUtil.stringToList(processedSqlValue, ";");
 
         return String.join(", ", Collections.nCopies(values.size(), "?"));
     }
@@ -171,7 +171,7 @@ public abstract class Condition {
         return String.join(", ", values);
     }
 
-    public String formatSQLValue() throws BIException {
+    public String formatSqlValue() throws BIException {
         StringBuilder result = new StringBuilder(this.value);
         if (!StringUtils.equalsIgnoreCase(result.toString(), "null") && this.field != null) {
             List<String> values = BIUtil.stringToList(result.toString(), ";");
@@ -192,11 +192,11 @@ public abstract class Condition {
         String op = this.mapOperator(this.operator.getSymbol());
         StringBuilder result = new StringBuilder();
 
-        if (this.SQLValue.equalsIgnoreCase("null")) {
+        if (this.sqlValue.equalsIgnoreCase("null")) {
             op = op.equals("IN(") ? "IS" : "IS NOT";
         }
 
-        result.append("#$").append(this.field.getFieldId()).append("$! ").append(op).append(" ").append(this.SQLValue);
+        result.append("#$").append(this.field.getFieldId()).append("$! ").append(op).append(" ").append(this.sqlValue);
 
         if (op.contains("IN(")) {
             result.append(")");
@@ -205,7 +205,7 @@ public abstract class Condition {
         return result.toString();
     }
 
-    protected abstract Object clone() throws CloneNotSupportedException;
+    protected abstract Condition copy() throws BIException;
 
     protected abstract Object format(String value) throws BIException;
 

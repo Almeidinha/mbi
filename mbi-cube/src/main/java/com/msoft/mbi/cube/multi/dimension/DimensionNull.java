@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.msoft.mbi.cube.multi.Cube;
-import com.msoft.mbi.cube.multi.metaData.MetaDataField;
+import com.msoft.mbi.cube.multi.metadata.MetaDataField;
 
 public abstract class DimensionNull extends Dimension {
 

@@ -161,4 +161,14 @@
                  stripComments="true"/>
     </changeSet>
 
+    <changeSet id="bi-populate-sequences" author="admin">
+        <sqlFile dbms="mysql"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 path="bi-populate-sequences.sql"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true"/>
+    </changeSet>
+
 </databaseChangeLog>

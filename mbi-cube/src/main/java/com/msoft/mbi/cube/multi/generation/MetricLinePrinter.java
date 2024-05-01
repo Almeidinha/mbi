@@ -3,7 +3,7 @@ package com.msoft.mbi.cube.multi.generation;
 import java.util.List;
 
 import com.msoft.mbi.cube.multi.Cube;
-import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditionsMetrica;
+import com.msoft.mbi.cube.multi.coloralertcondition.ColorAlertConditionsMetrica;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import lombok.Getter;

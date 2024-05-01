@@ -27,9 +27,9 @@ public class CellProperty implements Serializable {
     private String dateMask = "";
     @Builder.Default
     private Map<String, String> extraAttributes = new HashMap<>();
-    public static String ALIGNMENT_LEFT = "left";
-    public static String ALIGNMENT_RIGHT = "right";
-    public static String ALIGNMENT_CENTER = "center";
+    public static final String ALIGNMENT_LEFT = "left";
+    public static final String ALIGNMENT_RIGHT = "right";
+    public static final String ALIGNMENT_CENTER = "center";
     public static final String CELL_PROPERTY_TOTAL_PARTIAL_LINES = "vlrTPcl";
     public static final String CELL_PROPERTY_TOTAL_PARTIAL_HEADER = "cbcTPcl";
     public static final String CELL_PROPERTY_COLUMN_TOTAL_HEADER = "cbcTCls";

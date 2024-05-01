@@ -68,8 +68,8 @@ public class ColorAlert {
     public String getFirstDoubleValue() {
         String result = getFirstValue();
         result = result.replace('.', 'X');
-        result = result.replaceAll("X", "");
-        result = result.replaceAll(",", ".");
+        result = result.replace("X", "");
+        result = result.replace(",", ".");
         return result;
     }
 
@@ -174,26 +174,22 @@ public class ColorAlert {
     public String getSegundoValorDouble() {
         String result = getSecondValue();
         result = result.replace('.', 'X');
-        result = result.replaceAll("X", "");
-        result = result.replaceAll(",", ".");
+        result = result.replace("X", "");
+        result = result.replace(",", ".");
         return result;
     }
 
-    public ColorAlert clone(Indicator indicator) {
+    public ColorAlert copy(Indicator indicator) {
         ColorAlert result = new ColorAlert();
 
-        List<Field> campos = indicator.getFields();
-        for (Field campo : campos) {
-            if (campo != null) {
-                if (this.firstField != null) {
-                    if (this.firstField.getFieldId() == campo.getFieldId()) {
-                        result.setFirstField(campo);
-                    }
+        List<Field> fields = indicator.getFields();
+        for (Field field : fields) {
+            if (field != null) {
+                if (this.firstField != null && this.firstField.getFieldId() == field.getFieldId()) {
+                    result.setFirstField(field);
                 }
-                if (this.secondField != null) {
-                    if (this.secondField.getFieldId() == campo.getFieldId()) {
-                        result.setSecondField(campo);
-                    }
+                if (this.secondField != null && this.secondField.getFieldId() == field.getFieldId()) {
+                    result.setSecondField(field);
                 }
             }
         }

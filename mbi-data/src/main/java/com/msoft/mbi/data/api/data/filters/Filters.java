@@ -1,6 +1,7 @@
 package com.msoft.mbi.data.api.data.filters;
 
 import com.msoft.mbi.data.api.data.exception.BIException;
+import com.msoft.mbi.data.api.data.indicator.Dimension;
 import com.msoft.mbi.data.api.data.indicator.Field;
 import lombok.Data;
 import lombok.Getter;
@@ -55,18 +56,17 @@ public class Filters {
         return position;
     }
 
-    @Override
-    public Filters clone() throws CloneNotSupportedException {
-        Filters filters = (Filters) super.clone();
-        if (this.dimensionFilter != null) {
-            filters.setDimensionFilter((DimensionFilter) this.dimensionFilter.clone());
+    public static Filters copy(Filters template) throws BIException {
+        Filters filters = new Filters();
+        if (template.dimensionFilter != null) {
+            filters.setDimensionFilter(template.dimensionFilter.copy());
         }
-        if (this.metricFilters != null) {
-            filters.setMetricFilters((MetricFilters) this.metricFilters.clone());
+        if (template.metricFilters != null) {
+            filters.setMetricFilters((MetricFilters) template.metricFilters.clone());
         }
-        if (this.metricSqlFilter != null) {
+        if (template.metricSqlFilter != null) {
             filters.setMetricSqlFilter(
-                    Stream.of(this.metricSqlFilter.clone())
+                    Stream.of(template.metricSqlFilter.clone())
                             .map(MetricFilter.class::cast)
                             .collect(Collectors.toList())
             );
@@ -110,14 +110,14 @@ public class Filters {
         }
     }
 
-    public void removeMetricFilter(String value, String operator, String fieldCode) throws BIException {
-        List<MetricFilter> metricFilters = this.getMetricFilters();
-        this.removeMetricFilter(value, fieldCode, metricFilters);
+    public void removeMetricFilter(String value, String fieldCode) throws BIException {
+        List<MetricFilter> filters = this.getMetricFilters();
+        this.removeMetricFilter(value, fieldCode, filters);
     }
 
     public void removeApplicableMetricSqlFilter(String value, String operator, String fieldCode) throws BIException {
-        List<MetricFilter> metricSqlFilter = this.getMetricSqlFilter();
-        this.removeMetricFilter(value, fieldCode, metricSqlFilter);
+        List<MetricFilter> filters = this.getMetricSqlFilter();
+        this.removeMetricFilter(value, fieldCode, filters);
     }
 
     private void removeMetricFilter(String value, String fieldCode, List<MetricFilter> metricFilters) throws BIException {
@@ -134,23 +134,23 @@ public class Filters {
 
     public void addFilter(Field field, String operator, String value) throws BIException {
         if (field.getFieldType().equals("D")) {
-            DimensionFilter dimensionFilter = this.getDimensionFilter();
-            if (dimensionFilter == null) {
+            DimensionFilter filter = this.getDimensionFilter();
+            if (filter == null) {
                 DimensionFilter novo = FilterFactory.createDimensionFilter(field, operator, value);
                 this.setDimensionFilter(novo);
                 novo.setDrillDown(true);
             } else {
-                if (dimensionFilter.getCondition() == null && dimensionFilter.getConnector().equals("AND") && !dimensionFilter.isMacro()) {
+                if (filter.getCondition() == null && filter.getConnector().equals("AND") && !filter.isMacro()) {
                     DimensionFilter novo = FilterFactory.createDimensionFilter(field, operator, value);
-                    dimensionFilter.addDimensionFilter(novo);
+                    filter.addDimensionFilter(novo);
                     novo.setDrillDown(true);
                 } else {
-                    DimensionFilter fAux = (DimensionFilter) dimensionFilter.clone();
+                    DimensionFilter fAux = filter.copy();
                     DimensionFilter novo = FilterFactory.createDimensionFilter(field, operator, value);
-                    dimensionFilter.removeAll();
-                    dimensionFilter.addDimensionFilter(fAux);
-                    dimensionFilter.addDimensionFilter(novo);
-                    dimensionFilter.setConnector("AND");
+                    filter.removeAll();
+                    filter.addDimensionFilter(fAux);
+                    filter.addDimensionFilter(novo);
+                    filter.setConnector("AND");
                     novo.setDrillDown(true);
                 }
             }

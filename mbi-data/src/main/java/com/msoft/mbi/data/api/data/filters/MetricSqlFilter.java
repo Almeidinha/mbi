@@ -66,8 +66,8 @@ public class MetricSqlFilter extends ArrayList<MetricFilter> {
             Operator op = fTemp.getOperator();
             if (cmpAux != null && op != null) {
                 String clause = cmpAux.isExpression()
-                        ? String.format("%s %s %s", cmpAux.getName(), op.getSymbol(), fTemp.getSQLValue())
-                        : String.format("%s.%s %s %s", cmpAux.getTableNickname(), cmpAux.getName(), op.getSymbol(), fTemp.getSQLValue());
+                        ? String.format("%s %s %s", cmpAux.getName(), op.getSymbol(), fTemp.getSqlValue())
+                        : String.format("%s.%s %s %s", cmpAux.getTableNickname(), cmpAux.getName(), op.getSymbol(), fTemp.getSqlValue());
                 result.append(" AND ").append(clause);
             }
         }

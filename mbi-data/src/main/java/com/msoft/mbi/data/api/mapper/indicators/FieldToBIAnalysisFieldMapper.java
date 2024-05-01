@@ -25,7 +25,7 @@ public interface FieldToBIAnalysisFieldMapper {
             @Mapping(target = "direction", source = "orderDirection"),
             @Mapping(target = "decimalPositions", source = "numDecimalPositions"),
             @Mapping(target = "localApres", source = "displayLocation"),
-            @Mapping(target = "fieldTotalization", source = "totalizingField"),
+            @Mapping(target = "fieldTotalization", source = "field", qualifiedByName = "getFieldTotalization"),
             @Mapping(target = "lineFieldTotalization", source = "sumLine"),
             @Mapping(target = "accumulatedLineField", source = "horizontalParticipationAccumulated"),
 
@@ -40,8 +40,9 @@ public interface FieldToBIAnalysisFieldMapper {
             @Mapping(target = "orderDirection", source = "direction"),
             @Mapping(target = "numDecimalPositions", source = "decimalPositions"),
             @Mapping(target = "displayLocation", source = "localApres"),
-            @Mapping(target = "totalizingField", source = "fieldTotalization"),
+            @Mapping(target = "totalizingField", expression = "java(!dto.getFieldTotalization().equals(\"N\"))"),
             @Mapping(target = "sumLine", source = "lineFieldTotalization"),
+            @Mapping(target = "applyTotalizationExpression", expression = "java(dto.getFieldTotalization().equals(\"E\"))"),
             @Mapping(target = "horizontalParticipationAccumulated", source = "accumulatedLineField"),
             @Mapping(target = "verticalAnalysis", expression = "java(!dto.getVertical().equals(\"N\"))"),
             @Mapping(target = "horizontalAnalysis", expression = "java(!dto.getHorizontal().equals(\"N\"))"),
@@ -57,7 +58,7 @@ public interface FieldToBIAnalysisFieldMapper {
             @Mapping(target = "direction", source = "orderDirection"),
             @Mapping(target = "decimalPositions", source = "numDecimalPositions"),
             @Mapping(target = "localApres", source = "displayLocation"),
-            @Mapping(target = "fieldTotalization", source = "totalizingField"),
+            @Mapping(target = "fieldTotalization", source = "field", qualifiedByName = "getFieldTotalization"),
             @Mapping(target = "lineFieldTotalization", source = "sumLine"),
             @Mapping(target = "accumulatedLineField", source = "horizontalParticipationAccumulated"),
     })
@@ -72,11 +73,20 @@ public interface FieldToBIAnalysisFieldMapper {
             @Mapping(target = "orderDirection", source = "direction"),
             @Mapping(target = "numDecimalPositions", source = "decimalPositions"),
             @Mapping(target = "displayLocation", source = "localApres"),
-            @Mapping(target = "totalizingField", source = "fieldTotalization"),
+            @Mapping(target = "totalizingField", expression = "java(!dto.getFieldTotalization().equals(\"N\"))"),
             @Mapping(target = "sumLine", source = "lineFieldTotalization"),
+            @Mapping(target = "applyTotalizationExpression", expression = "java(dto.getFieldTotalization().equals(\"E\"))"),
             @Mapping(target = "horizontalParticipationAccumulated", source = "accumulatedLineField"),
             @Mapping(target = "verticalAnalysis", expression = "java(!dto.getVertical().equals(\"N\"))"),
             @Mapping(target = "horizontalAnalysis", expression = "java(!dto.getHorizontal().equals(\"N\"))"),
     })
     List<Field> setDTOToEntity(List<BIAnalysisFieldDTO> dtos);
+
+    @Named("getFieldTotalization")
+    default String getFieldTotalization(Field field) {
+        if (field.isApplyTotalizationExpression()) {
+            return "E";
+        }
+        return field.isTotalizingField() ? "S" : "N";
+    }
 }

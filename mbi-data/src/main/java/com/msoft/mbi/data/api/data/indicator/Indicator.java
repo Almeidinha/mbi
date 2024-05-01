@@ -4,16 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.msoft.mbi.cube.multi.Cube;
-import com.msoft.mbi.cube.multi.column.MaskColumnMetaData;
 import com.msoft.mbi.cube.multi.generation.*;
-import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
-import com.msoft.mbi.cube.multi.metaData.HTMLLineMask;
-import com.msoft.mbi.cube.multi.metaData.MetaDataField;
-import com.msoft.mbi.cube.multi.metaData.CubeMetaData;
-import com.msoft.mbi.cube.multi.renderers.MaskMonth;
-import com.msoft.mbi.cube.multi.renderers.MaskMonthYear;
-import com.msoft.mbi.cube.multi.renderers.MaskPeriod;
-import com.msoft.mbi.cube.multi.renderers.MaskWeek;
+import com.msoft.mbi.cube.multi.metadata.ColorAlertMetadata;
+import com.msoft.mbi.cube.multi.metadata.HTMLLineMask;
+import com.msoft.mbi.cube.multi.metadata.MetaDataField;
+import com.msoft.mbi.cube.multi.metadata.CubeMetaData;
+import com.msoft.mbi.cube.multi.renderers.*;
 import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLText;
 import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLColumnText;
 import com.msoft.mbi.cube.util.CubeListener;
@@ -29,6 +25,7 @@ import com.msoft.mbi.data.api.data.filters.*;
 import com.msoft.mbi.data.api.data.filters.interpreters.DimensionFilterInterpreter;
 import com.msoft.mbi.data.api.data.filters.interpreters.MetricFilterInterpreter;
 import com.msoft.mbi.data.api.data.htmlbuilder.*;
+import com.msoft.mbi.data.api.data.util.BIData;
 import com.msoft.mbi.data.api.data.util.BIUtil;
 import com.msoft.mbi.data.api.data.util.Constants;
 import com.msoft.mbi.data.api.data.util.ValuesRepository;
@@ -36,6 +33,7 @@ import com.msoft.mbi.model.support.DatabaseType;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.StringWriter;
@@ -51,6 +49,7 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 @Data
+@Log4j2
 @SuppressWarnings("unused")
 public class Indicator {
 
@@ -59,7 +58,7 @@ public class Indicator {
         temporaryFrozenStatus = false;
         frozenStatus = false;
         this.analysisGroupPermissions = new ArrayList<>();
-        this.AnalysisUserPermissions = new ArrayList<>();
+        this.analysisUserPermissions = new ArrayList<>();
         this.analysisComments = new AnalysisComments();
         this.fields = new ArrayList<>();
         this.filters = new Filters();
@@ -79,7 +78,7 @@ public class Indicator {
     private Filters filters;
     private FiltersFunction filtersFunction;
     private AnalysisComments analysisComments;
-    private List<AnalysisUserPermission> AnalysisUserPermissions;
+    private List<AnalysisUserPermission> analysisUserPermissions;
     private List<AnalysisGroupPermissions> analysisGroupPermissions;
     private String fileName;
     private String searchClause;
@@ -106,7 +105,7 @@ public class Indicator {
     private String currentView = "T";
     private String dateFormat = "dd/MM/yyyy";
 
-    transient private CubeListener cubeListener = new DefaultCubeListener();
+    private CubeListener cubeListener = new DefaultCubeListener();
 
     private int leftCoordinates = 10;
     private int topCoordinates = 60;
@@ -132,11 +131,11 @@ public class Indicator {
     private boolean inheritsFields = false;
     private boolean replicateChanges;
 
-    transient private AnalysisParameters analysisParameters;
-    transient private Map<Field, MetaDataField> BICubeMappedFields;
+    private AnalysisParameters analysisParameters;
+    private Map<Field, MetaDataField> biCubeMappedFields;
 
-    transient private Cube cube;
-    transient private TableGenerator cubeTable;
+    private Cube cube;
+    private TableGenerator cubeTable;
 
     private final ObjectMapper mapper;
 
@@ -170,7 +169,7 @@ public class Indicator {
         String sql = sqlBuilder.toString().trim();
 
         if (databaseType.equals(DatabaseType.OPENEDGE) || caseSensitive) {
-            return this.applyValues(quoteSQLString(sql, "\""));
+            return this.applyValues(BIUtil.quoteSQLString(sql, "\""));
         } else {
             return this.applyValues(sql);
         }
@@ -257,9 +256,9 @@ public class Indicator {
             groupBy.insert(0, "GROUP BY ");
         }
 
-        this.removeTrailingComma(select);
-        this.removeTrailingComma(groupBy);
-        this.removeTrailingComma(orderBy);
+        BIUtil.removeTrailingComma(select);
+        BIUtil.removeTrailingComma(groupBy);
+        BIUtil.removeTrailingComma(orderBy);
 
         this.searchClause = select.toString();
         this.groupClause = groupBy.toString();
@@ -279,7 +278,6 @@ public class Indicator {
         if (!"S".equals(field.getDefaultField()) && (fieldType.equals("D") && !isFieldUsedToDelegateOrder(field))) {
             return;
         }
-
 
         if (Constants.DIMENSION.equals(fieldType) && !"COUNT".equalsIgnoreCase(aggregationType) && !"COUNT_DIST".equalsIgnoreCase(aggregationType)) {
             if (field.isFixedValue()) {
@@ -319,11 +317,7 @@ public class Indicator {
         }
     }
 
-    private void removeTrailingComma(StringBuilder builder) {
-        if (!builder.isEmpty() &&  builder.charAt(builder.length() - 1) == ',') {
-            builder.deleteCharAt(builder.length() - 1);
-        }
-    }
+
 
     private boolean isConditionalExpression(String fieldName) {
         return fieldName.toUpperCase().trim().startsWith("SE(") || fieldName.toUpperCase().trim().startsWith("IF(");
@@ -375,8 +369,14 @@ public class Indicator {
         return null;
     }
 
+    public MetricDimensionRestriction getRestrictionByFieldId(int code) {
+        return this.metricDimensionRestrictions.stream()
+                .filter(restriction -> restriction != null && restriction.getMetricId() == code)
+                .findFirst().orElse(null);
+    }
+
     public Field getFieldByCode(int code) {
-        return fields.stream()
+        return this.fields.stream()
                 .filter(field -> field != null && field.getFieldId() == code)
                 .findFirst().orElse(null);
     }
@@ -420,11 +420,11 @@ public class Indicator {
 
             this.addFilterIfPresent(interpreter.hasSequenceFilters(), interpreter.getFilterSequence());
             this.addFilterIfPresent(interpreter.hasAccumulatedFilters(), interpreter.getFilterAccumulated());
-            this.metricFilters = this.filters.getMetricFilters().toString().trim(); //interpreter.getFilters().toString().trim();
+            this.metricFilters = this.filters.getMetricFilters().toString().trim();
         }
     }
 
-    private void addFilterIfPresent(boolean condition, FilterFunction filter) throws BIException {
+    private void addFilterIfPresent(boolean condition, FilterFunction filter) {
         if (condition) {
             if (this.filtersFunction == null) {
                 this.filtersFunction = new FiltersFunction();
@@ -441,37 +441,11 @@ public class Indicator {
         }
     }
 
-    public String quoteSQLString(String input, String quote) {
-
-        Set<String> sqlKeywords = new HashSet<>(Set.of(
-                "?", "<", ">", "=", "-", "+", "/", "*", "}", "{", "]", "[", ")", "(", ",", " ", ".", "MAX", "MIN",
-                "SUM", "AND", "AS", "ASC", "BETWEEN", "COUNT", "BY", "CASE", "CURRENT_DATE", "CURRENT_TIME",
-                "DELETE", "DESC", "INSERT", "DISTINCT", "EACH", "ELSEIF", "FALSE", "TOP",
-                "FROM", "HAVING", "IF", "IN", "INTERVAL", "INTO", "IS", "INNER", "JOIN", "KEY",
-                "KEYS", "LEFT", "LIKE", "LIMIT", "MATCH", "NOT", "NULL", "ON", "OPTION", "OR", "ORDER", "OUT",
-                "OUTER", "REPLACE", "RIGHT", "SELECT", "SET", "TABLE", "THEN", "TO", "TRUE", "UPDATE", "VALUES",
-                "WHEN", "WHERE", "DATE", "DECIMAL", "ELSE", "EXISTS", "FOR", "VARCHAR", "UNION", "GROUP",
-                "WITH"));
-
-        String[] words = input.trim().replaceAll("\\n", " ").replaceAll(" +", " ").split("((?<=[\\s,.)(=\\-+/*])|(?=[\\s,.)(=\\-+/*]))");
-
-        StringBuilder output = new StringBuilder();
-
-        for (String word : words) {
-            if (!sqlKeywords.contains(word.toUpperCase()) && !StringUtils.isNumeric(word)) {
-                word = quote + word + quote;
-            }
-            output.append(word);
-        }
-
-        return output.toString();
-    }
-
-    public void startTableProcess() {
+    public void startTableProcess() throws BIGeneralException {
         try {
             this.montaSaida(true);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new BIGeneralException(e);
         }
     }
 
@@ -515,8 +489,7 @@ public class Indicator {
         this.cubeTable.process(jsonPrinter);
 
         long elapsedTime = System.nanoTime() - startTime;
-        System.out.println("Total execution time to cubeTable.processar in millis: " + elapsedTime/1000000);
-
+        log.info("Total execution time to cubeTable.processar in millis: " + elapsedTime/1000000);
 
         objectNode.set("title", jsonTitle);
 
@@ -524,8 +497,7 @@ public class Indicator {
 
     }
 
-
-    public void montaSaida(boolean consult) throws Exception {
+    public void montaSaida(boolean consult) throws BIGeneralException {
         if (consult) {
             try {
                 this.cubeListener.start();
@@ -550,7 +522,7 @@ public class Indicator {
 
     public ArrayNode buildJsonDrillUp() {
 
-        ArrayNode ArrayNode = this.mapper.createArrayNode();
+        ArrayNode arrayNode = this.mapper.createArrayNode();
 
         ObjectNode json = this.mapper.createObjectNode();
 
@@ -562,15 +534,15 @@ public class Indicator {
             json.put("onclick", "addDrillUp(0)");
         }
 
-        ArrayNode.add(json);
+        arrayNode.add(json);
 
-        return ArrayNode;
+        return arrayNode;
     }
 
 
     public ArrayNode buildDefaultJsonDrillUp() {
 
-        ArrayNode ArrayNode = this.mapper.createArrayNode();
+        ArrayNode arrayNode = this.mapper.createArrayNode();
         ObjectNode json = this.mapper.createObjectNode();
 
 
@@ -593,8 +565,8 @@ public class Indicator {
                 json.put("onclick", "'DrillDownSemFiltro(" + aux.getFieldId() + ")' class='vect-arrow-square-down-right' title='Descer um nível sem utilizar Drill-Down'");
             }
         }
-        ArrayNode.add(json);
-        return ArrayNode;
+        arrayNode.add(json);
+        return arrayNode;
     }
 
     public String buildDefaultStringDrillUp() {
@@ -621,7 +593,7 @@ public class Indicator {
         json.put("tableId","indicator_" + this.code);
         json.put("width","100px");
         json.put("editable",true);
-        json.put("alignment","center");
+        json.put("alignment", CellProperty.ALIGNMENT_CENTER);
         json.put("titleId","title_" + this.code);
         json.put("fontStyle","normal");
         json.put("fontFamily","verdana");
@@ -657,7 +629,7 @@ public class Indicator {
             if (this.stopProcess())
                 return;
             configureFieldsNavigation(this.dimensionColumn);
-            this.cube = Cube.factoryMultiDimensionalCube(createCuboMetaData());
+            this.cube = Cube.factoryMultiDimensionalCube(createCubeMetaData());
             this.cubeTable = new MultiDimensionalDefaultTableBuilder(this.cube);
         } else {
             this.cube = Cube.factoryDefaultCube(createStandardMetaDataCube());
@@ -672,7 +644,7 @@ public class Indicator {
         }
     }
 
-    public int getMaxDrillDownSequence() throws BIException {
+    public int getMaxDrillDownSequence() {
         return this.fields.stream()
                 .filter(field -> field != null && field.isDrillDown())
                 .mapToInt(Field::getDrillDownSequence)
@@ -700,7 +672,7 @@ public class Indicator {
             }
         }
 
-        createFiltroseRestricoesMetricasCuboMetaData(cubeMetaData);
+        createCubeMetadataMetricFilterRestrictions(cubeMetaData);
         return cubeMetaData;
     }
 
@@ -732,14 +704,14 @@ public class Indicator {
 
     private void configureAlertColor(Field field, MetaDataField metaDataField) {
         int alertSequence = 1;
-        for (LineColor corLinha : field.getLineColors()) {
-            if (corLinha != null) {
-                String corFundo = corLinha.getBackGroundColor().startsWith("#") ? corLinha.getBackGroundColor().substring(1) : corLinha.getBackGroundColor();
-                String corFonte = corLinha.getFontColor().startsWith("#") ? corLinha.getFontColor().substring(1) : corLinha.getFontColor();
-                ColorAlertMetadata alertaCor = new ColorAlertMetadata(alertSequence++, LogicalOperators.BETWEEN_INCLUSIVE,
-                        Double.parseDouble(corLinha.getInitialValue()), Double.parseDouble(corLinha.getInitialValue()), corFonte, corFundo,
+        for (LineColor lineColor : field.getLineColors()) {
+            if (lineColor != null) {
+                String backGroundColor = lineColor.getBackGroundColor().startsWith("#") ? lineColor.getBackGroundColor().substring(1) : lineColor.getBackGroundColor();
+                String fontColor = lineColor.getFontColor().startsWith("#") ? lineColor.getFontColor().substring(1) : lineColor.getFontColor();
+                ColorAlertMetadata alertColor = new ColorAlertMetadata(alertSequence++, LogicalOperators.BETWEEN_INCLUSIVE,
+                        Double.parseDouble(lineColor.getInitialValue()), Double.parseDouble(lineColor.getInitialValue()), fontColor, backGroundColor,
                         "Verdana", false, false, 10);
-                metaDataField.addColorAlert(alertaCor, ColorAlertMetadata.VALUE_ALERT_TYPE);
+                metaDataField.addColorAlert(alertColor, ColorAlertMetadata.VALUE_ALERT_TYPE);
             }
         }
     }
@@ -751,7 +723,7 @@ public class Indicator {
             this.cube.process(resultSet);
 
             long elapsedTime = System.nanoTime() - startTime;
-            System.out.println("Total execution time to cubo.processarCubo in millis: " + elapsedTime/1000000);
+            log.info("Total execution time to cubo.processarCubo in millis: " + elapsedTime/1000000);
         } catch (SQLException sqle) {
             BIDatabaseException biex = new BIDatabaseException(sqle);
             biex.setAction("Processamento do Cubo.");
@@ -772,12 +744,12 @@ public class Indicator {
         startFieldsCalculationByRestriction();
         for (Field field : this.fields) {
             if (field != null && !field.getDefaultField().equals("N") && field.getFieldType().equals(Constants.METRIC)) {
-                // TODO Check this when implementing restrictions
-                /*MetricDimensionRestriction restMetDim = this.getMetricDimensionRestrictions().getRestMetricaDimensao(field.getCode());
-                if (restMetDim != null && restMetDim.isMetricaRestrita(this, dimensionField)) {
+
+                MetricDimensionRestriction restMetDim = this.getRestrictionByFieldId(field.getFieldId());
+                if (restMetDim != null && restMetDim.isRestrictMetric(this, dimensionField)) {
                     field.setDefaultField("T");
                     field.setCalculatorPerRestriction(true);
-                }*/
+                }
             }
         }
     }
@@ -834,9 +806,10 @@ public class Indicator {
         metaDataField.setName(field.getName());
         metaDataField.setNumDecimalPositions(field.getNumDecimalPositions());
         metaDataField.setOrder(field.getOrder());
-        metaDataField.setOrder(field.getAccumulatedOrder());
+        metaDataField.setAccumulatedOrder(field.getAccumulatedOrder());
         metaDataField.setDefaultField(field.getDefaultField());
         metaDataField.setTitle(field.getTitle());
+        metaDataField.setHorizontalParticipation(field.isHorizontalParticipation());
         metaDataField.setAccumulatedParticipation(field.isAccumulatedParticipation());
         metaDataField.setHorizontalAccumulatedParticipation(field.isHorizontalParticipationAccumulated());
         metaDataField.setColumnAlignmentPosition(field.getColumnAlignment());
@@ -848,7 +821,7 @@ public class Indicator {
         metaDataField.setAccumulatedValue(field.isAccumulatedValue());
 
         setMetaDataFieldOrder(metaDataField, field);
-        setMetaDataFieldMask(metaDataField, field);
+        BIUtil.setMetaDataFieldMask(metaDataField, field);
         setMetaDataFieldOrderDirection(metaDataField, field);
         setMetaDataFieldLineTotalizationType(metaDataField, field);
 
@@ -869,44 +842,6 @@ public class Indicator {
             if (campoIndicator != null) {
                 metaDataField.setOrderingField(createMetaDataCubeField(campoIndicator));
             }
-        }
-    }
-
-    private void setMetaDataFieldMask(MetaDataField metaDataField, Field field) {
-        String fieldDateMask = field.getDateMask();
-
-        if (!"".equalsIgnoreCase(field.getDateMask()) && fieldDateMask != null && !"".equalsIgnoreCase(field.getDataType())) {
-            if (Constants.DATE.equalsIgnoreCase(field.getDataType())) {
-                metaDataField.addMask(new MaskColumnMetaData(fieldDateMask, MaskColumnMetaData.DATA_TYPE));
-            } else if (Constants.DIMENSION.equals(field.getFieldType())) {
-                if (Constants.NUMBER.equals(field.getDataType()) || Constants.STRING.equals(field.getDataType())) {
-                    if (field.getName().equalsIgnoreCase("num_mes")) {
-                        if (fieldDateMask.equalsIgnoreCase(MaskMonth.ABBREVIATED)
-                                || fieldDateMask.equalsIgnoreCase(MaskMonth.NOT_ABBREVIATED)) {
-                            metaDataField.addMask(new MaskColumnMetaData(fieldDateMask, MaskColumnMetaData.TYPE_EIS_DIMENSION_MONTH));
-                        }
-                    }
-                    if (field.getName().equalsIgnoreCase("num_dia_semana")) {
-                        if (fieldDateMask.equalsIgnoreCase(MaskWeek.ABBREVIATED)
-                                || fieldDateMask.equalsIgnoreCase(MaskWeek.NOT_ABBREVIATED)) {
-                            metaDataField.addMask(new MaskColumnMetaData(fieldDateMask, MaskColumnMetaData.TYPE_EIS_DIMENSION_WEEK));
-                        }
-                    }
-                    if (field.getName().equalsIgnoreCase("num_bimestre") || field.getName().equalsIgnoreCase("num_trimestre")
-                            || field.getName().equalsIgnoreCase("num_semestre")) {
-                        if (Constants.NUMBER.equals(field.getDataType()) && (MaskPeriod.validaMascara(fieldDateMask))) {
-                            metaDataField.addMask(new MaskColumnMetaData(fieldDateMask, MaskColumnMetaData.TYPE_EIS_DIMENSION_PERIOD));
-                        }
-                    }
-                    if (field.getName().equalsIgnoreCase("ano_mes_dat")) {
-                        if (Constants.STRING.equals(field.getDataType()) && (MaskMonthYear.validaMascara(fieldDateMask))) {
-                            metaDataField.addMask(new MaskColumnMetaData(fieldDateMask, MaskColumnMetaData.TYPE_EIS_DIMENSION_MONTH_YEAR));
-                        }
-                    }
-                }
-            }
-        } else if (Constants.DATE.equals(field.getDataType())) {
-            metaDataField.addMask(new MaskColumnMetaData(BIUtil.DEFAULT_DATE_FORMAT, MaskColumnMetaData.DATA_TYPE));
         }
     }
 
@@ -971,8 +906,8 @@ public class Indicator {
         return new Expression(expressionSlice);
     }
 
-    private CubeMetaData createCuboMetaData() throws BIException, DateException {
-        Map<Field, MetaDataField> BICubeMapedFields = new HashMap<>();
+    private CubeMetaData createCubeMetaData() throws BIException, DateException {
+        Map<Field, MetaDataField> biCubeMappedFields = new HashMap<>();
         CubeMetaData cubeMetaData = new CubeMetaData();
 
         loadMultiDimensionalFieldRegisters();
@@ -1014,7 +949,7 @@ public class Indicator {
             }
 
             cubeMetaData.addField(metadataField, fieldType);
-            BICubeMapedFields.put(field, metadataField);
+            biCubeMappedFields.put(field, metadataField);
         }
 
         if (this.usesSequence && firtsLineDimensionDrillDown != null) {
@@ -1025,9 +960,9 @@ public class Indicator {
             }
         }
 
-        processColorAlerts(BICubeMapedFields);
+        processColorAlerts(biCubeMappedFields);
 
-        createFiltroseRestricoesMetricasCuboMetaData(cubeMetaData);
+        createCubeMetadataMetricFilterRestrictions(cubeMetaData);
         return cubeMetaData;
     }
 
@@ -1045,23 +980,23 @@ public class Indicator {
             String fontColor = props.getFontColor().startsWith("#") ? props.getFontColor().substring(1) : props.getFontColor();
 
             if (!colorAlert.isCompareToAnotherField()) {
-                ColorAlertMetadata alertaCubo = createAlertaCuboMetaData(colorAlert, action, fontColor, backgroundColor);
-                metadataField.addColorAlert(alertaCubo, ColorAlertMetadata.VALUE_ALERT_TYPE);
+                ColorAlertMetadata cubeAlert = createAlertMetaDataCube(colorAlert, action, fontColor, backgroundColor);
+                metadataField.addColorAlert(cubeAlert, ColorAlertMetadata.VALUE_ALERT_TYPE);
             } else {
                 String value = colorAlert.getFirstDoubleValue();
                 if ("".equals(value)) {
                     value = "0.00";
                 }
-                ColorAlertMetadata alertaCubo = new ColorAlertMetadata(colorAlert.getSequence(), colorAlert.getOperator().getSymbol(),
+                ColorAlertMetadata alertMetadata = new ColorAlertMetadata(colorAlert.getSequence(), colorAlert.getOperator().getSymbol(),
                         Double.parseDouble(value), action, colorAlert.getFirstFieldFunction(), fontColor, backgroundColor, props.getFontName(),
                         props.hasBold(), props.hasItalic(), props.getFontSize(), colorAlert.getValueType(), colorAlert.getSecondField().getTitle(),
                         colorAlert.getSecondFieldFunction());
-                metadataField.addColorAlert(alertaCubo, ColorAlertMetadata.SECOND_FIELD_ALERT_TYPE);
+                metadataField.addColorAlert(alertMetadata, ColorAlertMetadata.SECOND_FIELD_ALERT_TYPE);
             }
         }
     }
 
-    private void createFiltroseRestricoesMetricasCuboMetaData(CubeMetaData cubeMetaData) throws BIException {
+    private void createCubeMetadataMetricFilterRestrictions(CubeMetaData cubeMetaData) throws BIException {
         String metricFilterExpression = buildMetricFiltersExpression();
         cubeMetaData.setMetricFieldsExpression(metricFilterExpression);
 
@@ -1090,49 +1025,107 @@ public class Indicator {
         return "";
     }
 
-    private ColorAlertMetadata createAlertaCuboMetaData(ColorAlert colorAlert, int action, String fontColor, String backGroundColor) throws BIException, DateException {
+    private ColorAlertMetadata createAlertMetaDataCube(ColorAlert colorAlert, int action, String fontColor, String backGroundColor) throws BIException {
         Field field = colorAlert.getFirstField();
-        AlertProperty props = colorAlert.getAlertProperty();
+        AlertProperty alertProperty = colorAlert.getAlertProperty();
 
-        String operatorSymbol = colorAlert.getOperator().getSymbol();
+        if (field == null || field.getFieldType().equals(Constants.METRIC)) {
+            return createMetricAlertMetaDataCube(colorAlert, alertProperty, action, fontColor, backGroundColor);
+        } else if (!field.getDataType().equals(Constants.DATE)) {
+            return createNonDateAlertMetaDataCube(colorAlert, alertProperty, action, fontColor, backGroundColor, field);
+        } else {
+            return createDateAlertMetaDataCube(colorAlert, alertProperty, action, fontColor, backGroundColor, field);
+        }
+    }
+
+    private ColorAlertMetadata createDateAlertMetaDataCube(ColorAlert colorAlert, AlertProperty alertProperty, int action, String fontColor, String backGroundColor, Field field) throws BIException {
         String firstValue = colorAlert.getFirstValue();
         String secondValue = colorAlert.getSecondValue();
-
-        Object firstValueObject = parseAlertValue(field, firstValue, operatorSymbol);
-        Object segundoValor = (secondValue != null) ? parseAlertValue(field, secondValue, operatorSymbol) : null;
-
-        return new ColorAlertMetadata(colorAlert.getSequence(), operatorSymbol, firstValueObject, segundoValor, action,
-                colorAlert.getFirstFieldFunction(), fontColor, backGroundColor, props.getFontName(), props.hasBold(), props.hasItalic(),
-                props.getFontSize());
-    }
-
-    private Object parseAlertValue(Field field, String value, String operator) throws BIException, DateException {
-        if (field == null || field.getFieldType().equals(Constants.METRIC)) {
-            return Double.parseDouble(value);
+        if (firstValue.trim().startsWith("@|") && firstValue.trim().endsWith("|")) {
+            DimensionFilter dimensionFilter = FilterFactory.createDimensionFilter(field, colorAlert.getOperator().getSymbol(), firstValue);
+            return createAlertMetaDataCubeWithCondition(colorAlert, alertProperty, dimensionFilter, action, fontColor, backGroundColor);
         } else {
-            if (field.getDataType().equals(Constants.DATE)) {
-                return parseDateAlertValue(field, value, operator);
-            } else if (field.getDataType().equals(Constants.NUMBER)) {
-                return Integer.parseInt(value);
-            } else {
-                return value;
-            }
+            return createAlertMetaDataCubeWithoutCondition(colorAlert, action, fontColor, backGroundColor, alertProperty, firstValue, secondValue);
         }
     }
 
-    private Object parseDateAlertValue(Field field, String value, String operator) throws BIException {
-        if (value.trim().startsWith("@|") && value.trim().endsWith("|")) {
-            DimensionFilter dimensionFilter = FilterFactory.createDimensionFilter(field, operator, value);
-            if (dimensionFilter.getFilters() != null && !dimensionFilter.getFilters().isEmpty()) {
-                // Process and return date range values
-            } else {
-                // Process and return single date value
-            }
-        } else {
-            // Process and return date value
-        }
-        return null; // Default return
+    private ColorAlertMetadata createMetricAlertMetaDataCube(ColorAlert colorAlert, AlertProperty alertProperty, int action, String fontColor, String backGroundColor) {
+        double firstValue = Double.parseDouble(colorAlert.getFirstDoubleValue());
+        double secondValue = colorAlert.getSecondValue() != null ? Double.parseDouble(colorAlert.getSegundoValorDouble()) : 0;
+        return this.getColorAlertMetadata(
+                colorAlert, alertProperty,
+                firstValue, secondValue,
+                action, fontColor, backGroundColor
+        );
     }
+
+    private ColorAlertMetadata createNonDateAlertMetaDataCube(ColorAlert colorAlert, AlertProperty alertProperty, int action, String fontColor, String backGroundColor, Field field) throws BIException {
+        String firstValue = colorAlert.getFirstValue();
+        if (firstValue.trim().startsWith("@|") && firstValue.trim().endsWith("|")) {
+            DimensionFilter dimensionFilter = FilterFactory.createDimensionFilter(field, colorAlert.getOperator().getSymbol(), firstValue);
+            firstValue = dimensionFilter.getCondition().getValue();
+        }
+        Object valor1 = field.getDataType().equals(Constants.NUMBER) ? Integer.parseInt(firstValue) : firstValue;
+        return this.getColorAlertMetadata(
+                colorAlert, alertProperty,
+                valor1, null,
+                action, fontColor, backGroundColor
+        );
+    }
+
+    private ColorAlertMetadata createAlertMetaDataCubeWithCondition(ColorAlert colorAlert, AlertProperty alertProperty, DimensionFilter dimensionFilter, int action, String fontColor, String backGroundColor) throws BIException {
+
+        Date firstValue = null;
+        Date secondValue = null;
+        for (DimensionFilter filter : dimensionFilter.getFilters()) {
+            if (filter != null && filter.getCondition() != null) {
+                Condition condition = new TextCondition(filter.getCondition());
+                Date formattedSQLDate = BIUtil.formatSQLDate(condition.getFormattedValue(), BIData.DAY_MONTH_YEAR_4DF);
+                if (condition.getOperator().getSymbol().equals(Operators.GREATER_TAN_OR_EQUAL)) {
+                    firstValue = formattedSQLDate;
+                } else {
+                    secondValue = formattedSQLDate;
+                }
+            }
+        }
+        colorAlert.getOperator().setSymbol(LogicalOperators.BETWEEN_INCLUSIVE);
+        return this.getColorAlertMetadata(
+                colorAlert, alertProperty,
+                firstValue, secondValue,
+                action, fontColor, backGroundColor
+        );
+    }
+
+    private ColorAlertMetadata createAlertMetaDataCubeWithoutCondition(ColorAlert colorAlert, int action, String fontColor, String backGroundColor, AlertProperty alertProperty, String firstValue, String secondValue) throws BIDatabaseException {
+        Date firstValueDate = BIUtil.formatSQLDate(firstValue, BIData.DAY_MONTH_YEAR_4DF);
+        Date secondValueDate = colorAlert.getOperator().getSymbol().equals(Operators.BETWEEN) ?
+                BIUtil.formatSQLDate(secondValue, BIData.DAY_MONTH_YEAR_4DF) : null;
+        return this.getColorAlertMetadata(
+                colorAlert, alertProperty,
+                firstValueDate, secondValueDate,
+                action, fontColor, backGroundColor
+        );
+    }
+
+    private ColorAlertMetadata getColorAlertMetadata(ColorAlert colorAlert, AlertProperty alertProperty,
+                                                     Object firstValueDate, Object secondValueDate, int action, String fontColor, String backGroundColor
+    ) {
+        return new ColorAlertMetadata(
+                colorAlert.getSequence(),
+                colorAlert.getOperator().getSymbol(),
+                firstValueDate,
+                secondValueDate,
+                action,
+                colorAlert.getFirstFieldFunction(),
+                fontColor,
+                backGroundColor,
+                alertProperty.getFontName(),
+                alertProperty.hasBold(),
+                alertProperty.hasItalic(),
+                alertProperty.getFontSize()
+        );
+    }
+
 
     private void configureFieldsNavigation(List<Field> columnFields) {
         for (Field field : columnFields) {
@@ -1157,42 +1150,48 @@ public class Indicator {
     }
 
     private boolean isValidFieldForDrillUp(int index, Field field) {
-        return this.fields.get(index) != null &&
-                (this.fields.get(index).getFieldType().equals(Constants.DIMENSION) && this.fields.get(index).getDisplayLocation() == Constants.LINE) ||
-                this.fields.get(index).getFieldType().equals(Constants.METRIC) ||
-                this.fields.get(index).isDrillDown() && this.fields.get(index).getDrillDownSequence() >= field.getDrillDownSequence();
+        Field currentField = this.fields.get(index);
+        return currentField != null &&
+                ((currentField.getFieldType().equals(Constants.DIMENSION) &&
+                        currentField.getDisplayLocation() == Constants.LINE) ||
+                        currentField.getFieldType().equals(Constants.METRIC) ||
+                        (currentField.isDrillDown() &&
+                                currentField.getDrillDownSequence() >= field.getDrillDownSequence()));
     }
 
     private boolean isValidFieldForNavigableUpwards(int index, Field field) {
-        return this.fields.get(index) != null &&
-                (this.fields.get(index).getFieldType().equals(Constants.DIMENSION) && this.fields.get(index).getDisplayLocation() == Constants.LINE) ||
-                this.fields.get(index).getFieldType().equals(Constants.METRIC) ||
-                this.fields.get(index).isDrillDown() && this.fields.get(index).getDrillDownSequence() <= field.getDrillDownSequence();
+        Field currentField = this.fields.get(index);
+        return currentField != null &&
+                ((currentField.getFieldType().equals(Constants.DIMENSION) &&
+                        currentField.getDisplayLocation() == Constants.LINE) ||
+                        currentField.getFieldType().equals(Constants.METRIC) ||
+                        (currentField.isDrillDown() &&
+                                currentField.getDrillDownSequence() <= field.getDrillDownSequence()));
     }
 
     public List<Field> getFieldsPerType(String fieldType) {
         return this.fields.stream()
                 .filter(field -> field.getFieldType().equals(fieldType))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<Field> getAllDrillDownDimensions() {
         return this.fields.stream()
                 .filter(field -> field.getFieldType().equals(Constants.DIMENSION)
                         && field.isDrillDown())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<Field> getAllNonDrillDownDimensions() {
         return this.fields.stream()
                 .filter(field -> field.getFieldType().equals(Constants.DIMENSION)
                         && !field.isDrillDown())
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    private void sortDrillDownSequence(List<Field> campos) {
+    private List<Field> sortDrillDownSequence(List<Field> fields) {
         DrillDownComparator drillDownComparator = new DrillDownComparator();
-        campos.sort(drillDownComparator);
+        return fields.stream().sorted(drillDownComparator).toList();
     }
 
     public void orderFieldsPerDrillDownSequence() {
@@ -1200,13 +1199,10 @@ public class Indicator {
         List<Field> drillDownFields = getAllDrillDownDimensions();
         List<Field> nonDrillDownFields = getAllNonDrillDownDimensions();
 
-        sortDrillDownSequence(drillDownFields);
-        sortDrillDownSequence(nonDrillDownFields);
-
         this.fields.clear();
 
-        this.fields.addAll(drillDownFields);
-        this.fields.addAll(nonDrillDownFields);
+        this.fields.addAll(sortDrillDownSequence(drillDownFields));
+        this.fields.addAll(sortDrillDownSequence(nonDrillDownFields));
         this.fields.addAll(metricFields);
 
     }
@@ -1221,10 +1217,8 @@ public class Indicator {
         long metricColumns = this.getVisibleFieldsAmount(Constants.METRIC, Constants.COLUMN);
         long metricLines = this.getVisibleFieldsAmount(Constants.METRIC, Constants.LINE);
 
-        if (lineDimensions < 1) {
-            if (this.tableType == 0) {
-                throw new BIGeneralException("Deve haver pelo menos uma dimensão nas linhas!");
-            }
+        if (lineDimensions < 1 && this.tableType == 0) {
+            throw new BIGeneralException("Deve haver pelo menos uma dimensão nas linhas!");
         }
         if (metricColumns + metricLines < 1) {
             throw new BIGeneralException("Você deve selecionar pelo menos uma métrica!");
@@ -1242,12 +1236,12 @@ public class Indicator {
                 .filter(field -> field.getDisplayLocation() == displayLocation)
                 .mapToLong(field -> {
                     long count = 1;
-                    if (displayLocation == Constants.LINE && fieldType.equals("M")) {
-                        if (field.isTotalizingField() || field.isAccumulatedParticipation() || field.isVerticalAnalysis()
+                    if (displayLocation == Constants.LINE && fieldType.equals("M")
+                            && (field.isTotalizingField() || field.isAccumulatedParticipation() || field.isVerticalAnalysis()
                                 || field.isAccumulatedValue() || field.isHorizontalAnalysis()
-                                || field.isHorizontalParticipation() || field.isHorizontalParticipationAccumulated()) {
-                            count++;
-                        }
+                                || field.isHorizontalParticipation() || field.isHorizontalParticipationAccumulated())) {
+                        count++;
+
                     }
                     return count;
                 })
@@ -1256,7 +1250,7 @@ public class Indicator {
 
     public void startFieldsCalculationByRestriction() {
         fields.stream()
-                .filter(Objects::nonNull) // Filter out null fields
+                .filter(Objects::nonNull)
                 .filter(field -> "T".equals(field.getDefaultField()) && field.isCalculatorPerRestriction())
                 .forEach(field -> {
                     field.setDefaultField("S");
@@ -1266,7 +1260,7 @@ public class Indicator {
 
     public Field getLastLevelDimensionField(List<Field> fieldsToVerify) {
         return fieldsToVerify.stream()
-                .filter(Objects::nonNull) // Filter out null fields
+                .filter(Objects::nonNull)
                 .filter(tempField ->
                         "S".equals(tempField.getDefaultField()) &&
                                 tempField.getDisplayLocation() == Constants.COLUMN &&
@@ -1299,50 +1293,51 @@ public class Indicator {
                 .filter(field -> field.getDisplayLocation() == displayLocation)
                 .peek(field -> {
                     if (fieldType.equals(Constants.METRIC)) {
-                        // TODO Check this when doing metric restrictions
-                        /*MetricDimensionRestriction restMetDim = this.getMetricDimensionRestrictions().getRestMetricaDimensao(field.getCode());
-                        if (restMetDim != null && restMetDim.isMetricaRestrita(this, lastLevelCode)) {
+                        MetricDimensionRestriction restMetDim = this.getRestrictionByFieldId(field.getFieldId());
+                        if (restMetDim != null && restMetDim.isRestrictMetric(this, lastLevelCode)) {
                             field.setDefaultField("T");
                             field.setCalculatorPerRestriction(true);
-                        }*/
-                    }
-                })
-                .flatMap(field -> {
-                    Stream.Builder<Field> builder = Stream.builder();
-                    builder.add(field);
-
-                    if (displayLocation == Constants.LINE && fieldType.equals("M")) {
-                        if (field.isTotalizingField()) {
-                            builder.add(createField(field.getFieldId(), "", "total", "S", String.valueOf(field.getColumnWidth()), field.getColumnAlignment()));
-                        }
-                        if (field.isVerticalAnalysis()) {
-                            builder.add(createField(field.getFieldId(), "", "%", true, true, field.getDefaultField(), String.valueOf(field.getColumnWidth()), field.getColumnAlignment()));
-                        }
-                        if (field.isAccumulatedParticipation()) {
-                            builder.add(createField(field.getFieldId(), "", "% Acumulada", true, true, field.getDefaultField(), String.valueOf(field.getColumnWidth()), field.getColumnAlignment()));
-                        }
-                        if (field.isAccumulatedValue()) {
-                            builder.add(createField(field.getFieldId(), "", field.getTitle() + " Acum.", true, true, field.getDefaultField(), String.valueOf(field.getColumnWidth()), field.getColumnAlignment()));
-                        }
-                        if (field.isHorizontalAnalysis()) {
-                            builder.add(createField(field.getFieldId(), "", "AH%", true, true, field.getDefaultField(), String.valueOf(field.getColumnWidth()), field.getColumnAlignment()));
-                        }
-                        if (field.isHorizontalParticipation()) {
-                            builder.add(createField(field.getFieldId(), "", "AH Participação", true, true, field.getDefaultField(), String.valueOf(field.getColumnWidth()), field.getColumnAlignment()));
-                        }
-                        if (field.isHorizontalParticipationAccumulated()) {
-                            builder.add(createField(field.getFieldId(), "", "AH Participação Acumulada", true, true, field.getDefaultField(), String.valueOf(field.getColumnWidth()), field.getColumnAlignment()));
                         }
                     }
-                    return builder.build();
                 })
+                .flatMap(field -> fieldBuilder(field, displayLocation, fieldType))
                 .toList();
     }
 
-    private Field createField(int code, String name, String title, String defaultField, String columnWidth, String columnAlignment) {
+    private Stream<Field> fieldBuilder(Field field, int displayLocation, String fieldType) {
+        Stream.Builder<Field> builder = Stream.builder();
+        builder.add(field);
+
+        if (displayLocation == Constants.LINE && fieldType.equals("M")) {
+            if (field.isTotalizingField()) {
+                builder.add(createField(field.getFieldId(), "total", "S", String.valueOf(field.getColumnWidth()), field.getColumnAlignment()));
+            }
+            if (field.isVerticalAnalysis()) {
+                builder.add(createChieldField(field.getFieldId(), "%", field.getDefaultField(), String.valueOf(field.getColumnWidth()), field.getColumnAlignment()));
+            }
+            if (field.isAccumulatedParticipation()) {
+                builder.add(createChieldField(field.getFieldId(), "% Acumulada", field.getDefaultField(), String.valueOf(field.getColumnWidth()), field.getColumnAlignment()));
+            }
+            if (field.isAccumulatedValue()) {
+                builder.add(createChieldField(field.getFieldId(), field.getTitle() + " Acum.", field.getDefaultField(), String.valueOf(field.getColumnWidth()), field.getColumnAlignment()));
+            }
+            if (field.isHorizontalAnalysis()) {
+                builder.add(createChieldField(field.getFieldId(), "AH%", field.getDefaultField(), String.valueOf(field.getColumnWidth()), field.getColumnAlignment()));
+            }
+            if (field.isHorizontalParticipation()) {
+                builder.add(createChieldField(field.getFieldId(), "AH Participação", field.getDefaultField(), String.valueOf(field.getColumnWidth()), field.getColumnAlignment()));
+            }
+            if (field.isHorizontalParticipationAccumulated()) {
+                builder.add(createChieldField(field.getFieldId(), "AH Participação Acumulada", field.getDefaultField(), String.valueOf(field.getColumnWidth()), field.getColumnAlignment()));
+            }
+        }
+        return builder.build();
+    }
+
+    private Field createField(int code, String title, String defaultField, String columnWidth, String columnAlignment) {
         Field field = new Field();
         field.setFieldId(code);
-        field.setName(name);
+        field.setName("");
         field.setTitle(title);
         field.setDefaultField(defaultField);
         field.setColumnWidth(columnWidth);
@@ -1350,29 +1345,11 @@ public class Indicator {
         return field;
     }
 
-    private Field createField(int code, String name, String title, boolean verticalAnalysis, boolean childField, String defaultField, String columnWidth, String columnAlignment) {
-        Field field = createField(code, name, title, defaultField, columnWidth, columnAlignment);
-        field.setVerticalAnalysis(verticalAnalysis);
-        field.setChildField(childField);
+    private Field createChieldField(int code, String title, String defaultField, String columnWidth, String columnAlignment) {
+        Field field = createField(code, title, defaultField, columnWidth, columnAlignment);
+        field.setVerticalAnalysis(true);
+        field.setChildField(true);
         return field;
-    }
-
-    public int getFieldIndex(String code) throws BIException {
-        return Indicator.getFieldIndex(this.fields, code);
-    }
-
-    public static int getFieldIndex(List<Field> campos, String code) throws BIException {
-        for (int i = 0; i < campos.size(); i++) {
-            Field field = campos.get(i);
-            if (field != null && field.getFieldId() == Integer.parseInt(code)) {
-                return i;
-            }
-        }
-
-        BIGeneralException biex = new BIGeneralException("Nao foi possivel encontrar o campo de codigo " + code + " no indicador atual.");
-        biex.setAction("buscar indice de um field");
-        biex.setLocal("Indicator", "getIndiceField(String)");
-        throw biex;
     }
 
     public void addFilter(Field field, String operator, String value) throws BIException {

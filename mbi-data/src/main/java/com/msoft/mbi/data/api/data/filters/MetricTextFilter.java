@@ -28,22 +28,15 @@ public class MetricTextFilter extends MetricFilter {
     }
 
     public MetricTextFilter(MetricFilter metricFilter) throws BIException {
-        if (metricFilter != null) {
-            if (metricFilter.getCondition() != null) {
+        if (metricFilter != null && (metricFilter.getCondition() != null)) {
                 this.setCondition(new TextCondition(metricFilter.getCondition()));
-            }
-        }
-    }
 
-    public MetricTextFilter(MetricSqlFilter metricFilters) throws BIException {
-        if (metricFilters != null) {
-            return;
         }
     }
 
     public String getFormattedValue() throws BIException {
         Field field = this.getCondition().getField();
-        String sqlValue = this.applyValues(this.getCondition().getSQLValue(), 0);
+        String sqlValue = this.applyValues(this.getCondition().getSqlValue(), 0);
         List<String> values = BIUtil.stringToList(sqlValue, ",");
 
         return values.stream()
@@ -62,6 +55,11 @@ public class MetricTextFilter extends MetricFilter {
         return super.applyValues(query, position);
     }
 
+    @Override
+    protected MetricFilter copy() throws BIException {
+        return new MetricTextFilter(this.getCondition());
+    }
+
     public void setCondition(Field field, Operator operator, String value) throws BIException {
         TextCondition condition = new TextCondition(field, operator, value);
         super.setCondition(condition);
@@ -70,11 +68,6 @@ public class MetricTextFilter extends MetricFilter {
     public void setCondition(Field campo, String operator, String value) throws BIException {
         TextCondition condition = new TextCondition(campo, operator, value);
         super.setCondition(condition);
-    }
-
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return new MetricTextFilter(this.getCondition());
     }
 
     @Override

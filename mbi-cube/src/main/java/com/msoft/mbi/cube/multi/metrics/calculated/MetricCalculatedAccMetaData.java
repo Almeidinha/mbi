@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.msoft.mbi.cube.multi.analytics.AnalysisParticipationType;
 import com.msoft.mbi.cube.multi.calculation.Calculation;
-import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
+import com.msoft.mbi.cube.multi.metadata.ColorAlertMetadata;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLColumnText;
 import com.msoft.mbi.cube.multi.renderers.linkHTML.MascLinkHTMLTextRenderer;

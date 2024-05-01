@@ -17,11 +17,11 @@ import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.dimension.DimensionLine;
 import com.msoft.mbi.cube.multi.dimension.DimensionMetaData;
 import com.msoft.mbi.cube.multi.dimension.Dimensions;
-import com.msoft.mbi.cube.multi.resumeFunctions.MetricFilters;
-import com.msoft.mbi.cube.multi.resumeFunctions.MetricFiltersAccumulatedValue;
-import com.msoft.mbi.cube.multi.resumeFunctions.FunctionRanking;
-import com.msoft.mbi.cube.multi.metaData.MetaDataField;
-import com.msoft.mbi.cube.multi.metaData.CubeMetaData;
+import com.msoft.mbi.cube.multi.resumefunctions.MetricFilters;
+import com.msoft.mbi.cube.multi.resumefunctions.MetricFiltersAccumulatedValue;
+import com.msoft.mbi.cube.multi.resumefunctions.FunctionRanking;
+import com.msoft.mbi.cube.multi.metadata.MetaDataField;
+import com.msoft.mbi.cube.multi.metadata.CubeMetaData;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.metrics.MetricOrdering;
 import com.msoft.mbi.cube.multi.metrics.additive.MetricAdditiveMetaData;
@@ -52,8 +52,8 @@ public abstract class Cube extends Dimension {
 	private final List<MetricMetaData> hierarchyMetric = new ArrayList<>();
     @Getter
 	protected MetricsMap metricsMap = null;
-    private transient List<Dimension> dimensionsLastLevelColumns = null;
-    protected transient List<Dimension> dimensionsLastLevelLines = null;
+    private List<Dimension> dimensionsLastLevelColumns = null;
+    protected List<Dimension> dimensionsLastLevelLines = null;
     protected MetricFilters metricFilters;
     protected MetricFiltersAccumulatedValue metricFiltersAccumulatedValue;
     @Getter
@@ -488,10 +488,8 @@ public abstract class Cube extends Dimension {
             this.metricsMap.accumulateMetricLine(this, set);
 
             count++;
-            if (count % batchSize == 0) {
-                if (this.cubeListener.stopProcess()) {
-                    break;
-                }
+            if (count % batchSize == 0 && (this.cubeListener.stopProcess())) {
+                break;
             }
         }
 

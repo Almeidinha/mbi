@@ -91,6 +91,25 @@ public class BIAnalysisFieldServiceImpl implements BIAnalysisFieldService {
                     if (field.getDecimalPositions() != null) {
                         entity.setDecimalPositions(field.getDecimalPositions());
                     }
+                    if (field.getVertical() != null) {
+                        entity.setVertical(field.getVertical());
+                    }
+                    if (field.getAccumulatedLineField() != null) {
+                        entity.setAccumulatedLineField(field.getAccumulatedLineField());
+                    }
+                    if (field.getHorizontal() != null) {
+                        entity.setHorizontal(field.getHorizontal());
+                    }
+
+                    entity.setDirection(field.getDirection());
+                    entity.setFieldOrder(field.getFieldOrder());
+                    entity.setFieldTotalization(field.getFieldTotalization());
+                    entity.setAccumulatedParticipation(field.isAccumulatedParticipation());
+                    entity.setAccumulatedValue(field.isAccumulatedValue());
+                    entity.setLineFieldTotalization(field.isLineFieldTotalization());
+                    entity.setUsesMediaLine(field.isUsesMediaLine());
+                    entity.setHorizontalParticipation(field.isHorizontalParticipation());
+                    entity.setHorizontalParticipationAccumulated(field.isHorizontalParticipationAccumulated());
 
                     return this.analysisFieldRepository.save(entity);
                 })

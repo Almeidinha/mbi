@@ -5,10 +5,10 @@ import java.util.List;
 import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.analytics.AnalysisParticipationType;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
-import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
+import com.msoft.mbi.cube.multi.metadata.ColorAlertMetadata;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 
-public class MetricCalculatedAVParticipationMetaData extends MetricCalculatedParticipacaoMetaData {
+public class MetricCalculatedAVParticipationMetaData extends MetricCalculatedParticipationMetaData {
 
     public static final String AV = "analiseVertical";
 

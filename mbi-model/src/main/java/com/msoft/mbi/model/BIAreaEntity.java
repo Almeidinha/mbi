@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "bi_area", schema = "dbo", catalog = "BISERVER")
+@Table(name = "bi_area", schema = "biserver", catalog = "BISERVER")
 public class BIAreaEntity extends BaseEntity {
 
     @Id

@@ -2,7 +2,7 @@ package com.msoft.mbi.cube.multi.metrics.calculated;
 
 import com.msoft.mbi.cube.multi.calculation.Calculation;
 import com.msoft.mbi.cube.multi.column.TypeDecimal;
-import com.msoft.mbi.cube.multi.metaData.MetaDataField;
+import com.msoft.mbi.cube.multi.metadata.MetaDataField;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.applyAggregationOrder.AggregationApplyBefore;
 import com.msoft.mbi.cube.multi.metrics.calculated.applyAggregationOrder.AggregationApplyAfter;

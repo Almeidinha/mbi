@@ -33,6 +33,12 @@ public class BIDimMetricRestrictionController {
         return ResponseEntity.ok(restrictionMapper.listEntityToDTOs(metricRestrictions));
     }
 
+    @DeleteMapping("/list/delete")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteAll(@RequestBody List<MetricDimensionRestrictionEntityDTO> restrictionEntities) {
+        this.restrictionService.deleteAll(restrictionMapper.listDTOToEntities(restrictionEntities));
+    }
+
     @PostMapping("/save")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<MetricDimensionRestrictionEntityDTO> save(@RequestBody MetricDimensionRestrictionEntityDTO restrictionEntity) {
@@ -43,20 +49,23 @@ public class BIDimMetricRestrictionController {
     @DeleteMapping({"/{indicatorId}"})
     @ResponseStatus(HttpStatus.OK)
     public void  deleteByIndicator(@PathVariable Integer indicatorId) {
-
+        this.restrictionService.deleteByIndicator(indicatorId);
     }
 
     @DeleteMapping({"/{indicatorId}/{metricId}"})
     @ResponseStatus(HttpStatus.OK)
     public void  deleteByMetric(@PathVariable Integer indicatorId, @PathVariable Integer metricId) {
-
+        this.restrictionService.deleteByMetric(indicatorId, metricId);
     }
 
     @DeleteMapping({"/{indicatorId}/{metricId}/{dimensionId}"})
     @ResponseStatus(HttpStatus.OK)
-    public void  removeDimensionFormMetricRestriction(@PathVariable Integer indicatorId,
-                                                      @PathVariable Integer metricId,
-                                                      @PathVariable Integer dimensionId) {
+    public void  deleteByDimension(
+            @PathVariable Integer indicatorId,
+            @PathVariable Integer metricId,
+            @PathVariable Integer dimensionId) {
+
+        this.restrictionService.deleteByDimension(indicatorId, metricId, dimensionId);
 
     }
 }

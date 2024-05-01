@@ -48,8 +48,8 @@ public class MetricFilters extends ArrayList<MetricFilter> {
                     try {
                         Field field = filter.getField();
                         String fieldExpression = field.isExpression() ? field.getName() : field.getTableNickname() + "." + field.getName();
-                        return fieldExpression + " " + filter.getOperator().getSymbol() + " " + filter.getSQLValue();
-                    } catch (BIException e) {
+                        return fieldExpression + " " + filter.getOperator().getSymbol() + " " + filter.getSqlValue();
+                    } catch (Exception e) {
                         log.error("Error converting filter to string", e);
                         throw new RuntimeException("Error converting filter to string", e);
                     }
@@ -65,7 +65,7 @@ public class MetricFilters extends ArrayList<MetricFilter> {
                 .forEach(joiner::add);
 
         if (joiner.length() > 0) {
-            return (withAggregation ? "HAVING " : "AND ") + joiner.toString();
+            return (withAggregation ? "HAVING " : "AND ") + joiner;
         } else {
             return "";
         }
@@ -89,23 +89,22 @@ public class MetricFilters extends ArrayList<MetricFilter> {
 
     public int applyValues(PreparedStatement stmt, int position) {
         for (MetricFilter metricFilter : this) {
-            if (metricFilter == null) {
-                continue;
-            }
-            Field field = metricFilter.getField();
-            if (field == null) {
+            if (metricFilter == null || metricFilter.getField() == null) {
                 continue;
             }
 
+            Field field = metricFilter.getField();
+
             String fieldName = field.getName().toUpperCase().trim();
-            if (!field.isExpression() || !(fieldName.startsWith("SE(") || fieldName.startsWith("IF("))) {
-                if (metricFilter.getCondition() != null) {
-                    try {
-                        position = metricFilter.applyValues(stmt, position);
-                    } catch (BIException e) {
-                        log.error("Error applying values", e);
-                    }
+            if (!field.isExpression() || !(fieldName.startsWith("SE(") || fieldName.startsWith("IF("))
+                    && (metricFilter.getCondition() != null)) {
+
+                try {
+                    position = metricFilter.applyValues(stmt, position);
+                } catch (BIException e) {
+                    log.error("Error applying values", e);
                 }
+
             }
         }
         return position;

@@ -12,7 +12,7 @@ import java.util.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(
-        name = "bi_ind", schema = "dbo", catalog = "BISERVER",
+        name = "bi_ind", schema = "biserver", catalog = "BISERVER",
         indexes = @Index(name = "ix1_bi_ind", columnList = "name")
 )
 public class BIIndEntity extends BaseEntity {

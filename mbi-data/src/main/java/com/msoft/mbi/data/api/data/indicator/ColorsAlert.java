@@ -26,9 +26,9 @@ import java.util.stream.IntStream;
 @Setter
 public class ColorsAlert {
 
-    private ArrayList<ColorAlert> colorAlertList;
+    private List<ColorAlert> colorAlertList;
 
-    public ArrayList<ColorAlert> getColorAlertList() {
+    public List<ColorAlert> getColorAlertList() {
         if (colorAlertList == null) {
             colorAlertList = new ArrayList<>();
         }
@@ -39,7 +39,7 @@ public class ColorsAlert {
         this.getColorAlertList().add(colorAlert);
     }
 
-    public ArrayList<ColorAlert> getColorAlertListValues() {
+    public List<ColorAlert> getColorAlertListValues() {
         ArrayList<ColorAlert> list = new ArrayList<>();
         for (ColorAlert colorsAlert : this.getColorAlertList()) {
             if (colorsAlert != null && !colorsAlert.isCompareToAnotherField()) {
@@ -49,7 +49,7 @@ public class ColorsAlert {
         return list;
     }
 
-    public ArrayList<ColorAlert> getOtherFieldsAlertList() {
+    public List<ColorAlert> getOtherFieldsAlertList() {
         ArrayList<ColorAlert> list = new ArrayList<>();
         for (ColorAlert colorsAlert : this.getColorAlertList()) {
             if (colorsAlert != null && colorsAlert.isCompareToAnotherField()) {
@@ -81,18 +81,33 @@ public class ColorsAlert {
         List<ColorAlert> colorsAlert = this.getFieldAlertFunctionValueList(function, field);
         for (ColorAlert alert : colorsAlert) {
             colorAlert = alert;
-            if (colorAlert != null) {
-                if (!isrestrictByLine(colorAlert.getAction(), dimension)) {
-                    Operator operator = colorAlert.getOperator();
+            if (colorAlert != null && !isrestrictByLine(colorAlert.getAction(), dimension)) {
+                Operator operator = colorAlert.getOperator();
 
-                    if (field == null || field.getFieldType().equals(Constants.METRIC)) {
-                        value = BIUtil.formatDoubleValue(String.valueOf(value), decimalPositions);
-                        double valComp = BIUtil.formatDoubleValue(colorAlert.getFirstDoubleValue(), decimalPositions);
-                        double segundoValor = 0;
-                        if (colorAlert.getSecondValue() != null) {
-                            segundoValor = BIUtil.formatDoubleValue(colorAlert.getSegundoValorDouble(), decimalPositions);
+                if (field == null || field.getFieldType().equals(Constants.METRIC)) {
+                    value = BIUtil.formatDoubleValue(String.valueOf(value), decimalPositions);
+                    double valComp = BIUtil.formatDoubleValue(colorAlert.getFirstDoubleValue(), decimalPositions);
+                    double segundoValor = 0;
+                    if (colorAlert.getSecondValue() != null) {
+                        segundoValor = BIUtil.formatDoubleValue(colorAlert.getSegundoValorDouble(), decimalPositions);
+                    }
+                    if (this.compareDoubleValue((Double) value, operator, valComp, segundoValor)) {
+                        Object style = this.applyProperties(colorAlert, cell, line, isHtml, Constants.DIMENSION.equals(colorAlert.getFirstField().getFieldType()));
+                        if (colorAlert.getAction().equals(ColorAlert.LINHA)) {
+                            dimension.setLineAppliedStyle(style);
+                            retorno = true;
                         }
-                        if (this.compareDoubleValue((Double) value, operator, valComp, segundoValor)) {
+                        break;
+                    }
+                } else {
+                    if (!field.getDataType().equals(Constants.DATE)) {
+                        String valorComp = colorAlert.getFirstValue();
+                        if (valorComp.trim().startsWith("@|") && valorComp.trim().endsWith("|")) {
+                            DimensionFilter dimensionFilter = FilterFactory.createDimensionFilter(field, colorAlert.getOperator().getSymbol(), valorComp);
+                            Condition condition = dimensionFilter.getCondition();
+                            valorComp = condition.getValue();
+                        }
+                        if (this.compareStringValue((String) value, operator, valorComp)) {
                             Object style = this.applyProperties(colorAlert, cell, line, isHtml, Constants.DIMENSION.equals(colorAlert.getFirstField().getFieldType()));
                             if (colorAlert.getAction().equals(ColorAlert.LINHA)) {
                                 dimension.setLineAppliedStyle(style);
@@ -101,64 +116,22 @@ public class ColorsAlert {
                             break;
                         }
                     } else {
-                        if (!field.getDataType().equals(Constants.DATE)) {
-                            String valorComp = colorAlert.getFirstValue();
-                            if (valorComp.trim().startsWith("@|") && valorComp.trim().endsWith("|")) {
-                                DimensionFilter dimensionFilter = FilterFactory.createDimensionFilter(field, colorAlert.getOperator().getSymbol(), valorComp);
-                                Condition condition = dimensionFilter.getCondition();
-                                valorComp = condition.getValue();
-                            }
-                            if (this.compareStringValue((String) value, operator, valorComp)) {
-                                Object style = this.applyProperties(colorAlert, cell, line, isHtml, Constants.DIMENSION.equals(colorAlert.getFirstField().getFieldType()));
-                                if (colorAlert.getAction().equals(ColorAlert.LINHA)) {
-                                    dimension.setLineAppliedStyle(style);
-                                    retorno = true;
-                                }
-                                break;
-                            }
-                        } else {
-                            String dataString = colorAlert.getFirstValue();
-                            String dataString2 = colorAlert.getSecondValue();
-                            if (value != null && !value.toString().trim().isEmpty()) {
-                                BIData data = new BIData(value.toString(), BIData.MONTH_DAY_YEAR_FORMAT);
-                                if (dataString.trim().startsWith("@|") && dataString.trim().endsWith("|")) {
-                                    DimensionFilter dimensionFilter = FilterFactory.createDimensionFilter(field, colorAlert.getOperator().getSymbol(), dataString);
-                                    if (dimensionFilter.getFilters() != null && !dimensionFilter.getFilters().isEmpty()) {
-                                        boolean allTrue = dimensionFilter.getFilters().stream()
-                                                .filter(Objects::nonNull)
-                                                .filter(filter -> filter.getCondition() != null)
-                                                .allMatch(filter -> {
-                                                    Condition condition = filter.getCondition();
-                                                    BIData biData = new BIData(condition.getFormattedValue(), BIData.MONTH_DAY_YEAR_FORMAT);
-                                                    return compareDateValue(data, condition.getOperator(), biData, null);
-                                                });
-                                        if (allTrue) {
-                                            Object style = this.applyProperties(colorAlert, cell, line, isHtml, Constants.DIMENSION.equals(colorAlert.getFirstField().getFieldType()));
-                                            if (colorAlert.getAction().equals(ColorAlert.LINHA)) {
-                                                dimension.setLineAppliedStyle(style);
-                                                retorno = true;
-                                            }
-                                            break;
-                                        }
-                                    } else {
-                                        Condition condition = dimensionFilter.getCondition();
-                                        BIData biData = new BIData(condition.getFormattedValue(), BIData.MONTH_DAY_YEAR_FORMAT);
-                                        if (compareDateValue(data, condition.getOperator(), biData, null)) {
-                                            Object style = this.applyProperties(colorAlert, cell, line, isHtml, Constants.DIMENSION.equals(colorAlert.getFirstField().getFieldType()));
-                                            if (colorAlert.getAction().equals(ColorAlert.LINHA)) {
-                                                dimension.setLineAppliedStyle(style);
-                                                retorno = true;
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    BIData biData = new BIData(dataString.trim(), BIData.MONTH_DAY_YEAR_FORMAT);
-                                    BIData dataComparacao2 = null;
-                                    if (colorAlert.getOperator().getSymbol().equals(Operators.BETWEEN)) {
-                                        dataComparacao2 = new BIData(dataString2.trim(), BIData.MONTH_DAY_YEAR_FORMAT);
-                                    }
-
-                                    if (compareDateValue(data, colorAlert.getOperator(), biData, dataComparacao2)) {
+                        String dataString = colorAlert.getFirstValue();
+                        String dataString2 = colorAlert.getSecondValue();
+                        if (value != null && !value.toString().trim().isEmpty()) {
+                            BIData data = new BIData(value.toString(), BIData.DAY_MONTH_YEAR_4DF);
+                            if (dataString.trim().startsWith("@|") && dataString.trim().endsWith("|")) {
+                                DimensionFilter dimensionFilter = FilterFactory.createDimensionFilter(field, colorAlert.getOperator().getSymbol(), dataString);
+                                if (dimensionFilter.getFilters() != null && !dimensionFilter.getFilters().isEmpty()) {
+                                    boolean allTrue = dimensionFilter.getFilters().stream()
+                                            .filter(Objects::nonNull)
+                                            .filter(filter -> filter.getCondition() != null)
+                                            .allMatch(filter -> {
+                                                Condition condition = filter.getCondition();
+                                                BIData biData = new BIData(condition.getFormattedValue(), BIData.DAY_MONTH_YEAR_4DF);
+                                                return compareDateValue(data, condition.getOperator(), biData, null);
+                                            });
+                                    if (allTrue) {
                                         Object style = this.applyProperties(colorAlert, cell, line, isHtml, Constants.DIMENSION.equals(colorAlert.getFirstField().getFieldType()));
                                         if (colorAlert.getAction().equals(ColorAlert.LINHA)) {
                                             dimension.setLineAppliedStyle(style);
@@ -166,6 +139,31 @@ public class ColorsAlert {
                                         }
                                         break;
                                     }
+                                } else {
+                                    Condition condition = dimensionFilter.getCondition();
+                                    BIData biData = new BIData(condition.getFormattedValue(), BIData.DAY_MONTH_YEAR_4DF);
+                                    if (compareDateValue(data, condition.getOperator(), biData, null)) {
+                                        Object style = this.applyProperties(colorAlert, cell, line, isHtml, Constants.DIMENSION.equals(colorAlert.getFirstField().getFieldType()));
+                                        if (colorAlert.getAction().equals(ColorAlert.LINHA)) {
+                                            dimension.setLineAppliedStyle(style);
+                                            retorno = true;
+                                        }
+                                    }
+                                }
+                            } else {
+                                BIData biData = new BIData(dataString.trim(), BIData.DAY_MONTH_YEAR_4DF);
+                                BIData dataComparacao2 = null;
+                                if (colorAlert.getOperator().getSymbol().equals(Operators.BETWEEN)) {
+                                    dataComparacao2 = new BIData(dataString2.trim(), BIData.DAY_MONTH_YEAR_4DF);
+                                }
+
+                                if (compareDateValue(data, colorAlert.getOperator(), biData, dataComparacao2)) {
+                                    Object style = this.applyProperties(colorAlert, cell, line, isHtml, Constants.DIMENSION.equals(colorAlert.getFirstField().getFieldType()));
+                                    if (colorAlert.getAction().equals(ColorAlert.LINHA)) {
+                                        dimension.setLineAppliedStyle(style);
+                                        retorno = true;
+                                    }
+                                    break;
                                 }
                             }
                         }
@@ -345,11 +343,9 @@ public class ColorsAlert {
                     for (int k = 0; k < values[0].length; k++) {
                         if (values[0][k] != null && values[0][k].equals(field)) {
                             retorno = (Double) values[1][k + 1];
-                            if (field.isExpression() && field.isApplyTotalizationExpression()) {
-                                if (cachedResults != null) {
-                                    Expression.aplicaExpressaoNoRegistroTotalizado(indicator, field, cachedResults);
-                                    retorno = Double.parseDouble(cachedResults.getValor(field.getFieldId()));
-                                }
+                            if (field.isExpression() && field.isApplyTotalizationExpression() && cachedResults != null) {
+                                Expression.aplicaExpressaoNoRegistroTotalizado(indicator, field, cachedResults);
+                                retorno = Double.parseDouble(cachedResults.getValor(field.getFieldId()));
                             }
                             break;
                         }
@@ -404,14 +400,12 @@ public class ColorsAlert {
     private List<ColorAlert> getOtherFieldAlertFunctionList(String function, Field field) {
         List<ColorAlert> result = new ArrayList<>();
         for (ColorAlert colorAlert : this.getOtherFieldsAlertList()) {
-            if (colorAlert != null) {
-                if (function.trim().equals(colorAlert.getFirstFieldFunction().trim())) {
-                    if (ColorAlert.TOTALIZACAO_HORIZONTAL.equals(function.trim()) || ColorAlert.TOTALIZACAO.equals(function.trim())) {
+            if (colorAlert != null && function.trim().equals(colorAlert.getFirstFieldFunction().trim())) {
+                if (ColorAlert.TOTALIZACAO_HORIZONTAL.equals(function.trim()) || ColorAlert.TOTALIZACAO.equals(function.trim())) {
+                    result.add(colorAlert);
+                } else {
+                    if (field.equals(colorAlert.getFirstField())) {
                         result.add(colorAlert);
-                    } else {
-                        if (field.equals(colorAlert.getFirstField())) {
-                            result.add(colorAlert);
-                        }
                     }
                 }
             }
@@ -568,7 +562,7 @@ public class ColorsAlert {
         if (this.colorAlertList != null) {
             this.colorAlertList.stream()
                     .filter(Objects::nonNull)
-                    .map(alert -> alert.clone(indicator))
+                    .map(alert -> alert.copy(indicator))
                     .forEach(colorsAlert::addToColorAlertList);
         }
         return colorsAlert;

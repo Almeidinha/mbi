@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_color_conditions", schema = "dbo", catalog = "BISERVER")
+@Table(name = "bi_color_conditions", schema = "biserver", catalog = "BISERVER")
 @IdClass(BIColorConditionsPK.class)
 public class BIColorConditionsEntity {
 
@@ -22,12 +22,12 @@ public class BIColorConditionsEntity {
     private int fieldId;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "initial_value", nullable = false, precision = 6)
     private BigDecimal initialValue;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "final_value", nullable = false, precision = 6)
     private BigDecimal finalValue;
 

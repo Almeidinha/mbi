@@ -9,7 +9,7 @@ import jakarta.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_fixed_condition_clause", schema = "dbo", catalog = "BISERVER")
+@Table(name = "bi_fixed_condition_clause", schema = "biserver", catalog = "BISERVER")
 public class BIFixedConditionClauseEntity extends BaseEntity {
 
     @Id

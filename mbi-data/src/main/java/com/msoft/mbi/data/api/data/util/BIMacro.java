@@ -2,11 +2,13 @@ package com.msoft.mbi.data.api.data.util;
 
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Data
 @Getter
 @Setter
+@NoArgsConstructor
 public class BIMacro {
 
     private String id = "";
@@ -42,9 +44,6 @@ public class BIMacro {
     public static final String NOME_USUARIO_LOGADO = "@|NOME_USUARIO_LOGADO|";
     public static final String EMAIL_USUARIO_LOGADO = "@|EMAIL_USUARIO_LOGADO|";
 
-    public BIMacro() {
-    }
-
     public void setID(String id) {
         if (id.charAt(0) == '\'') {
             id = id.substring(1, id.length() - 1);
@@ -52,14 +51,13 @@ public class BIMacro {
         this.id = id;
     }
 
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        BIMacro m = (BIMacro) super.clone();
-        m.setIncrementalField(this.incrementalField);
-        m.setDescription(this.description);
-        m.setID(this.id);
-        m.setFieldType(this.fieldType);
-        return m;
+    public static BIMacro copy(BIMacro template) {
+        BIMacro biMacro = new BIMacro();
+        biMacro.setIncrementalField(template.incrementalField);
+        biMacro.setDescription(template.description);
+        biMacro.setID(template.id);
+        biMacro.setFieldType(template.fieldType);
+        return biMacro;
     }
 
 }

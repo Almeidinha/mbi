@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "bi_config_email", schema = "dbo", catalog = "BISERVER")
+@Table(name = "bi_config_email", schema = "biserver", catalog = "BISERVER")
 public class BiConfigEmailEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

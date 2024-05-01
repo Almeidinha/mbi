@@ -12,6 +12,14 @@ public interface BIDimMetricRestrictionService extends CrudService<BIDimMetricRe
 
     List<BIDimMetricRestrictionEntity> saveAll(List<BIDimMetricRestrictionEntity> restrictionEntities);
 
+    void deleteAll(List<BIDimMetricRestrictionEntity> restrictionEntities);
+
     BIDimMetricRestrictionEntity save(BIDimMetricRestrictionEntity restrictionEntity);
+
+    void deleteByIndicator(Integer indicatorId);
+
+    void deleteByMetric(Integer indicatorId, Integer metricId);
+
+    void deleteByDimension(Integer indicatorId, Integer metricId, Integer dimensionId);
 
 }

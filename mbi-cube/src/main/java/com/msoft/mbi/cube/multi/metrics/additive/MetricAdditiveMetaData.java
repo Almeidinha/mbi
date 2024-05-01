@@ -3,7 +3,7 @@ package com.msoft.mbi.cube.multi.metrics.additive;
 import com.msoft.mbi.cube.multi.column.DataType;
 import com.msoft.mbi.cube.multi.column.TypeDecimal;
 import com.msoft.mbi.cube.multi.column.TypeMetricInt;
-import com.msoft.mbi.cube.multi.metaData.MetaDataField;
+import com.msoft.mbi.cube.multi.metadata.MetaDataField;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import lombok.Getter;
 import lombok.Setter;

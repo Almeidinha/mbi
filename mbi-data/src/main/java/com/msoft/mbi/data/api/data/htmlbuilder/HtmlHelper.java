@@ -1,7 +1,8 @@
 package com.msoft.mbi.data.api.data.htmlbuilder;
 
-import com.msoft.mbi.cube.multi.metaData.MetaDataField;
-import com.msoft.mbi.cube.multi.metaData.HTMLLineMask;
+import com.msoft.mbi.cube.multi.metadata.MetaDataField;
+import com.msoft.mbi.cube.multi.metadata.HTMLLineMask;
+import com.msoft.mbi.cube.multi.renderers.CellProperty;
 import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLColumnSVG;
 import com.msoft.mbi.cube.multi.renderers.linkHTML.LinkHTMLDynamicText;
 import com.msoft.mbi.data.api.data.exception.BIException;
@@ -81,7 +82,7 @@ public class HtmlHelper {
         titleTab.addLine(new HTMLLine());
         titleTab.getCurrentLine().setEditable("yes");
         titleTab.getCurrentLine().addCell(new HTMLCell());
-        titleTab.getCurrentLine().getCurrentCell().setAlignment("center");
+        titleTab.getCurrentLine().getCurrentCell().setAlignment(CellProperty.ALIGNMENT_CENTER);
         titleTab.getCurrentLine().getCurrentCell().setId("nome_titulo");
         titleTab.getCurrentLine().getCurrentCell().setNowrap(true);
 

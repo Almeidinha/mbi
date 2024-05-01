@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_having_clause", schema = "dbo", catalog = "BISERVER")
+@Table(name = "bi_having_clause", schema = "biserver", catalog = "BISERVER")
 public class BIHavingClauseEntity extends BaseEntity {
 
     @Id

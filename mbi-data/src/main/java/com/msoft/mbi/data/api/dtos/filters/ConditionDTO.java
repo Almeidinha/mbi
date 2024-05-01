@@ -18,5 +18,5 @@ public class ConditionDTO {
     private FieldDTO field;
     private OperatorDTO operator;
     private String value;
-    private String SQLValue;
+    private String sqlValue;
 }

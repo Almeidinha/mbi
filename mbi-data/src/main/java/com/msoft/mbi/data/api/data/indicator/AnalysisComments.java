@@ -1,5 +1,6 @@
 package com.msoft.mbi.data.api.data.indicator;
 
+import com.msoft.mbi.cube.multi.renderers.CellProperty;
 import com.msoft.mbi.data.api.data.exception.BIArrayIndexOutOfBoundsException;
 import com.msoft.mbi.data.api.data.exception.BIException;
 import com.msoft.mbi.data.api.data.exception.BISQLException;
@@ -178,7 +179,7 @@ public class AnalysisComments {
                     tabela.getCurrentLine().addCell(new HTMLCell());
                     tabela.getCurrentLine().getCurrentCell().setWidth("7%");
                     tabela.getCurrentLine().getCurrentCell().setCellClass("pretoBranco");
-                    tabela.getCurrentLine().getCurrentCell().setAlignment("center");
+                    tabela.getCurrentLine().getCurrentCell().setAlignment(CellProperty.ALIGNMENT_CENTER);
 
                     if (maintenance) {
                         HTMLImage imgExcluir = new HTMLImage("imagens\\excluir.gif");
@@ -220,10 +221,10 @@ public class AnalysisComments {
 
             tabela.addLine(new HTMLLine());
             tabela.getCurrentLine().addCell(new HTMLCell());
-            tabela.getCurrentLine().getCurrentCell().setAlignment("right");
+            tabela.getCurrentLine().getCurrentCell().setAlignment(CellProperty.ALIGNMENT_RIGHT);
             tabela.getCurrentLine().getCurrentCell().setBorderColor("#FFFFFF");
             tabela.getCurrentLine().getCurrentCell().setContent("Comentários da Análise");
-            tabela.getCurrentLine().getCurrentCell().setAlignment("center");
+            tabela.getCurrentLine().getCurrentCell().setAlignment(CellProperty.ALIGNMENT_CENTER);
             tabela.getCurrentLine().getCurrentCell().setStyle(estiloCabecalho);
 
             tabela.getCurrentLine().getCurrentCell().setHeight("30");

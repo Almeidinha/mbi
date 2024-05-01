@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.msoft.mbi.cube.multi.Cube;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
-import com.msoft.mbi.cube.multi.metaData.ColorAlertMetadata;
+import com.msoft.mbi.cube.multi.metadata.ColorAlertMetadata;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 
 public class PrintCurrentMetricLine extends MetricLinePrinter {

@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_panel_indicator", schema = "dbo", catalog = "BISERVER")
+@Table(name = "bi_panel_indicator", schema = "biserver", catalog = "BISERVER")
 @IdClass(BIPanelIndicatorPK.class)
 public class BIPanelIndicatorEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)

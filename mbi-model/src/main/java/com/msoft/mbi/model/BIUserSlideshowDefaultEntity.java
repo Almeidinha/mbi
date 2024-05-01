@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_user_slideshow_default", schema = "dbo", catalog = "BISERVER")
+@Table(name = "bi_user_slideshow_default", schema = "biserver", catalog = "BISERVER")
 @IdClass(BIUserSlideshowDefaultPK.class)
 public class BIUserSlideshowDefaultEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)

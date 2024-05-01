@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "bi_cor_val_campo", schema = "dbo", catalog = "BISERVER")
+@Table(name = "bi_cor_val_campo", schema = "biserver", catalog = "BISERVER")
 public class BiCorValCampoEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

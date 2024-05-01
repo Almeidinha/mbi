@@ -28,7 +28,7 @@ public class MetricFilterJDBC extends MetricFilter {
     }
 
     public String getFormattedValue() throws BIException {
-        String inputValues = this.getCondition().getValue().replaceAll(";", ",");
+        String inputValues = this.getCondition().getValue().replace(";", ",");
         List<String> values = BIUtil.stringToList(inputValues, ",");
 
         return values.stream()
@@ -56,11 +56,6 @@ public class MetricFilterJDBC extends MetricFilter {
     }
 
     @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return new MetricFilterJDBC(this.getCondition());
-    }
-
-    @Override
     public boolean haveStartParentheses() {
         return this.startParentheses;
     }
@@ -70,4 +65,8 @@ public class MetricFilterJDBC extends MetricFilter {
         return endParentheses;
     }
 
+    @Override
+    protected MetricFilter copy() throws BIException {
+        return new MetricFilterJDBC(this.getCondition());
+    }
 }

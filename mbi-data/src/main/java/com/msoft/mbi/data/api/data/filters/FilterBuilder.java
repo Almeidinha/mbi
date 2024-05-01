@@ -76,8 +76,7 @@ public class FilterBuilder {
         Operator op = new Operator(operator);
 
         valor = valor.replace('.', 'X');
-        valor = valor.replaceAll("X", "");
-
+        valor = valor.replace("X", "");
         valor = valor.replace(',', '.');
 
         if (filterType == FilterFunction.SEQUENCE_FILTER) {
@@ -106,7 +105,7 @@ public class FilterBuilder {
         } else {
             DimensionFilter newFilter = FilterFactory.createDimensionFilter(field, operator, valor);
             if (parentFilter != null && parentFilter.isMacro()) {
-                DimensionFilter copy = (DimensionFilter) parentFilter.clone();
+                DimensionFilter copy = parentFilter.copy();
                 parentFilter.removeAll();
                 parentFilter.addDimensionFilter(copy);
                 parentFilter.addDimensionFilter(newFilter);
@@ -114,7 +113,7 @@ public class FilterBuilder {
             } else if (parentFilter != null && parentFilter.getConnector().equals(connector)) {
                 parentFilter.addDimensionFilter(newFilter);
             } else {
-                DimensionFilter copy = (DimensionFilter) dimensionFilter.clone();
+                DimensionFilter copy = dimensionFilter.copy();
                 dimensionFilter.removeAll();
                 dimensionFilter.addDimensionFilter(copy);
 
@@ -184,7 +183,7 @@ public class FilterBuilder {
                 if (link.charAt(0) == '4') {
                     filters.removeApplicableMetricSqlFilter(value, symbol, String.valueOf(field.getFieldId()));
                 } else {
-                    filters.removeMetricFilter(value, symbol, String.valueOf(field.getFieldId()));
+                    filters.removeMetricFilter(value, String.valueOf(field.getFieldId()));
                 }
             }
         }

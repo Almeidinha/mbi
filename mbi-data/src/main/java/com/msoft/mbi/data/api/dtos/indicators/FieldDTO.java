@@ -41,7 +41,7 @@ public class FieldDTO {
     private int columnWidth;
     private String columnAlignment;
     private boolean sumLine;
-    private String accumulatedLine;
+    private String accumulatedLine = "N";
     private String dateMask;
     private boolean partialTotalization;
     private boolean partialMedia;

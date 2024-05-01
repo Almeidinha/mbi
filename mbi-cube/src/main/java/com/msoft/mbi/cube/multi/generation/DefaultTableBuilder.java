@@ -7,7 +7,7 @@ import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.MetricsMap;
 import com.msoft.mbi.cube.multi.column.ColumnMetaData;
 import com.msoft.mbi.cube.multi.column.TypeDate;
-import com.msoft.mbi.cube.multi.colorAlertCondition.ColorAlertConditions;
+import com.msoft.mbi.cube.multi.coloralertcondition.ColorAlertConditions;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.dimension.DimensionNullColumn;
 import com.msoft.mbi.cube.multi.dimension.DimensionMetaData;

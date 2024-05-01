@@ -9,7 +9,7 @@ import java.util.Collection;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_product", schema = "dbo", catalog = "BISERVER")
+@Table(name = "bi_product", schema = "biserver", catalog = "BISERVER")
 public class BIProductEntity extends BaseEntity {
 
     @Id

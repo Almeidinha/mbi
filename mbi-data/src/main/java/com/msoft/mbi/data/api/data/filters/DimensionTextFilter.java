@@ -12,15 +12,16 @@ import org.apache.commons.lang3.NotImplementedException;
 
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
-public class DimensionTextFilter extends DimensionFilter implements Cloneable {
+public class DimensionTextFilter extends DimensionFilter {
 
     private boolean startParentheses;
     private boolean endParentheses;
     private int startParentCount;
-    private int EndParentCount;
+    private int endParentCount;
 
     public DimensionTextFilter() {
         super();
@@ -47,30 +48,29 @@ public class DimensionTextFilter extends DimensionFilter implements Cloneable {
         super.setCondition(condition);
     }
 
-    @SneakyThrows
     @Override
-    public Object clone() {
-        DimensionFilter f = new DimensionTextFilter();
+    public DimensionFilter copy() throws BIException {
+        DimensionFilter copyFilter = new DimensionTextFilter();
         if (this.getCondition() == null || this.getMacro() != null) {
             if (this.getFilters() != null) {
-                ArrayList<DimensionFilter> novo = new ArrayList<>();
-                for (DimensionFilter dimensionFilter : this.getFilters()) {
-                    novo.add((DimensionTextFilter) dimensionFilter.clone());
+                List<DimensionFilter> dimensionFilters = new ArrayList<>();
+                for (DimensionFilter filter : this.getFilters()) {
+                    dimensionFilters.add(filter.copy());
                 }
-                f.setFilters(novo);
-                f.setConnector(this.getConnector());
+                copyFilter.setFilters(dimensionFilters);
+                copyFilter.setConnector(this.getConnector());
             }
             if (this.getMacro() != null) {
-                f.setMacro((BIMacro) this.getMacro().clone(), (Field) this.getMacroField().clone());
+                copyFilter.setMacro(BIMacro.copy(this.getMacro()), Field.copy(this.getMacroField()));
                 if (this.getCondition() != null)
-                    f.setCondition((Condition) this.getCondition().clone());
+                    copyFilter.setCondition(this.getCondition().copy());
             }
         } else {
-            f.setConnector(this.getConnector());
-            f.setCondition((Condition) this.getCondition().clone());
+            copyFilter.setConnector(this.getConnector());
+            copyFilter.setCondition(this.getCondition().copy());
         }
-        f.setDrillDown(this.isDrillDown());
-        return f;
+        copyFilter.setDrillDown(this.isDrillDown());
+        return copyFilter;
     }
 
     @Override

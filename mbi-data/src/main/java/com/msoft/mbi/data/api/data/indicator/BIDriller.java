@@ -3,6 +3,7 @@ package com.msoft.mbi.data.api.data.indicator;
 import com.msoft.mbi.data.api.data.exception.BIException;
 import com.msoft.mbi.data.api.data.filters.DimensionFilter;
 import com.msoft.mbi.data.api.data.filters.Filters;
+import com.msoft.mbi.data.api.data.util.BIUtil;
 import com.msoft.mbi.data.api.data.util.ConnectionBean;
 import com.msoft.mbi.data.api.data.util.Constants;
 import lombok.NoArgsConstructor;
@@ -25,7 +26,7 @@ public class BIDriller {
         }
 
         List<Field> fields = indicator.getFields();
-        Field field = fields.get(Indicator.getFieldIndex(fields, fieldCode));
+        Field field = fields.get(BIUtil.getFieldIndex(fields, fieldCode));
         Field nextField = getNextFieldForDrillDown(field, indicator);
 
         if (hasDimension(indicator.getFields(), 1, field.getDisplayLocation())) {
@@ -96,7 +97,7 @@ public class BIDriller {
 
     public void navigateHide(String fieldCode, Indicator indicator, boolean hide) throws BIException {
         List<Field> fields = indicator.getFields();
-        Field field = fields.get(Indicator.getFieldIndex(fields, fieldCode));
+        Field field = fields.get(BIUtil.getFieldIndex(fields, fieldCode));
         Field nextField = this.getNextDrillDownSequence(field, indicator.getFields());
 
         while (nextField != null && nextField.getDisplayLocation() == Constants.LINE) {
@@ -111,7 +112,7 @@ public class BIDriller {
     }
 
     public void navigate(String fieldCode, Indicator indicator, boolean hide) throws BIException {
-        Field field = indicator.getFields().get(Indicator.getFieldIndex(indicator.getFields(), fieldCode));
+        Field field = indicator.getFields().get(BIUtil.getFieldIndex(indicator.getFields(), fieldCode));
         Field nextField = this.getNextDrillDownSequence(field, indicator.getFields());
 
         while (nextField != null && nextField.getDisplayLocation() == Constants.LINE) {

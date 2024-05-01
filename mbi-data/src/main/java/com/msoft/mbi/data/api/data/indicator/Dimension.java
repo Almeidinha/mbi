@@ -1,5 +1,6 @@
 package com.msoft.mbi.data.api.data.indicator;
 
+import com.msoft.mbi.cube.multi.renderers.CellProperty;
 import com.msoft.mbi.data.api.data.consult.CachedResults;
 import com.msoft.mbi.data.api.data.consult.ConsultResult;
 import com.msoft.mbi.data.api.data.consult.ConsultResultFactory;
@@ -767,7 +768,7 @@ public class Dimension {
                     bottomDimension.setMountTableWithoutLink(this.mountTableWithoutLink);
                     if (line.getCells().isEmpty()) {
                         line.addCell(new HTMLCell());
-                        line.getCurrentCell().setAlignment("right");
+                        line.getCurrentCell().setAlignment(CellProperty.ALIGNMENT_RIGHT);
 
                         line.getCurrentCell().setTHCell(true);
 
@@ -815,7 +816,7 @@ public class Dimension {
                         line.getCurrentCell().setColspan(line.getCurrentCell().getColspan() - metricAHCount);
                     }
 
-                    line.getCurrentCell().setAlignment("center");
+                    line.getCurrentCell().setAlignment(CellProperty.ALIGNMENT_CENTER);
                     line.getCurrentCell().setContent(bottomDimension.getValue().getFormattedValue(0));
                     boolean appliedLineAlert = this.indicator.getColorAlerts().searchAlertValueApply(bottomDimension.getValue().getFormattedValue(0), line.getCurrentCell(), line, bottomDimension.getValue().getField(), ColorAlert.SEM_FUNCAO, bottomDimension.getValue().getField().getNumDecimalPositions(), this, true);
                     if (appliedLineAlert) {
@@ -864,7 +865,7 @@ public class Dimension {
                         line.getCurrentCell().setBackGroundColor("#3377CC");
                         line.getCurrentCell().setBorderColor("#FFFFFF");
                         line.getCurrentCell().setStyle(style);
-                        line.getCurrentCell().setAlignment("center");
+                        line.getCurrentCell().setAlignment(CellProperty.ALIGNMENT_CENTER);
                         line.getCurrentCell().setContent("Seq");
                     }
 
@@ -874,7 +875,7 @@ public class Dimension {
                             line.getCurrentCell().setBackGroundColor("#3377CC");
                             line.getCurrentCell().setBorderColor("#FFFFFF");
                             line.getCurrentCell().setStyle(style);
-                            line.getCurrentCell().setAlignment("center");
+                            line.getCurrentCell().setAlignment(CellProperty.ALIGNMENT_CENTER);
                             line.getCurrentCell().setTHCell(true);
                             HTMLTable tabelaAux = new HTMLTable();
                             tabelaAux.setWidth("100%");
@@ -957,7 +958,7 @@ public class Dimension {
                 }
             } else {
                 line.addCell(new HTMLCell());
-                line.getCurrentCell().setAlignment("center");
+                line.getCurrentCell().setAlignment(CellProperty.ALIGNMENT_CENTER);
                 line.getCurrentCell().setBackGroundColor("#A2C8E8");
                 line.getCurrentCell().setContent("&nbsp;");
             }
@@ -1024,7 +1025,7 @@ public class Dimension {
             cell.setNowrap(true);
             cell.setContent("Total");
             cell.setDimensionColumn(true);
-            cell.setAlignment("left");
+            cell.setAlignment(CellProperty.ALIGNMENT_LEFT);
             cell.setBackGroundColor("#CCCCCC");
             cell.setTHCell(true);
             cell.setColspan(this.getLowerDimensionsHeight());
@@ -1110,7 +1111,7 @@ public class Dimension {
                 htmlLine.addCell(cell);
                 cell.setStyle(htmlStyle);
                 cell.setNowrap(true);
-                cell.setAlignment("right");
+                cell.setAlignment(CellProperty.ALIGNMENT_RIGHT);
                 cell.setContent(BIUtil.formatDoubleToText(this.totalLine, 2));
             }
         }

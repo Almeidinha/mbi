@@ -11,6 +11,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
@@ -18,25 +19,25 @@ import java.util.stream.IntStream;
 @Getter
 @Setter
 @SuppressWarnings("unused")
-public abstract class DimensionFilter implements Filter, Cloneable {
+public abstract class DimensionFilter implements Filter {
 
-    private ArrayList<DimensionFilter> filters;
+    private List<DimensionFilter> filters;
     private String connector;
     private Condition condition;
     private BIMacro macro;
     private Field macroField;
     private boolean drillDown = false;
 
-    public DimensionFilter() {
+    protected DimensionFilter() {
     }
 
-    public DimensionFilter(Field macroField, BIMacro macro, String connector) {
+    protected DimensionFilter(Field macroField, BIMacro macro, String connector) {
         this.macroField = macroField;
         this.macro = macro;
         this.connector = connector;
     }
 
-    public DimensionFilter(ArrayList<DimensionFilter> filters, String connector, Condition condition, BIMacro macro, Field macroField) {
+    protected DimensionFilter(List<DimensionFilter> filters, String connector, Condition condition, BIMacro macro, Field macroField) {
         this.filters = filters;
         this.connector = connector;
         this.condition = condition;
@@ -44,7 +45,7 @@ public abstract class DimensionFilter implements Filter, Cloneable {
         this.macroField = macroField;
     }
 
-    public DimensionFilter getDimensionFilter(int index) throws BIException {
+    public DimensionFilter getDimensionFilter(int index) {
         if (this.filters != null) {
             return filters.get(index);
         } else {
@@ -182,15 +183,15 @@ public abstract class DimensionFilter implements Filter, Cloneable {
 
     }
 
-    public String getSQLValue() throws BIException {
+    public String getSqlValue() {
         if (this.isMacro()) {
             return this.macro.getId();
         } else {
-            return this.condition.getSQLValue();
+            return this.condition.getSqlValue();
         }
     }
 
-    public String getValue() throws BIException {
+    public String getValue() {
         if (this.isMacro()) {
             return this.macro.getId();
         } else {
@@ -198,11 +199,11 @@ public abstract class DimensionFilter implements Filter, Cloneable {
         }
     }
 
-    public boolean addDimensionFilter(DimensionFilter filter) {
+    public void addDimensionFilter(DimensionFilter filter) {
         if (Optional.ofNullable(this.filters).isEmpty()) {
             this.filters = new ArrayList<>();
         }
-        return filters.add(filter);
+        filters.add(filter);
     }
 
     public String toString() {
@@ -252,7 +253,6 @@ public abstract class DimensionFilter implements Filter, Cloneable {
                 });
     }
 
-    @Override
-    public abstract Object clone();
+    protected abstract DimensionFilter copy() throws BIException;
 
 }
