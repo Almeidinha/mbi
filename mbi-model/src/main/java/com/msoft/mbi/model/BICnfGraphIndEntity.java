@@ -9,7 +9,7 @@ import jakarta.persistence.*;
 @Setter
 @Entity
 @Table(
-        name = "bi_cnf_graph_ind", schema = "biserver", catalog = "BISERVER",
+        name = "bi_cnf_graph_ind", schema = "biserver", catalog = "biserver",
         indexes = {
                 @Index(name = "ix1_bi_cnf_graf_in", columnList = "indicator_id"),
                 @Index(name = "ix2_bi_cnf_graf_in", columnList = "graph_id")

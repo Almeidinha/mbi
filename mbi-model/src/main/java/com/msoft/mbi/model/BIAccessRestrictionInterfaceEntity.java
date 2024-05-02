@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_access_restriction_interface", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_access_restriction_interface", schema = "biserver", catalog = "biserver")
 @IdClass(BIAccessRestrictionInterfacePK.class)
 public class BIAccessRestrictionInterfaceEntity {
 

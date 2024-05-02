@@ -10,7 +10,7 @@ import jakarta.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "bi_where_clause", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_where_clause", schema = "biserver", catalog = "biserver")
 public class BIWhereClauseEntity extends BaseEntity {
 
     @Id

@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "bi_user_group", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_user_group", schema = "biserver", catalog = "biserver")
 public class BIUserGroupEntity extends BaseEntity {
 
     @Id

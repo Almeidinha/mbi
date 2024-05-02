@@ -10,7 +10,7 @@ import jakarta.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "bi_dim_metric_restriction", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_dim_metric_restriction", schema = "biserver", catalog = "biserver")
 @IdClass(BIDimMetricRestrictionPK.class)
 public class BIDimMetricRestrictionEntity {
 

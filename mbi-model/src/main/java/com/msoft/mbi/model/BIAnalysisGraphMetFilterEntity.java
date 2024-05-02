@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_analysis_graph_met_filter", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_analysis_graph_met_filter", schema = "biserver", catalog = "biserver")
 @IdClass(BIAnalysisGraphMetFilterPk.class)
 public class BIAnalysisGraphMetFilterEntity {
 

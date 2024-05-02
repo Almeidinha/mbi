@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_color_conditions", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_color_conditions", schema = "biserver", catalog = "biserver")
 @IdClass(BIColorConditionsPK.class)
 public class BIColorConditionsEntity {
 

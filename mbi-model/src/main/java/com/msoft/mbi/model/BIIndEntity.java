@@ -3,6 +3,8 @@ package com.msoft.mbi.model;
 import lombok.*;
 import jakarta.persistence.*;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.*;
 
 @Getter
@@ -12,10 +14,13 @@ import java.util.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(
-        name = "bi_ind", schema = "biserver", catalog = "BISERVER",
+        name = "bi_ind", schema = "biserver", catalog = "biserver",
         indexes = @Index(name = "ix1_bi_ind", columnList = "name")
 )
-public class BIIndEntity extends BaseEntity {
+public class BIIndEntity extends BaseEntity implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

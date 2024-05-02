@@ -1,9 +1,10 @@
-FROM maven:3.8.3-openjdk-17 AS build
+FROM maven:3.8.3-openjdk-17
 
 LABEL mentainer="blackheal@gmail.com"
 
-COPY . /app
+WORKDIR /mbi
+COPY . .
 
-RUN mvn -f /app/pom.xml clean install -Pdocker -DskipTests
+RUN mvn clean install -DskipTests
 
-ENTRYPOINT ["java","-jar","/app/mbi-web/target/mbi-web-0.0.1-SNAPSHOT"]
+ENTRYPOINT ["java","-jar","/mbi/mbi-web/target/mbi-web-0.0.1-SNAPSHOT.jar"]

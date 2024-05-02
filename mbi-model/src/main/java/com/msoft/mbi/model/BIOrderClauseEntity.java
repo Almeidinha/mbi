@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_order_clause", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_order_clause", schema = "biserver", catalog = "biserver")
 public class BIOrderClauseEntity extends BaseEntity {
 
     @Id

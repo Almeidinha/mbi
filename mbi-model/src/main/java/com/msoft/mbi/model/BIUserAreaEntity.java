@@ -9,7 +9,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_user_area", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_user_area", schema = "biserver", catalog = "biserver")
 @IdClass(BIUserAreaPK.class)
 public class BIUserAreaEntity {
 

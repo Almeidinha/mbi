@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_panel_user", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_panel_user", schema = "biserver", catalog = "biserver")
 @IdClass(BIPanelUserPK.class)
 public class BIPanelUserEntity {
 

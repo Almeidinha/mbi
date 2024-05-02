@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_graph_field_analysis", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_graph_field_analysis", schema = "biserver", catalog = "biserver")
 @IdClass(BIGraphFieldAnalysisPK.class)
 public class BIGraphFieldAnalysisEntity {
 

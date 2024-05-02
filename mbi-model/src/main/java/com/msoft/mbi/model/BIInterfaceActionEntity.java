@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_interface_action", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_interface_action", schema = "biserver", catalog = "biserver")
 public class BIInterfaceActionEntity implements Serializable {
 
     @Id

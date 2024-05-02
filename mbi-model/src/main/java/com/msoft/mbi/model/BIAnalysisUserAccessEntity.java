@@ -9,7 +9,7 @@ import java.sql.Date;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_analysis_user_access", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_analysis_user_access", schema = "biserver", catalog = "biserver")
 @IdClass(BIAnalysisUserPK.class)
 public class BIAnalysisUserAccessEntity {
 

@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "bi_grp_usu_area", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_grp_usu_area", schema = "biserver", catalog = "biserver")
 @IdClass(BiGrpUsuAreaEntityPK.class)
 public class BiGrpUsuAreaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_graph_par", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_graph_par", schema = "biserver", catalog = "biserver")
 @IdClass(BIGraphParPK.class)
 public class BIGraphParEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)

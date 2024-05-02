@@ -10,7 +10,7 @@ import jakarta.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "bi_metric_filter", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_metric_filter", schema = "biserver", catalog = "biserver")
 public class BIMetricFilterEntity extends BaseEntity {
 
     @Id

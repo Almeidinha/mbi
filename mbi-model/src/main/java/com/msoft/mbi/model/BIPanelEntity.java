@@ -4,13 +4,19 @@ import lombok.Getter;
 import lombok.Setter;
 
 import jakarta.persistence.*;
+
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Collection;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_panel", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_panel", schema = "biserver", catalog = "biserver")
 public class BIPanelEntity extends BaseEntity {
+
+    @Serial
+    private static final long serialVersionUID = 2405172041950251807L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

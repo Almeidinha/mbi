@@ -11,7 +11,7 @@ import jakarta.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "bi_user_group_indicator", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_user_group_indicator", schema = "biserver", catalog = "biserver")
 @IdClass(BIUserGroupIndicatorPK.class)
 public class BIUserGroupIndEntity {
 

@@ -10,7 +10,7 @@ import java.sql.Time;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_user_panel", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_user_panel", schema = "biserver", catalog = "biserver")
 @IdClass(BIUserPanelPK.class)
 public class BIUserPanelEntity {
 

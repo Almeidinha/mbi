@@ -11,7 +11,7 @@ import java.util.Collection;
 @Getter
 @NoArgsConstructor
 @Entity
-@Table(name = "bi_intercalation", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_intercalation", schema = "biserver", catalog = "biserver")
 public class BIIntercalationEntity extends BaseEntity {
 
     @Id

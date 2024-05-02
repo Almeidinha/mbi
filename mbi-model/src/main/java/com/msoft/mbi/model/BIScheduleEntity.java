@@ -11,7 +11,7 @@ import java.util.Collection;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_schedule", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_schedule", schema = "biserver", catalog = "biserver")
 public class BIScheduleEntity extends BaseEntity {
 
     @Id

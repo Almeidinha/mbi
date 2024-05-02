@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "bi_search_clause", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_search_clause", schema = "biserver", catalog = "biserver")
 public class BISearchClauseEntity extends BaseEntity {
 
     @Id

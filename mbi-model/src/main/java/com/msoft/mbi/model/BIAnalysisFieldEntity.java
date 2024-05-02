@@ -13,9 +13,10 @@ import java.util.Collection;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(
-        name = "bi_analysis_field", schema = "biserver", catalog = "BISERVER",
+        name = "bi_analysis_field", schema = "biserver", catalog = "biserver",
         indexes = @Index(name = "ix2_bi_analysis_field", columnList = "title")
 )
+@IdClass(BIAnalysisFieldPK.class)
 public class BIAnalysisFieldEntity {
 
     @Id
@@ -227,8 +228,9 @@ public class BIAnalysisFieldEntity {
     @Column(name = "delegate_order")
     private Integer delegateOrder;
 
+    @Id
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "indicator_id", nullable = false)
+    @JoinColumn(name = "indicator_id", referencedColumnName ="id", nullable = false)
     private BIIndEntity biIndByInd;
 
     @OneToMany(mappedBy = "biAnalysisFieldByFk2ColorAlertInd")

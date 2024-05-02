@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "eis_dimension_data", schema = "biserver", catalog = "BISERVER")
+@Table(name = "eis_dimension_data", schema = "biserver", catalog = "biserver")
 public class EisDimensionDataEntity extends BaseEntity {
 
     @Id

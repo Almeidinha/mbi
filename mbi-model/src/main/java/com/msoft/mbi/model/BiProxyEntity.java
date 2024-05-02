@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "bi_proxy", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_proxy", schema = "biserver", catalog = "biserver")
 public class BiProxyEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

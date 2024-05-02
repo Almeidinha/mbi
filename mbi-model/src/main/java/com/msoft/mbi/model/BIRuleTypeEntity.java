@@ -9,7 +9,7 @@ import java.util.Collection;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_rule_type", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_rule_type", schema = "biserver", catalog = "biserver")
 public class BIRuleTypeEntity extends BaseEntity {
 
     @Id

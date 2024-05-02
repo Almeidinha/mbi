@@ -10,7 +10,7 @@ import java.util.Collection;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_analysis_graph", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_analysis_graph", schema = "biserver", catalog = "biserver")
 @IdClass(BIAnalysisGraphPK.class)
 public class BIAnalysisGraphEntity {
 

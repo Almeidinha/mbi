@@ -10,7 +10,7 @@ import jakarta.persistence.*;
 @Getter
 @NoArgsConstructor
 @Entity
-@Table(name = "bi_user_default_indicator", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_user_default_indicator", schema = "biserver", catalog = "biserver")
 @IdClass(BIUserDefaultIndicatorPK.class)
 public class BIUserDefaultIndicatorEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)

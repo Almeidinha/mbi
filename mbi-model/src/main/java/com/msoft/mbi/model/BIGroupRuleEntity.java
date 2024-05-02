@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_group_rule", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_group_rule", schema = "biserver", catalog = "biserver")
 @IdClass(BIGroupRulePK.class)
 public class BIGroupRuleEntity {
     

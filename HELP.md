@@ -12,7 +12,7 @@ For further reference, please consider the following sections:
 ### Deploy locally
 Make sure you hava Java and maven installed preferably java 17
 
-Make sure you have a Mysql BIServer:3306 instance running (or change the name in the application-prod.properties file)
+Make sure you have a Mysql biserver:3306 instance running (or change the name in the application-prod.properties file)
 Change the username:password to mach your instance (in application-prod.properties)
 
 In the root dir ``(..\mbi)``, run ``mvn -Pprod clean install``

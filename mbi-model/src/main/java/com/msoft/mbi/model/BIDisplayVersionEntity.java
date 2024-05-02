@@ -9,7 +9,7 @@ import java.sql.Date;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_display_version", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_display_version", schema = "biserver", catalog = "biserver")
 public class BIDisplayVersionEntity extends BaseEntity {
 
     @Id

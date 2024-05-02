@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_user_portlets", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_user_portlets", schema = "biserver", catalog = "biserver")
 @IdClass(BIUserPortletsPK.class)
 public class BIUserPortletsEntity {
 

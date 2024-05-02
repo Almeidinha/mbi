@@ -6,7 +6,7 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd"
         objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
     <changeSet id="1713778430158-1" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_multitenant_model">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_multitenant_model">
             <column name="id" type="binary(16)">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_multitenant_model"/>
             </column>
@@ -19,7 +19,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430158-2" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_tenants">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_tenants">
             <column name="id" type="binary(16)">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_tenants"/>
             </column>
@@ -61,7 +61,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-1" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_access_restriction_interface">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_access_restriction_interface">
             <column autoIncrement="true" name="user_group_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_access_restriction_interface"/>
             </column>
@@ -74,7 +74,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-2" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_analysis_field">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_analysis_field">
             <column name="field_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_analysis_field"/>
             </column>
@@ -135,12 +135,12 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-2-1" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_analysis_field_seq">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_analysis_field_seq">
             <column name="next_val" type="BIGINT"/>
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-3" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_analysis_graph">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_analysis_graph">
             <column name="graph_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_analysis_graph"/>
             </column>
@@ -159,12 +159,12 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-3-1" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_analysis_graph_seq">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_analysis_graph_seq">
             <column name="next_val" type="BIGINT"/>
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-4" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_analysis_graph_dim_filter">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_analysis_graph_dim_filter">
             <column autoIncrement="true" name="indicator_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_analysis_graph_dim_filter"/>
             </column>
@@ -175,7 +175,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-5" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_analysis_graph_met_filter">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_analysis_graph_met_filter">
             <column autoIncrement="true" name="indicator_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_analysis_graph_met_filter"/>
             </column>
@@ -186,7 +186,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-6" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_analysis_parameter">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_analysis_parameter">
             <column autoIncrement="true" name="indicator_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_analysis_parameter"/>
             </column>
@@ -205,7 +205,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-7" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_analysis_user_access">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_analysis_user_access">
             <column autoIncrement="true" name="indicator_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_analysis_user_access"/>
             </column>
@@ -221,7 +221,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-8" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_area">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_area">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_area"/>
             </column>
@@ -234,7 +234,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-9" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_cnf_graph_ind">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_cnf_graph_ind">
             <column autoIncrement="true" name="indicator_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_cnf_graph_ind"/>
             </column>
@@ -253,7 +253,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-10" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_color_conditions">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_color_conditions">
             <column name="indicator_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_color_conditions"/>
             </column>
@@ -274,12 +274,12 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-10-1" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_color_conditions_seq">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_color_conditions_seq">
             <column name="next_val" type="BIGINT"/>
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-11" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_comments">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_comments">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_comments"/>
             </column>
@@ -299,7 +299,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-12" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_company">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_company">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_company"/>
             </column>
@@ -316,7 +316,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-13" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_config_email">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_config_email">
             <column autoIncrement="true" name="config_email" type="SMALLINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_config_email"/>
             </column>
@@ -338,7 +338,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-14" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_cor_val_campo">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_cor_val_campo">
             <column autoIncrement="true" name="sequencia_val" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_cor_val_campo"/>
             </column>
@@ -356,7 +356,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-15" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_dim_metric_restriction">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_dim_metric_restriction">
             <column name="indicator_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_dim_metric_restriction"/>
             </column>
@@ -369,7 +369,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-16" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_dimension_filter">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_dimension_filter">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_dimension_filter"/>
             </column>
@@ -379,7 +379,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-17" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_display_version">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_display_version">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_display_version"/>
             </column>
@@ -391,7 +391,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-18" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_documents">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_documents">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_documents"/>
             </column>
@@ -413,7 +413,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-19" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_documents_indicator">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_documents_indicator">
             <column autoIncrement="true" name="indicator_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_documents_indicator"/>
             </column>
@@ -423,7 +423,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-20" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_filtro_geral">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_filtro_geral">
             <column autoIncrement="true" name="filtro" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_filtro_geral"/>
             </column>
@@ -434,7 +434,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-21" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_fixed_condition_clause">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_fixed_condition_clause">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_fixed_condition_clause"/>
             </column>
@@ -444,7 +444,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-22" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_from_clause">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_from_clause">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_from_clause"/>
             </column>
@@ -454,7 +454,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-23" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_graph_alert">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_graph_alert">
             <column autoIncrement="true" name="indicator_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_graph_alert"/>
             </column>
@@ -477,7 +477,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-24" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_graph_field_analysis">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_graph_field_analysis">
             <column autoIncrement="true" name="indicator_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_graph_field_analysis"/>
             </column>
@@ -512,7 +512,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-25" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_graph_par">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_graph_par">
             <column autoIncrement="true" name="indicator_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_graph_par"/>
             </column>
@@ -529,7 +529,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-26" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_group_clause">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_group_clause">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_group_clause"/>
             </column>
@@ -539,7 +539,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-27" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_group_rule">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_group_rule">
             <column autoIncrement="true" name="user_group_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_group_rule"/>
             </column>
@@ -558,7 +558,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-28" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_grp_usu_area">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_grp_usu_area">
             <column autoIncrement="true" name="grupo_usuario" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_grp_usu_area"/>
             </column>
@@ -568,7 +568,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-29" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_grupo_usuario_slideshow">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_grupo_usuario_slideshow">
             <column autoIncrement="true" name="slideshow" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_grupo_usuario_slideshow"/>
             </column>
@@ -581,7 +581,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-30" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_having_clause">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_having_clause">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_having_clause"/>
             </column>
@@ -591,7 +591,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-31" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_ind">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_ind">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_ind"/>
             </column>
@@ -638,7 +638,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-32" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_ind_alert_color">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_ind_alert_color">
             <column name="alert_sequence" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_ind_alert_color"/>
             </column>
@@ -672,7 +672,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-33" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_intercalation">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_intercalation">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_intercalation"/>
             </column>
@@ -687,7 +687,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-34" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_interface">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_interface">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_interface"/>
             </column>
@@ -697,7 +697,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-35" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_interface_action">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_interface_action">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_interface_action"/>
             </column>
@@ -713,7 +713,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-36" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_measure_par">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_measure_par">
             <column autoIncrement="true" name="indicator_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_measure_par"/>
             </column>
@@ -735,7 +735,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-37" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_metric_filter">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_metric_filter">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_metric_filter"/>
             </column>
@@ -745,7 +745,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-38" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_order_clause">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_order_clause">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_order_clause"/>
             </column>
@@ -755,7 +755,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-39" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_panel">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_panel">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_panel"/>
             </column>
@@ -767,7 +767,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-40" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_panel_indicator">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_panel_indicator">
             <column autoIncrement="true" name="indicator_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_panel_indicator"/>
             </column>
@@ -798,7 +798,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-41" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_panel_intercalation">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_panel_intercalation">
             <column autoIncrement="true" name="intercalation_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_panel_intercalation"/>
             </column>
@@ -814,7 +814,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-42" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_panel_user">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_panel_user">
             <column autoIncrement="true" name="panel_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_panel_user"/>
             </column>
@@ -828,7 +828,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-43" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_parameter">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_parameter">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_parameter"/>
             </column>
@@ -843,7 +843,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-44" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_portlets">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_portlets">
             <column autoIncrement="true" name="portlets" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_portlets"/>
             </column>
@@ -857,7 +857,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-45" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_product">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_product">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_product"/>
             </column>
@@ -867,7 +867,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-46" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_proxy">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_proxy">
             <column autoIncrement="true" name="proxy" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_proxy"/>
             </column>
@@ -878,7 +878,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-47" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_restriction">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_restriction">
             <column autoIncrement="true" name="indicator_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_restriction"/>
             </column>
@@ -894,7 +894,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-48" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_rule_type">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_rule_type">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_rule_type"/>
             </column>
@@ -904,7 +904,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-49" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_rule_type_action">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_rule_type_action">
             <column autoIncrement="true" name="rule_type_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_rule_type_action"/>
             </column>
@@ -915,7 +915,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-50" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_schedule">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_schedule">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_schedule"/>
             </column>
@@ -956,7 +956,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-51" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_search_clause">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_search_clause">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_search_clause"/>
             </column>
@@ -966,7 +966,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-52" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_slideshow">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_slideshow">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_slideshow"/>
             </column>
@@ -984,7 +984,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-53" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_slideshow_painel">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_slideshow_painel">
             <column autoIncrement="true" name="slideshow" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_slideshow_painel"/>
             </column>
@@ -998,7 +998,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-54" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_sql_metric_filters">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_sql_metric_filters">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_sql_metric_filters"/>
             </column>
@@ -1008,7 +1008,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-55" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_user">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_user">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user"/>
             </column>
@@ -1035,7 +1035,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-56" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_user_area">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_user_area">
             <column autoIncrement="true" name="user_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_area"/>
             </column>
@@ -1045,7 +1045,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-57" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_user_default_indicator">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_user_default_indicator">
             <column autoIncrement="true" name="user_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_default_indicator"/>
             </column>
@@ -1055,7 +1055,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-58" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_user_default_panel">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_user_default_panel">
             <column autoIncrement="true" name="user_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_default_panel"/>
             </column>
@@ -1065,7 +1065,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-59" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_user_documents">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_user_documents">
             <column autoIncrement="true" name="document_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_documents"/>
             </column>
@@ -1078,7 +1078,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-60" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_user_group">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_user_group">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group"/>
             </column>
@@ -1094,7 +1094,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-61" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_user_group_default_panel">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_user_group_default_panel">
             <column autoIncrement="true" name="user_group_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group_default_panel"/>
             </column>
@@ -1104,7 +1104,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-62" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_user_group_documents">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_user_group_documents">
             <column name="document_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group_documents"/>
             </column>
@@ -1117,7 +1117,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-63" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_user_group_indicator">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_user_group_indicator">
             <column name="indicator_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group_indicator"/>
             </column>
@@ -1130,7 +1130,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-64" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_user_group_interface">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_user_group_interface">
             <column autoIncrement="true" name="user_group_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group_interface"/>
             </column>
@@ -1143,7 +1143,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-65" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_user_group_panel">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_user_group_panel">
             <column autoIncrement="true" name="panel_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group_panel"/>
             </column>
@@ -1156,7 +1156,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-66" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_user_group_restriction">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_user_group_restriction">
             <column autoIncrement="true" name="indicator_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group_restriction"/>
             </column>
@@ -1172,7 +1172,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-67" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_user_group_schedule">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_user_group_schedule">
             <column name="schedule_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group_schedule"/>
             </column>
@@ -1182,7 +1182,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-68" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_user_group_slideshow_default">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_user_group_slideshow_default">
             <column autoIncrement="true" name="user_group_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_group_slideshow_default"/>
             </column>
@@ -1192,7 +1192,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-69" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_user_indicator">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_user_indicator">
             <column name="user_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_indicator"/>
             </column>
@@ -1208,7 +1208,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-70" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_user_interface">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_user_interface">
             <column autoIncrement="true" name="user_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_interface"/>
             </column>
@@ -1221,7 +1221,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-71" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_user_panel">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_user_panel">
             <column autoIncrement="true" name="panel_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_panel"/>
             </column>
@@ -1237,7 +1237,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-72" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_user_portlets">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_user_portlets">
             <column autoIncrement="true" name="user_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_portlets"/>
             </column>
@@ -1248,7 +1248,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-73" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_user_restriction">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_user_restriction">
             <column autoIncrement="true" name="indicator_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_restriction"/>
             </column>
@@ -1264,7 +1264,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-74" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_user_rule">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_user_rule">
             <column autoIncrement="true" name="user_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_rule"/>
             </column>
@@ -1283,7 +1283,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-75" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_user_schedule">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_user_schedule">
             <column name="schedule_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_schedule"/>
             </column>
@@ -1293,7 +1293,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-76" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_user_slideshow">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_user_slideshow">
             <column autoIncrement="true" name="slideshow_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_slideshow"/>
             </column>
@@ -1307,7 +1307,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-77" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_user_slideshow_default">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_user_slideshow_default">
             <column autoIncrement="true" name="user_id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_user_slideshow_default"/>
             </column>
@@ -1317,7 +1317,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-78" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="bi_where_clause">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="bi_where_clause">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bi_where_clause"/>
             </column>
@@ -1327,7 +1327,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-79" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="eis_dimension_data">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="eis_dimension_data">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_eis_dimension_data"/>
             </column>
@@ -1380,7 +1380,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-80" author="Marcos (generated)">
-        <createTable catalogName="BIServer" schemaName="biserver" tableName="user_group_company">
+        <createTable catalogName="biserver" schemaName="biserver" tableName="user_group_company">
             <column name="company_id" type="INT">
                 <constraints nullable="false"/>
             </column>
@@ -1390,61 +1390,61 @@
         </createTable>
     </changeSet>
     <changeSet id="1713778430706-81" author="Marcos (generated)">
-        <addUniqueConstraint columnNames="dimension_filter" constraintName="uc_bi_ind_dimension_filter" catalogName="BIServer" schemaName="biserver"
+        <addUniqueConstraint columnNames="dimension_filter" constraintName="uc_bi_ind_dimension_filter" catalogName="biserver" schemaName="biserver"
                              tableName="bi_ind"/>
     </changeSet>
     <changeSet id="1713778430706-82" author="Marcos (generated)">
         <addUniqueConstraint columnNames="fixed_condition_clause" constraintName="uc_bi_ind_fixed_condition_clause"
-                             catalogName="BIServer" schemaName="biserver" tableName="bi_ind"/>
+                             catalogName="biserver" schemaName="biserver" tableName="bi_ind"/>
     </changeSet>
     <changeSet id="1713778430706-83" author="Marcos (generated)">
-        <addUniqueConstraint columnNames="from_clause" constraintName="uc_bi_ind_from_clause" catalogName="BIServer" schemaName="biserver"
+        <addUniqueConstraint columnNames="from_clause" constraintName="uc_bi_ind_from_clause" catalogName="biserver" schemaName="biserver"
                              tableName="bi_ind"/>
     </changeSet>
     <changeSet id="1713778430706-84" author="Marcos (generated)">
-        <addUniqueConstraint columnNames="group_clause" constraintName="uc_bi_ind_group_clause" catalogName="BIServer" schemaName="biserver"
+        <addUniqueConstraint columnNames="group_clause" constraintName="uc_bi_ind_group_clause" catalogName="biserver" schemaName="biserver"
                              tableName="bi_ind"/>
     </changeSet>
     <changeSet id="1713778430706-85" author="Marcos (generated)">
-        <addUniqueConstraint columnNames="having_clause" constraintName="uc_bi_ind_having_clause" catalogName="BIServer" schemaName="biserver"
+        <addUniqueConstraint columnNames="having_clause" constraintName="uc_bi_ind_having_clause" catalogName="biserver" schemaName="biserver"
                              tableName="bi_ind"/>
     </changeSet>
     <changeSet id="1713778430706-86" author="Marcos (generated)">
-        <addUniqueConstraint columnNames="metric_filter" constraintName="uc_bi_ind_metric_filter" catalogName="BIServer" schemaName="biserver"
+        <addUniqueConstraint columnNames="metric_filter" constraintName="uc_bi_ind_metric_filter" catalogName="biserver" schemaName="biserver"
                              tableName="bi_ind"/>
     </changeSet>
     <changeSet id="1713778430706-87" author="Marcos (generated)">
-        <addUniqueConstraint columnNames="order_clause" constraintName="uc_bi_ind_order_clause" catalogName="BIServer" schemaName="biserver"
+        <addUniqueConstraint columnNames="order_clause" constraintName="uc_bi_ind_order_clause" catalogName="biserver" schemaName="biserver"
                              tableName="bi_ind"/>
     </changeSet>
     <changeSet id="1713778430706-88" author="Marcos (generated)">
-        <addUniqueConstraint columnNames="search_clause" constraintName="uc_bi_ind_search_clause" catalogName="BIServer" schemaName="biserver"
+        <addUniqueConstraint columnNames="search_clause" constraintName="uc_bi_ind_search_clause" catalogName="biserver" schemaName="biserver"
                              tableName="bi_ind"/>
     </changeSet>
     <changeSet id="1713778430706-89" author="Marcos (generated)">
         <addUniqueConstraint columnNames="sql_metric_filter" constraintName="uc_bi_ind_sql_metric_filter"
-                             catalogName="BIServer" schemaName="biserver" tableName="bi_ind"/>
+                             catalogName="biserver" schemaName="biserver" tableName="bi_ind"/>
     </changeSet>
     <changeSet id="1713778430706-90" author="Marcos (generated)">
-        <addUniqueConstraint columnNames="where_clause" constraintName="uc_bi_ind_where_clause" catalogName="BIServer" schemaName="biserver"
+        <addUniqueConstraint columnNames="where_clause" constraintName="uc_bi_ind_where_clause" catalogName="biserver" schemaName="biserver"
                              tableName="bi_ind"/>
     </changeSet>
     <changeSet id="1713778430706-91" author="Marcos (generated)">
-        <addUniqueConstraint columnNames="email" constraintName="uc_bi_user_email" catalogName="BIServer" schemaName="biserver"
+        <addUniqueConstraint columnNames="email" constraintName="uc_bi_user_email" catalogName="biserver" schemaName="biserver"
                              tableName="bi_user"/>
     </changeSet>
     <changeSet id="1713778430706-93" author="Marcos (generated)">
-        <createIndex indexName="ix1_bi_ind" catalogName="BIServer" schemaName="biserver" tableName="bi_ind">
+        <createIndex indexName="ix1_bi_ind" catalogName="biserver" schemaName="biserver" tableName="bi_ind">
             <column name="name"/>
         </createIndex>
     </changeSet>
     <changeSet id="1713778430706-94" author="Marcos (generated)">
-        <createIndex indexName="ix2_bi_analysis_field" catalogName="BIServer" schemaName="biserver" tableName="bi_analysis_field">
+        <createIndex indexName="ix2_bi_analysis_field" catalogName="biserver" schemaName="biserver" tableName="bi_analysis_field">
             <column name="title"/>
         </createIndex>
     </changeSet>
     <changeSet id="1713778430706-95" author="Marcos (generated)">
-        <createIndex indexName="ix2_bi_cnf_graf_in" catalogName="BIServer" schemaName="biserver" tableName="bi_cnf_graph_ind">
+        <createIndex indexName="ix2_bi_cnf_graf_in" catalogName="biserver" schemaName="biserver" tableName="bi_cnf_graph_ind">
             <column name="graph_id"/>
         </createIndex>
     </changeSet>
@@ -1537,7 +1537,7 @@
                                  referencedColumnNames="id" referencedTableName="bi_ind"
                                  referencedTableSchemaName="biserver"/>
 
-        <createIndex indexName="ix1_bi_cnf_graf_in" catalogName="BIServer" schemaName="biserver" tableName="bi_cnf_graph_ind">
+        <createIndex indexName="ix1_bi_cnf_graf_in" catalogName="biserver" schemaName="biserver" tableName="bi_cnf_graph_ind">
             <column name="indicator_id"/>
         </createIndex>
     </changeSet>

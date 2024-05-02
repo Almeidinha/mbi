@@ -9,7 +9,7 @@ import java.util.Collection;
 @Getter
 @Setter
 @Entity
-@Table(name = "bi_rule_type_action", schema = "biserver", catalog = "BISERVER")
+@Table(name = "bi_rule_type_action", schema = "biserver", catalog = "biserver")
 @IdClass(BIRuleTypeActionPK.class)
 public class BIRuleTypeActionEntity {
 
