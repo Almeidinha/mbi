@@ -655,14 +655,16 @@ public class Indicator {
         loadDefaultFieldRegisters();
         int lastDrillDownSequence = getMaxDrillDownSequence();
 
-        Optional<MetaDataField> firstColumn = fields.stream()
+        List<MetaDataField> metaDataFields = fields.stream()
                 .filter(this::isFieldValid)
                 .map(field -> {
                     MetaDataField metaDataField = createCampoMetaData(field);
                     configureCampoMetaData(field, metaDataField, lastDrillDownSequence);
                     cubeMetaData.addField(metaDataField, field.getFieldType());
                     return metaDataField;
-                })
+                }).toList();
+
+        Optional<MetaDataField> firstColumn =  metaDataFields.stream()
                 .filter(field -> "S".equals(field.getDefaultField()) && this.usesSequence)
                 .findFirst();
 
