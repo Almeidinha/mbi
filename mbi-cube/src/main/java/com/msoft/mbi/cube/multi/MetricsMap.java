@@ -23,7 +23,7 @@ public class MetricsMap {
     private final Dimension dimensionNullLine;
     private final Dimension dimensionNullColumn;
 
-    private final Map<String, Map<String, Metric>> metricsMap = new HashMap<>();
+    private final Map<String, Map<String, Metric>> metricStringHashMap = new HashMap<>();
     private final Cube cube;
 
     public MetricsMap(Cube cube) {
@@ -67,111 +67,95 @@ public class MetricsMap {
         String key = this.buildKey(dimensionLine, dimensionColumn);
         Map<String, Metric> mapActualMetrics = new HashMap<>();
 
-        Map<String, Metric> mapMetrica = this.metricsMap.computeIfAbsent(key, k -> new HashMap<>());
+        Map<String, Metric> mapMetrica = this.metricStringHashMap.computeIfAbsent(key, k -> new HashMap<>());
 
-        Iterator<MetricAdditiveMetaData> isAdditive = this.cube.getHierarchyMetricAdditive().iterator();
-        MetricAdditiveMetaData metricaMetaData;
         MetricAditiva metrica;
-        String titulo;
+        String title;
         String coluna;
 
         MetricLine currentMetricLine = new MetricLine(dimensionLine, dimensionColumn, mapActualMetrics);
-        while (isAdditive.hasNext()) {
-            metricaMetaData = isAdditive.next();
-            titulo = metricaMetaData.getTitle();
-            coluna = metricaMetaData.getColumn();
+        for (MetricAdditiveMetaData additiveMetaData : this.cube.getHierarchyMetricAdditive()) {
+            title = additiveMetaData.getTitle();
+            coluna = additiveMetaData.getColumn();
 
-            metrica = (MetricAditiva) mapMetrica.get(titulo);
+            metrica = (MetricAditiva) mapMetrica.get(title);
 
             if (metrica == null) {
-                metrica = metricaMetaData.createMetrica();
-                mapMetrica.put(titulo, metrica);
+                metrica = additiveMetaData.createMetrica();
+                mapMetrica.put(title, metrica);
             }
 
-            MetricAditiva currentMetricValue = metricaMetaData.createMetrica();
-            mapActualMetrics.put(titulo, currentMetricValue);
-            Double valor = metricaMetaData.getType().getValue(set, coluna);
+            MetricAditiva currentMetricValue = additiveMetaData.createMetrica();
+            mapActualMetrics.put(title, currentMetricValue);
+            Double valor = additiveMetaData.getType().getValue(set, coluna);
             currentMetricValue.add(valor);
 
             metrica.add(valor);
         }
 
-        Iterator<MetricCalculatedMetaData> itCalculada = this.cube.getHierarchyMetricCalculated().iterator();
-        MetricCalculatedMetaData metricaCalculadaMetaData;
         MetricCalculated metricCalculated;
 
-        while (itCalculada.hasNext()) {
-            metricaCalculadaMetaData = itCalculada.next();
-            titulo = metricaCalculadaMetaData.getTitle();
+        for (MetricCalculatedMetaData calculatedMetaData: this.cube.getHierarchyMetricCalculated()) {
+            title = calculatedMetaData.getTitle();
 
-            metricCalculated = (MetricCalculated) mapMetrica.get(titulo);
+            metricCalculated = (MetricCalculated) mapMetrica.get(title);
 
             if (metricCalculated == null) {
-                metricCalculated = metricaCalculadaMetaData.createMetrica();
-                mapMetrica.put(titulo, metricCalculated);
+                metricCalculated = calculatedMetaData.createMetrica();
+                mapMetrica.put(title, metricCalculated);
             }
         }
 
-        for (MetricCalculatedMetaData calculadaMetaData : this.cube.getHierarchyMetricCalculated()) {
-            metricaCalculadaMetaData = calculadaMetaData;
-            titulo = metricaCalculadaMetaData.getTitle();
+        for (MetricCalculatedMetaData calculatedMetaData : this.cube.getHierarchyMetricCalculated()) {
+            title = calculatedMetaData.getTitle();
 
-            metricCalculated = (MetricCalculated) mapMetrica.get(titulo);
+            metricCalculated = (MetricCalculated) mapMetrica.get(title);
 
-            if (!(metricaCalculadaMetaData instanceof MetricCalculatedFunctionMetaData)) {
-                MetricCalculated metricCalculatedValorAtual = metricaCalculadaMetaData.createMetrica();
-                mapActualMetrics.put(titulo, metricCalculatedValorAtual);
+            if (!(calculatedMetaData instanceof MetricCalculatedFunctionMetaData)) {
+                MetricCalculated currentDataMetric = calculatedMetaData.createMetrica();
+                mapActualMetrics.put(title, currentDataMetric);
 
-                MetricLine metricLineUtilizar = metricaCalculadaMetaData.getAggregationApplyOrder().getMetricLineUse(currentMetricLine,
+                MetricLine lineUse = calculatedMetaData.getAggregationApplyOrder().getMetricLineUse(currentMetricLine,
                         this);
-                Double valor = metricCalculated.calculate(this, metricLineUtilizar, (MetricLine) null);
+                Double valor = metricCalculated.calculate(this, lineUse, null);
                 metricCalculated.populateNewValue(valor);
 
-                metricCalculatedValorAtual.setValue(valor);
+                currentDataMetric.setValue(valor);
             }
         }
     }
 
     public void accumulateMetricOthers(Dimension dimensionLineToRemove, Dimension dimensionLinesOthers, Dimension dimensionColumn) {
         String otherKeys = this.buildKey(dimensionLinesOthers, dimensionColumn);
-        Map<String, Metric> mapMetricaOutros = this.metricsMap.computeIfAbsent(otherKeys, k -> new HashMap<>());
+        Map<String, Metric> mapMetricOthers = this.metricStringHashMap.computeIfAbsent(otherKeys, k -> new HashMap<>());
 
-        Iterator<MetricAdditiveMetaData> itAditiva = this.cube.getHierarchyMetricAdditive().iterator();
-        MetricAdditiveMetaData metricaMetaData;
-        MetricAditiva metrica;
-        String titulo;
-
-        while (itAditiva.hasNext()) {
-            metricaMetaData = itAditiva.next();
-            titulo = metricaMetaData.getTitle();
-            metrica = (MetricAditiva) mapMetricaOutros.get(titulo);
-            if (metrica == null) {
-                metrica = metricaMetaData.createMetrica();
-                mapMetricaOutros.put(titulo, metrica);
+        for (MetricAdditiveMetaData additiveMetaData: this.cube.getHierarchyMetricAdditive()) {
+            String title = additiveMetaData.getTitle();
+            MetricAditiva metric = (MetricAditiva) mapMetricOthers.get(title);
+            if (metric == null) {
+                metric = additiveMetaData.createMetrica();
+                mapMetricOthers.put(title, metric);
             }
-            PartialTotalizationApplyTypeSoma totalParcialLinha = PartialTotalizationApplyTypeSoma.getInstance();
-            Double valor = totalParcialLinha.calculateValue(dimensionLineToRemove, dimensionColumn, metricaMetaData, this);
+            PartialTotalizationApplyTypeSoma totalPartialLine = PartialTotalizationApplyTypeSoma.getInstance();
+            Double valor = totalPartialLine.calculateValue(dimensionLineToRemove, dimensionColumn, additiveMetaData, this);
 
-            metrica.somaValor(valor);
+            metric.somaValor(valor);
         }
 
-        Iterator<MetricCalculatedMetaData> itCalculada = this.cube.getHierarchyMetricCalculated().iterator();
-        MetricCalculatedMetaData metricaCalculadaMetaData;
-        MetricCalculated metricCalculated;
-        while (itCalculada.hasNext()) {
-            metricaCalculadaMetaData = itCalculada.next();
-            titulo = metricaCalculadaMetaData.getTitle();
 
-            metricCalculated = (MetricCalculated) mapMetricaOutros.get(titulo);
+        for (MetricCalculatedMetaData metricaCalculadaMetaData: this.cube.getHierarchyMetricCalculated()) {
+            String title = metricaCalculadaMetaData.getTitle();
+
+            MetricCalculated metricCalculated = (MetricCalculated) mapMetricOthers.get(title);
 
             if (metricCalculated == null) {
                 metricCalculated = metricaCalculadaMetaData.createMetrica();
-                mapMetricaOutros.put(titulo, metricCalculated);
+                mapMetricOthers.put(title, metricCalculated);
             }
 
             if (!(metricaCalculadaMetaData instanceof MetricCalculatedFunctionMetaData)) {
-                MetricLine linha = new MetricLine(dimensionLinesOthers, this.dimensionNullColumn, mapMetricaOutros);
-                Double valor = metricCalculated.calculate(this, linha, null);
+                MetricLine line = new MetricLine(dimensionLinesOthers, this.dimensionNullColumn, mapMetricOthers);
+                Double valor = metricCalculated.calculate(this, line, null);
                 metricCalculated.setValue(valor);
             }
         }
@@ -179,16 +163,14 @@ public class MetricsMap {
 
     public Map<String, Metric> getMetricaMap(Dimension dimensionLine, Dimension dimensionColumn) {
         String key = this.buildKey(dimensionLine, dimensionColumn);
-        Map<String, Metric> mapMetrica = this.metricsMap.get(key);
-        if (mapMetrica == null) {
-            mapMetrica = new HashMap<>();
-            this.metricsMap.put(key, mapMetrica);
+        return this.metricStringHashMap.computeIfAbsent(key, k -> {
+            Map<String, Metric> metricHashMap = new HashMap<>();
             for (MetricMetaData metaData : this.cube.getHierarchyMetric()) {
                 Metric metric = metaData.createMetrica();
-                mapMetrica.put(metaData.getTitle(), metric);
+                metricHashMap.put(metaData.getTitle(), metric);
             }
-        }
-        return mapMetrica;
+            return metricHashMap;
+        });
     }
 
     private String buildKey(Dimension dimensionLine, Dimension dimensionColumn) {
@@ -199,12 +181,12 @@ public class MetricsMap {
 
     public void removeMetricLine(Dimension dimensionLine, Dimension dimensionColumn) {
         String key = this.buildKey(dimensionLine, dimensionColumn);
-        this.metricsMap.remove(key);
+        this.metricStringHashMap.remove(key);
     }
 
     public void removeMetricLine(Dimension dimensionLine) {
         String key = this.buildKey(dimensionLine, dimensionNullColumn);
-        this.metricsMap.remove(key);
+        this.metricStringHashMap.remove(key);
     }
 
 }

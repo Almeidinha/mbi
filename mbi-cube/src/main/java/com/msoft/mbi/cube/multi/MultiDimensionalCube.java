@@ -17,7 +17,7 @@ import com.msoft.mbi.cube.multi.dimension.DimensionLineOutros;
 import com.msoft.mbi.cube.multi.dimension.DimensionMetaData;
 import com.msoft.mbi.cube.multi.dimension.DimensionMetaDataOthers;
 import com.msoft.mbi.cube.multi.dimension.Dimensions;
-import com.msoft.mbi.cube.multi.dimension.comparator.DimensaoMetricaComparator;
+import com.msoft.mbi.cube.multi.dimension.comparator.DimensionMetricComparator;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
 import com.msoft.mbi.cube.multi.resumefunctions.MetricFilters;
 import com.msoft.mbi.cube.multi.resumefunctions.MetricFiltersAccumulatedValue;
@@ -289,8 +289,8 @@ public class MultiDimensionalCube extends Cube {
     @Override
     protected void reorderData(List<MetricOrdering> metricOrderings) {
         if (!metricOrderings.isEmpty()) {
-            this.getLastMetaDataLine().setComparator(new DimensaoMetricaComparator(this.metricsMap, this.getDimensionsLastLevelColumns(), metricOrderings));
-            this.reorderLastLevelDimension(metricOrderings);
+            this.getLastMetaDataLine().setComparator(new DimensionMetricComparator(this.metricsMap, metricOrderings));
+            this.reorderLastLevelDimension();
         }
     }
 
@@ -313,14 +313,13 @@ public class MultiDimensionalCube extends Cube {
         }
     }
 
-    protected void reorderLastLevelDimension(List<MetricOrdering> orderedMetrics) {
-        List<Dimension> dimensionsLastLevelColumns = this.getDimensionsLastLevelColumns();
+    protected void reorderLastLevelDimension() {
         List<Dimension> parentDimensionsReorder = new ArrayList<>();
         this.generateDimensionsChildReorderList(this, parentDimensionsReorder);
         List<Dimension> dimensions;
         for (Dimension parentDimension : parentDimensionsReorder) {
             dimensions = new ArrayList<>(parentDimension.getDimensionsLine().values());
-            parentDimension.resetDimensionsLines(new DimensaoMetricaComparator(this.metricsMap, dimensionsLastLevelColumns, orderedMetrics));
+            parentDimension.resetDimensionsLines();
             for (Dimension dimension : dimensions) {
                 parentDimension.addDimensionLine(dimension);
                 Dimension.increaseTotalSize(parentDimension);

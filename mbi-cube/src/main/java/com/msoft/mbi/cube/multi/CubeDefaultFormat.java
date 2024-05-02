@@ -8,7 +8,7 @@ import com.msoft.mbi.cube.multi.column.ColumnMetaData;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 import com.msoft.mbi.cube.multi.dimension.DimensionMetaDataAuxiliary;
 import com.msoft.mbi.cube.multi.dimension.DimensionMetaData;
-import com.msoft.mbi.cube.multi.dimension.comparator.DimensaoMetricaComparator;
+import com.msoft.mbi.cube.multi.dimension.comparator.DimensionMetricComparator;
 import com.msoft.mbi.cube.multi.resumefunctions.MetricFilters;
 import com.msoft.mbi.cube.multi.resumefunctions.MetricFiltersAccumulatedValue;
 import com.msoft.mbi.cube.multi.metadata.ColorAlertMetadata;
@@ -186,14 +186,14 @@ public class CubeDefaultFormat extends Cube {
     protected void reorderData(List<MetricOrdering> metricOrderings) {
         if (!metricOrderings.isEmpty()) {
             if (this.lastOrderedDimension == null) {
-                this.getDimensionsLastLevelLines().sort(new DimensaoMetricaComparator(this.metricsMap, new ArrayList<>(), metricOrderings));
+                this.getDimensionsLastLevelLines().sort(new DimensionMetricComparator(this.metricsMap, metricOrderings));
             } else {
                 List<Dimension> parentDimension = new ArrayList<>();
                 this.buildDimensionReorderChildrenList(this, parentDimension);
                 for (Dimension dimension : parentDimension) {
                     List<Dimension> dimensionLine = new ArrayList<>();
                     this.getLastLevelList(dimension.getDimensionsLine().values(), dimensionLine);
-                    dimensionLine.sort(new DimensaoMetricaComparator(this.metricsMap, new ArrayList<>(), metricOrderings));
+                    dimensionLine.sort(new DimensionMetricComparator(this.metricsMap, metricOrderings));
                 }
             }
         }

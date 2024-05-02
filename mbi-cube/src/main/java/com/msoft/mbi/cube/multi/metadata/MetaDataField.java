@@ -1,6 +1,5 @@
 package com.msoft.mbi.cube.multi.metadata;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @SuppressWarnings("unused")
-public class MetaDataField implements Serializable {
+public class MetaDataField {
 
     private Integer id;
     private String name;
@@ -139,26 +138,26 @@ public class MetaDataField implements Serializable {
     }
 
     public void addColorAlert(ColorAlertMetadata colorAlert, String alertType) {
-        List<ColorAlertMetadata> alertasCores;
+        List<ColorAlertMetadata> colorAlerts;
         Map<String, List<ColorAlertMetadata>> colorAlertRelativeField;
         if (ColorAlertMetadata.VALUE_ALERT_TYPE.equals(alertType)) {
-            alertasCores = this.colorAlertMetadata;
+            colorAlerts = this.colorAlertMetadata;
             colorAlertRelativeField = this.colorAlertMetadataRelatedFieldFunction;
         } else {
-            alertasCores = this.colorAlertMetadataSecondField;
+            colorAlerts = this.colorAlertMetadataSecondField;
             colorAlertRelativeField = this.colorAlertMetadataRelatedSecondFieldFunction;
         }
         if (!colorAlert.isRelativeFieldFunction()) {
-            alertasCores.add(colorAlert);
+            colorAlerts.add(colorAlert);
         } else {
             String function = colorAlert.getFunction();
-            List<ColorAlertMetadata> alertasFuncao = colorAlertRelativeField.get(function);
-            if (alertasFuncao == null) {
-                alertasFuncao = new ArrayList<>();
+            List<ColorAlertMetadata> alertMetadataList = colorAlertRelativeField.get(function);
+            if (alertMetadataList == null) {
+                alertMetadataList = new ArrayList<>();
             }
             colorAlert.setFunction(ColorAlertMetadata.NO_FUNCTION);
-            alertasFuncao.add(colorAlert);
-            colorAlertRelativeField.put(function, alertasFuncao);
+            alertMetadataList.add(colorAlert);
+            colorAlertRelativeField.put(function, alertMetadataList);
         }
     }
 

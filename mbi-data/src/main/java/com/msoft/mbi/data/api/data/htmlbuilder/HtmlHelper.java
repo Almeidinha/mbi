@@ -9,16 +9,19 @@ import com.msoft.mbi.data.api.data.exception.BIException;
 import com.msoft.mbi.data.api.data.indicator.Field;
 import com.msoft.mbi.data.api.data.indicator.BIDriller;
 import com.msoft.mbi.data.api.data.indicator.Indicator;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.io.Writer;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class HtmlHelper {
 
-    public static HTMLTable buildStringDrillUp(boolean isDrillUp) {
-        HTMLTable tab_drillup = new HTMLTable();
-        tab_drillup.setId("opcao_drill_up");
-        tab_drillup.addLine(new HTMLLine());
-        tab_drillup.getCurrentLine().addCell(new HTMLCell());
+    public static void buildStringDrillUp(boolean isDrillUp) {
+        HTMLTable tabDrillUp = new HTMLTable();
+        tabDrillUp.setId("opcao_drill_up");
+        tabDrillUp.addLine(new HTMLLine());
+        tabDrillUp.getCurrentLine().addCell(new HTMLCell());
         LinkHTMLColumnSVG image;
         if (isDrillUp) {
             image = new LinkHTMLColumnSVG("vect-arrow-square-up-left", "Drill Up", 18, 18);
@@ -26,8 +29,7 @@ public class HtmlHelper {
         } else {
             image = new LinkHTMLColumnSVG();
         }
-        tab_drillup.getCurrentLine().getCurrentCell().setContent(image);
-        return tab_drillup;
+        tabDrillUp.getCurrentLine().getCurrentCell().setContent(image);
     }
 
     public static String buildDefaultStringDrillUp(Indicator indicator) {
@@ -62,7 +64,7 @@ public class HtmlHelper {
         return drillUpTable.toString();
     }
 
-    public static void buildStringTitleAndDrillUp(Writer out, boolean noLinks, Object drillUpTable, String name) throws BIException {
+    public static void buildStringTitleAndDrillUp(Writer out, Object drillUpTable, String name) throws BIException {
         HTMLTable titleTab = buildStringTitle(name);
         HTMLTable table = new HTMLTable();
         table.addLine(new HTMLLine());
@@ -145,14 +147,14 @@ public class HtmlHelper {
         dimensionCube.addHTMLLineMask(mascaraLinkHTML);
     }
 
-    public static void configureSorting(Field field, MetaDataField campo) {
+    public static void configureSorting(MetaDataField metaDataField) {
         LinkHTMLColumnSVG svgHTML = new LinkHTMLColumnSVG("desc", "btOrdena vect-sort-down", "Ordenar de forma decrescente", 14, 14);
         // configure svgHTML
-        campo.addHTMLLineMask(new HTMLLineMask("ordenacao", HTMLLineMask.VALUE_TYPE_AFTER, svgHTML));
+        metaDataField.addHTMLLineMask(new HTMLLineMask("ordenacao", HTMLLineMask.VALUE_TYPE_AFTER, svgHTML));
 
         svgHTML = new LinkHTMLColumnSVG("asc", "btOrdena vect-sort-up", "Ordenar de forma crescente", 14, 14);
         // configure svgHTML
-        campo.addHTMLLineMask(new HTMLLineMask("ordenacao", HTMLLineMask.VALUE_TYPE_AFTER, svgHTML));
+        metaDataField.addHTMLLineMask(new HTMLLineMask("ordenacao", HTMLLineMask.VALUE_TYPE_AFTER, svgHTML));
     }
 
 }

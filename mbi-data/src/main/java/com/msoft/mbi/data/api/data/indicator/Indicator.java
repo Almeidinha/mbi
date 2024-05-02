@@ -452,17 +452,15 @@ public class Indicator {
     public String getStringTable(boolean montaSemLink) throws BIException {
         StringWriter out = new StringWriter();
 
-        Object tabelaDrillUp = "&nbsp;";
-
         if (!montaSemLink) {
             if (this.multidimensional) {
-                tabelaDrillUp = HtmlHelper.buildStringDrillUp(this.dimensionColumn.get(0).isDrillUp());
+                HtmlHelper.buildStringDrillUp(this.dimensionColumn.get(0).isDrillUp());
             } else {
-                tabelaDrillUp = this.buildDefaultStringDrillUp();
+                this.buildDefaultStringDrillUp();
             }
         }
 
-        HtmlHelper.buildStringTitleAndDrillUp(out, montaSemLink, tabelaDrillUp, this.name);
+        HtmlHelper.buildStringTitleAndDrillUp(out, montaSemLink, this.name);
 
         this.cubeTable.process(new PrinterHTML(out, (!montaSemLink)));
         return out.toString();
@@ -657,20 +655,18 @@ public class Indicator {
         loadDefaultFieldRegisters();
         int lastDrillDownSequence = getMaxDrillDownSequence();
 
-        MetaDataField firtsColumn = null;
+        Optional<MetaDataField> firstColumn = fields.stream()
+                .filter(this::isFieldValid)
+                .map(field -> {
+                    MetaDataField metaDataField = createCampoMetaData(field);
+                    configureCampoMetaData(field, metaDataField, lastDrillDownSequence);
+                    cubeMetaData.addField(metaDataField, field.getFieldType());
+                    return metaDataField;
+                })
+                .filter(field -> "S".equals(field.getDefaultField()) && this.usesSequence)
+                .findFirst();
 
-        for (Field field : fields) {
-            if (isFieldValid(field)) {
-                MetaDataField metaDataField = createCampoMetaData(field);
-                configureCampoMetaData(field, metaDataField, lastDrillDownSequence);
-                cubeMetaData.addField(metaDataField, field.getFieldType());
-
-                if ("S".equals(field.getDefaultField()) && this.usesSequence && firtsColumn == null) {
-                    firtsColumn = metaDataField;
-                    configurePrimerColumn(firtsColumn);
-                }
-            }
-        }
+        firstColumn.ifPresent(this::configureFirstColumn);
 
         createCubeMetadataMetricFilterRestrictions(cubeMetaData);
         return cubeMetaData;
@@ -680,7 +676,7 @@ public class Indicator {
         return field != null && !(field.getTitle().equalsIgnoreCase("Não visualizado") && field.isFixedValue());
     }
 
-    private void configurePrimerColumn(MetaDataField firstColumn) {
+    private void configureFirstColumn(MetaDataField firstColumn) {
         firstColumn.setShowSequence(true);
         FilterSequence filterSequence = getFiltersFunction().getFilterSequence();
         if (filterSequence != null) {
@@ -695,8 +691,8 @@ public class Indicator {
     }
 
     private void configureCampoMetaData(Field field, MetaDataField metaDataField, int lastDrillDownSequence) {
-        HtmlHelper.configureSorting(field, metaDataField);
-        if (field.isDrillDown() && field.getDrillDownSequence() != lastDrillDownSequence) {
+        HtmlHelper.configureSorting(metaDataField);
+        if (metaDataField.isDrillDown() && field.getDrillDownSequence() != lastDrillDownSequence) {
             HtmlHelper.createHTMLDrillDownMask(field, metaDataField, this.code);
         }
         configureAlertColor(field, metaDataField);
@@ -907,7 +903,7 @@ public class Indicator {
     }
 
     private CubeMetaData createCubeMetaData() throws BIException, DateException {
-        Map<Field, MetaDataField> biCubeMappedFields = new HashMap<>();
+        Map<Field, MetaDataField> metaDataFieldHashMap = new HashMap<>();
         CubeMetaData cubeMetaData = new CubeMetaData();
 
         loadMultiDimensionalFieldRegisters();
@@ -949,7 +945,7 @@ public class Indicator {
             }
 
             cubeMetaData.addField(metadataField, fieldType);
-            biCubeMappedFields.put(field, metadataField);
+            metaDataFieldHashMap.put(field, metadataField);
         }
 
         if (this.usesSequence && firtsLineDimensionDrillDown != null) {
@@ -960,13 +956,13 @@ public class Indicator {
             }
         }
 
-        processColorAlerts(biCubeMappedFields);
+        processColorAlerts(metaDataFieldHashMap);
 
         createCubeMetadataMetricFilterRestrictions(cubeMetaData);
         return cubeMetaData;
     }
 
-    private void processColorAlerts(Map<Field, MetaDataField> biCubeMappedFields) throws BIException, DateException {
+    private void processColorAlerts(Map<Field, MetaDataField> biCubeMappedFields) throws BIException {
         List<ColorAlert> colorAlertsList = colorAlerts.getColorAlertList();
         for (ColorAlert colorAlert : colorAlertsList) {
             MetaDataField metadataField = biCubeMappedFields.get(colorAlert.getFirstField());

@@ -15,7 +15,7 @@ import com.msoft.mbi.cube.multi.column.TypeNumber;
 import com.msoft.mbi.cube.multi.column.TextType;
 import com.msoft.mbi.cube.multi.coloralertcondition.ColorAlertConditionsDimensao;
 import com.msoft.mbi.cube.multi.coloralertcondition.ColorAlertConditionsMetrica;
-import com.msoft.mbi.cube.multi.dimension.comparator.DimensaoComparator;
+import com.msoft.mbi.cube.multi.dimension.comparator.DimensionComparator;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
 import lombok.AccessLevel;
@@ -245,7 +245,7 @@ public abstract class Dimension implements Comparable<Dimension> {
         return (Dimension) this.getDimensionsColumn().firstKey();
     }
 
-    public Dimension getSameLevelFirstDimensionColumn() { // TODO is this refactor correct???
+    public Dimension getSameLevelFirstDimensionColumn() { // TODO Check if this refactor correct.
         Dimension currentColumn = this.cube;
 
         while (!currentColumn.getMetaData().equals(this.getMetaData())) {
@@ -312,7 +312,7 @@ public abstract class Dimension implements Comparable<Dimension> {
         }
     }
 
-    public void resetDimensionsLines(DimensaoComparator comparator) {
+    public void resetDimensionsLines() {
         this.dimensionsLine = new Dimensions();
         decreaseTotalSize(this, this.totalSize);
     }

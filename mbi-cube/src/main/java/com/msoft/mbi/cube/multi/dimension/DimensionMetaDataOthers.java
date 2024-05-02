@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.msoft.mbi.cube.multi.coloralertcondition.ColorAlertConditionsDimensao;
-import com.msoft.mbi.cube.multi.dimension.comparator.DimensaoPadraoComparator;
+import com.msoft.mbi.cube.multi.dimension.comparator.DimensionDefaultComparator;
 import com.msoft.mbi.cube.multi.renderers.CellProperty;
 import lombok.Getter;
 
@@ -32,7 +32,7 @@ public class DimensionMetaDataOthers extends DimensionMetaData {
         this.setUpperLevelTotal(dimensionMetaDataRanking.getUpperLevelTotal());
         this.setAscending(false);
         this.setHasSequenceFields(dimensionMetaDataRanking.hasSequenceFields());
-        this.setComparator(DimensaoPadraoComparator.getInstance());
+        this.setComparator(DimensionDefaultComparator.getInstance());
     }
 
     @Override

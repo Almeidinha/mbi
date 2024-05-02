@@ -5,7 +5,6 @@ import java.sql.SQLException;
 
 public class DimensionLine extends Dimension {
 
-
     public DimensionLine(Dimension pai, DimensionMetaData metaData) {
         super(pai, metaData);
         this.dimensionsLine = new Dimensions();

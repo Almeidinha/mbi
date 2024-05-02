@@ -153,11 +153,11 @@ public abstract class Cube extends Dimension {
                 }
             }
         } else {
-            String prefixoChaveCampo = "#\\$";
-            String prefixoChaveCampoAcum = "(acum\\()*";
-            String posfixoChaveCampo = "\\$!";
-            String posfixoChaveCampoAcum = "\\)*";
-            Pattern p = Pattern.compile(prefixoChaveCampo + prefixoChaveCampoAcum + "\\d+" + posfixoChaveCampoAcum + posfixoChaveCampo);
+            String fieldKeyPrefix = "#\\$";
+            String accFieldPrefixKey = "(acum\\()*";
+            String fieldKeySuffixKey = "\\$!";
+            String accFieldSuffixKey = "\\)*";
+            Pattern p = Pattern.compile(fieldKeyPrefix + accFieldPrefixKey + "\\d+" + accFieldSuffixKey + fieldKeySuffixKey);
             Matcher m = p.matcher(expression);
             while (m.find()) {
                 String chaveCampo = m.group();
@@ -185,7 +185,7 @@ public abstract class Cube extends Dimension {
     protected String convertConditionalExpression(String expressaoOriginal) {
         expressaoOriginal = convertConditionalExpressionToTitle(expressaoOriginal);
         expressaoOriginal = expressaoOriginal.replaceAll("[Ss][Ee][(]", "IF(");
-        expressaoOriginal = expressaoOriginal.replaceAll(";", ",");
+        expressaoOriginal = expressaoOriginal.replace(";", ",");
         return expressaoOriginal;
     }
 
@@ -204,8 +204,8 @@ public abstract class Cube extends Dimension {
             fieldkey = fieldkey.substring(2, fieldkey.length() - 2);
 
             String fieldkeyExp = fieldKeyPrefix + fieldkey + fieldKeySuffix;
-            fieldkeyExp = fieldkeyExp.replaceAll("\\(", "\\\\(");
-            fieldkeyExp = fieldkeyExp.replaceAll("\\)", "\\\\)");
+            fieldkeyExp = fieldkeyExp.replace("\\(", "\\\\(");
+            fieldkeyExp = fieldkeyExp.replace("\\)", "\\\\)");
 
             Pattern fieldKeyPattern = Pattern.compile("\\d+");
             Matcher fieldKeyMatcher = fieldKeyPattern.matcher(fieldkey);
@@ -216,12 +216,12 @@ public abstract class Cube extends Dimension {
                 tempField = this.getMetaData().getMetricFieldByCode(Integer.parseInt(codCampo));
 
                 if (tempField != null) {
-                    String tituloCampo = tempField.getTitle().replaceAll("\\$", "###");
+                    String tituloCampo = tempField.getTitle().replace("\\$", "###");
                     tituloCampo = fieldkey.replaceAll(codCampo, tituloCampo);
 
-                    String expRegTituloCampo = Pattern.quote(fieldkeyExp);
-                    expressaoOriginal = expressaoOriginal.replaceAll(expRegTituloCampo, "[" + tituloCampo + "]");
-                    expressaoOriginal = expressaoOriginal.replaceAll("###", "\\$");
+                    String expRegFieldTitle = Pattern.quote(fieldkeyExp);
+                    expressaoOriginal = expressaoOriginal.replaceAll(expRegFieldTitle, "[" + tituloCampo + "]");
+                    expressaoOriginal = expressaoOriginal.replace("###", "\\$");
                 }
             }
         }
@@ -399,23 +399,22 @@ public abstract class Cube extends Dimension {
             if (!dimensionListHashMap.isEmpty()) {
                 List<Dimension> lDimensoesColunaRemover;
 
-                for (Dimension dimensionLine : dimensionListHashMap.keySet()) {
-                    lDimensoesColunaRemover = dimensionListHashMap.get(dimensionLine);
+                for (Map.Entry<Dimension, List<Dimension>> entry : dimensionListHashMap.entrySet()) {
+                    lDimensoesColunaRemover = entry.getValue();
 
                     if (lDimensoesColunaRemover.size() == lastLevelColumns.size()) {
-                        dimensions.add(dimensionLine);
+                        dimensions.add(entry.getKey());
                     }
 
                     for (Dimension dimensionToRemove : lDimensoesColunaRemover) {
                         remocoesColuna.put(dimensionToRemove, (remocoesColuna.get(dimensionToRemove)) + 1);
-                        this.metricsMap.removeMetricLine(dimensionLine, dimensionToRemove);
+                        this.metricsMap.removeMetricLine(entry.getKey(), dimensionToRemove);
                     }
                 }
-
-                for (Dimension dimensionColumns : remocoesColuna.keySet()) {
-                    if (remocoesColuna.get(dimensionColumns) == lastLevelLines.size()) {
-                        dimensionColumns.getParent().removeDimensionsColumn(dimensionColumns);
-                        lastLevelColumns.remove(dimensionColumns);
+                for (Map.Entry<Dimension, Integer> entry : remocoesColuna.entrySet()) {
+                    if (entry.getValue() == lastLevelLines.size()) {
+                        entry.getKey().getParent().removeDimensionsColumn(entry.getKey());
+                        lastLevelColumns.remove(entry.getKey());
                     }
                 }
             }
@@ -447,13 +446,11 @@ public abstract class Cube extends Dimension {
     private void resumeData() {
         List<Dimension> lastLevelDimensions = this.getDimensionsLastLevelLines();
         List<Dimension> dimensoesLinhaRemover = this.applyMetricFilters(this.metricFilters);
-        int verificaProcessamento = 0;
+        int checkProcessing = 0;
         for (Dimension dimensionLinesToRemove : dimensoesLinhaRemover) {
-            verificaProcessamento++;
-            if (verificaProcessamento % 100 == 0) {
-                if (this.cubeListener.stopProcess()) {
-                    return;
-                }
+            checkProcessing++;
+            if (checkProcessing % 100 == 0 && this.cubeListener.stopProcess()) {
+                return;
             }
             Dimension dimensionPai = dimensionLinesToRemove.getParent();
             dimensionPai.removeDimensionLine(dimensionLinesToRemove);

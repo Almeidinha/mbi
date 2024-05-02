@@ -2,20 +2,18 @@ package com.msoft.mbi.cube.multi.dimension.comparator;
 
 import com.msoft.mbi.cube.multi.dimension.Dimension;
 
-public class DimensaoPadraoComparator extends DimensaoComparator {
+public class DimensionDefaultComparator extends DimensionComparator {
 
-
-    private static DimensaoPadraoComparator padraoComparator;
-
-    private DimensaoPadraoComparator() {
+    private DimensionDefaultComparator() {
         super();
     }
 
-    public static final DimensaoPadraoComparator getInstance() {
-        if (padraoComparator == null) {
-            padraoComparator = new DimensaoPadraoComparator();
-        }
-        return padraoComparator;
+    private static class SingletonHolder {
+        private static final DimensionDefaultComparator INSTANCE = new DimensionDefaultComparator();
+    }
+
+    public static DimensionDefaultComparator getInstance() {
+        return SingletonHolder.INSTANCE;
     }
 
     @Override

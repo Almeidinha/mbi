@@ -14,8 +14,8 @@ import com.msoft.mbi.cube.multi.column.TextType;
 import com.msoft.mbi.cube.multi.coloralertcondition.ColorAlertConditionsDimensao;
 import com.msoft.mbi.cube.multi.coloralertcondition.ColorAlertConditionsValorDimensao;
 import com.msoft.mbi.cube.multi.coloralertcondition.ColorAlertProperties;
-import com.msoft.mbi.cube.multi.dimension.comparator.DimensaoComparator;
-import com.msoft.mbi.cube.multi.dimension.comparator.DimensaoPadraoComparator;
+import com.msoft.mbi.cube.multi.dimension.comparator.DimensionComparator;
+import com.msoft.mbi.cube.multi.dimension.comparator.DimensionDefaultComparator;
 import com.msoft.mbi.cube.multi.generation.Printer;
 import com.msoft.mbi.cube.multi.metadata.ColorAlertMetadata;
 import com.msoft.mbi.cube.multi.metadata.MetaDataField;
@@ -42,7 +42,7 @@ public class DimensionMetaData extends ColumnMetaData {
     private boolean isDrillDown = false;
     @Setter(AccessLevel.NONE)
     private DimensionMetaData child = null;
-    private transient Cube cube = null;
+    private Cube cube = null;
     @Getter(AccessLevel.NONE)
     private final DataType<?> dataType;
     private int lowerLevelsCount = 0;
@@ -50,8 +50,8 @@ public class DimensionMetaData extends ColumnMetaData {
     private final List<ColorAlertConditionsDimensao> colorAlertLines;
     @Setter(AccessLevel.NONE)
     private final List<ColorAlertConditionsDimensao> colorAlertCells;
-    private DimensaoComparator comparator;
-    private transient DimensionMetaData upperLevelTotal = null;
+    private DimensionComparator comparator;
+    private DimensionMetaData upperLevelTotal = null;
     private int referenceAxis = LINE;
     public static final int LINE = 1;
     public static final int COLUMN = 2;
@@ -64,7 +64,7 @@ public class DimensionMetaData extends ColumnMetaData {
         this.dataType = type;
         this.colorAlertCells = new ArrayList<>();
         this.colorAlertLines = new ArrayList<>();
-        this.comparator = DimensaoPadraoComparator.getInstance();
+        this.comparator = DimensionDefaultComparator.getInstance();
     }
 
     public void setAscending(boolean asc) {
@@ -169,7 +169,7 @@ public class DimensionMetaData extends ColumnMetaData {
         for (ColorAlertMetadata alert : alerts) {
             ColorAlertProperties alertProperties = ColorAlertProperties.factory(alert.getFontColor(), alert.getBackGroundColor(), alert.getFontStyle(),
                     alert.isBold(), alert.isItalic(), alert.getFontSize());
-            alertProperties.setAlignment(ColorAlertProperties.ALIGNMENT_LEFT);
+            alertProperties.setAlignment(CellProperty.ALIGNMENT_LEFT);
             ColorAlertConditionsValorDimensao colorCondition = new ColorAlertConditionsValorDimensao(alert.getSequence(), alertProperties, alert.getFunction(),
                     alert.getAction(), alert.getOperator(), dimensionMetaData, alert.getValues());
             dimensionMetaData.addColorAlert(colorCondition);
