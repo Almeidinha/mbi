@@ -8,6 +8,8 @@ import com.msoft.mbi.model.BIAnalysisFieldEntity;
 
 import java.util.ArrayList;
 import java.util.Collections;
+
+import com.msoft.mbi.model.BiAnalysisFieldId;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.stereotype.Service;
@@ -28,7 +30,7 @@ public class BIAnalysisFieldServiceImpl implements BIAnalysisFieldService {
     }
 
     @Override
-    public BIAnalysisFieldEntity findById(Integer id) {
+    public BIAnalysisFieldEntity findById(BiAnalysisFieldId id) {
         Optional<BIAnalysisFieldEntity> biAnalysisField = this
                 .analysisFieldRepository.findById((id));
 
@@ -36,7 +38,7 @@ public class BIAnalysisFieldServiceImpl implements BIAnalysisFieldService {
     }
 
     @Override
-    public BIAnalysisFieldDTO findDtoById(Integer id) {
+    public BIAnalysisFieldDTO findDtoById(BiAnalysisFieldId id) {
         BIAnalysisFieldEntity biUserIndEntity = this.findById(id);
 
         return this.analysisFieldMapper.biEntityToDTO(biUserIndEntity);
@@ -55,7 +57,7 @@ public class BIAnalysisFieldServiceImpl implements BIAnalysisFieldService {
     }
 
     @Override
-    public BIAnalysisFieldEntity update(Integer id, BIAnalysisFieldEntity field) {
+    public BIAnalysisFieldEntity update(BiAnalysisFieldId id, BIAnalysisFieldEntity field) {
         return this.analysisFieldRepository.findById(id)
                 .map(entity -> {
                     if (field.getTitle() != null) {
@@ -116,15 +118,17 @@ public class BIAnalysisFieldServiceImpl implements BIAnalysisFieldService {
                 .orElse(null);
     }
 
-    public BIAnalysisFieldDTO updateDto(Integer id, BIAnalysisFieldDTO dto) {
-        BIAnalysisFieldEntity field = this.update(id, this.analysisFieldMapper.dtoToEntity(dto));
+    public BIAnalysisFieldDTO updateDto(BIAnalysisFieldDTO dto) {
+        BIAnalysisFieldEntity field = this.update(
+                BiAnalysisFieldId.builder().fieldId(dto.getId().getFieldId()).indicatorId(dto.getId().getIndicatorId()).build(),
+                this.analysisFieldMapper.dtoToEntity(dto));
         return this.analysisFieldMapper.biEntityToDTO(field);
     }
 
     public List<BIAnalysisFieldDTO> updateDtoList(List<BIAnalysisFieldDTO> dtos) {
         List<BIAnalysisFieldDTO> savedDtos = new ArrayList<>();
         for (BIAnalysisFieldDTO dto : dtos) {
-            savedDtos.add(this.updateDto(dto.getFieldId(), dto));
+            savedDtos.add(this.updateDto(dto));
         }
         return savedDtos;
     }
@@ -135,7 +139,7 @@ public class BIAnalysisFieldServiceImpl implements BIAnalysisFieldService {
     }
 
     @Override
-    public void deleteById(Integer fieldId) {
+    public void deleteById(BiAnalysisFieldId fieldId) {
         this.analysisFieldRepository.deleteById(fieldId);
     }
 

@@ -2,6 +2,7 @@ package com.msoft.mbi.web.controllers;
 
 import com.msoft.mbi.data.api.dtos.indicators.entities.BIAnalysisFieldDTO;
 import com.msoft.mbi.data.services.BIAnalysisFieldService;
+import com.msoft.mbi.model.BiAnalysisFieldId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +17,13 @@ public class BIAnalysisFieldController {
 
     private final BIAnalysisFieldService fieldService;
 
-    @GetMapping("/{id}")
+    @GetMapping("{indicatorId}/{fieldId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<BIAnalysisFieldDTO> getFieldDto(@PathVariable("id") Integer id) {
+    public ResponseEntity<BIAnalysisFieldDTO> getFieldDto(
+            @PathVariable("indicatorId") Integer indicatorId,
+            @PathVariable("fieldId") Integer fieldId)
+    {
+        BiAnalysisFieldId id = BiAnalysisFieldId.builder().indicatorId(indicatorId).fieldId(fieldId).build();
         BIAnalysisFieldDTO dto =  this.fieldService.findDtoById(id);
 
         return ResponseEntity.ok(dto);
@@ -30,10 +35,10 @@ public class BIAnalysisFieldController {
         return ResponseEntity.ok(this.fieldService.saveDto(dto));
     }
 
-    @PutMapping({"/{id}"})
+    @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<BIAnalysisFieldDTO> updateField(@PathVariable Integer id, @RequestBody BIAnalysisFieldDTO dto){
-        BIAnalysisFieldDTO updatedDto = fieldService.updateDto(id, dto);
+    public ResponseEntity<BIAnalysisFieldDTO> updateField(@RequestBody BIAnalysisFieldDTO dto){
+        BIAnalysisFieldDTO updatedDto = fieldService.updateDto(dto);
 
         if (updatedDto != null) {
             return ResponseEntity.ok(updatedDto);

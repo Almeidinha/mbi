@@ -2,6 +2,7 @@ package com.msoft.mbi.data.api.mapper.indicators.entities;
 
 import com.msoft.mbi.data.api.dtos.indicators.FieldDTO;
 import com.msoft.mbi.model.BIAnalysisFieldEntity;
+import com.msoft.mbi.model.BiAnalysisFieldId;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -26,7 +27,8 @@ public interface BIAnalysisFieldToFieldDTOMapper {
             @Mapping(target = "totalizingField", expression = "java(!entity.getFieldTotalization().equals(\"N\"))"),
             @Mapping(target = "sumLine", source = "lineFieldTotalization"),
             @Mapping(target = "accumulatedLine", source = "accumulatedLineField"),
-            @Mapping(target = "indicatorId", source = "biIndByInd.id"),
+            @Mapping(target = "indicatorId", source = "id.indicatorId"),
+            @Mapping(target = "fieldId", source = "id.fieldId"),
             @Mapping(target = "mediaLine", source = "usesMediaLine"),
             @Mapping(target = "applyTotalizationExpression", expression = "java(entity.getFieldTotalization().equals(\"E\"))"),
             @Mapping(target = "verticalAnalysis", expression = "java(!entity.getVertical().equals(\"N\"))"),
@@ -43,8 +45,8 @@ public interface BIAnalysisFieldToFieldDTOMapper {
             @Mapping(target = "decimalPositions", source = "numDecimalPositions"),
             @Mapping(target = "localApres", source = "displayLocation"),
             @Mapping(target = "fieldTotalization", source = "dto", qualifiedByName = "getFieldTotalization"),
+            @Mapping(target = "id", source = "dto", qualifiedByName = "getBiAnalysisFieldId"),
             @Mapping(target = "lineFieldTotalization", source = "sumLine"),
-            @Mapping(target = "biIndByInd.id", source = "indicatorId"),
             @Mapping(target = "usesMediaLine", source = "mediaLine"),
             @Mapping(target = "accumulatedLineField", source = "accumulatedLine"),
 
@@ -62,7 +64,8 @@ public interface BIAnalysisFieldToFieldDTOMapper {
             @Mapping(target = "totalizingField", expression = "java(!entity.getFieldTotalization().equals(\"N\"))"),
             @Mapping(target = "sumLine", source = "lineFieldTotalization"),
             @Mapping(target = "accumulatedLine", source = "accumulatedLineField"),
-            @Mapping(target = "indicatorId", source = "biIndByInd.id"),
+            @Mapping(target = "indicatorId", source = "id.indicatorId"),
+            @Mapping(target = "fieldId", source = "id.fieldId"),
             @Mapping(target = "mediaLine", source = "usesMediaLine"),
             @Mapping(target = "applyTotalizationExpression", expression = "java(entity.getFieldTotalization().equals(\"E\"))"),
             @Mapping(target = "verticalAnalysis", expression = "java(!entity.getVertical().equals(\"N\"))"),
@@ -78,9 +81,9 @@ public interface BIAnalysisFieldToFieldDTOMapper {
             @Mapping(target = "direction", source = "orderDirection"),
             @Mapping(target = "decimalPositions", source = "numDecimalPositions"),
             @Mapping(target = "localApres", source = "displayLocation"),
+            @Mapping(target = "id", source = "dto", qualifiedByName = "getBiAnalysisFieldId"),
             @Mapping(target = "fieldTotalization", source = "dto", qualifiedByName = "getFieldTotalization"),
             @Mapping(target = "lineFieldTotalization", source = "sumLine"),
-            @Mapping(target = "biIndByInd.id", source = "indicatorId"),
             @Mapping(target = "usesMediaLine", source = "mediaLine"),
             @Mapping(target = "accumulatedLineField", source = "accumulatedLine"),
 
@@ -95,4 +98,13 @@ public interface BIAnalysisFieldToFieldDTOMapper {
         }
         return dto.isTotalizingField() ? "S" : "N";
     }
+
+    @Named("getBiAnalysisFieldId")
+    default BiAnalysisFieldId getBiAnalysisFieldId(FieldDTO dto) {
+        return BiAnalysisFieldId.builder()
+                .fieldId(dto.getFieldId())
+                .indicatorId(dto.getIndicatorId())
+                .build();
+    }
+
 }

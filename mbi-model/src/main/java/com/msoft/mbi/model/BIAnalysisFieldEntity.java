@@ -3,6 +3,9 @@ package com.msoft.mbi.model;
 import jakarta.persistence.*;
 import org.hibernate.annotations.DynamicUpdate;
 import lombok.*;
+
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Collection;
 
 @Getter
@@ -16,13 +19,18 @@ import java.util.Collection;
         name = "bi_analysis_field", schema = "biserver", catalog = "biserver",
         indexes = @Index(name = "ix2_bi_analysis_field", columnList = "title")
 )
-@IdClass(BIAnalysisFieldPK.class)
-public class BIAnalysisFieldEntity {
+public class BIAnalysisFieldEntity implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "field_id", nullable = false)
-    private Integer fieldId;
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    @EmbeddedId
+    private BiAnalysisFieldId id = new BiAnalysisFieldId();
+
+    @MapsId("indicatorId")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "indicator_id", nullable = false)
+    private BIIndEntity indicator;
 
     @Basic
     @Column(name = "name", length = 2000)
@@ -228,11 +236,6 @@ public class BIAnalysisFieldEntity {
     @Column(name = "delegate_order")
     private Integer delegateOrder;
 
-    @Id
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "indicator_id", referencedColumnName ="id", nullable = false)
-    private BIIndEntity biIndByInd;
-
     @OneToMany(mappedBy = "biAnalysisFieldByFk2ColorAlertInd")
     private Collection<BIIndAlertColorEntity> biColorAlertInds1;
 
@@ -252,7 +255,7 @@ public class BIAnalysisFieldEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof BIAnalysisFieldEntity )) return false;
-        return fieldId != null && fieldId.equals(((BIAnalysisFieldEntity) o).getFieldId());
+        return id != null && id.equals(((BIAnalysisFieldEntity) o).getId());
     }
 
     @Override

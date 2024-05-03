@@ -139,7 +139,7 @@ public class BIIndEntity extends BaseEntity implements Serializable {
     @JoinColumn(name = "having_clause")
     private BIHavingClauseEntity havingClause;
 
-    @OneToMany(mappedBy = "biIndByInd", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToMany(mappedBy = "indicator", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     private List<BIAnalysisFieldEntity> biAnalysisFields;
 
     @OneToMany(mappedBy = "biIndByInd", fetch = FetchType.LAZY)
@@ -203,7 +203,7 @@ public class BIIndEntity extends BaseEntity implements Serializable {
         if (this.biAnalysisFields == null) {
             this.biAnalysisFields = new ArrayList<>();
         }
-        biAnalysisField.setBiIndByInd(this);
+        biAnalysisField.setIndicator(this);
         this.biAnalysisFields.add(biAnalysisField);
 
     }
@@ -211,14 +211,14 @@ public class BIIndEntity extends BaseEntity implements Serializable {
     public void removeField(BIAnalysisFieldEntity biAnalysisField) {
         if (this.biAnalysisFields != null) {
             this.biAnalysisFields.remove(biAnalysisField);
-            biAnalysisField.setBiIndByInd(null);
+            biAnalysisField.setIndicator(null);
         }
     }
 
     public void updateField(BIAnalysisFieldEntity biAnalysisField) {
         if (this.biAnalysisFields != null) {
             Optional<BIAnalysisFieldEntity> entityField = this.biAnalysisFields.stream()
-                    .filter(field -> field.getFieldId().equals(biAnalysisField.getFieldId())).findFirst();
+                    .filter(field -> field.getId().equals(biAnalysisField.getId())).findFirst();
 
             if (entityField.isPresent()) {
                 entityField.get().setDefaultField(biAnalysisField.getDefaultField());

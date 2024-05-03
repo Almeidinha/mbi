@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BIAnalysisFieldDTO {
 
-    private Integer fieldId;
+    private BiAnalysisFieldIdDTO id = new BiAnalysisFieldIdDTO();
     private String name;
     private String title;
     private String fieldType;

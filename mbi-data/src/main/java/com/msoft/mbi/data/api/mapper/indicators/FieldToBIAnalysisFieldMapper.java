@@ -6,6 +6,7 @@ import com.msoft.mbi.data.api.data.indicator.Field;
 import java.util.List;
 
 import com.msoft.mbi.data.api.dtos.indicators.entities.BIAnalysisFieldDTO;
+import com.msoft.mbi.data.api.dtos.indicators.entities.BiAnalysisFieldIdDTO;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -40,6 +41,7 @@ public interface FieldToBIAnalysisFieldMapper {
             @Mapping(target = "orderDirection", source = "direction"),
             @Mapping(target = "numDecimalPositions", source = "decimalPositions"),
             @Mapping(target = "displayLocation", source = "localApres"),
+            @Mapping(target = "fieldId", source = "id.fieldId"),
             @Mapping(target = "totalizingField", expression = "java(!dto.getFieldTotalization().equals(\"N\"))"),
             @Mapping(target = "sumLine", source = "lineFieldTotalization"),
             @Mapping(target = "applyTotalizationExpression", expression = "java(dto.getFieldTotalization().equals(\"E\"))"),
@@ -73,6 +75,7 @@ public interface FieldToBIAnalysisFieldMapper {
             @Mapping(target = "orderDirection", source = "direction"),
             @Mapping(target = "numDecimalPositions", source = "decimalPositions"),
             @Mapping(target = "displayLocation", source = "localApres"),
+            @Mapping(target = "fieldId", source = "id.fieldId"),
             @Mapping(target = "totalizingField", expression = "java(!dto.getFieldTotalization().equals(\"N\"))"),
             @Mapping(target = "sumLine", source = "lineFieldTotalization"),
             @Mapping(target = "applyTotalizationExpression", expression = "java(dto.getFieldTotalization().equals(\"E\"))"),
@@ -89,4 +92,6 @@ public interface FieldToBIAnalysisFieldMapper {
         }
         return field.isTotalizingField() ? "S" : "N";
     }
+
+    BiAnalysisFieldIdDTO map(Integer fieldId, Integer indicatorId);
 }

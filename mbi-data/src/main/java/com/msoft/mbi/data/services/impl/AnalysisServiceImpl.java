@@ -194,7 +194,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     private List<BIAnalysisFieldEntity> buildEntityFieldsFromFieldDto(List<FieldDTO> analysisFieldDTOS) {
 
         if (analysisFieldDTOS == null || analysisFieldDTOS.isEmpty()) {
-            return null;
+            return Collections.emptyList();
         }
 
         return biAnalysisFieldToFieldDTOMapper.setDTOToEntity(analysisFieldDTOS);
