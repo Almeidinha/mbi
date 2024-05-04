@@ -222,8 +222,7 @@ public class Dimension {
             }
 
             if (field.isHorizontalParticipation() || field.isHorizontalParticipationAccumulated() || field.getAccumulatedOrder() != 0) {
-                double finalValAux = valAux;
-                this.getTotalLines().computeIfAbsent(String.valueOf(field.getFieldId()), k -> finalValAux);
+                this.getTotalLines().putIfAbsent(String.valueOf(field.getFieldId()), valAux);
             }
 
             return total;
@@ -240,7 +239,7 @@ public class Dimension {
             if (field.isHorizontalParticipation() || field.isHorizontalParticipationAccumulated() || field.getAccumulatedOrder() != 0) {
                 valAux = this.accumulatedLine[index];
                 double finalValAux1 = valAux;
-                this.getTotalLines().computeIfAbsent(String.valueOf(field.getFieldId()), k -> finalValAux1);
+                this.getTotalLines().putIfAbsent(String.valueOf(field.getFieldId()), finalValAux1);
             }
         }
 
@@ -1835,7 +1834,7 @@ public class Dimension {
                 if ("S".equals(dimension.getValue().getField().getDefaultField()) && !dimension.isFilterByAccumulated()) {
                     dimension.setCounter(count);
                     if (this.indicator.getSequeceValuesRepository() != null) {
-                        this.indicator.getSequeceValuesRepository().addValor(dimension.getCounter());
+                        this.indicator.getSequeceValuesRepository().addValue(dimension.getCounter());
                     }
                     dimension.setCounterEnabled(true);
                     count++;

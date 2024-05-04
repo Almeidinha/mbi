@@ -9,7 +9,6 @@ import lombok.extern.log4j.Log4j2;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Log4j2
@@ -51,7 +50,7 @@ public abstract class ConsultResult {
         this.values.addAll(values);
     }
 
-    public void addToValues(ArrayList<Object> values) {
+    public void addToValues(List<Object> values) {
         this.values.addAll(values);
     }
 
@@ -106,7 +105,7 @@ public abstract class ConsultResult {
                         return null; // or some default value
                     }
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
 }

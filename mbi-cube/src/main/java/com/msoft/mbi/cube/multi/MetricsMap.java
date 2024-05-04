@@ -3,7 +3,6 @@ package com.msoft.mbi.cube.multi;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import com.msoft.mbi.cube.multi.dimension.Dimension;
@@ -58,7 +57,7 @@ public class MetricsMap {
     }
 
     public void accumulateMetric(Dimension dimensionLine, Dimension dimensionColumn, ResultSet set) throws SQLException {
-        if (this.cube instanceof CubeDefaultFormat) {
+        if (this.cube instanceof DefaultCube) {
             if (dimensionLine.getValue() != null && !dimensionLine.getValue().toString().equalsIgnoreCase("root")) {
                 dimensionLine.setValue(dimensionLine.getValue() + "(*" + set.getRow() + "*)");
             }
@@ -67,7 +66,7 @@ public class MetricsMap {
         String key = this.buildKey(dimensionLine, dimensionColumn);
         Map<String, Metric> mapActualMetrics = new HashMap<>();
 
-        Map<String, Metric> mapMetrica = this.metricStringHashMap.computeIfAbsent(key, k -> new HashMap<>());
+        Map<String, Metric> metricMap = this.metricStringHashMap.computeIfAbsent(key, k -> new HashMap<>());
 
         MetricAditiva metrica;
         String title;
@@ -78,11 +77,11 @@ public class MetricsMap {
             title = additiveMetaData.getTitle();
             coluna = additiveMetaData.getColumn();
 
-            metrica = (MetricAditiva) mapMetrica.get(title);
+            metrica = (MetricAditiva) metricMap.get(title);
 
             if (metrica == null) {
                 metrica = additiveMetaData.createMetrica();
-                mapMetrica.put(title, metrica);
+                metricMap.put(title, metrica);
             }
 
             MetricAditiva currentMetricValue = additiveMetaData.createMetrica();
@@ -98,18 +97,18 @@ public class MetricsMap {
         for (MetricCalculatedMetaData calculatedMetaData: this.cube.getHierarchyMetricCalculated()) {
             title = calculatedMetaData.getTitle();
 
-            metricCalculated = (MetricCalculated) mapMetrica.get(title);
+            metricCalculated = (MetricCalculated) metricMap.get(title);
 
             if (metricCalculated == null) {
                 metricCalculated = calculatedMetaData.createMetrica();
-                mapMetrica.put(title, metricCalculated);
+                metricMap.put(title, metricCalculated);
             }
         }
 
         for (MetricCalculatedMetaData calculatedMetaData : this.cube.getHierarchyMetricCalculated()) {
             title = calculatedMetaData.getTitle();
 
-            metricCalculated = (MetricCalculated) mapMetrica.get(title);
+            metricCalculated = (MetricCalculated) metricMap.get(title);
 
             if (!(calculatedMetaData instanceof MetricCalculatedFunctionMetaData)) {
                 MetricCalculated currentDataMetric = calculatedMetaData.createMetrica();

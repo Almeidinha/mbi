@@ -6,8 +6,10 @@ import com.msoft.mbi.cube.multi.Cube;
 import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.MetricsMap;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+@EqualsAndHashCode
 public class MetricOrdering implements Comparable<MetricOrdering> {
 
     @Getter

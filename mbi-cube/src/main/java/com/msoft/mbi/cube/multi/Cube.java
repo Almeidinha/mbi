@@ -81,7 +81,7 @@ public abstract class Cube extends Dimension {
     }
 
     public static Cube factoryDefaultCube(CubeMetaData metaData) {
-        CubeDefaultFormat cube = new CubeDefaultFormat(metaData);
+        DefaultCube cube = new DefaultCube(metaData);
         cube.factory();
         cube.dimensionsLine = new Dimensions();
         cube.dimensionsColumn = new Dimensions();

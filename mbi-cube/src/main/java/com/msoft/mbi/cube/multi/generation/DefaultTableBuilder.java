@@ -87,15 +87,16 @@ public class DefaultTableBuilder extends TableGenerator {
         }
     }
 
+    @Override
     protected void createDefaultStyles() {
-        this.printer.setDefaultBorderColor("3377CC");
+        this.printer.setDefaultBorderColor(ColorUtil.BLUE);
         super.createDefaultStyles();
 
         CellProperty cellProperty = CellProperty.builder()
                 .alignment(CellProperty.ALIGNMENT_CENTER)
-                .fontColor("FFFFFF")
-                .backGroundColor("3377CC")
-                .fontName("Verdana")
+                .fontColor(ColorUtil.WHITE)
+                .backGroundColor(ColorUtil.BLUE)
+                .fontName(CellProperty.FONT_VERDANA)
                 .fontSize(10)
                 .extraAttributes(Map.of("border", "1px solid #FFFFFF"))
                 .build();
@@ -137,11 +138,11 @@ public class DefaultTableBuilder extends TableGenerator {
 
                     this.printer.addStyle(CellProperty.builder()
                             .alignment(CellProperty.ALIGNMENT_RIGHT)
-                            .fontColor("000080")
-                            .backGroundColor("D7E3F7")
-                            .fontName("Verdana")
+                            .fontColor(ColorUtil.DARK_BLUE)
+                            .backGroundColor(ColorUtil.LIGHT_TURQUOISE)
+                            .fontName(CellProperty.FONT_VERDANA)
                             .fontSize(10)
-                            .borderColor("3377CC")
+                            .borderColor(ColorUtil.BLUE)
                             .specificBorder(true)
                             .dateMask(mask)
                             .build(), metaData.getTitle() + "1");
@@ -149,11 +150,11 @@ public class DefaultTableBuilder extends TableGenerator {
 
                     this.printer.addStyle(CellProperty.builder()
                             .alignment(CellProperty.ALIGNMENT_RIGHT)
-                            .fontColor("000080")
-                            .backGroundColor("FFFFFF")
-                            .fontName("Verdana")
+                            .fontColor(ColorUtil.DARK_BLUE)
+                            .backGroundColor(ColorUtil.WHITE)
+                            .fontName(CellProperty.FONT_VERDANA)
                             .fontSize(10)
-                            .borderColor("3377CC")
+                            .borderColor(ColorUtil.BLUE)
                             .specificBorder(true)
                             .dateMask(mask)
                             .build(), metaData.getTitle() + "2");

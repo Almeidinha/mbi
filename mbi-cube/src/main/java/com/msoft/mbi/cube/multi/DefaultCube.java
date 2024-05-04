@@ -25,14 +25,16 @@ import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedAccValorAVMet
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedAVParticipationMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedParticipationMetaData;
+import lombok.EqualsAndHashCode;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-public class CubeDefaultFormat extends Cube {
+@EqualsAndHashCode(callSuper = true)
+public class DefaultCube extends Cube {
 
     private DimensionMetaData lastOrderedDimension;
 
-    protected CubeDefaultFormat(CubeMetaData metaData) {
+    protected DefaultCube(CubeMetaData metaData) {
         super(metaData);
     }
 
@@ -49,87 +51,16 @@ public class CubeDefaultFormat extends Cube {
         dimensionsByOrder.sort(comparator);
         DimensionMetaDataAuxiliary metaDataAuxiliary = new DimensionMetaDataAuxiliary();
         this.addHierarchyLine(metaDataAuxiliary);
-        for (MetaDataField metaDataField : dimensionsByOrder) {
-            if ("S".equals(metaDataField.getDefaultField())) {
-                DimensionMetaData dimensionMetaData = DimensionMetaData.factory(metaDataField);
-                this.addHierarchyLine(dimensionMetaData);
-                dimensions.put(metaDataField, dimensionMetaData);
-                if (metaDataField.getOrder() > 0) {
-                    this.lastOrderedDimension = dimensionMetaData;
-                }
-            }
-        }
 
-        for (MetaDataField campo : cubeMetaData.getFields()) {
-            if (MetaDataField.DIMENSION.equals(campo.getFieldType())) {
-                if ("S".equals(campo.getDefaultField())) {
-                    this.columnsViewed.add(dimensions.get(campo));
+        this.setLastOrderedDimension(dimensionsByOrder, dimensions);
+
+        for (MetaDataField metaDataField : cubeMetaData.getFields()) {
+            if (MetaDataField.DIMENSION.equals(metaDataField.getFieldType())) {
+                if ("S".equals(metaDataField.getDefaultField())) {
+                    this.columnsViewed.add(dimensions.get(metaDataField));
                 }
             } else {
-                AnalysisParticipationType participacaoTipoGeral = AnalysisParticipationTypeGeneral.getInstance();
-                String visualizationStatus = this.getMetricVisualizationStatus(campo);
-                if (!MetaDataField.NOT_ADDED_METRIC.equals(visualizationStatus)) {
-                    MetricMetaData metaDataCampoOriginal;
-                    if (!campo.isExpression()) {
-                        metaDataCampoOriginal = MetricAdditiveMetaData.factory(campo);
-                        this.addHierarchyLineMetricAdditive((MetricAdditiveMetaData) metaDataCampoOriginal);
-                    } else {
-                        campo.setName(this.convertConditionalExpression(campo.getName()));
-
-                        metaDataCampoOriginal = MetricCalculatedMetaData.factory(campo);
-
-                        Double valorExpr = null;
-                        Double resultExpr = null;
-
-                        try {
-                            resultExpr = ((MetricCalculatedMetaData) metaDataCampoOriginal).createCalculation().calculateValue();
-                            valorExpr = Double.valueOf(campo.getName());
-                        } catch (Exception e) {
-                            log.error("Error: " + e.getMessage());
-                        }
-
-                        if (resultExpr != null && resultExpr.equals(valorExpr)) {
-                            metaDataCampoOriginal = MetricAdditiveMetaData.factory(campo);
-                            this.addHierarchyLineMetricAdditive((MetricAdditiveMetaData) metaDataCampoOriginal);
-                        } else {
-                            this.addHierarchyLineMetricCalculated((MetricCalculatedMetaData) metaDataCampoOriginal);
-                        }
-                    }
-
-                    if (MetaDataField.METRIC_RESTRICTED_VIEW.equals(visualizationStatus)) {
-                        metaDataCampoOriginal.setViewed(false);
-                    } else {
-                        this.columnsViewed.add(metaDataCampoOriginal);
-                    }
-
-                    if (campo.hasVerticalAnalysis()) {
-                        List<ColorAlertMetadata> alertsAV = campo.getRelativeFieldFunctionValueAlert(MetricCalculatedAVParticipationMetaData.AV);
-                        MetricCalculatedAVParticipationMetaData metricAV = new MetricCalculatedAVParticipationMetaData(metaDataCampoOriginal, participacaoTipoGeral, alertsAV);
-                        metricAV.setTotalLines(true);
-                        this.addHierarchyLineMetricCalculated(metricAV);
-                        this.columnsViewed.add(metricAV);
-                    }
-                    if (campo.hasAccumulatedValue()) {
-                        List<ColorAlertMetadata> alertsAV = campo.getRelativeFieldFunctionValueAlert(MetricCalculatedAccValorAVMetaData.ACCUMULATED_VALUE_AV);
-                        MetricCalculatedAccValorAVMetaData metricAccumValueAV = new MetricCalculatedAccValorAVMetaData(metaDataCampoOriginal, participacaoTipoGeral, alertsAV);
-                        this.addHierarchyLineMetricCalculated(metricAccumValueAV);
-                        this.columnsViewed.add(metricAccumValueAV);
-                    }
-                    if (campo.hasAccumulatedParticipation()) {
-                        MetricCalculatedParticipationMetaData metaDataAVAuxiliar;
-                        if (!campo.hasVerticalAnalysis()) {
-                            metaDataAVAuxiliar = new MetricCalculatedAVParticipationMetaData(metaDataCampoOriginal, participacaoTipoGeral, null);
-                            metaDataAVAuxiliar.setViewed(false);
-                            this.addHierarchyLineMetricCalculated(metaDataAVAuxiliar);
-                        } else {
-                            metaDataAVAuxiliar = (MetricCalculatedParticipationMetaData) this.getMetricMetaDataRelativeField(campo.getTitle(), MetricCalculatedAVParticipationMetaData.AV);
-                        }
-                        List<ColorAlertMetadata> alertsAV = campo.getRelativeFieldFunctionValueAlert(MetricCalculatedAccParticipationAVMetaData.ACC_PARTICIPATION_AV);
-                        MetricCalculatedAccParticipationAVMetaData metricPartAccumAV = new MetricCalculatedAccParticipationAVMetaData(metaDataAVAuxiliar, participacaoTipoGeral, alertsAV);
-                        this.addHierarchyLineMetricCalculated(metricPartAccumAV);
-                        this.columnsViewed.add(metricPartAccumAV);
-                    }
-                }
+                this.handleMetrics(metaDataField);
             }
         }
 
@@ -145,6 +76,85 @@ public class CubeDefaultFormat extends Cube {
         if (cubeMetaData.getAccumulatedFieldExpression() != null && !cubeMetaData.getAccumulatedFieldExpression().trim().isEmpty()) {
             String filterExpression = this.convertMetricFilterToFieldTitle(cubeMetaData.getAccumulatedFieldExpression());
             this.metricFiltersAccumulatedValue = new MetricFiltersAccumulatedValue(filterExpression);
+        }
+    }
+
+    private void handleMetrics(MetaDataField metaDataField) {
+        AnalysisParticipationType participationTypeGeneral = AnalysisParticipationTypeGeneral.getInstance();
+        String visualizationStatus = this.getMetricVisualizationStatus(metaDataField);
+        if (!MetaDataField.NOT_ADDED_METRIC.equals(visualizationStatus)) {
+            MetricMetaData metaDataCampoOriginal;
+            if (!metaDataField.isExpression()) {
+                metaDataCampoOriginal = MetricAdditiveMetaData.factory(metaDataField);
+                this.addHierarchyLineMetricAdditive((MetricAdditiveMetaData) metaDataCampoOriginal);
+            } else {
+                metaDataField.setName(this.convertConditionalExpression(metaDataField.getName()));
+                metaDataCampoOriginal = MetricCalculatedMetaData.factory(metaDataField);
+
+                Double valorExpr = null;
+                Double resultExpr = null;
+
+                try {
+                    resultExpr = ((MetricCalculatedMetaData) metaDataCampoOriginal).createCalculation().calculateValue();
+                    valorExpr = Double.valueOf(metaDataField.getName());
+                } catch (Exception e) {
+                    log.error("Error: " + e.getMessage());
+                }
+
+                if (resultExpr != null && resultExpr.equals(valorExpr)) {
+                    metaDataCampoOriginal = MetricAdditiveMetaData.factory(metaDataField);
+                    this.addHierarchyLineMetricAdditive((MetricAdditiveMetaData) metaDataCampoOriginal);
+                } else {
+                    this.addHierarchyLineMetricCalculated((MetricCalculatedMetaData) metaDataCampoOriginal);
+                }
+            }
+
+            if (MetaDataField.METRIC_RESTRICTED_VIEW.equals(visualizationStatus)) {
+                metaDataCampoOriginal.setViewed(false);
+            } else {
+                this.columnsViewed.add(metaDataCampoOriginal);
+            }
+
+            if (metaDataField.hasVerticalAnalysis()) {
+                List<ColorAlertMetadata> alertsAV = metaDataField.getRelativeFieldFunctionValueAlert(MetricCalculatedAVParticipationMetaData.AV);
+                MetricCalculatedAVParticipationMetaData metricAV = new MetricCalculatedAVParticipationMetaData(metaDataCampoOriginal, participationTypeGeneral, alertsAV);
+                metricAV.setTotalLines(true);
+                this.addHierarchyLineMetricCalculated(metricAV);
+                this.columnsViewed.add(metricAV);
+            }
+            if (metaDataField.hasAccumulatedValue()) {
+                List<ColorAlertMetadata> alertsAV = metaDataField.getRelativeFieldFunctionValueAlert(MetricCalculatedAccValorAVMetaData.ACCUMULATED_VALUE_AV);
+                MetricCalculatedAccValorAVMetaData metricAccumValueAV = new MetricCalculatedAccValorAVMetaData(metaDataCampoOriginal, participationTypeGeneral, alertsAV);
+                this.addHierarchyLineMetricCalculated(metricAccumValueAV);
+                this.columnsViewed.add(metricAccumValueAV);
+            }
+            if (metaDataField.hasAccumulatedParticipation()) {
+                MetricCalculatedParticipationMetaData participationMetaData;
+                if (!metaDataField.hasVerticalAnalysis()) {
+                    participationMetaData = new MetricCalculatedAVParticipationMetaData(metaDataCampoOriginal, participationTypeGeneral, null);
+                    participationMetaData.setViewed(false);
+                    this.addHierarchyLineMetricCalculated(participationMetaData);
+                } else {
+                    participationMetaData = (MetricCalculatedParticipationMetaData) this.getMetricMetaDataRelativeField(metaDataField.getTitle(), MetricCalculatedAVParticipationMetaData.AV);
+                }
+                List<ColorAlertMetadata> alertsAV = metaDataField.getRelativeFieldFunctionValueAlert(MetricCalculatedAccParticipationAVMetaData.ACC_PARTICIPATION_AV);
+                MetricCalculatedAccParticipationAVMetaData metricPartAccumAV = new MetricCalculatedAccParticipationAVMetaData(participationMetaData, participationTypeGeneral, alertsAV);
+                this.addHierarchyLineMetricCalculated(metricPartAccumAV);
+                this.columnsViewed.add(metricPartAccumAV);
+            }
+        }
+    }
+
+    private void setLastOrderedDimension(List<MetaDataField> dimensionsByOrder, Map<MetaDataField, DimensionMetaData> dimensions) {
+        for (MetaDataField metaDataField : dimensionsByOrder) {
+            if ("S".equals(metaDataField.getDefaultField())) {
+                DimensionMetaData dimensionMetaData = DimensionMetaData.factory(metaDataField);
+                this.addHierarchyLine(dimensionMetaData);
+                dimensions.put(metaDataField, dimensionMetaData);
+                if (metaDataField.getOrder() > 0) {
+                    this.lastOrderedDimension = dimensionMetaData;
+                }
+            }
         }
     }
 

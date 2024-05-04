@@ -11,7 +11,7 @@ public class ValuesRepository {
     @Getter
     @Setter
     private int type;
-    private final ArrayList<String> values;
+    private final List<String> values;
     @Setter
     @Getter
     private int fieldCode;
@@ -25,16 +25,16 @@ public class ValuesRepository {
         this.values = new ArrayList<>();
     }
 
-    public void addValor(double valor) {
-        this.values.add(String.valueOf(valor));
+    public void addValue(double value) {
+        this.values.add(String.valueOf(value));
     }
 
-    public void addValor(int valor) {
-        this.values.add(String.valueOf(valor));
+    public void addValue(int value) {
+        this.values.add(String.valueOf(value));
     }
 
-    public ArrayList<String> getValues(int orderingType) {
-        ArrayList<String> result;
+    public List<String> getValues(int orderingType) {
+        List<String> result;
         order(orderingType);
         if (this.type == FilterFunction.ACCUMULATED_FILTER) {
             result = formatValues();
@@ -64,7 +64,7 @@ public class ValuesRepository {
         return Double.compare(s2, s1);
     };
 
-    public ArrayList<String> formatValues() {
+    public List<String> formatValues() {
         ArrayList<String> result = new ArrayList<>();
         for (String value : this.values) {
             result.add(BIUtil.formatDoubleToText(value, 2));
