@@ -8,11 +8,11 @@ import com.msoft.mbi.cube.multi.MetricsMap;
 import com.msoft.mbi.cube.multi.metrics.Metric;
 import com.msoft.mbi.cube.multi.metrics.MetricValueUse;
 
-public class MetricAditiva extends Metric {
+public class MetricAditive extends Metric {
 
 
   public void add(ResultSet set, String campo) throws SQLException {
-    Double valor = (Double) this.getMetaData().getType().getValue(set, campo);
+    Double valor = this.getMetaData().getType().getValue(set, campo);
     this.add(valor);
   }
 
@@ -41,7 +41,7 @@ public class MetricAditiva extends Metric {
     return null;
   }
 
-  public float getFuncao(String funcao) {
+  public float getFunction(String function) {
     throw new RuntimeException("Método não implementado ainda");
   }
 

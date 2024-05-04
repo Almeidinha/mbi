@@ -46,8 +46,8 @@ public class MetricAdditiveMetaData extends MetricMetaData {
     }
 
     @Override
-    public MetricAditiva createMetrica() {
-        MetricAditiva metricaAditiva = new MetricAditiva();
+    public MetricAditive createMetrica() {
+        MetricAditive metricaAditiva = new MetricAditive();
         metricaAditiva.setMetaData(this);
         metricaAditiva.setAggregator(this.aggregationType);
         return metricaAditiva;

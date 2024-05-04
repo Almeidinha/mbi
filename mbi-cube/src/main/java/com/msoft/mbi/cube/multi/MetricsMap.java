@@ -10,7 +10,7 @@ import com.msoft.mbi.cube.multi.dimension.DimensionNullColumn;
 import com.msoft.mbi.cube.multi.dimension.DimensionLineNull;
 import com.msoft.mbi.cube.multi.metrics.Metric;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
-import com.msoft.mbi.cube.multi.metrics.additive.MetricAditiva;
+import com.msoft.mbi.cube.multi.metrics.additive.MetricAditive;
 import com.msoft.mbi.cube.multi.metrics.additive.MetricAdditiveMetaData;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculated;
 import com.msoft.mbi.cube.multi.metrics.calculated.MetricCalculatedFunctionMetaData;
@@ -57,10 +57,12 @@ public class MetricsMap {
     }
 
     public void accumulateMetric(Dimension dimensionLine, Dimension dimensionColumn, ResultSet set) throws SQLException {
-        if (this.cube instanceof DefaultCube) {
-            if (dimensionLine.getValue() != null && !dimensionLine.getValue().toString().equalsIgnoreCase("root")) {
+        if (this.cube instanceof DefaultCube && (
+                dimensionLine.getValue() != null
+                        && !dimensionLine.getValue().toString().equalsIgnoreCase("root"))
+        ) {
                 dimensionLine.setValue(dimensionLine.getValue() + "(*" + set.getRow() + "*)");
-            }
+
         }
 
         String key = this.buildKey(dimensionLine, dimensionColumn);
@@ -68,34 +70,30 @@ public class MetricsMap {
 
         Map<String, Metric> metricMap = this.metricStringHashMap.computeIfAbsent(key, k -> new HashMap<>());
 
-        MetricAditiva metrica;
-        String title;
-        String coluna;
-
         MetricLine currentMetricLine = new MetricLine(dimensionLine, dimensionColumn, mapActualMetrics);
         for (MetricAdditiveMetaData additiveMetaData : this.cube.getHierarchyMetricAdditive()) {
-            title = additiveMetaData.getTitle();
-            coluna = additiveMetaData.getColumn();
+            MetricAditive metricAditive;
+            String title = additiveMetaData.getTitle();
 
-            metrica = (MetricAditiva) metricMap.get(title);
+            metricAditive = (MetricAditive) metricMap.get(title);
 
-            if (metrica == null) {
-                metrica = additiveMetaData.createMetrica();
-                metricMap.put(title, metrica);
+            if (metricAditive == null) {
+                metricAditive = additiveMetaData.createMetrica();
+                metricMap.put(title, metricAditive);
             }
 
-            MetricAditiva currentMetricValue = additiveMetaData.createMetrica();
+            MetricAditive currentMetricValue = additiveMetaData.createMetrica();
             mapActualMetrics.put(title, currentMetricValue);
-            Double valor = additiveMetaData.getType().getValue(set, coluna);
-            currentMetricValue.add(valor);
+            Double value = additiveMetaData.getType().getValue(set, additiveMetaData.getColumn());
+            currentMetricValue.add(value);
 
-            metrica.add(valor);
+            metricAditive.add(value);
         }
 
         MetricCalculated metricCalculated;
 
         for (MetricCalculatedMetaData calculatedMetaData: this.cube.getHierarchyMetricCalculated()) {
-            title = calculatedMetaData.getTitle();
+            String title = calculatedMetaData.getTitle();
 
             metricCalculated = (MetricCalculated) metricMap.get(title);
 
@@ -106,7 +104,7 @@ public class MetricsMap {
         }
 
         for (MetricCalculatedMetaData calculatedMetaData : this.cube.getHierarchyMetricCalculated()) {
-            title = calculatedMetaData.getTitle();
+            String title = calculatedMetaData.getTitle();
 
             metricCalculated = (MetricCalculated) metricMap.get(title);
 
@@ -130,7 +128,7 @@ public class MetricsMap {
 
         for (MetricAdditiveMetaData additiveMetaData: this.cube.getHierarchyMetricAdditive()) {
             String title = additiveMetaData.getTitle();
-            MetricAditiva metric = (MetricAditiva) mapMetricOthers.get(title);
+            MetricAditive metric = (MetricAditive) mapMetricOthers.get(title);
             if (metric == null) {
                 metric = additiveMetaData.createMetrica();
                 mapMetricOthers.put(title, metric);
