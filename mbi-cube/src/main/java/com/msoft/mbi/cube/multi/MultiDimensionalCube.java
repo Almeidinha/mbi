@@ -7,7 +7,7 @@ import java.util.List;
 import com.msoft.mbi.cube.multi.analytics.AnaliseEvolucaoTipoDinamica;
 import com.msoft.mbi.cube.multi.analytics.AnaliseEvolucaoTipoFixa;
 import com.msoft.mbi.cube.multi.analytics.AnalysisParticipationType;
-import com.msoft.mbi.cube.multi.analytics.AnaliseParticipacaoTipoGeral;
+import com.msoft.mbi.cube.multi.analytics.AnalysisParticipationTypeGeneral;
 import com.msoft.mbi.cube.multi.analytics.AnaliseParticipacaoTipoParcialProxNivel;
 import com.msoft.mbi.cube.multi.analytics.AnaliseParticipacaoTipoParcialProxNivelTotalizado;
 import com.msoft.mbi.cube.multi.coloralertcondition.ColorAlertConditionsMetricaOutroCampo;
@@ -71,7 +71,7 @@ public class MultiDimensionalCube extends Cube {
         } else if (MetaDataField.AV_TYPE_PARTIAL_NEXT_LEVEL_TOTAL.equals(type)) {
             return AnaliseParticipacaoTipoParcialProxNivelTotalizado.getInstance();
         } else {
-            return AnaliseParticipacaoTipoGeral.getInstance();
+            return AnalysisParticipationTypeGeneral.getInstance();
         }
     }
 
@@ -94,8 +94,8 @@ public class MultiDimensionalCube extends Cube {
                 this.columnsViewed.add(dimensao);
             }
         }
-        AnalysisParticipationType tipoAnaliseVerticalCampo = AnaliseParticipacaoTipoGeral.getInstance();
-        AnalysisParticipationType participationType = AnaliseParticipacaoTipoGeral.getInstance();
+        AnalysisParticipationType tipoAnaliseVerticalCampo = AnalysisParticipationTypeGeneral.getInstance();
+        AnalysisParticipationType participationType = AnalysisParticipationTypeGeneral.getInstance();
         for (MetaDataField metaDataField : cubeMetaData.getMetricFields()) {
             metricFields.add(metaDataField);
             String metricVisualization = this.getMetricVisualizationStatus(metaDataField);
@@ -113,7 +113,7 @@ public class MultiDimensionalCube extends Cube {
                     Double resultExpr = null;
 
                     try {
-                        resultExpr = ((MetricCalculatedMetaData) metaDataCampoOriginal).createCalculo().calculateValue();
+                        resultExpr = ((MetricCalculatedMetaData) metaDataCampoOriginal).createCalculation().calculateValue();
                         valorExpr = Double.valueOf(metaDataField.getName());
                     } catch (Exception e) {
                         log.error("Erro ao calcular valor da expressão: " + metaDataField.getName(), e);

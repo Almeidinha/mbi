@@ -24,7 +24,7 @@ public class MetricCalculated extends Metric {
 
     public Double calculate(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior, MetricValueUse calculateLevel) {
         MetricCalculatedMetaData metaData = this.getMetaData();
-        Calculation calculation = metaData.createCalculo();
+        Calculation calculation = metaData.createCalculation();
 
         try {
             for (String variable : calculation.getVariables().values()) {

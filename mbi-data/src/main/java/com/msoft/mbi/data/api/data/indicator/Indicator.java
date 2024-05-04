@@ -487,7 +487,7 @@ public class Indicator {
         this.cubeTable.process(jsonPrinter);
 
         long elapsedTime = System.nanoTime() - startTime;
-        log.info("Total execution time to cubeTable.processar in millis: " + elapsedTime/1000000);
+        log.info("Total execution time to cubeTable.processar in millis: {}", elapsedTime/1000000);
 
         objectNode.set("title", jsonTitle);
 
@@ -721,7 +721,7 @@ public class Indicator {
             this.cube.process(resultSet);
 
             long elapsedTime = System.nanoTime() - startTime;
-            log.info("Total execution time to cubo.processarCubo in millis: " + elapsedTime/1000000);
+            log.info("Total execution time to cubo.processarCubo in millis: {}", elapsedTime/1000000);
         } catch (SQLException sqle) {
             BIDatabaseException biex = new BIDatabaseException(sqle);
             biex.setAction("Processamento do Cubo.");

@@ -4,9 +4,9 @@ import com.msoft.mbi.cube.multi.calculation.Calculation;
 import com.msoft.mbi.cube.multi.column.TypeDecimal;
 import com.msoft.mbi.cube.multi.metadata.MetaDataField;
 import com.msoft.mbi.cube.multi.metrics.MetricMetaData;
-import com.msoft.mbi.cube.multi.metrics.calculated.applyAggregationOrder.AggregationApplyBefore;
-import com.msoft.mbi.cube.multi.metrics.calculated.applyAggregationOrder.AggregationApplyAfter;
-import com.msoft.mbi.cube.multi.metrics.calculated.applyAggregationOrder.AggregationApplyOrder;
+import com.msoft.mbi.cube.multi.metrics.calculated.applyaggregationorder.AggregationApplyBefore;
+import com.msoft.mbi.cube.multi.metrics.calculated.applyaggregationorder.AggregationApplyAfter;
+import com.msoft.mbi.cube.multi.metrics.calculated.applyaggregationorder.AggregationApplyOrder;
 import lombok.Getter;
 
 
@@ -36,7 +36,7 @@ public class MetricCalculatedMetaData extends MetricMetaData {
         return metricMetadata;
     }
 
-    public Calculation createCalculo() {
+    public Calculation createCalculation() {
         return new Calculation(this.expression);
     }
 

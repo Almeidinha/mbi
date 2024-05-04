@@ -20,7 +20,7 @@ public class MetricCalculatedEvolutionAH extends MetricCalculated {
     public Double calculate(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior) {
 
         MetricCalculatedAHEvolutionMetaData metaData = (MetricCalculatedAHEvolutionMetaData) this.getMetaData();
-        Calculation calculation = metaData.createCalculo();
+        Calculation calculation = metaData.createCalculation();
         Double result = null;
         try {
             String columnAHTitle = calculation.getVariables().get(MetricCalculatedAHEvolutionMetaData.AH_COLUMN_VARIABLE);

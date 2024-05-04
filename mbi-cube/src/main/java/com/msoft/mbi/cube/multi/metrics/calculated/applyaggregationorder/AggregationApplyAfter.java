@@ -1,4 +1,4 @@
-package com.msoft.mbi.cube.multi.metrics.calculated.applyAggregationOrder;
+package com.msoft.mbi.cube.multi.metrics.calculated.applyaggregationorder;
 
 import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.MetricsMap;
@@ -10,13 +10,12 @@ public class AggregationApplyAfter implements AggregationApplyOrder {
         super();
     }
 
-    public static AggregationApplyAfter aggregationApplyAfter;
+    private static class SingletonHolder {
+        private static final AggregationApplyAfter INSTANCE = new AggregationApplyAfter();
+    }
 
     public static AggregationApplyAfter getInstance() {
-        if (aggregationApplyAfter == null) {
-            aggregationApplyAfter = new AggregationApplyAfter();
-        }
-        return aggregationApplyAfter;
+        return AggregationApplyAfter.SingletonHolder.INSTANCE;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.msoft.mbi.cube.multi.metrics.calculated.applyAggregationOrder;
+package com.msoft.mbi.cube.multi.metrics.calculated.applyaggregationorder;
 
 import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.MetricsMap;

@@ -33,7 +33,7 @@ public class CalculationHierarchyOrdering {
             return;
         }
 
-        Calculation calculation = metric.createCalculo();
+        Calculation calculation = metric.createCalculation();
         calculation.getVariables().values().stream()
                 .map(metricsMap::get)
                 .filter(Objects::nonNull)

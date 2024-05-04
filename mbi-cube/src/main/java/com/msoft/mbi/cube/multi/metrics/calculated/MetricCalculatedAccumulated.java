@@ -15,7 +15,7 @@ public class MetricCalculatedAccumulated extends MetricCalculated {
     @Override
     public Double calculate(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior) {
         MetricCalculatedAccMetaData metaData = (MetricCalculatedAccMetaData) this.getMetaData();
-        Calculation calculation = metaData.createCalculo();
+        Calculation calculation = metaData.createCalculation();
 
         try {
             String title = calculation.getVariables().get(MetricCalculatedAccMetaData.AV_COLUMN_VARIABLE);

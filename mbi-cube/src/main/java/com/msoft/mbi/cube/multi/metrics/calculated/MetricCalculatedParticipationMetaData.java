@@ -59,8 +59,8 @@ public abstract class MetricCalculatedParticipationMetaData extends MetricCalcul
     }
 
     @Override
-    public Calculation createCalculo() {
-        Calculation calculation = super.createCalculo();
+    public Calculation createCalculation() {
+        Calculation calculation = super.createCalculation();
         calculation.putVariable(COLUNA_AV_VARIABLE, this.getReferenceFieldTitle());
         return calculation;
     }

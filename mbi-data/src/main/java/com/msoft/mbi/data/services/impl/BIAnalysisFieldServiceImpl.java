@@ -6,16 +6,12 @@ import com.msoft.mbi.data.repositories.BIAnalysisFieldRepository;
 import com.msoft.mbi.data.services.BIAnalysisFieldService;
 import com.msoft.mbi.model.BIAnalysisFieldEntity;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 
 import com.msoft.mbi.model.BiAnalysisFieldId;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -56,12 +52,19 @@ public class BIAnalysisFieldServiceImpl implements BIAnalysisFieldService {
         return this.analysisFieldMapper.biEntityToDTO(field);
     }
 
+    /* TODO Handle filterSequence change
+    * If the field changes to Metric,filter sequence must be set to 0
+    * If it changes to Dimension, filter sequence must be set to The next sequence
+    */
     @Override
     public BIAnalysisFieldEntity update(BiAnalysisFieldId id, BIAnalysisFieldEntity field) {
         return this.analysisFieldRepository.findById(id)
                 .map(entity -> {
                     if (field.getTitle() != null) {
                         entity.setTitle(field.getTitle());
+                    }
+                    if (field.getFilterSequence() != null) {
+                        entity.setFilterSequence(field.getFilterSequence());
                     }
                     if (field.getFieldType() != null) {
                         entity.setFieldType(field.getFieldType());
@@ -101,6 +104,9 @@ public class BIAnalysisFieldServiceImpl implements BIAnalysisFieldService {
                     }
                     if (field.getHorizontal() != null) {
                         entity.setHorizontal(field.getHorizontal());
+                    }
+                    if (field.getAggregationType() != null) {
+                        entity.setAggregationType(field.getAggregationType());
                     }
 
                     entity.setDirection(field.getDirection());

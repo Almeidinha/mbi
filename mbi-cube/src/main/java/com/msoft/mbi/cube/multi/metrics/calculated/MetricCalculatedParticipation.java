@@ -20,7 +20,7 @@ public class MetricCalculatedParticipation extends MetricCalculated {
     public Double calculate(MetricsMap metricsMap, MetricLine metricLine, MetricLine metricLineAnterior) {
 
         MetricCalculatedParticipationMetaData metaData = (MetricCalculatedParticipationMetaData) this.getMetaData();
-        Calculation calculation = metaData.createCalculo();
+        Calculation calculation = metaData.createCalculation();
         Double result = null;
         try {
             String titleColumnAV = calculation.getVariables().get(MetricCalculatedParticipationMetaData.COLUNA_AV_VARIABLE);

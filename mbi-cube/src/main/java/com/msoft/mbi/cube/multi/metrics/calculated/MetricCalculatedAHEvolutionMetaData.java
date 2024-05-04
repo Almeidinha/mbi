@@ -5,7 +5,7 @@ import java.util.List;
 import com.msoft.mbi.cube.multi.MetricLine;
 import com.msoft.mbi.cube.multi.analytics.EvolutionAnalysisType;
 import com.msoft.mbi.cube.multi.analytics.AnalysisParticipationType;
-import com.msoft.mbi.cube.multi.analytics.AnaliseParticipacaoTipoGeral;
+import com.msoft.mbi.cube.multi.analytics.AnalysisParticipationTypeGeneral;
 import com.msoft.mbi.cube.multi.calculation.Calculation;
 import com.msoft.mbi.cube.multi.column.MaskColumnMetaData;
 import com.msoft.mbi.cube.multi.dimension.Dimension;
@@ -39,7 +39,7 @@ public class MetricCalculatedAHEvolutionMetaData extends MetricCalculatedMetaDat
         this.referenceColumnTitle = referenceColumn.getTitle();
 
         this.expression = "(([" + AH_COLUMN_VARIABLE + "]-[" + PREVIOUS_VALUE_COLUMN_VARIABLE + "])/" + "[" + PREVIOUS_VALUE_COLUMN_VARIABLE + "])*100";
-        this.comparisonParticipationType = AnaliseParticipacaoTipoGeral.getInstance();
+        this.comparisonParticipationType = AnalysisParticipationTypeGeneral.getInstance();
         this.evolutionAnalysisType = evolutionAnalysisType;
         if (colorAlerts != null) {
             factoryColorsAlert(this, colorAlerts);
@@ -84,8 +84,8 @@ public class MetricCalculatedAHEvolutionMetaData extends MetricCalculatedMetaDat
     }
 
     @Override
-    public Calculation createCalculo() {
-        Calculation calculation = super.createCalculo();
+    public Calculation createCalculation() {
+        Calculation calculation = super.createCalculation();
         calculation.putVariable(AH_COLUMN_VARIABLE, this.referenceColumnTitle);
         return calculation;
     }

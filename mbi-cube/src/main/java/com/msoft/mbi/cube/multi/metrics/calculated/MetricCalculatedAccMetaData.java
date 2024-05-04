@@ -54,8 +54,8 @@ public abstract class MetricCalculatedAccMetaData extends MetricCalculatedMetaDa
     }
 
     @Override
-    public Calculation createCalculo() {
-        Calculation calculation = super.createCalculo();
+    public Calculation createCalculation() {
+        Calculation calculation = super.createCalculation();
         calculation.putVariable(AV_COLUMN_VARIABLE, this.referenceColumnTitle);
         return calculation;
     }

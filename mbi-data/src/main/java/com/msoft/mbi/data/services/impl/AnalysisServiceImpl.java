@@ -15,11 +15,13 @@ import com.msoft.mbi.data.connection.ConnectionManager;
 import com.msoft.mbi.data.services.*;
 import com.msoft.mbi.model.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class AnalysisServiceImpl implements AnalysisService {
@@ -84,6 +86,7 @@ public class AnalysisServiceImpl implements AnalysisService {
             Indicator ind = indicatorMapper.dtoToIndicator(dto);
 
             String sql = ind.getSqlExpression(biTenant.getDatabaseType(), false);
+            log.info("Executing SQL: {}", sql);
             JdbcTemplate jdbcTemplate = connectionManager.getNewConnection(biTenant);
             ind.startTableProcess();
 
@@ -91,6 +94,11 @@ public class AnalysisServiceImpl implements AnalysisService {
                 try {
                     ind.processCube(resultSet);
                 } catch (BIException e) {
+                    log.error("Error while executing query in class {}, method {}, line number {}: {}",
+                            e.getStackTrace()[0].getClassName(),
+                            e.getStackTrace()[0].getMethodName(),
+                            e.getStackTrace()[0].getLineNumber(),
+                            e.getMessage());
                     throw new RuntimeException(e);
                 }
                 return null;
