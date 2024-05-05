@@ -34,7 +34,6 @@ public class DataSourceManager {
     @Bean
     // @RefreshScope
     public DataSource getDatasource() {
-        DataSource dataSource = DataSourceBuilder.create().url(dbUrl).username(dbUserName).password(dbPassword).build();
-        return dataSource;
+        return DataSourceBuilder.create().url(dbUrl).username(dbUserName).password(dbPassword).build();
     }
 }

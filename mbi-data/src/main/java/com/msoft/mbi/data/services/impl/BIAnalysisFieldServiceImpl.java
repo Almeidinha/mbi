@@ -109,6 +109,7 @@ public class BIAnalysisFieldServiceImpl implements BIAnalysisFieldService {
                         entity.setAggregationType(field.getAggregationType());
                     }
 
+                    entity.setDrillDown(field.isDrillDown());
                     entity.setDirection(field.getDirection());
                     entity.setFieldOrder(field.getFieldOrder());
                     entity.setFieldTotalization(field.getFieldTotalization());

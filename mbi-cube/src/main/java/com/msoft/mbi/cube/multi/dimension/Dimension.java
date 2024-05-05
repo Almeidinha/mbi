@@ -74,49 +74,51 @@ public abstract class Dimension implements Comparable<Dimension> {
     }
 
     public Comparable<Object> getOrderValue() {
-        Object obj;
-        if (this.value == null) {
-            if (this.metaData.getDataType() instanceof TypeNumber) {
-                obj = TypeDecimal.BRANCO;
-            } else if (this.metaData.getDataType() instanceof TypeDate) {
-                obj = TypeDate.BRANCO;
-            } else if (this.metaData.getDataType() instanceof TypeHour) {
-                obj = TypeHour.BRANCO;
-            } else {
-                obj = TextType.EMPTY;
-            }
+        return this.value == null
+                ? (Comparable<Object>) handleNullValue()
+                : (Comparable<Object>) handleNonNullValue();
+    }
+
+    private Object handleNullValue() {
+
+        if (this.metaData.getDataType() instanceof TypeNumber) {
+            return TypeDecimal.BRANCO;
+        } else if (this.metaData.getDataType() instanceof TypeDate) {
+            return TypeDate.BRANCO;
+        } else if (this.metaData.getDataType() instanceof TypeHour) {
+            return TypeHour.BRANCO;
         } else {
-            DimensionMetaData dimensionMetaData = this.metaData;
-            if (this.metaData.getOrderingDimension() != null) {
-                dimensionMetaData = this.metaData.getOrderingDimension();
-            }
-            if (dimensionMetaData.getDataType() instanceof TextType) {
-                obj = this.getValue().toString().trim();
-                int posIni = obj.toString().indexOf("(*");
-                if (posIni > -1) {
-                    obj = obj.toString().replace(obj.toString().substring(posIni), "");
-                }
-            } else {
-                obj = this.getValue();
+            return TextType.EMPTY;
+        }
+    }
 
-                if ((this.metaData.getDataType() instanceof TypeDate) || (this.metaData.getDataType() instanceof TypeNumber)) {
-                    int posIni = obj.toString().indexOf("(*");
+    private Object handleNonNullValue() {
+        DimensionMetaData dimensionMetaData = this.metaData.getOrderingDimension() != null ? this.metaData.getOrderingDimension() : this.metaData;
+        Object obj = this.getValue();
 
-                    if (posIni > -1) {
-                        obj = obj.toString().replace(obj.toString().substring(posIni), "");
-
-                        if (this.metaData.getDataType() instanceof TypeDate)
-                            obj = Date.valueOf(obj.toString());
-                    }
-                }
-
-                if (this.metaData.getDataType() instanceof TypeNumber)
-                    obj = Double.valueOf(obj.toString());
-
-            }
+        if (dimensionMetaData.getDataType() instanceof TextType) {
+            obj = handleTextType(obj.toString());
+        } else if (dimensionMetaData.getDataType() instanceof TypeDate) {
+            obj = handleDateType(obj.toString());
+        } else if (dimensionMetaData.getDataType() instanceof TypeNumber) {
+            obj = handleNumberType(obj.toString());
         }
 
-        return (Comparable<Object>) obj;
+        return obj;
+    }
+
+    private String handleTextType(String value) {
+        int posIni = value.indexOf("(*");
+        return posIni > -1 ? value.replace(value.substring(posIni), "") : value;
+    }
+
+    private Date handleDateType(String value) {
+        int posIni = value.indexOf("(*");
+        return posIni > -1 ? Date.valueOf(value.replace(value.substring(posIni), "")) : Date.valueOf(value);
+    }
+
+    private Double handleNumberType(String value) {
+        return Double.valueOf(value);
     }
 
     public void setValue(Comparable<String> value) {
