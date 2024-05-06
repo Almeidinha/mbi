@@ -1,12 +1,17 @@
 package com.msoft.mbi.data.api.dtos.indicators;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import java.util.List;
 
 public interface BIIndSummary {
     Integer getId();
     String getName();
+    @Value("#{target.biAreaByArea.id}")
+    Integer getAreaId();
 
-    Area getBiAreaByArea();
+    @Value("#{target.biAreaByArea.description}")
+    String getAreaName();
 
     List<UserIndicators> getBiUserIndicators();
 
@@ -21,11 +26,6 @@ public interface BIIndSummary {
     interface UserGroupIndicators {
         Integer getUserGroupId();
         boolean isCanEdit();
-    }
-
-    interface Area {
-        Integer getId();
-        String getDescription();
     }
 
 }
