@@ -16,12 +16,12 @@ public class BIUserIndServiceImpl implements BIUserIndService {
 
     @Override
     public List<BIUserIndEntity> findAll() {
-        return null;
+        return this.userIndRepository.findAll();
     }
 
     @Override
-    public BIUserIndEntity findById(Integer integer) {
-        return null;
+    public BIUserIndEntity findById(Integer id) {
+        return this.userIndRepository.findById(id).orElse(null);
     }
 
     @Override
@@ -35,13 +35,13 @@ public class BIUserIndServiceImpl implements BIUserIndService {
     }
 
     @Override
-    public void delete(BIUserIndEntity object) {
-
+    public void delete(BIUserIndEntity entity) {
+        this.userIndRepository.delete(entity);
     }
 
     @Override
-    public void deleteById(Integer integer) {
-
+    public void deleteById(Integer id) {
+        this.userIndRepository.deleteById(id);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class BIUserIndServiceImpl implements BIUserIndService {
                     .userId(userId)
                     .indicatorId(indicatorId)
                     .canChange(false)
-                    .isFavorite(true).build();
+                    .favorite(true).build();
 
             this.userIndRepository.save(userIndEntity);
             return;
@@ -82,4 +82,11 @@ public class BIUserIndServiceImpl implements BIUserIndService {
     public void toggleIsCanChange(Integer userId, Integer indicatorId) {
         this.userIndRepository.toggleIsCanChange(userId, indicatorId);
     }
+
+    @Override
+    public List<BIUserIndEntity> findAllByIndicatorId(Integer indicatorId) {
+        return this.userIndRepository.findAllByIndicatorId(indicatorId);
+    }
+
+
 }

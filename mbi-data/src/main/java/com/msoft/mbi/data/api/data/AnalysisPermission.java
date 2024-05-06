@@ -11,5 +11,5 @@ public class AnalysisPermission {
     Integer userId;
     Integer groupId;
     PermissionLevel level;
-    boolean isFavorite;
+    boolean favorite;
 }

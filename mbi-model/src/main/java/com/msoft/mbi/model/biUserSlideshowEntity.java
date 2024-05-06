@@ -27,6 +27,6 @@ public class biUserSlideshowEntity {
 
     @Basic
     @Column(name = "is_favorite")
-    private Boolean isFavorite;
+    private Boolean favorite;
 
 }

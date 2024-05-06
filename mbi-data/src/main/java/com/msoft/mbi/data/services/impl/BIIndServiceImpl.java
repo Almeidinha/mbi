@@ -1,6 +1,7 @@
 package com.msoft.mbi.data.services.impl;
 
 import com.msoft.mbi.data.api.dtos.indicators.BIIndInfoDTO;
+import com.msoft.mbi.data.api.dtos.indicators.BIIndSummary;
 import com.msoft.mbi.data.api.dtos.indicators.IndicatorDTO;
 import com.msoft.mbi.data.api.mapper.indicators.BIIndInfoMapper;
 import com.msoft.mbi.data.api.mapper.indicators.entities.BIIndToIndicatorDTOMapper;
@@ -19,9 +20,7 @@ import java.util.Optional;
 public class BIIndServiceImpl implements BIIndService {
 
     private final BIIndRepository indRepository;
-
     private final BIIndInfoMapper indMapper;
-
     private final BIIndToIndicatorDTOMapper biIndToIndicatorDTOMapper;
 
     @Override
@@ -92,4 +91,16 @@ public class BIIndServiceImpl implements BIIndService {
     public void changeSequence(int id, boolean hasSequence) {
         this.indRepository.changeSequence(id, hasSequence);
     }
+
+    @Override
+    public List<BIIndInfoDTO> getIndicatorListDescription() {
+        return this.indRepository.getIndicatorListDescription();
+    }
+
+
+    @Override
+    public List<BIIndSummary> getBiSummary() {
+        return this.indRepository.findBy(BIIndSummary.class);
+    }
+
 }

@@ -9,6 +9,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Repository
 public interface BIUserIndRepository extends JpaRepository<BIUserIndEntity, Integer> {
 
@@ -28,5 +30,7 @@ public interface BIUserIndRepository extends JpaRepository<BIUserIndEntity, Inte
     void toggleIsCanChange(@Param("userId") Integer userId, @Param("indicatorId") Integer indicatorId);
 
     boolean existsByUserIdAndIndicatorId(Integer userId, Integer indicatorId);
+
+    List<BIUserIndEntity> findAllByIndicatorId(Integer indicatorId);
 
 }

@@ -2,6 +2,8 @@ package com.msoft.mbi.data.services;
 
 import com.msoft.mbi.model.BIUserIndEntity;
 
+import java.util.List;
+
 public interface BIUserIndService extends CrudService<BIUserIndEntity, Integer> {
 
     void saveAll(Iterable<BIUserIndEntity> userIndEntities);
@@ -14,5 +16,5 @@ public interface BIUserIndService extends CrudService<BIUserIndEntity, Integer> 
 
     void toggleIsCanChange(Integer userId, Integer indicatorId);
 
-
+    List<BIUserIndEntity> findAllByIndicatorId(Integer indicatorId);
 }

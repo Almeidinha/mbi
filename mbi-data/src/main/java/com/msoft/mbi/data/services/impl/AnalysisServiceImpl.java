@@ -164,7 +164,7 @@ public class AnalysisServiceImpl implements AnalysisService {
                                 .indicatorId(analysisInput.getId())
                                 .userId(permission.getUserId())
                                 .canChange(permission.getLevel().equals(PermissionLevel.WRITE))
-                                .isFavorite(permission.isFavorite())
+                                .favorite(permission.isFavorite())
                                 .build()
                 ).toList();
     }

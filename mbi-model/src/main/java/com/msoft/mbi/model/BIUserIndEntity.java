@@ -28,7 +28,7 @@ public class BIUserIndEntity {
 
     @Basic
     @Column(name = "is_favorite", nullable = false)
-    private boolean isFavorite;
+    private boolean favorite;
 
     @ManyToOne
     @JoinColumn(name = "indicator_id", referencedColumnName = "id", nullable = false, insertable = false, updatable = false)

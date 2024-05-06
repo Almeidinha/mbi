@@ -8,13 +8,26 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class BIIndInfoDTO extends BaseDTO {
+public class BIIndInfoDTO extends BaseDTO implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    public BIIndInfoDTO(Integer id, int companyId, String name, Integer areaId, String areaName) {
+        this.id = id;
+        this.companyId = companyId;
+        this.name = name;
+        this.areaId = areaId;
+        this.areaName = areaName;
+    }
 
     private Integer id;
 
@@ -29,7 +42,5 @@ public class BIIndInfoDTO extends BaseDTO {
     private List<BIUserIndDTO> biUserIndDtoList;
 
     private List<BIUserGroupIndDTO> biUserGroupIndDtoList;
-
-
 
 }

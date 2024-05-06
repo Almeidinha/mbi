@@ -1,6 +1,7 @@
 package com.msoft.mbi.web.controllers;
 
 import com.msoft.mbi.data.api.dtos.indicators.BIIndInfoDTO;
+import com.msoft.mbi.data.api.dtos.indicators.BIIndSummary;
 import com.msoft.mbi.data.api.dtos.indicators.IndicatorDTO;
 import com.msoft.mbi.data.services.BIIndService;
 import lombok.RequiredArgsConstructor;
@@ -49,5 +50,23 @@ public class BIIndicatorController {
     @ResponseStatus(HttpStatus.OK)
     public void changeSequence(@PathVariable Integer id, @PathVariable boolean hasSequence) {
         this.indService.changeSequence(id, hasSequence);
+    }
+
+    @GetMapping("/description/list")
+    ResponseEntity<List<BIIndInfoDTO>> getIndicatorListDescription() {
+        List<BIIndInfoDTO> result = this.indService.getIndicatorListDescription();
+        if (result == null || result.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(this.indService.getIndicatorListDescription());
+    }
+
+    @GetMapping("/summary/list")
+    ResponseEntity<List<BIIndSummary>> getBiSummary() {
+        List<BIIndSummary> result = this.indService.getBiSummary();
+        if (result == null || result.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(this.indService.getBiSummary());
     }
 }

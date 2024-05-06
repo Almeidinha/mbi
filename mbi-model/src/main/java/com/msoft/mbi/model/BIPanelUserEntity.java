@@ -28,7 +28,7 @@ public class BIPanelUserEntity {
 
     @Basic
     @Column(name = "is_favorite")
-    private boolean isFavorite;
+    private boolean favorite;
 
     @ManyToOne
     @JoinColumn(name = "panel_id", referencedColumnName = "id", nullable = false)
