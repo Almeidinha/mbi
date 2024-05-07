@@ -1,6 +1,7 @@
 package com.msoft.mbi.data.services.impl;
 
 import com.msoft.mbi.data.api.data.User;
+import com.msoft.mbi.data.api.dtos.user.BIUserSummary;
 import com.msoft.mbi.data.repositories.BIUserRepository;
 import com.msoft.mbi.data.services.UserService;
 import com.msoft.mbi.model.BIUserEntity;
@@ -38,9 +39,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<BIUserSummary> findUserSummaryByEmail(String email) {
+        return this.userRepository.findUserSummaryByEmail(email);
+    }
+
+    @Override
     public User loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        return userRepository.findByEmail(username)
+        return userRepository.findUserSummaryByEmail(username)
                 .map(User::new)
                 .orElseThrow(()-> new UsernameNotFoundException("User not found"));
     }

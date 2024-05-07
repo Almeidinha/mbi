@@ -1,5 +1,6 @@
 package com.msoft.mbi.data.api.data;
 
+import com.msoft.mbi.data.api.dtos.user.BIUserSummary;
 import com.msoft.mbi.model.BIUserEntity;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,7 +20,7 @@ public class User implements UserDetails {
     private boolean isEnabled;
     private List<GrantedAuthority> authorities;
 
-    public User(BIUserEntity biUser) {
+    public User(BIUserSummary biUser) {
         this.userName = biUser.getEmail(); // biUser.getFirstName() + "-" + biUser.getLastName();
         this.password = biUser.getPassword();
         this.isEnabled = biUser.getIsActive();

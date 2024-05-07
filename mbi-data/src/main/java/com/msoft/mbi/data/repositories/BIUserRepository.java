@@ -1,5 +1,6 @@
 package com.msoft.mbi.data.repositories;
 
+import com.msoft.mbi.data.api.dtos.user.BIUserSummary;
 import com.msoft.mbi.model.BIUserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,4 +15,7 @@ public interface BIUserRepository extends JpaRepository<BIUserEntity, Long> {
 
     @Query("SELECT id FROM BIUserEntity WHERE email = :email")
     int findUseridByEmail(@Param("email") String email);
+
+    Optional<BIUserSummary> findUserSummaryByEmail(String email);
+
 }

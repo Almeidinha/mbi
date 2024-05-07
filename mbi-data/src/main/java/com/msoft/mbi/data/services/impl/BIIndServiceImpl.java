@@ -103,4 +103,9 @@ public class BIIndServiceImpl implements BIIndService {
         return this.indRepository.findBy(BIIndSummary.class);
     }
 
+    @Override
+    public List<BIIndSummary> findAllProjectedBy() {
+        return this.indRepository.findAllProjectedBy();
+    }
+
 }

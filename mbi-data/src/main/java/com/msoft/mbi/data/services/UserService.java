@@ -1,6 +1,7 @@
 package com.msoft.mbi.data.services;
 
 import com.msoft.mbi.data.api.data.User;
+import com.msoft.mbi.data.api.dtos.user.BIUserSummary;
 import com.msoft.mbi.model.BIUserEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -16,5 +17,7 @@ public interface UserService extends UserDetailsService {
     void saveUserVerificationToken(BIUserEntity theUser, String verificationToken);
 
     String validateToken(String theToken);
+
+    Optional<BIUserSummary> findUserSummaryByEmail(String email);
 
 }

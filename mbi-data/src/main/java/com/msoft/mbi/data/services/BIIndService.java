@@ -24,4 +24,6 @@ public interface BIIndService extends CrudService<BIIndEntity, Integer> {
 
     List<BIIndSummary> getBiSummary();
 
+    List<BIIndSummary> findAllProjectedBy();
+
 }

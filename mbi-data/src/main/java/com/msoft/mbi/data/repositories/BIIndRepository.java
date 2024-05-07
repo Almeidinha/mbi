@@ -10,7 +10,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -27,5 +26,7 @@ public interface BIIndRepository extends JpaRepository<BIIndEntity, Integer> {
     List<BIIndInfoDTO> getIndicatorListDescription();
 
     <T> List<T> findBy(Class<T> type);
+
+    List<BIIndSummary> findAllProjectedBy();
 
 }

@@ -58,7 +58,7 @@ public class BIIndicatorController {
         if (result == null || result.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(this.indService.getIndicatorListDescription());
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/summary/list")
@@ -67,6 +67,15 @@ public class BIIndicatorController {
         if (result == null || result.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(this.indService.getBiSummary());
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/summary/test")
+    ResponseEntity<List<BIIndSummary>> getBiSummaryTest() {
+        List<BIIndSummary> result = this.indService.findAllProjectedBy();
+        if (result == null || result.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(result);
     }
 }

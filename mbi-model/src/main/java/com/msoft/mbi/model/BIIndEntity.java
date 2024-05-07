@@ -99,43 +99,43 @@ public class BIIndEntity extends BaseEntity implements Serializable {
     @JoinColumn(name = "company_id", nullable = false)
     private BICompanyEntity companyIdByCompany;
 
-    @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "search_clause")
     private BISearchClauseEntity biSearchClause;
 
-    @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "from_clause")
     private BIFromClauseEntity biFromClause;
 
-    @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "where_clause")
     private BIWhereClauseEntity biWhereClause;
 
-    @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "fixed_condition_clause")
     private BIFixedConditionClauseEntity biFixedConditionClause;
 
-    @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "dimension_filter")
     private BIDimensionFilterEntity biDimensionFilter;
 
-    @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "metric_filter")
     private BIMetricFilterEntity biIndMetricFilter;
 
-    @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "sql_metric_filter")
     private BISqlMetricFiltersEntity biIndSqlMetricFilter;
 
-    @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "group_clause")
     private BIGroupClauseEntity biGroupClause;
 
-    @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "order_clause")
     private BIOrderClauseEntity biOrderClause;
 
-    @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "having_clause")
     private BIHavingClauseEntity havingClause;
 
